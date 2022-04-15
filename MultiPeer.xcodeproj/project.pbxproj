@@ -7,15 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */; };
+		2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625E2807EB8300C9EB79 /* ConnectionManager.swift */; };
+		227862612807FD5200C9EB79 /* CameraVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227862602807FD5100C9EB79 /* CameraVC.swift */; };
+		227862632808024900C9EB79 /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227862622808024900C9EB79 /* VideoHelper.swift */; };
 		228B88372806577A007A6842 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88362806577A007A6842 /* AppDelegate.swift */; };
 		228B88392806577A007A6842 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88382806577A007A6842 /* SceneDelegate.swift */; };
 		228B883B2806577A007A6842 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B883A2806577A007A6842 /* ViewController.swift */; };
 		228B883E2806577B007A6842 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B883C2806577B007A6842 /* Main.storyboard */; };
 		228B884028065784007A6842 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 228B883F28065784007A6842 /* Assets.xcassets */; };
 		228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B884128065784007A6842 /* LaunchScreen.storyboard */; };
+		22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACAF5428094ACF007277A7 /* DateExt+.swift */; };
+		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatManagerFromRay.swift; sourceTree = "<group>"; };
+		2278625E2807EB8300C9EB79 /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
+		227862602807FD5100C9EB79 /* CameraVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraVC.swift; sourceTree = "<group>"; };
+		227862622808024900C9EB79 /* VideoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
 		228B88332806577A007A6842 /* MultiPeer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MultiPeer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B88362806577A007A6842 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		228B88382806577A007A6842 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -24,6 +34,10 @@
 		228B883F28065784007A6842 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		228B884228065784007A6842 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		228B884428065784007A6842 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		22ACAF5428094ACF007277A7 /* DateExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateExt+.swift"; sourceTree = "<group>"; };
+		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA8C32117F417B1A5C42D8EC /* Pods-MultiPeer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MultiPeer.debug.xcconfig"; path = "Target Support Files/Pods-MultiPeer/Pods-MultiPeer.debug.xcconfig"; sourceTree = "<group>"; };
+		B72406CCD7171172A8776BA5 /* Pods-MultiPeer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MultiPeer.release.xcconfig"; path = "Target Support Files/Pods-MultiPeer/Pods-MultiPeer.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +57,8 @@
 			children = (
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
+				6C823DBE391EE5CB5A4C0AA5 /* Pods */,
+				6F98C3DBED4EA4948B2B95DE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -59,12 +76,34 @@
 				228B88362806577A007A6842 /* AppDelegate.swift */,
 				228B88382806577A007A6842 /* SceneDelegate.swift */,
 				228B883A2806577A007A6842 /* ViewController.swift */,
+				227862622808024900C9EB79 /* VideoHelper.swift */,
+				2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */,
+				227862602807FD5100C9EB79 /* CameraVC.swift */,
+				2278625E2807EB8300C9EB79 /* ConnectionManager.swift */,
 				228B883C2806577B007A6842 /* Main.storyboard */,
+				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				228B883F28065784007A6842 /* Assets.xcassets */,
 				228B884128065784007A6842 /* LaunchScreen.storyboard */,
 				228B884428065784007A6842 /* Info.plist */,
 			);
 			path = MultiPeer;
+			sourceTree = "<group>";
+		};
+		6C823DBE391EE5CB5A4C0AA5 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				AA8C32117F417B1A5C42D8EC /* Pods-MultiPeer.debug.xcconfig */,
+				B72406CCD7171172A8776BA5 /* Pods-MultiPeer.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		6F98C3DBED4EA4948B2B95DE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,9 +113,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 228B884728065784007A6842 /* Build configuration list for PBXNativeTarget "MultiPeer" */;
 			buildPhases = (
+				2A4290338D15EEDEE4B485D7 /* [CP] Check Pods Manifest.lock */,
 				228B882F2806577A007A6842 /* Sources */,
 				228B88302806577A007A6842 /* Frameworks */,
 				228B88312806577A007A6842 /* Resources */,
+				81B0AD825B70B0374278A026 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -133,13 +174,60 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2A4290338D15EEDEE4B485D7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-MultiPeer-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		81B0AD825B70B0374278A026 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MultiPeer/Pods-MultiPeer-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MultiPeer/Pods-MultiPeer-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MultiPeer/Pods-MultiPeer-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		228B882F2806577A007A6842 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */,
+				227862612807FD5200C9EB79 /* CameraVC.swift in Sources */,
+				227862632808024900C9EB79 /* VideoHelper.swift in Sources */,
+				22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */,
 				228B883B2806577A007A6842 /* ViewController.swift in Sources */,
 				228B88372806577A007A6842 /* AppDelegate.swift in Sources */,
+				2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */,
 				228B88392806577A007A6842 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -282,6 +370,7 @@
 		};
 		228B884828065784007A6842 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AA8C32117F417B1A5C42D8EC /* Pods-MultiPeer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -295,6 +384,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -310,6 +400,7 @@
 		};
 		228B884928065784007A6842 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B72406CCD7171172A8776BA5 /* Pods-MultiPeer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -323,6 +414,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
