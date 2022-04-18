@@ -59,16 +59,12 @@ protocol ConnectionManagerDelegate: NSObject {
 
 class ConnectionManager: NSObject {
     
-
-    
-    // make it singleton pattern to use messages, peers, and connectionState
-
     static let shared = ConnectionManager()
 
     private static let service = "jobmanager-chat"
 
     weak var delegate: ConnectionManagerDelegate?
-//    static var
+    
     static var messages: [ChatMessage] = [] // for testing
     static var peers: [MCPeerID] = []
     static var connectedToChat = false
@@ -145,23 +141,26 @@ extension ConnectionManager: MCSessionDelegate {
     
     // need to order Viewcontroller to trigger video recording when data received
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        
+        print("flag6")
         guard let orderMessage = String(data: data, encoding: .utf8) else { return }
-        
+        print("flag7")
         switch orderMessage {
         case OrderMessageTypes.presentCamera:
             print("present Camera!")
             delegate?.presentVideo() // delegate: ConnectionManagerDelegate
         case OrderMessageTypes.startRecording:
             print("start Recording!")
-            
+            print("flag6")
+            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.startRecordingFromVC), object: nil)
         case OrderMessageTypes.stopRecording:
             print("stop Recording!")
+            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.stopRecordingFromVC), object: nil)
         case OrderMessageTypes.save:
             print("save!")
         default:
             print("some other case, \(orderMessage)")
         }
+        print("flag8")
     }
 
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {

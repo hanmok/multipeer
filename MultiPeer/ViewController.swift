@@ -25,6 +25,13 @@ public enum OrderMessageTypes {
     static let stopRecording = "stopRecording"
     static let save = "save"
 }
+
+
+protocol MainVCDelegate: NSObject {
+    func startRecord()
+    func stopRecord()
+}
+
 extension ViewController: ConnectionManagerDelegate {
     
     func updateState(state: String) {
@@ -73,15 +80,26 @@ extension ViewController: ConnectionManagerDelegate {
     func presentVideo() {
         print(#function, "PresentVideo called from ViewController")
         print("self: \(self)")
-        VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
+//        VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
+        videoHelper.startMediaBrowser2()
         
     }
 }
 
-class ViewController: UIViewController {
+//extension ViewController: UIImagePickerControllerDelegate {
+//    func orderVideoCapture() {
+//
+//    }
+//}
+
+
+class ViewController: UIViewController, UINavigationBarDelegate {
+
+    weak var delegate: MainVCDelegate?
     
     var connectionManager = ConnectionManager()
     // MARK: - Properties
+    var videoHelper = VideoHelper()
     
     var count = 0
     
@@ -152,6 +170,42 @@ class ViewController: UIViewController {
         setupTarget()
         
         connectionManager.delegate = self
+        videoHelper.delegate = self
+//        videoHelper = self.delegate!
+        
+//        NotificationCenter.default.addObserver(self, selector: #selector(didReceiveTestNotification(_:)), name: NSNotification.Name("Test"), object: nil)
+        
+        addNotifications()
+    }
+    
+    func addNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(orderStartRecording(_:)), name: NSNotification.Name(NotificationKeys.startRecordingFromIPC), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(orderStopRecording(_:)), name: NSNotification.Name(NotificationKeys.stopRecordingFromIPC), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(orderSave(_:)), name: NSNotification.Name(NotificationKeys.saveFromIPC), object: nil)
+                                               
+    }
+    
+    @objc func orderStartRecording(_ notification: Notification) {
+        print("flag4")
+        print("orderStartRecording!")
+        // 여기 코드가 문제임..
+        connectionManager.send(OrderMessageTypes.startRecording)
+    print("flag5")
+    }
+
+    @objc func orderStopRecording(_ notification: Notification) {
+//        print("orderStopRecording!")
+        connectionManager.send(OrderMessageTypes.stopRecording)
+    }
+    
+    @objc func orderSave(_ notification: Notification) {
+        
+    }
+    
+    @objc func didReceiveTestNotification(_ notification: Notification) {
+        print("Test succeed!")
     }
     
     
@@ -202,7 +256,8 @@ class ViewController: UIViewController {
     // Start Recording! Btn
     @objc func cameraBtnTapped(_ sender: UIButton) {
         print("Camera Btn Tapped!")
-          VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
+//          VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
+        videoHelper.startMediaBrowser2()
     }
     
     @objc func orderAny(_ sender: UIButton) {
@@ -210,7 +265,8 @@ class ViewController: UIViewController {
 
         connectionManager.send(OrderMessageTypes.presentCamera)
         // original Code
-        VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
+//        VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
+        videoHelper.startMediaBrowser2()
         receivedData.text = String(count)
         count += 1
         
@@ -298,6 +354,10 @@ extension ViewController: UIImagePickerControllerDelegate {
         picker.dismiss(animated: true)
         
     }
+     func some() {
+        print("extended custom implementation")
+    }
+    
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         print("ended!")
