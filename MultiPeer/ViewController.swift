@@ -11,6 +11,20 @@ import SnapKit
 import AVFoundation
 import MobileCoreServices
 
+struct OrderMessage: Identifiable, Equatable, Codable {
+
+    var id = UUID()
+    let displayName: String
+
+    var orderTypeString: String
+}
+
+public enum OrderMessageTypes {
+    static let presentCamera = "presentCamera"
+    static let startRecording = "startRecording"
+    static let stopRecording = "stopRecording"
+    static let save = "save"
+}
 extension ViewController: ConnectionManagerDelegate {
     
     func updateState(state: String) {
@@ -81,7 +95,7 @@ class ViewController: UIViewController {
     
     let cameraButton: UIButton = {
         let btn = UIButton()
-        btn.setTitle("Start Recording!", for: .normal)
+        btn.setTitle("Camera Btn!", for: .normal)
         btn.setTitleColor(.green, for: .normal)
         return btn
     }()
@@ -193,9 +207,10 @@ class ViewController: UIViewController {
     
     @objc func orderAny(_ sender: UIButton) {
         print("data has sent")
-        connectionManager.send(String(count))
+
+        connectionManager.send(OrderMessageTypes.presentCamera)
         // original Code
-        //        VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
+        VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
         receivedData.text = String(count)
         count += 1
         
@@ -246,13 +261,9 @@ class ViewController: UIViewController {
         durationLabel.rightAnchor.constraint(equalTo: endTimeLabel.leftAnchor).isActive = true
         durationLabel.heightAnchor.constraint(equalToConstant: 100).isActive = true
 
-        
-        
         view.addSubview(connectionStateLabel)
         connectionStateLabel.translatesAutoresizingMaskIntoConstraints = false
-//        connectionStateLabel.topAnchor.constraint(equalTo: endTimeLabel.bottomAnchor).isActive = true
         connectionStateLabel.topAnchor.constraint(equalTo: cameraButton.bottomAnchor, constant: 100).isActive = true
-//        connectionStateLabel.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         connectionStateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         connectionStateLabel.heightAnchor.constraint(equalToConstant: 100).isActive = true
         connectionStateLabel.widthAnchor.constraint(equalToConstant: 200).isActive = true
@@ -261,8 +272,6 @@ class ViewController: UIViewController {
         orderButton.translatesAutoresizingMaskIntoConstraints = false
         orderButton.topAnchor.constraint(equalTo: connectionStateLabel.bottomAnchor).isActive = true
         orderButton.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-//        orderButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
         orderButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
         orderButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
         
@@ -281,11 +290,6 @@ class ViewController: UIViewController {
         triggerVideoButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
 
     }
-    
-    
-    
-    
-    
 }
 
 // MARK: - UIImagePickerControllerDelegate
@@ -296,6 +300,7 @@ extension ViewController: UIImagePickerControllerDelegate {
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        print("ended!")
       dismiss(animated: true)
       
       guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
@@ -313,8 +318,6 @@ extension ViewController: UIImagePickerControllerDelegate {
       UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, #selector(video(_:didFinishSavingWithError:contextInfo:)),
                                           nil)
     }
-    
-    
 }
 
 extension ViewController: UINavigationControllerDelegate {

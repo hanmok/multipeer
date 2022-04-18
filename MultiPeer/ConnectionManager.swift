@@ -37,21 +37,7 @@ struct ChatMessage: Identifiable, Equatable, Codable {
     }
 }
 
-struct OrderMessage: Identifiable, Equatable, Codable {
 
-    var id = UUID()
-    let displayName: String
-//    let body: String
-    var time = Date()
-
-    var orderTypeString: String
-//    enum OrderType {
-//        case startRecording
-//    }
-    var isUser: Bool {
-        return displayName == UIDevice.current.name
-    }
-}
 
 
 
@@ -156,16 +142,26 @@ class ConnectionManager: NSObject {
 
 
 extension ConnectionManager: MCSessionDelegate {
-    // need to order to Viewcontroller to trigger video recording when data received
+    
+    // need to order Viewcontroller to trigger video recording when data received
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         
         guard let orderMessage = String(data: data, encoding: .utf8) else { return }
         
-        guard let message = String(data: data, encoding: .utf8) else { return }
-        let chatMessage = ChatMessage(displayName: peerID.displayName, body: message)
-        print("Received Data: \(message)")
-//        delegate?.presentVideo()
-        ConnectionManager.messages.append(chatMessage)
+        switch orderMessage {
+        case OrderMessageTypes.presentCamera:
+            print("present Camera!")
+            delegate?.presentVideo() // delegate: ConnectionManagerDelegate
+        case OrderMessageTypes.startRecording:
+            print("start Recording!")
+            
+        case OrderMessageTypes.stopRecording:
+            print("stop Recording!")
+        case OrderMessageTypes.save:
+            print("save!")
+        default:
+            print("some other case, \(orderMessage)")
+        }
     }
 
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
@@ -174,23 +170,14 @@ extension ConnectionManager: MCSessionDelegate {
             if !ConnectionManager.peers.contains(peerID) {
                 ConnectionManager.peers.insert(peerID, at: 0)
             }
-//            print(state.rawValue)
+
             print("state: connected !")
             startTime = Date()
 
             delegate?.showStart(startTime)
             delegate?.updateState(state: "connected!")
 
-//            var timer = Timer()
-//            timer = Timer(fire: Date(), interval: 1, repeats: true, block: { _ in
-//                print("updateDuration has called!")
-//                self.delegate?.updateDuration(self.startTime, current: Date())
-//            })
-            var timer = Timer()
-             timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
-//            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { _ in
-//                self.updateTime()
-//            }).fire()
+
         case .notConnected:
             if let index = ConnectionManager.peers.firstIndex(of: peerID) {
                 ConnectionManager.peers.remove(at: index)
@@ -198,6 +185,7 @@ extension ConnectionManager: MCSessionDelegate {
             if ConnectionManager.peers.isEmpty && !self.isHosting {
                 ConnectionManager.connectedToChat = false
             }
+            
             endTime = Date()
             delegate?.updateState(state: "not connected!") // not triggered
 //            delegate
@@ -239,3 +227,21 @@ extension ConnectionManager: MCBrowserViewControllerDelegate {
         browserViewController.dismiss(animated: true)
     }
 }
+
+
+
+
+/* Written to show duration every seconds, but not working .
+ //            var timer = Timer()
+ //            timer = Timer(fire: Date(), interval: 1, repeats: true, block: { _ in
+ //                print("updateDuration has called!")
+ //                self.delegate?.updateDuration(self.startTime, current: Date())
+ //            })
+             
+             var timer = Timer()
+              timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
+ //            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { _ in
+ //                self.updateTime()
+ //            }).fire()
+ 
+ */
