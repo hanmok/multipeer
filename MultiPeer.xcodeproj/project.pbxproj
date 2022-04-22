@@ -7,12 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		226E0446280EBBE4004A8A28 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226E0445280EBBE4004A8A28 /* RecordViewController.swift */; };
+		226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226E0445280EBBE4004A8A28 /* RecordingViewController.swift */; };
 		2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */; };
 		2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625E2807EB8300C9EB79 /* ConnectionManager.swift */; };
 		227862612807FD5200C9EB79 /* CameraVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227862602807FD5100C9EB79 /* CameraVC.swift */; };
 		227862632808024900C9EB79 /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227862622808024900C9EB79 /* VideoHelper.swift */; };
-		228A32E828123A6700AC3447 /* NotificationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A32E728123A6600AC3447 /* NotificationKeys.swift */; };
 		228B88372806577A007A6842 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88362806577A007A6842 /* AppDelegate.swift */; };
 		228B88392806577A007A6842 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88382806577A007A6842 /* SceneDelegate.swift */; };
 		228B883B2806577A007A6842 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B883A2806577A007A6842 /* MainViewController.swift */; };
@@ -24,12 +23,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		226E0445280EBBE4004A8A28 /* RecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
+		226E0445280EBBE4004A8A28 /* RecordingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatManagerFromRay.swift; sourceTree = "<group>"; };
 		2278625E2807EB8300C9EB79 /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
 		227862602807FD5100C9EB79 /* CameraVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraVC.swift; sourceTree = "<group>"; };
 		227862622808024900C9EB79 /* VideoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
-		228A32E728123A6600AC3447 /* NotificationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationKeys.swift; sourceTree = "<group>"; };
 		228B88332806577A007A6842 /* MultiPeer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MultiPeer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B88362806577A007A6842 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		228B88382806577A007A6842 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -59,7 +57,7 @@
 		228B882A2806577A007A6842 = {
 			isa = PBXGroup;
 			children = (
-				226E0445280EBBE4004A8A28 /* RecordViewController.swift */,
+				226E0445280EBBE4004A8A28 /* RecordingViewController.swift */,
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
 				6C823DBE391EE5CB5A4C0AA5 /* Pods */,
@@ -86,7 +84,6 @@
 				227862602807FD5100C9EB79 /* CameraVC.swift */,
 				2278625E2807EB8300C9EB79 /* ConnectionManager.swift */,
 				228B883C2806577B007A6842 /* Main.storyboard */,
-				228A32E728123A6600AC3447 /* NotificationKeys.swift */,
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				228B883F28065784007A6842 /* Assets.xcassets */,
 				228B884128065784007A6842 /* LaunchScreen.storyboard */,
@@ -230,10 +227,9 @@
 				2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */,
 				227862612807FD5200C9EB79 /* CameraVC.swift in Sources */,
 				227862632808024900C9EB79 /* VideoHelper.swift in Sources */,
-				226E0446280EBBE4004A8A28 /* RecordViewController.swift in Sources */,
+				226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */,
 				22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */,
 				228B883B2806577A007A6842 /* MainViewController.swift in Sources */,
-				228A32E828123A6700AC3447 /* NotificationKeys.swift in Sources */,
 				228B88372806577A007A6842 /* AppDelegate.swift in Sources */,
 				2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */,
 				228B88392806577A007A6842 /* SceneDelegate.swift in Sources */,

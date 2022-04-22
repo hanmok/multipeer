@@ -11,6 +11,29 @@ import SnapKit
 import AVFoundation
 import MobileCoreServices
 
+
+public enum NotificationKeys {
+
+    // ImagePickerController -> ViewController
+//    static let startRecordingFromIPC = "startRecordingFromIPC"
+//    static let stopRecordingFromIPC = "stopRecordingFromIPC"
+//    static let saveFromIPC = "saveFromIPC"
+
+    // ViewController -> ImagePickerCOntroller
+    static let startRecordingFromVC = "startRecordingFromVC"
+//    static let stopRecordingFromVC = "stopRecordingFromVC"
+
+    
+    // New
+    static let presentVideoKey = "presentVideo"
+    static let startRecordingKey = "startRecording"
+    static let stopRecordingKey = "stopRecording"
+    static let disconnectedKey = "disconnected"
+    
+    static let connectedKey = "connected"
+    
+}
+
 struct OrderMessage: Identifiable, Equatable, Codable {
 
     var id = UUID()
@@ -18,12 +41,7 @@ struct OrderMessage: Identifiable, Equatable, Codable {
     var orderTypeString: String
 }
 
-public enum OrderMessageTypes {
-    static let presentCamera = "presentCamera"
-    static let startRecording = "startRecording"
-    static let stopRecording = "stopRecording"
-    static let save = "save"
-}
+
 
 
 protocol MainVCDelegate: NSObject {
@@ -91,18 +109,13 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
         return btn
     }()
     
-    let receivedData:UILabel = {
-        let label = UILabel()
-        label.text = "Received Data"
-        return label
-    }()
+//    let receivedData:UILabel = {
+//        let label = UILabel()
+//        label.text = "Received Data"
+//        return label
+//    }()
     
-    let triggerVideoButton: UIButton = {
-        let btn = UIButton()
-        btn.setTitle("Video", for: .normal)
-        btn.setTitleColor(.red, for: .normal)
-        return btn
-    }()
+
     
     deinit {
         print("MainVC deinitiated.")
@@ -125,40 +138,27 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
     }
     
     func addNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(orderStartRecording(_:)), name: NSNotification.Name(NotificationKeys.startRecordingFromIPC), object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(orderStopRecording(_:)), name: NSNotification.Name(NotificationKeys.stopRecordingFromIPC), object: nil)
-        
-//        NotificationCenter.default.addObserver(self, selector: #selector(orderSave(_:)), name: NSNotification.Name(NotificationKeys.saveFromIPC), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(presentNewVideo), name: Notification.Name(NotificationKeys.presentVideoKey), object: nil)
     }
+    
+    
     
     @objc func orderStartRecording(_ notification: Notification) {
         print("flag4")
         print("orderStartRecording!")
         // 여기 코드가 문제임..
         connectionManager.send(OrderMessageTypes.startRecording)
-    print("flag5")
     }
 
     @objc func orderStopRecording(_ notification: Notification) {
 //        print("orderStopRecording!")
         connectionManager.send(OrderMessageTypes.stopRecording)
     }
-    
-    @objc func orderSave(_ notification: Notification) {
-        
-    }
+
     
     @objc func didReceiveTestNotification(_ notification: Notification) {
         print("Test succeed!")
     }
-    
-    
-    
-    
-    
-                              
-    
     
     @objc func showConnectivityAction(_ sender: Any) {
         let actionSheet = UIAlertController(title: "Todo Exchange", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
@@ -192,13 +192,10 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
         
         sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
         
-        cameraButton.addTarget(self, action: #selector(cameraBtnTapped(_:)), for: .touchUpInside)
-        
         orderButton.addTarget(self, action: #selector(orderAny(_:)), for: .touchUpInside)
         
-        triggerVideoButton.addTarget(self, action: #selector(triggerVideo(_:)), for: .touchUpInside)
+
         
-        triggerVideoButton.addTarget(self, action: #selector(triggerTimer(_:)), for: .touchUpInside)
         
 }
     
@@ -209,41 +206,34 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
     @objc func timerCounter() -> Void
     {
         count = count + 1
-        receivedData.text = String(count)
+//        receivedData.text = String(count)
     }
     
-    
-    // Start Recording! Btn
-    @objc func cameraBtnTapped(_ sender: UIButton) {
-        print("Camera Btn Tapped!")
-        
-//        videoHelper.startMediaBrowser2()
+    @objc func presentNewVideo() {
+        let recordingVC = RecordingViewController(connectionManager: connectionManager, vcTimer: count)
+
+        DispatchQueue.main.async {
+            recordingVC.modalPresentationStyle = .fullScreen
+
+            self.present(recordingVC, animated: true)
+        }
     }
+    
     
     @objc func orderAny(_ sender: UIButton) {
         print("data has sent")
 
         connectionManager.send(OrderMessageTypes.presentCamera)
-        // original Code
-//        VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
-//        videoHelper.startMediaBrowser2()
-        let recordingVC = RecordingViewController(connectionManager: connectionManager)
         
-        recordingVC.modalPresentationStyle = .fullScreen
-        self.present(recordingVC, animated: true)
+        NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.presentVideoKey), object: nil)
         
-        receivedData.text = String(count)
+        presentNewVideo()
+        
+//        receivedData.text = String(count)
         count += 1
-        
-
-        if let lastMsg = ConnectionManager.messages.last {
-            receivedData.text = lastMsg.body
-        }
     }
     
-    @objc func triggerVideo(_ sender: UIButton) {
-        print("video triggered!")
-    }
+
     
     
     func setupLayout() {
@@ -298,21 +288,15 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
             make.width.equalTo(200)
         }
         
-        view.addSubview(receivedData)
-        receivedData.snp.makeConstraints { make in
-            make.bottom.equalTo(orderButton) // bottom 써야하나?
-            make.left.equalTo(orderButton.snp.right)
-            make.height.equalTo(100)
-            make.width.equalTo(200)
-        }
+//        view.addSubview(receivedData)
+//        receivedData.snp.makeConstraints { make in
+//            make.bottom.equalTo(orderButton) // bottom 써야하나?
+//            make.left.equalTo(orderButton.snp.right)
+//            make.height.equalTo(100)
+//            make.width.equalTo(200)
+//        }
         
-        view.addSubview(triggerVideoButton)
-        triggerVideoButton.snp.makeConstraints { make in
-            make.top.equalTo(orderButton.snp.bottom)
-            make.left.equalTo(view)
-            make.height.equalTo(100)
-            make.width.equalTo(200)
-        }
+
     }
 }
 
@@ -366,7 +350,7 @@ extension MainViewController: ConnectionManagerDelegate {
     func presentVideo() {
         print(#function, "PresentVideo called from ViewController")
         print("self: \(self)")
-        
+        presentNewVideo()
 //        videoHelper.startMediaBrowser2()
         
     }
@@ -375,36 +359,37 @@ extension MainViewController: ConnectionManagerDelegate {
 
 
 // MARK: - UIImagePickerControllerDelegate
-extension MainViewController: UIImagePickerControllerDelegate {
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true)
-        
-    }
-     func some() {
-        print("extended custom implementation")
-    }
-    
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        print("ended!")
-      dismiss(animated: true)
-      
-      guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
-              mediaType == (kUTTypeMovie as String),
-            
-              // the delegate method gives a URL pointing to the video
-              let url = info[UIImagePickerController.InfoKey.mediaURL] as? URL,
-              
-              // Verify that the app can save the file to the device's photo album
-              UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(url.path)
-              
-      else { return }
-      
-      // If it can, save it.
-      UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, #selector(video(_:didFinishSavingWithError:contextInfo:)),
-                                          nil)
-    }
-}
+//extension MainViewController: UIImagePickerControllerDelegate {
+////    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+////        picker.dismiss(animated: true)
+////
+////    }
+//
+//     func some() {
+//        print("extended custom implementation")
+//    }
+//
+//
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+//        print("ended!")
+//      dismiss(animated: true)
+//
+//      guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
+//              mediaType == (kUTTypeMovie as String),
+//
+//              // the delegate method gives a URL pointing to the video
+//              let url = info[UIImagePickerController.InfoKey.mediaURL] as? URL,
+//
+//              // Verify that the app can save the file to the device's photo album
+//              UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(url.path)
+//
+//      else { return }
+//
+//      // If it can, save it.
+//      UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, #selector(video(_:didFinishSavingWithError:contextInfo:)),
+//                                          nil)
+//    }
+//}
 
 extension MainViewController: UINavigationControllerDelegate {
     

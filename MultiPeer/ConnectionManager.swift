@@ -25,27 +25,34 @@ import AVFoundation
 //    }
 //}
 
-struct ChatMessage: Identifiable, Equatable, Codable {
-    
-    var id = UUID()
-    let displayName: String
-    let body: String
-    var time = Date()
-    
-    var isUser: Bool {
-        return displayName == UIDevice.current.name
-    }
+//struct ChatMessage: Identifiable, Equatable, Codable {
+//
+//    var id = UUID()
+//    let displayName: String
+//    let body: String
+//    var time = Date()
+//
+//    var isUser: Bool {
+//        return displayName == UIDevice.current.name
+//    }
+//}
+
+public enum OrderMessageTypes {
+    static let presentCamera = "presentCamera"
+    static let startRecording = "startRecording"
+    static let stopRecording = "stopRecording"
 }
-
-
-
-
 
 
 extension ConnectionManager: MCNearbyServiceAdvertiserDelegate {
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         invitationHandler(true, session)
     }
+}
+
+public enum ConnectionState {
+    case connected
+    case disconnected
 }
 
 protocol ConnectionManagerDelegate: NSObject {
@@ -57,7 +64,13 @@ protocol ConnectionManagerDelegate: NSObject {
     func disconnected(state: String, timeDuration: Int)
 }
 
+
 class ConnectionManager: NSObject {
+    
+    var connectionState: ConnectionState = .disconnected
+    var duration = 0
+    
+     var timer: Timer?
     
     static let shared = ConnectionManager()
     
@@ -65,7 +78,7 @@ class ConnectionManager: NSObject {
     
     weak var delegate: ConnectionManagerDelegate?
     
-    static var messages: [ChatMessage] = [] // for testing
+//    static var messages: [ChatMessage] = [] // for testing
     static var peers: [MCPeerID] = []
     static var connectedToChat = false
     
@@ -81,17 +94,18 @@ class ConnectionManager: NSObject {
     deinit {
         print("connectionManager deinitiated.")
     }
+    
     var startTime = Date()
     var endTime = Date()
     
     func send(_ message: String) {
-        let chatMessage = ChatMessage(displayName: myPeerId.displayName, body: message)
-        ConnectionManager.messages.append(chatMessage)
+        
+//        let chatMessage = ChatMessage(displayName: myPeerId.displayName, body: message)
+//        ConnectionManager.messages.append(chatMessage)
         
         guard let session = session,
               let data = message.data(using: .utf8),
               !session.connectedPeers.isEmpty else { return }
-        
         do {
             try session.send(data, toPeers: session.connectedPeers, with: .reliable)
         } catch {
@@ -101,7 +115,8 @@ class ConnectionManager: NSObject {
     
     func join() {
         ConnectionManager.peers.removeAll()
-        ConnectionManager.messages.removeAll()
+//        ConnectionManager.messages.removeAll()
+        
         session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .required)
         session?.delegate = self
         
@@ -109,6 +124,7 @@ class ConnectionManager: NSObject {
               let session = session else { return }
         
         let mcBrowerViewController = MCBrowserViewController(serviceType: ConnectionManager.service, session: session)
+        
         mcBrowerViewController.delegate = self
         window.rootViewController?.present(mcBrowerViewController, animated: true)
     }
@@ -116,7 +132,7 @@ class ConnectionManager: NSObject {
     func host() {
         isHosting = true
         ConnectionManager.peers.removeAll()
-        ConnectionManager.messages.removeAll()
+//        ConnectionManager.messages.removeAll()
         ConnectionManager.connectedToChat = true
         session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .required)
         session?.delegate = self
@@ -129,39 +145,52 @@ class ConnectionManager: NSObject {
         isHosting = false
         ConnectionManager.connectedToChat = false
         advertiserAssistant?.stopAdvertisingPeer()
-        ConnectionManager.messages.removeAll()
+//        ConnectionManager.messages.removeAll()
         session = nil
         advertiserAssistant = nil
     }
     
     @objc func updateTime() {
-
         delegate?.updateDuration(startTime, current: Date())
-        
+    }
+    
+    func startDurationTimer() {
+        print("connection timer has started!")
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+            guard let `self` = self else { return }
+            
+//            self.secondsOfTimer += 1
+//            self?.duration += 1
+            self.duration += 1
+            print("ConnectionManager.duration: \(self.duration)")
+//            self.timerLabel.text = Double(self.secondsOfTimer).format(units: [.hour ,.minute, .second])
+        }
     }
 }
 
 
 extension ConnectionManager: MCSessionDelegate {
     
-    // need to order Viewcontroller to trigger video recording when data received
+
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         
         guard let orderMessage = String(data: data, encoding: .utf8) else { return }
         
         switch orderMessage {
+            
         case OrderMessageTypes.presentCamera:
             delegate?.presentVideo()
             
         case OrderMessageTypes.startRecording:
-            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.startRecordingFromVC), object: nil)
+            print("received data: \(OrderMessageTypes.startRecording)")
+            
+            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.startRecordingKey), object: nil)
             
         case OrderMessageTypes.stopRecording:
-            print("stop Recording!")
-//            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.stopRecordingFromVC), object: nil)
+            print("received data: \(OrderMessageTypes.stopRecording)")
             
-        case OrderMessageTypes.save:
-            break
+            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.stopRecordingKey), object: nil)
+            
         default:
             break
             
@@ -174,15 +203,19 @@ extension ConnectionManager: MCSessionDelegate {
             if !ConnectionManager.peers.contains(peerID) {
                 ConnectionManager.peers.insert(peerID, at: 0)
             }
-            
+            self.connectionState = .connected
             print("state: connected !")
             startTime = Date()
             
             delegate?.showStart(startTime)
             delegate?.updateState(state: "connected!")
             
+            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.connectedKey), object: nil)
+            
+            self.startDurationTimer()
             
         case .notConnected:
+            self.connectionState = .disconnected
             if let index = ConnectionManager.peers.firstIndex(of: peerID) {
                 ConnectionManager.peers.remove(at: index)
             }
@@ -191,13 +224,14 @@ extension ConnectionManager: MCSessionDelegate {
             }
             
             endTime = Date()
+            
             delegate?.updateState(state: "not connected!")
             
-            print("connection remained for \((endTime.timeIntervalSince1970 - startTime.timeIntervalSince1970) / 60) min")
             
-            print("state: not connected !!")
+            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.disconnectedKey), object: nil)
+            
             delegate?.disconnected(state: "disconnected!", timeDuration: Int(endTime.timeIntervalSince1970 - startTime.timeIntervalSince1970))
-            
+            print("disconnected!!")
         case .connecting:
             print("it's connecting .. ")
         @unknown default:
@@ -212,10 +246,12 @@ extension ConnectionManager: MCSessionDelegate {
     }
     
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
-        guard let localURL = localURL,
-              let data = try? Data(contentsOf: localURL),
-              let messages = try? JSONDecoder().decode([ChatMessage].self, from: data)
-        else { return }
+        
+//        guard let localURL = localURL,
+//              let data = try? Data(contentsOf: localURL),
+//              let messages = try? JSONDecoder().decode([ChatMessage].self, from: data)
+                
+//        else { return }
         
     }
 }
