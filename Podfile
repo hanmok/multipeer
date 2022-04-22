@@ -6,5 +6,8 @@ target 'MultiPeer' do
   use_frameworks!
 
   # Pods for MultiPeer
-	pod 'SnapKit', '~> 5.6.0'
+  pod 'RxSwift', '~> 4.5.0'
+  pod 'RxCocoa', '~> 4.5.0'
+  pod 'Then'
+  pod 'SnapKit' 
 end

@@ -14,7 +14,6 @@ import MobileCoreServices
 struct OrderMessage: Identifiable, Equatable, Codable {
 
     var id = UUID()
-    let displayName: String
 
     var orderTypeString: String
 }
@@ -32,78 +31,21 @@ protocol MainVCDelegate: NSObject {
     func stopRecord()
 }
 
-extension ViewController: ConnectionManagerDelegate {
-    
-    func updateState(state: String) {
-        DispatchQueue.main.async {
-            self.connectionStateLabel.text = state
-        }
-    }
-    
-    func showDuration(_ startAt: Date, _ endAt: Date) {
-        
-        let startedTime = startAt.toString(dateFormat: "a HH:mm")
-        let endTime = endAt.toString(dateFormat: "a HH:mm")
-        DispatchQueue.main.async {
-            self.startTimeLabel.text = startedTime
-            self.endTimeLabel.text = endTime
-            self.durationLabel.text = String((endAt.timeIntervalSince1970 - startAt.timeIntervalSince1970) / 60) + String("min")
-        }
-    }
-    
-    func disconnected(state: String, timeDuration: Int) {
-        DispatchQueue.main.async {
-            self.durationLabel.text = String("remained for ")+String(timeDuration) + String("s")
-            self.connectionStateLabel.text = state
-            self.endTimeLabel.text = String(Date().toString(dateFormat: "a HH:mm"))
-        }
-    }
 
-    func showStart(_ startAt: Date) {
-        let startedTime = startAt.toString(dateFormat: "a HH:mm")
-        DispatchQueue.main.async {
-            self.startTimeLabel.text = startedTime
-            self.durationLabel.text = ""
-            self.endTimeLabel.text = ""
-        }
-        
-    }
-    
-    func updateDuration(_ startAt: Date, current: Date) {
-        DispatchQueue.main.async {
-//            self.durationLabel.text = String((current.timeIntervalSince1970 - startAt.timeIntervalSince1970) / 60) + String("min")
-            self.durationLabel.text = String((current.timeIntervalSince1970 - startAt.timeIntervalSince1970) ) + String("sec")
-        }
-        
-    }
-    
-    func presentVideo() {
-        print(#function, "PresentVideo called from ViewController")
-        print("self: \(self)")
-//        VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
-        videoHelper.startMediaBrowser2()
-        
-    }
-}
-
-//extension ViewController: UIImagePickerControllerDelegate {
-//    func orderVideoCapture() {
-//
-//    }
-//}
-
-
-class ViewController: UIViewController, UINavigationBarDelegate {
+class MainViewController: UIViewController, UINavigationBarDelegate {
 
     weak var delegate: MainVCDelegate?
     
     var connectionManager = ConnectionManager()
+    
+//    let recordingVC = RecordingViewController(connectionManager: connectionmana)
+    
     // MARK: - Properties
-    var videoHelper = VideoHelper()
+//    var videoHelper = VideoHelper()
     
     var count = 0
+    var timer: Timer = Timer()
     
-
     let sessionButton: UIButton = {
         let btn = UIButton()
         btn.setTitle("Session", for: .normal)
@@ -157,23 +99,27 @@ class ViewController: UIViewController, UINavigationBarDelegate {
     
     let triggerVideoButton: UIButton = {
         let btn = UIButton()
-        btn.setTitle("Video ", for: .normal)
+        btn.setTitle("Video", for: .normal)
         btn.setTitleColor(.red, for: .normal)
         return btn
     }()
     
+    deinit {
+        print("MainVC deinitiated.")
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        print("view has disappeared!")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         
         setupLayout()
         setupTarget()
         
         connectionManager.delegate = self
-        videoHelper.delegate = self
-//        videoHelper = self.delegate!
-        
-//        NotificationCenter.default.addObserver(self, selector: #selector(didReceiveTestNotification(_:)), name: NSNotification.Name("Test"), object: nil)
+//        videoHelper.delegate = self
         
         addNotifications()
     }
@@ -183,8 +129,7 @@ class ViewController: UIViewController, UINavigationBarDelegate {
         
         NotificationCenter.default.addObserver(self, selector: #selector(orderStopRecording(_:)), name: NSNotification.Name(NotificationKeys.stopRecordingFromIPC), object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(orderSave(_:)), name: NSNotification.Name(NotificationKeys.saveFromIPC), object: nil)
-                                               
+//        NotificationCenter.default.addObserver(self, selector: #selector(orderSave(_:)), name: NSNotification.Name(NotificationKeys.saveFromIPC), object: nil)
     }
     
     @objc func orderStartRecording(_ notification: Notification) {
@@ -252,12 +197,27 @@ class ViewController: UIViewController, UINavigationBarDelegate {
         orderButton.addTarget(self, action: #selector(orderAny(_:)), for: .touchUpInside)
         
         triggerVideoButton.addTarget(self, action: #selector(triggerVideo(_:)), for: .touchUpInside)
+        
+        triggerVideoButton.addTarget(self, action: #selector(triggerTimer(_:)), for: .touchUpInside)
+        
 }
+    
+    @objc func triggerTimer(_ sender: UIButton) {
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerCounter), userInfo: nil, repeats: true)
+    }
+    
+    @objc func timerCounter() -> Void
+    {
+        count = count + 1
+        receivedData.text = String(count)
+    }
+    
+    
     // Start Recording! Btn
     @objc func cameraBtnTapped(_ sender: UIButton) {
         print("Camera Btn Tapped!")
-//          VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
-        videoHelper.startMediaBrowser2()
+        
+//        videoHelper.startMediaBrowser2()
     }
     
     @objc func orderAny(_ sender: UIButton) {
@@ -266,7 +226,12 @@ class ViewController: UIViewController, UINavigationBarDelegate {
         connectionManager.send(OrderMessageTypes.presentCamera)
         // original Code
 //        VideoHelper.startMediaBrowser(delegate: self, sourceType: .camera)
-        videoHelper.startMediaBrowser2()
+//        videoHelper.startMediaBrowser2()
+        let recordingVC = RecordingViewController(connectionManager: connectionManager)
+        
+        recordingVC.modalPresentationStyle = .fullScreen
+        self.present(recordingVC, animated: true)
+        
         receivedData.text = String(count)
         count += 1
         
@@ -283,73 +248,134 @@ class ViewController: UIViewController, UINavigationBarDelegate {
     
     func setupLayout() {
         view.addSubview(sessionButton)
-        sessionButton.translatesAutoresizingMaskIntoConstraints = false
-        sessionButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        sessionButton.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        sessionButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        sessionButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        sessionButton.snp.makeConstraints { make in
+            make.centerY.equalTo(view)
+            make.right.equalTo(view)
+            make.height.width.equalTo(100)
+        }
         
         view.addSubview(cameraButton)
-        cameraButton.translatesAutoresizingMaskIntoConstraints = false
-        cameraButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        cameraButton.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        cameraButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        cameraButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        cameraButton.snp.makeConstraints { make in
+            make.centerY.left.equalTo(view)
+            make.width.equalTo(200)
+            make.height.equalTo(100)
+        }
         
         view.addSubview(startTimeLabel)
-        startTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        startTimeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        startTimeLabel.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        startTimeLabel.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        startTimeLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        startTimeLabel.snp.makeConstraints { make in
+            make.top.left.equalTo(view.safeAreaLayoutGuide)
+            make.height.width.equalTo(100)
+        }
         
         view.addSubview(endTimeLabel)
-        endTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        endTimeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        endTimeLabel.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        endTimeLabel.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        endTimeLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        endTimeLabel.snp.makeConstraints { make in
+            make.top.right.equalTo(view.safeAreaLayoutGuide)
+            make.height.width.equalTo(100)
+        }
         
         view.addSubview(durationLabel)
-        durationLabel.translatesAutoresizingMaskIntoConstraints = false
-        durationLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        durationLabel.leftAnchor.constraint(equalTo: startTimeLabel.rightAnchor).isActive = true
-        durationLabel.rightAnchor.constraint(equalTo: endTimeLabel.leftAnchor).isActive = true
-        durationLabel.heightAnchor.constraint(equalToConstant: 100).isActive = true
+
+        durationLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.left.equalTo(startTimeLabel.snp.right)
+            make.right.equalTo(endTimeLabel.snp.left)
+            make.height.equalTo(100)
+        }
 
         view.addSubview(connectionStateLabel)
-        connectionStateLabel.translatesAutoresizingMaskIntoConstraints = false
-        connectionStateLabel.topAnchor.constraint(equalTo: cameraButton.bottomAnchor, constant: 100).isActive = true
-        connectionStateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        connectionStateLabel.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        connectionStateLabel.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        connectionStateLabel.snp.makeConstraints { make in
+            make.top.equalTo(cameraButton.snp.bottom).offset(100)
+            make.centerX.equalTo(view)
+            make.height.equalTo(100)
+            make.width.equalTo(200)
+        }
         
         view.addSubview(orderButton)
-        orderButton.translatesAutoresizingMaskIntoConstraints = false
-        orderButton.topAnchor.constraint(equalTo: connectionStateLabel.bottomAnchor).isActive = true
-        orderButton.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        orderButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        orderButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        orderButton.snp.makeConstraints { make in
+            make.top.equalTo(connectionStateLabel.snp.bottom)
+            make.left.equalTo(view)
+            make.height.equalTo(100)
+            make.width.equalTo(200)
+        }
         
         view.addSubview(receivedData)
-        receivedData.translatesAutoresizingMaskIntoConstraints = false
-        receivedData.bottomAnchor.constraint(equalTo: orderButton.bottomAnchor).isActive = true
-        receivedData.leftAnchor.constraint(equalTo: orderButton.rightAnchor).isActive = true
-        receivedData.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        receivedData.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        receivedData.snp.makeConstraints { make in
+            make.bottom.equalTo(orderButton) // bottom 써야하나?
+            make.left.equalTo(orderButton.snp.right)
+            make.height.equalTo(100)
+            make.width.equalTo(200)
+        }
         
         view.addSubview(triggerVideoButton)
-        triggerVideoButton.translatesAutoresizingMaskIntoConstraints = false
-        triggerVideoButton.topAnchor.constraint(equalTo: orderButton.bottomAnchor).isActive = true
-        triggerVideoButton.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        triggerVideoButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        triggerVideoButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
-
+        triggerVideoButton.snp.makeConstraints { make in
+            make.top.equalTo(orderButton.snp.bottom)
+            make.left.equalTo(view)
+            make.height.equalTo(100)
+            make.width.equalTo(200)
+        }
     }
 }
 
+
+// MARK: - ConnectionManagerDelegate
+extension MainViewController: ConnectionManagerDelegate {
+    
+
+    func updateState(state: String) {
+        DispatchQueue.main.async {
+            self.connectionStateLabel.text = state
+        }
+    }
+    
+    func showDuration(_ startAt: Date, _ endAt: Date) {
+        
+        let startedTime = startAt.toString(dateFormat: "a HH:mm")
+        let endTime = endAt.toString(dateFormat: "a HH:mm")
+        DispatchQueue.main.async {
+            self.startTimeLabel.text = startedTime
+            self.endTimeLabel.text = endTime
+            self.durationLabel.text = String((endAt.timeIntervalSince1970 - startAt.timeIntervalSince1970) / 60) + String("min")
+        }
+    }
+    
+    func disconnected(state: String, timeDuration: Int) {
+        DispatchQueue.main.async {
+            self.durationLabel.text = String("remained for ")+String(timeDuration) + String("s")
+            self.connectionStateLabel.text = state
+            self.endTimeLabel.text = String(Date().toString(dateFormat: "a HH:mm"))
+        }
+    }
+
+    func showStart(_ startAt: Date) {
+        let startedTime = startAt.toString(dateFormat: "a HH:mm")
+        DispatchQueue.main.async {
+            self.startTimeLabel.text = startedTime
+            self.durationLabel.text = ""
+            self.endTimeLabel.text = ""
+        }
+        
+    }
+    
+    func updateDuration(_ startAt: Date, current: Date) {
+        DispatchQueue.main.async {
+            self.durationLabel.text = String((current.timeIntervalSince1970 - startAt.timeIntervalSince1970) ) + String("sec")
+        }
+        
+    }
+    
+    func presentVideo() {
+        print(#function, "PresentVideo called from ViewController")
+        print("self: \(self)")
+        
+//        videoHelper.startMediaBrowser2()
+        
+    }
+}
+
+
+
 // MARK: - UIImagePickerControllerDelegate
-extension ViewController: UIImagePickerControllerDelegate {
+extension MainViewController: UIImagePickerControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true)
         
@@ -380,6 +406,6 @@ extension ViewController: UIImagePickerControllerDelegate {
     }
 }
 
-extension ViewController: UINavigationControllerDelegate {
+extension MainViewController: UINavigationControllerDelegate {
     
 }
