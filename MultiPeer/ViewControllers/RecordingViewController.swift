@@ -314,7 +314,9 @@ class RecordingViewController: UIViewController {
     
     private func bestDevice(in position: AVCaptureDevice.Position) -> AVCaptureDevice {
         var deviceTypes: [AVCaptureDevice.DeviceType]!
-        
+        if #available(iOS 13.0, *) {
+            deviceTypes = [.builtInUltraWideCamera]
+        }
         if #available(iOS 11.1, *) {
             deviceTypes = [.builtInTrueDepthCamera, .builtInDualCamera, .builtInWideAngleCamera]
         } else {
