@@ -60,6 +60,7 @@
 //
 //    // prioritize duo camera systems before wide angle
 //    let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: deviceTypes, mediaType: AVMediaType.video, position: position)
+//
 //    for device in discoverySession.devices {
 //        if #available(iOS 11.0, *) {
 //            if (device.deviceType == AVCaptureDevice.DeviceType.builtInDualCamera) {

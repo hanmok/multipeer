@@ -18,7 +18,7 @@ import SnapKit
 
 
 
-class RecordingViewController: UIViewController {
+class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     // MARK:- Properties
     
@@ -54,7 +54,7 @@ class RecordingViewController: UIViewController {
         $0.bounds = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.width)
         $0.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
         $0.videoGravity = .resizeAspectFill
-        
+
     }
     
     lazy var topContainer: UIView = {
@@ -136,6 +136,8 @@ class RecordingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // 여기에 타이머 추가하기.
+        cameraDelegate = self
+        
         
         layout()
         bind()
@@ -314,9 +316,14 @@ class RecordingViewController: UIViewController {
     
     private func bestDevice(in position: AVCaptureDevice.Position) -> AVCaptureDevice {
         var deviceTypes: [AVCaptureDevice.DeviceType]!
-        if #available(iOS 13.0, *) {
-            deviceTypes = [.builtInUltraWideCamera]
-        }
+        
+//        if #available(iOS 13.0, *) {
+//            deviceTypes = [.builtInUltraWideCamera]
+//            let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: deviceTypes, mediaType: AVMediaType.video, position: position)
+//
+//            return discoverySession.devices.first(where: { device in device.position == position})! // trigger fatalError 
+//        }
+        
         if #available(iOS 11.1, *) {
             deviceTypes = [.builtInTrueDepthCamera, .builtInDualCamera, .builtInWideAngleCamera]
         } else {
@@ -501,7 +508,7 @@ class RecordingViewController: UIViewController {
     
     
     private func layout() {
-        self.view.layer.addSublayer(previewLayer)
+//        self.view.layer.addSublayer(previewLayer)
         
         self.view.addSubview(topHalfContainer)
         topHalfContainer.snp.makeConstraints { make in
@@ -587,7 +594,7 @@ class RecordingViewController: UIViewController {
 }
 
 
-extension RecordingViewController: AVCaptureFileOutputRecordingDelegate {
+extension RecordingViewController {
     
     // 레코딩이 시작되면 호출
     func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
@@ -610,7 +617,7 @@ extension RecordingViewController: AVCaptureFileOutputRecordingDelegate {
     // videoScaleAndCropFactor
     
     // 레코딩이 끝나면 호출
-    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+    override func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         if (error != nil) {
             print("Error recording movie: \(error!.localizedDescription)")
         } else {
