@@ -48,10 +48,10 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
     
     var maxSessionDuration = 0
     
-    private let captureButton: SwiftyRecordButton = {
-        let btn = SwiftyRecordButton()
-        return btn
-    }()
+//    private let captureButton: SwiftyRecordButton = {
+//        let btn = SwiftyRecordButton()
+//        return btn
+//    }()
     
 //    lazy var previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession).then {
 //        $0.bounds = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.width)

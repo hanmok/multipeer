@@ -1113,52 +1113,6 @@ fileprivate func changeFlashSettings(device: AVCaptureDevice, mode: FlashMode) {
    }
 }
 
-extension SwiftyCamViewController : SwiftyCamButtonDelegate {
-
-   /// Sets the maximum duration of the SwiftyCamButton
-
-   public func setMaxiumVideoDuration() -> Double {
-       return 100
-   }
-
-   /// Set UITapGesture to take photo
-
-   public func buttonWasTapped() {
-//        takePhoto()
-       if self.isVideoRecording {
-           stopVideoRecording()
-           print("stop Video Recording triggered!")
-       }else {
-           startVideoRecording()
-           print("start Video Recording triggered!")
-       }
-       
-//        cameraDelegate.video
-   }
-
-   /// Set UILongPressGesture start to begin video
-
-   public func buttonDidBeginLongPress() {
-//        startVideoRecording()
-       print("nothing!")
-   }
-
-   /// Set UILongPressGesture begin to begin end video
-
-
-   public func buttonDidEndLongPress() {
-//        stopVideoRecording()
-       print("nothing!")
-   }
-
-   /// Called if maximum duration is reached
-
-   public func longPressDidReachMaximumDuration() {
-//        stopVideoRecording()
-       
-   }
-}
-
 // MARK: AVCaptureFileOutputRecordingDelegate
 
 extension SwiftyCamViewController : AVCaptureFileOutputRecordingDelegate {
@@ -1364,3 +1318,51 @@ extension SwiftyCamViewController : UIGestureRecognizerDelegate {
        return true
    }
 }
+
+
+
+//extension SwiftyCamViewController : SwiftyCamButtonDelegate {
+//
+//   /// Sets the maximum duration of the SwiftyCamButton
+//
+//   public func setMaxiumVideoDuration() -> Double {
+//       return 100
+//   }
+//
+//   /// Set UITapGesture to take photo
+//
+//   public func buttonWasTapped() {
+////        takePhoto()
+//       if self.isVideoRecording {
+//           stopVideoRecording()
+//           print("stop Video Recording triggered!")
+//       }else {
+//           startVideoRecording()
+//           print("start Video Recording triggered!")
+//       }
+//
+////        cameraDelegate.video
+//   }
+//
+//   /// Set UILongPressGesture start to begin video
+//
+//   public func buttonDidBeginLongPress() {
+////        startVideoRecording()
+//       print("nothing!")
+//   }
+//
+//   /// Set UILongPressGesture begin to begin end video
+//
+//
+//   public func buttonDidEndLongPress() {
+////        stopVideoRecording()
+//       print("nothing!")
+//   }
+//
+//   /// Called if maximum duration is reached
+//
+//   public func longPressDidReachMaximumDuration() {
+////        stopVideoRecording()
+//
+//   }
+//}
