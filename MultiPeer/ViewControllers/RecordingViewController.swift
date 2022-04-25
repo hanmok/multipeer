@@ -32,7 +32,7 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
     
     var audioInput: AVCaptureDeviceInput!
     
-    var videoOutput: AVCaptureMovieFileOutput!
+//    var videoOutput: AVCaptureMovieFileOutput!
     
     var connectionManager: ConnectionManager!
     
@@ -48,14 +48,16 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
     
     var maxSessionDuration = 0
     
+    private let captureButton: SwiftyRecordButton = {
+        let btn = SwiftyRecordButton()
+        return btn
+    }()
     
-    
-    lazy var previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession).then {
-        $0.bounds = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.width)
-        $0.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
-        $0.videoGravity = .resizeAspectFill
-
-    }
+//    lazy var previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession).then {
+//        $0.bounds = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.width)
+//        $0.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
+//        $0.videoGravity = .resizeAspectFill
+//    }
     
     lazy var topContainer: UIView = {
         let view = UIView()
@@ -131,18 +133,21 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
         super.viewWillDisappear(animated)
         motionManager.stopAccelerometerUpdates()
         stopRecordTimer()
+//        startVideoRecording()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // 여기에 타이머 추가하기.
+        print("viewdidLoad from RecordingVC")
         cameraDelegate = self
-        
+        print("view from RecordingVC : \(view.frame.width), \(view.frame.height)")
         
         layout()
         bind()
         videoDevice = bestDevice(in: .back)
-        setupSession()
+        
+//        setupSession()
         
         addNotificationListener()
         
@@ -174,13 +179,16 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
     @objc func receiveStartRecording(_ notification: Notification) {
         print("receiveStartRecording ! ", #file, #function)
         DispatchQueue.main.async {
-            self.startRecording()
+//            self.startRecording()
+            self.startVideoRecording()
+            
         }
     }
     
     @objc func receiveStopRecording(_ notification: Notification) {
         
-        self.stopRecording()
+//        self.stopRecording()
+        self.stopVideoRecording()
     }
     
     @objc func receiveDismissCamera(_ notification: Notification) {
@@ -228,10 +236,14 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
             .subscribe(onNext: { [weak self] in
                 guard let `self` = self else { return }
                 
-                if self.videoOutput.isRecording {
+//                if self.videoOutput.isRecording {
+                
+//                if self.movieFileOutput?.isRecording {
+                if self.movieFileOutput.isRecording {
                     
                     // TODO: Order Stop Recording
-                    self.stopRecording()
+//                    self.stopRecording()
+                    self.stopVideoRecording()
                     
                     if let connectionManager = self.connectionManager {
                         connectionManager.send(OrderMessageTypes.stopRecording)
@@ -239,22 +251,19 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
                     } else {
                         fatalError("connectionManager is nil")
                     }
-                    
-                    
-                    
+                    print("Stop Recording !!")
                 } else {
-                    
                     // TODO: Order Start Recording
                     
-                    // 잘 감..
                     if let connectionManager = self.connectionManager {
                         connectionManager.send(OrderMessageTypes.startRecording)
                         print("connectionManager is valid, start")
                     } else {
                         fatalError("connectionManager is nil, start")
                     }
-                    
-                    self.startRecording()
+                print("Start Recording !!")
+//                    self.startRecording()
+                    self.startVideoRecording()
                     
                 }
             })
@@ -267,8 +276,10 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
                 guard let `self` = self else { return }
                 print("tap has pressed!")
                 //                self.dismiss(animated: true)
-                if self.videoOutput.isRecording {
-                    self.stopRecording()
+//                if self.videoOutput.isRecording {
+                if self.movieFileOutput.isRecording {
+//                    self.stopRecording()
+                    self.stopVideoRecording()
                     //TODO: Order Stop Recording
                 }
                 
@@ -287,32 +298,32 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
         
     }
     
-    private func setupSession() {
-        do {
-            captureSession.beginConfiguration()
-            
-            videoInput = try AVCaptureDeviceInput(device: videoDevice!)
-            if captureSession.canAddInput(videoInput) {
-                captureSession.addInput(videoInput)
-            }
-            
-            let audioDevice = AVCaptureDevice.default(for: AVMediaType.audio)!
-            audioInput = try AVCaptureDeviceInput(device: audioDevice)
-            if captureSession.canAddInput(audioInput) {
-                captureSession.addInput(audioInput)
-            }
-            
-            videoOutput = AVCaptureMovieFileOutput()
-            if captureSession.canAddOutput(videoOutput) {
-                captureSession.addOutput(videoOutput)
-            }
-            
-            captureSession.commitConfiguration()
-        }
-        catch let error as NSError {
-            NSLog("\(error), \(error.localizedDescription)")
-        }
-    }
+//    private func setupSession() {
+//        do {
+//            captureSession.beginConfiguration()
+//
+//            videoInput = try AVCaptureDeviceInput(device: videoDevice!)
+//            if captureSession.canAddInput(videoInput) {
+//                captureSession.addInput(videoInput)
+//            }
+//
+//            let audioDevice = AVCaptureDevice.default(for: AVMediaType.audio)!
+//            audioInput = try AVCaptureDeviceInput(device: audioDevice)
+//            if captureSession.canAddInput(audioInput) {
+//                captureSession.addInput(audioInput)
+//            }
+//
+//            videoOutput = AVCaptureMovieFileOutput()
+//            if captureSession.canAddOutput(videoOutput) {
+//                captureSession.addOutput(videoOutput)
+//            }
+//
+//            captureSession.commitConfiguration()
+//        }
+//        catch let error as NSError {
+//            NSLog("\(error), \(error.localizedDescription)")
+//        }
+//    }
     
     private func bestDevice(in position: AVCaptureDevice.Position) -> AVCaptureDevice {
         var deviceTypes: [AVCaptureDevice.DeviceType]!
@@ -373,53 +384,71 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
     
     
     // MARK:- Recording Methods
-    
-    private func startRecording() {
-        let connection = videoOutput.connection(with: AVMediaType.video)
-        
-        // orientation을 설정해야 가로/세로 방향에 따른 레코딩 출력이 잘 나옴.
-        if (connection?.isVideoOrientationSupported)! {
-            connection?.videoOrientation = self.deviceOrientation
-        }
-        
-        let device = videoInput.device
-        if (device.isSmoothAutoFocusSupported) {
-            do {
-                try device.lockForConfiguration()
-                device.isSmoothAutoFocusEnabled = false
-                device.unlockForConfiguration()
-            } catch {
-                print("Error setting configuration: \(error)")
-            }
-        }
-        
-        // recording point, timerString에 대한 핸들링
-        DispatchQueue.main.async {
-            self.recordPoint.alpha = 1
-            self.recordButton.setTitle("Stop", for: .normal)
-        }
+    override func startVideoRecording() {
+        super.startVideoRecording()
         self.fadeViewInThenOut(view: recordPoint, delay: 0)
         self.startRecordTimer()
-        
-        outputURL = tempURL()
-        videoOutput.startRecording(to: outputURL!, recordingDelegate: self)
-        
         self.recordDuration = 0 // initiate Timer count
-        
-    }
-    
-    private func stopRecording() {
-        if videoOutput.isRecording {
-            self.stopRecordTimer()
-            videoOutput.stopRecording()
-            DispatchQueue.main.async {
-                
-                self.recordPoint.layer.removeAllAnimations()
-                self.recordButton.setTitle("Record", for: .normal)
-                
-            }
+        DispatchQueue.main.async {
+            self.recordButton.setTitle("Stop", for: .normal)
         }
     }
+    
+    override func stopVideoRecording() {
+        super.stopVideoRecording()
+        self.stopRecordTimer()
+        DispatchQueue.main.async {
+            self.recordButton.setTitle("Record", for: .normal)
+        }
+    }
+    
+//    private func startRecording() {
+//        let connection = videoOutput.connection(with: AVMediaType.video)
+//
+//        // orientation을 설정해야 가로/세로 방향에 따른 레코딩 출력이 잘 나옴.
+//        if (connection?.isVideoOrientationSupported)! {
+//            connection?.videoOrientation = self.deviceOrientation
+//        }
+//
+//        let device = videoInput.device
+//        if (device.isSmoothAutoFocusSupported) {
+//            do {
+//                try device.lockForConfiguration()
+//                device.isSmoothAutoFocusEnabled = false
+//                device.unlockForConfiguration()
+//            } catch {
+//                print("Error setting configuration: \(error)")
+//            }
+//        }
+//
+//        // recording point, timerString에 대한 핸들링
+//        DispatchQueue.main.async {
+//            self.recordPoint.alpha = 1
+//            self.recordButton.setTitle("Stop", for: .normal)
+//        }
+//        self.fadeViewInThenOut(view: recordPoint, delay: 0)
+//        self.startRecordTimer()
+//
+//        outputURL = tempURL()
+//        videoOutput.startRecording(to: outputURL!, recordingDelegate: self)
+//
+//        self.recordDuration = 0 // initiate Timer count
+//
+//    }
+    
+//    private func stopRecording() {
+////        swifty
+//        if videoOutput.isRecording {
+//            self.stopRecordTimer()
+//            videoOutput.stopRecording()
+//            DispatchQueue.main.async {
+//
+//                self.recordPoint.layer.removeAllAnimations()
+//                self.recordButton.setTitle("Record", for: .normal)
+//
+//            }
+//        }
+//    }
     
     private func fadeViewInThenOut(view : UIView, delay: TimeInterval) {
         let animationDuration = 0.5
@@ -597,7 +626,7 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
 extension RecordingViewController {
     
     // 레코딩이 시작되면 호출
-    func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
+    override func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
 //        connections.videoScaleAndCropFactor = .min
         
         for connection in connections {
@@ -617,14 +646,14 @@ extension RecordingViewController {
     // videoScaleAndCropFactor
     
     // 레코딩이 끝나면 호출
-    override func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-        if (error != nil) {
-            print("Error recording movie: \(error!.localizedDescription)")
-        } else {
-            let videoRecorded = outputURL! as URL
-            UISaveVideoAtPathToSavedPhotosAlbum(videoRecorded.path, nil, nil, nil)
-        }
-    }
+//    override func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+//        if (error != nil) {
+//            print("Error recording movie: \(error!.localizedDescription)")
+//        } else {
+//            let videoRecorded = outputURL! as URL
+//            UISaveVideoAtPathToSavedPhotosAlbum(videoRecorded.path, nil, nil, nil)
+//        }
+//    }
     
 }
 

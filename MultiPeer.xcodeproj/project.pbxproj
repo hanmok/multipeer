@@ -17,6 +17,7 @@
 		2282DD8D281646E0008928A4 /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD8C281646E0008928A4 /* Orientation.swift */; };
 		2282DD8F28164707008928A4 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD8E28164707008928A4 /* PreviewView.swift */; };
 		2282DD912816473C008928A4 /* SwiftyCamButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD902816473C008928A4 /* SwiftyCamButton.swift */; };
+		2282DD9328167944008928A4 /* SwiftyRecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD9228167944008928A4 /* SwiftyRecordButton.swift */; };
 		228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A32E92812A5EF00AC3447 /* ZoomRelated.swift */; };
 		228B88372806577A007A6842 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88362806577A007A6842 /* AppDelegate.swift */; };
 		228B88392806577A007A6842 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88382806577A007A6842 /* SceneDelegate.swift */; };
@@ -39,6 +40,7 @@
 		2282DD8C281646E0008928A4 /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
 		2282DD8E28164707008928A4 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		2282DD902816473C008928A4 /* SwiftyCamButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyCamButton.swift; sourceTree = "<group>"; };
+		2282DD9228167944008928A4 /* SwiftyRecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyRecordButton.swift; sourceTree = "<group>"; };
 		228A32E92812A5EF00AC3447 /* ZoomRelated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomRelated.swift; sourceTree = "<group>"; };
 		228B88332806577A007A6842 /* MultiPeer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MultiPeer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B88362806577A007A6842 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 				2282DD8C281646E0008928A4 /* Orientation.swift */,
 				2282DD8E28164707008928A4 /* PreviewView.swift */,
 				2282DD902816473C008928A4 /* SwiftyCamButton.swift */,
+				2282DD9228167944008928A4 /* SwiftyRecordButton.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				2282DD8A28164695008928A4 /* SwiftyCamViewControllerDelegate.swift in Sources */,
 				227862612807FD5200C9EB79 /* CameraVC.swift in Sources */,
 				2282DD912816473C008928A4 /* SwiftyCamButton.swift in Sources */,
+				2282DD9328167944008928A4 /* SwiftyRecordButton.swift in Sources */,
 				227862632808024900C9EB79 /* VideoHelper.swift in Sources */,
 				226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */,
 				228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */,

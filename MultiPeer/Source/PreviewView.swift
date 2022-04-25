@@ -53,14 +53,18 @@ class PreviewView: UIView {
     
     var videoPreviewLayer: AVCaptureVideoPreviewLayer {
         let previewlayer = layer as! AVCaptureVideoPreviewLayer
-        switch gravity {
-        case .resize:
-            previewlayer.videoGravity = AVLayerVideoGravity.resize
-        case .resizeAspect:
-            previewlayer.videoGravity = AVLayerVideoGravity.resizeAspect
-        case .resizeAspectFill:
-            previewlayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        }
+//        switch gravity {
+//        case .resize:
+//            previewlayer.videoGravity = AVLayerVideoGravity.resize
+//        case .resizeAspect:
+//            previewlayer.videoGravity = AVLayerVideoGravity.resizeAspect
+//        case .resizeAspectFill:
+//            previewlayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+//        }
+//        previewlayer.videoGravity = AVLayerVideoGravity.resizeAspect
+        
+        // this make video square !
+        previewlayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
         return previewlayer
     }
     

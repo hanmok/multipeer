@@ -16,6 +16,7 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 
 import UIKit
 import AVFoundation
+import SnapKit
 
 // MARK: View Controller Declaration
 
@@ -92,6 +93,8 @@ open class SwiftyCamViewController: UIViewController {
 
        /// AVCaptureSessionPresetiFrame1280x720
        case iframe1280x720
+       
+       case resolution1080x1080
    }
 
    /**
@@ -117,11 +120,12 @@ open class SwiftyCamViewController: UIViewController {
 
    /// Maxiumum video duration if SwiftyCamButton is used
 
-   public var maximumVideoDuration : Double     = 0.0
+   public var maximumVideoDuration : Double     = 100
 
    /// Video capture quality
 
-   public var videoQuality : VideoQuality       = .high
+//   public var videoQuality : VideoQuality       = .high
+    public var videoQuality : VideoQuality       = .resolution1080x1080
 
    /// Sets whether flash is enabled for photo and video capture
    @available(*, deprecated, message: "use flashMode .on or .off") //use flashMode
@@ -185,7 +189,9 @@ open class SwiftyCamViewController: UIViewController {
    public var allowAutoRotate                = false
 
    /// Specifies the [videoGravity](https://developer.apple.com/reference/avfoundation/avcapturevideopreviewlayer/1386708-videogravity) for the preview layer.
-   public var videoGravity                   : SwiftyCamVideoGravity = .resizeAspect
+   public var videoGravity                   : SwiftyCamVideoGravity = .resizeAspectFill
+   //    public var videoGravity                   : SwiftyCamVideoGravity = .resizeAspect
+
 
    /// Sets whether or not video recordings will record audio
    /// Setting to true will prompt user for access to microphone on View Controller launch.
@@ -257,7 +263,7 @@ open class SwiftyCamViewController: UIViewController {
 
    /// Movie File Output variable
 
-   fileprivate var movieFileOutput              : AVCaptureMovieFileOutput?
+   public var movieFileOutput              : AVCaptureMovieFileOutput!
 
    /// Photo File Output variable
 
@@ -297,17 +303,57 @@ open class SwiftyCamViewController: UIViewController {
    
    public var videoCodecType: AVVideoCodecType? = nil
 
+   
+//   private let someBtn: UIButton = {
+//       let btn = UIButton()
+//       btn.backgroundColor = .magenta
+//       btn.setTitle("Record", for: .normal)
+//       return btn
+//   }()
+   
    // MARK: ViewDidLoad
 
    /// ViewDidLoad Implementation
+   
 
+//   @objc func toggleRecordingState(_ sender: UIButton) {
+//       if isVideoRecording {
+//           DispatchQueue.main.async {
+//               self.someBtn.setTitle("Stop", for: .normal)
+//
+//           }
+//           self.stopVideoRecording() // toggle occur inside start, stop Video Recording method.
+//       } else {
+//           DispatchQueue.main.async {
+//               self.someBtn.setTitle("Record", for: .normal)
+//           }
+//           self.startVideoRecording()
+//       }
+//   }
+   
    override open func viewDidLoad() {
+       print("swiftycamViewController viewdidload")
        super.viewDidLoad()
-       previewLayer = PreviewView(frame: view.frame, videoGravity: videoGravity)
+//        previewLayer = PreviewView(frame: view.frame, videoGravity: videoGravity)
+
+       previewLayer = PreviewView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.width), videoGravity: .resizeAspectFill)
+       
+       print("view from SwiftyCam: \(view.frame.width), \(view.frame.height)")
        previewLayer.center = view.center
+       
        view.addSubview(previewLayer)
        view.sendSubviewToBack(previewLayer)
 
+//       view.addSubview(someBtn)
+//       someBtn.snp.makeConstraints { make in
+//           make.bottom.equalToSuperview()
+//           make.centerX.equalToSuperview()
+//           make.height.equalTo(40)
+//           make.width.equalTo(200)
+//       }
+//
+//       someBtn.addTarget(self, action: #selector(toggleRecordingState(_:)), for: .touchUpInside)
+       
        // Add Gesture Recognizers
 
        addGestureRecognizers()
@@ -332,8 +378,6 @@ open class SwiftyCamViewController: UIViewController {
                self.sessionQueue.resume()
            })
        default:
-
-           // already been asked. Denied access
            setupResult = .notAuthorized
        }
        sessionQueue.async { [unowned self] in
@@ -352,7 +396,8 @@ open class SwiftyCamViewController: UIViewController {
            layer.videoOrientation = .portrait
        }
        
-       previewLayer.frame = self.view.bounds
+//       previewLayer.frame = self.view.bounds
+       
 
    }
 
@@ -553,15 +598,20 @@ open class SwiftyCamViewController: UIViewController {
                let outputFileName = UUID().uuidString
                let outputFilePath = (self.outputFolder as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
                movieFileOutput.startRecording(to: URL(fileURLWithPath: outputFilePath), recordingDelegate: self)
+               
                self.isVideoRecording = true
+               
                DispatchQueue.main.async {
                    self.cameraDelegate?.swiftyCam(self, didBeginRecordingVideo: self.currentCamera)
                }
+               print("Video recording has started!!")
            }
            else {
                movieFileOutput.stopRecording()
+               print("stop recording!")
            }
        }
+
    }
 
    /**
@@ -593,6 +643,19 @@ open class SwiftyCamViewController: UIViewController {
        }
    }
 
+   
+   private func tempURL() -> URL? {
+       let directory = NSTemporaryDirectory() as NSString
+       
+       if directory != "" {
+           let path = directory.appendingPathComponent(NSUUID().uuidString + ".mp4")
+           return URL(fileURLWithPath: path)
+       }
+       
+       return nil
+   }
+   
+   
    /**
 
    Switch between front and rear camera
@@ -913,6 +976,8 @@ open class SwiftyCamViewController: UIViewController {
                print("[SwiftyCam]: Resolution 3840x2160 not supported")
                return AVCaptureSession.Preset.high.rawValue
            }
+       case .resolution1080x1080:
+           return AVCaptureSession.Preset.high.rawValue
        }
    }
 
@@ -1053,32 +1118,44 @@ extension SwiftyCamViewController : SwiftyCamButtonDelegate {
    /// Sets the maximum duration of the SwiftyCamButton
 
    public func setMaxiumVideoDuration() -> Double {
-       return maximumVideoDuration
+       return 100
    }
 
    /// Set UITapGesture to take photo
 
    public func buttonWasTapped() {
-       takePhoto()
+//        takePhoto()
+       if self.isVideoRecording {
+           stopVideoRecording()
+           print("stop Video Recording triggered!")
+       }else {
+           startVideoRecording()
+           print("start Video Recording triggered!")
+       }
+       
+//        cameraDelegate.video
    }
 
    /// Set UILongPressGesture start to begin video
 
    public func buttonDidBeginLongPress() {
-       startVideoRecording()
+//        startVideoRecording()
+       print("nothing!")
    }
 
    /// Set UILongPressGesture begin to begin end video
 
 
    public func buttonDidEndLongPress() {
-       stopVideoRecording()
+//        stopVideoRecording()
+       print("nothing!")
    }
 
    /// Called if maximum duration is reached
 
    public func longPressDidReachMaximumDuration() {
-       stopVideoRecording()
+//        stopVideoRecording()
+       
    }
 }
 
@@ -1107,6 +1184,20 @@ extension SwiftyCamViewController : AVCaptureFileOutputRecordingDelegate {
            DispatchQueue.main.async {
                self.cameraDelegate?.swiftyCam(self, didFinishProcessVideoAt: outputFileURL)
            }
+       }
+       
+       if error != nil {
+           fatalError("Error during saving Video!")
+       } else {
+           let videoRecorded = outputFileURL
+           UISaveVideoAtPathToSavedPhotosAlbum(videoRecorded.path, nil, nil, nil)
+           print(" Error not occurred", #file, #function)
+       }
+   }
+   
+   public func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
+       for connection in connections {
+           connection.videoScaleAndCropFactor = connection.videoMaxScaleAndCropFactor
        }
    }
 }
@@ -1151,8 +1242,7 @@ extension SwiftyCamViewController {
            return
        }
 
-//       let screenSize = previewLayer!.bounds.size
-       let screenSize = previewLayer.bounds.size
+       let screenSize = previewLayer!.bounds.size
        let tapPoint = tap.location(in: previewLayer!)
        let x = tapPoint.y / screenSize.height
        let y = 1.0 - tapPoint.x / screenSize.width
