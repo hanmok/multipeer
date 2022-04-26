@@ -9,18 +9,20 @@ import UIKit
 import SnapKit
 
 class ScoreView: UILabel {
-    var score: Int {
+    var score: Int? {
         didSet {
             self.loadView()
         }
     }
-    init( score: Int = 0, frame: CGRect = .zero) {
+    init( score: Int? = nil, frame: CGRect = .zero) {
         self.score = score
         super.init(frame: frame)
-        self.backgroundColor = .magenta
+//        self.backgroundColor = .magenta
+        loadView()
     }
     
     private func loadView() {
+        print("started load scoreView")
         self.addSubview(scoreLabel)
         scoreLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
@@ -30,10 +32,17 @@ class ScoreView: UILabel {
         
         scoreLabel.text = "\(score)"
         
-        self.layer.borderColor = UIColor.magenta.cgColor
-        self.layer.borderWidth = 1
-        self.layer.cornerRadius = 10
+        if let validScore = score {
+            scoreLabel.text = String(validScore)
+        } else {
+            scoreLabel.text = ""
+        }
         
+//        self.layer.borderColor = UIColor.magenta.cgColor
+//        self.layer.borderWidth = 1
+//        self.layer.cornerRadius = 10
+        
+        print("successfully loaded scoreView")
     }
     
     let scoreLabel: UILabel = {

@@ -109,6 +109,13 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
         return btn
     }()
     
+    let uiButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("moveToUI", for: .normal)
+        btn.setTitleColor(.white, for: .normal)
+        return btn
+    }()
+    
 //    let receivedData:UILabel = {
 //        let label = UILabel()
 //        label.text = "Received Data"
@@ -135,6 +142,8 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
 //        videoHelper.delegate = self
         
         addNotifications()
+        
+        moveToUIView()
     }
     
     func addNotifications() {
@@ -194,10 +203,22 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
         
         orderButton.addTarget(self, action: #selector(orderAny(_:)), for: .touchUpInside)
         
+        uiButton.addTarget(self, action: #selector(moveToUIView(_:)), for: .touchUpInside)
+    }
+    
+    @objc func moveToUIView(_ sender: UIButton) {
+        moveToUIView()
+    }
+    
+    func moveToUIView() {
+        let vc = PositionSelectingController()
+        
+        DispatchQueue.main.async {
+            vc.modalPresentationStyle = .fullScreen
 
-        
-        
-}
+            self.present(vc, animated: true)
+        }
+    }
     
     @objc func triggerTimer(_ sender: UIButton) {
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerCounter), userInfo: nil, repeats: true)
@@ -296,7 +317,15 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
 //            make.width.equalTo(200)
 //        }
         
-
+        view.addSubview(uiButton)
+        uiButton.snp.makeConstraints { make in
+            make.top.equalTo(orderButton.snp.top)
+            make.left.equalTo(orderButton.snp.right)
+            make.trailing.equalToSuperview()
+            make.height.equalTo(40)
+        }
+        
+        
     }
 }
 
