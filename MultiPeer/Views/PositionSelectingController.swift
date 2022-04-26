@@ -12,8 +12,44 @@ import Then
 
 
 
+// This is Main Screen From now on.. ^_^
 
 class PositionSelectingController: UIViewController {
+    
+    var connectionManager = ConnectionManager()
+    
+
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupLayout()
+        setupTargets()
+        connectionManager.delegate = self
+        
+        
+    }
+    
+    private func setupTargets() {
+        sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
+    }
+    
+    @objc func showConnectivityAction(_ sender: UIButton) {
+        let actionSheet = UIAlertController(title: "Todo Exchange", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
+            self.connectionManager.host()
+            
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
+            self.connectionManager.join()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(actionSheet, animated: true, completion: nil)
+    }
     
     private let squatView = PositionBlockView(PositionListEnum.deepsquat)
     private let hurdleStep = PositionBlockView(PositionListEnum.hurdleStep)
@@ -28,54 +64,82 @@ class PositionSelectingController: UIViewController {
     private let shoulder = PositionBlockView(PositionListEnum.shoulder)
     private let extensions = PositionBlockView(PositionListEnum.extensions)
     private let flexion = PositionBlockView(PositionListEnum.flexion)
-
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupLayout()
-    }
+    private let topView: UIView = {
+        let v = UIView()
+        v.backgroundColor = .systemPink
+        return v
+    }()
     
+    let sessionButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Connect", for: .normal)
+        btn.setTitleColor(.green, for: .normal)
+        return btn
+    }()
+    
+    
+    // MARK: - UI PART
     private func setupLayout() {
-        print("started setupLayout in positionSelectingController")
+
         let allViews = [
             squatView,hurdleStep, inlineLunge, shoulderMobility,
-            straightLegRaise
-            , stabilityPushup
-            , rotaryStability,
-                                    shoulder, extensions, flexion
+            straightLegRaise, stabilityPushup, rotaryStability,
+            shoulder, extensions, flexion
         ]
+        
+        let otherViews = [topView]
         
         allViews.forEach { eachPosition in
             self.view.addSubview(eachPosition)
         }
         
+        otherViews.forEach { v in
+            self.view.addSubview(v)
+        }
+        
+        topView.addSubview(sessionButton)
+        
+        
+        
+        topView.snp.makeConstraints { make in
+            make.left.top.right.equalTo(view.safeAreaLayoutGuide)
+            make.height.equalTo(40)
+        }
+        
+        sessionButton.snp.makeConstraints { make in
+            make.top.bottom.right.equalToSuperview()
+            make.width.equalTo(100)
+        }
+        
         squatView.snp.makeConstraints { make in
             make.left.equalToSuperview()
-            make.top.equalTo(view.safeAreaLayoutGuide)
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(topView.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
        
-        print("squat View ended")
         hurdleStep.snp.makeConstraints { make in
             make.leading.equalTo(squatView.snp.trailing)
-//            make.left.equalToSuperview()
-            make.top.equalTo(view.safeAreaLayoutGuide)
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(topView.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
-        print("hurdleStep View ended")
+
         inlineLunge.snp.makeConstraints { make in
             make.leading.equalTo(hurdleStep.snp.trailing)
-            make.top.equalTo(view.safeAreaLayoutGuide)
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(topView.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
-        print("inlineLunge View ended")
+
         shoulderMobility.snp.makeConstraints { make in
             make.leading.equalTo(inlineLunge.snp.trailing)
-            make.top.equalTo(view.safeAreaLayoutGuide)
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(topView.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
@@ -101,9 +165,6 @@ class PositionSelectingController: UIViewController {
             make.width.equalToSuperview().dividedBy(3)
         }
         
-        
-        
-        
         shoulder.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.top.equalTo(straightLegRaise.snp.bottom)
@@ -125,8 +186,34 @@ class PositionSelectingController: UIViewController {
             make.width.equalToSuperview().dividedBy(3)
         }
         
-//        shoulder.snp.makeConstraints { make in
-//            make.leading.equalTo(flexi)
-//        }
     }
+}
+
+
+extension PositionSelectingController: ConnectionManagerDelegate {
+    func presentVideo() {
+        
+    }
+    
+    func showDuration(_ startAt: Date, _ endAt: Date) {
+        
+    }
+    
+    func showStart(_ startAt: Date) {
+        
+    }
+    
+    func updateDuration(_ startAt: Date, current: Date) {
+        
+    }
+    
+    func updateState(state: String) {
+        
+    }
+    
+    func disconnected(state: String, timeDuration: Int) {
+        
+    }
+    
+    
 }

@@ -144,6 +144,7 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
         addNotifications()
         
         moveToUIView()
+        
     }
     
     func addNotifications() {

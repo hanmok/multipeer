@@ -11,6 +11,7 @@
 		2265AC0528169D6C00E0FCCF /* PositionBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */; };
 		2265AC072816A11E00E0FCCF /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC062816A11E00E0FCCF /* ScoreView.swift */; };
 		2265AC0928177FD800E0FCCF /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC0828177FD800E0FCCF /* Position.swift */; };
+		2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC4D2817F42300E0FCCF /* CameraController.swift */; };
 		226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226E0445280EBBE4004A8A28 /* RecordingViewController.swift */; };
 		2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */; };
 		2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625E2807EB8300C9EB79 /* ConnectionManager.swift */; };
@@ -37,6 +38,7 @@
 		2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionBlockView.swift; sourceTree = "<group>"; };
 		2265AC062816A11E00E0FCCF /* ScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
 		2265AC0828177FD800E0FCCF /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
+		2265AC4D2817F42300E0FCCF /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		226E0445280EBBE4004A8A28 /* RecordingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatManagerFromRay.swift; sourceTree = "<group>"; };
 		2278625E2807EB8300C9EB79 /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				226E0445280EBBE4004A8A28 /* RecordingViewController.swift */,
+				2265AC4D2817F42300E0FCCF /* CameraController.swift */,
 				228B883A2806577A007A6842 /* MainViewController.swift */,
 				2278625E2807EB8300C9EB79 /* ConnectionManager.swift */,
 			);
@@ -292,6 +295,7 @@
 				2265AC072816A11E00E0FCCF /* ScoreView.swift in Sources */,
 				2282DD8F28164707008928A4 /* PreviewView.swift in Sources */,
 				2282DD882816466A008928A4 /* SwiftyCamViewController.swift in Sources */,
+				2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */,
 				2265AC022816918700E0FCCF /* PositionSelectingController.swift in Sources */,
 				228B88372806577A007A6842 /* AppDelegate.swift in Sources */,
 				2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */,
