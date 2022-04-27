@@ -12,11 +12,13 @@ import SnapKit
 enum PositionDirection {
     case left
     case right
-    case none // represent 'Center' or 'Neutral'
+    case neutral // represent 'Center' or 'Neutral'
+    case not
 }
 
 // has no idea for direction
 class ScoreView: UILabel {
+    
     var score: Int? {
         didSet {
             self.loadView()
@@ -26,7 +28,7 @@ class ScoreView: UILabel {
     var direction: PositionDirection
     
     
-    init(direction: PositionDirection = .none, score: Int? = nil, frame: CGRect = .zero) {
+    init(direction: PositionDirection = .not, score: Int? = nil, frame: CGRect = .zero) {
         self.score = score
         self.direction = direction
         super.init(frame: frame)
@@ -51,11 +53,16 @@ class ScoreView: UILabel {
             switch direction {
             case .right: scoreLabel.text = "R"
             case .left: scoreLabel.text = "L"
-            case .none: scoreLabel.text = "N"
+            case .neutral: scoreLabel.text = "N"
+            case .not: scoreLabel.text = "X"
             }
         }
+        scoreLabel.textAlignment = .center
         
-        print("successfully loaded scoreView")
+        self.layer.borderColor = UIColor.blue.cgColor
+        self.layer.borderWidth = 1
+        self.layer.cornerRadius = 20
+        
     }
     
     let scoreLabel: UILabel = {

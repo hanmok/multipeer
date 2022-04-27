@@ -12,7 +12,7 @@ struct PositionBlock {
     var title: String
     
     var imageName: [String]
-    var score: [Int?] = [nil]
+    var score: [Int?] = [nil, nil]
     
     var leftRight: Bool {
         return imageName.count == 2 ? true : false
