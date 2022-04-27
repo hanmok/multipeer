@@ -14,13 +14,21 @@ import Then
 
 // This is Main Screen From now on.. ^_^
 
+class ImageButton: ButtonWithInfo {
+    override init(title: String, direction: PositionDirection = .neutral, score: Int? = nil, frame: CGRect = .zero) {
+        super.init(title: title, direction: direction, score: score, frame: frame)
+        self.addTarget(nil, action: #selector(PositionSelectingController.imgTapped(_:)), for: .touchUpInside)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 class PositionSelectingController: UIViewController {
     
     var connectionManager = ConnectionManager()
-    
 
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,8 +36,10 @@ class PositionSelectingController: UIViewController {
         setupTargets()
         connectionManager.delegate = self
         
-        
     }
+    
+
+    private let testImg = UIImageView().then { $0.isUserInteractionEnabled = true }
     
     private func setupTargets() {
         sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
@@ -71,6 +81,31 @@ class PositionSelectingController: UIViewController {
         return v
     }()
     
+    @objc func btnTapped( _ sender: UIButton) {
+        switch sender.tag {
+        case 0: print("from left")
+        case 1: print("from right")
+        case 2: print("from center")
+        default: print("other")
+        }
+    }
+    
+    @objc func imgTapped(_ sender: ButtonWithInfo) {
+        print("img Tapped,")
+        print("title: \(sender.title)")
+        print("direction: \(sender.direction)")
+    
+        print("sender.score: \(sender.score ?? 0)")
+    }
+    
+    @objc func scoreTapped(_ sender: ButtonWithInfo) {
+        print("score Tapped,")
+        print("title: \(sender.title)")
+        print("direction: \(sender.direction)")
+    
+        print("sender.score: \(sender.score ?? 0)")
+    }
+    
     let sessionButton: UIButton = {
         let btn = UIButton()
         btn.setTitle("Connect", for: .normal)
@@ -81,32 +116,45 @@ class PositionSelectingController: UIViewController {
     
     // MARK: - UI PART
     private func setupLayout() {
-
-        let allViews = [
-            deepSquat,hurdleStep, inlineLunge, ankleClearing,
-            shoulderMobility, shoulderClearing, straightLegRaise,
-             stabilityPushup, extensionClearing, rotaryStability, flexionClearing
-        ]
         
-        let otherViews = [topView]
+
+        
+        let allViews = [deepSquat, hurdleStep, inlineLunge, ankleClearing,
+                        shoulderMobility, shoulderClearing, straightLegRaise,
+                        stabilityPushup, extensionClearing, rotaryStability, flexionClearing]
+        
         
         allViews.forEach { eachPosition in
             self.view.addSubview(eachPosition)
+            eachPosition.isUserInteractionEnabled = true // do we need it ?
         }
         
-        otherViews.forEach { v in
-            self.view.addSubview(v)
+
+        
+        allViews.forEach { each in
+            each.isUserInteractionEnabled = true
         }
         
-        topView.addSubview(sessionButton)
+        [topView].forEach { otherView in
+            self.view.addSubview(otherView)
+        }
+        
         
         topView.snp.makeConstraints { make in
             make.left.top.right.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(40)
         }
+
+        topView.addSubview(sessionButton)
         
         sessionButton.snp.makeConstraints { make in
             make.top.bottom.right.equalToSuperview()
+            make.width.equalTo(100)
+        }
+        
+        topView.addSubview(testImg)
+        testImg.snp.makeConstraints { make in
+            make.leading.top.bottom.equalToSuperview()
             make.width.equalTo(100)
         }
         
@@ -190,6 +238,8 @@ class PositionSelectingController: UIViewController {
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
+        
+
     }
 }
 

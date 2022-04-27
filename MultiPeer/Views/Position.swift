@@ -8,16 +8,7 @@
 import Foundation
 
 
-struct PositionBlock {
-    var title: String
-    
-    var imageName: [String]
-    var score: [Int?] = [nil, nil]
-    
-    var leftRight: Bool {
-        return imageName.count == 2 ? true : false
-    }
-}
+
 
 
 
@@ -40,72 +31,72 @@ enum PositionImgs {
 
 
 
-var positionList: [PositionBlock] = [
-    PositionBlock(title: PositionImgs.deepSquat.0,
+var positionList: [Position] = [
+    Position(title: PositionImgs.deepSquat.0,
                   imageName: [PositionImgs.deepSquat.imageNames[0]]),
     
     
     
-    PositionBlock(title: PositionImgs.deepSquat.0,
+    Position(title: PositionImgs.deepSquat.0,
                   imageName: [PositionImgs.hurdleStep.imageNames[0], PositionImgs.hurdleStep.imageNames[1]]),
     
-    PositionBlock(title: PositionImgs.inlineLunge.0,
+    Position(title: PositionImgs.inlineLunge.0,
                   imageName: [PositionImgs.inlineLunge.imageNames[0],PositionImgs.inlineLunge.imageNames[1]]),
     
-    PositionBlock(title: PositionImgs.shoulderMobility.0,
+    Position(title: PositionImgs.shoulderMobility.0,
                   imageName: [PositionImgs.shoulderMobility.imageNames[0], PositionImgs.shoulderMobility.imageNames[1]]),
     
-    PositionBlock(title: PositionImgs.straightLegRaise.0,
+    Position(title: PositionImgs.straightLegRaise.0,
                   imageName: [PositionImgs.straightLegRaise.imageNames[0], PositionImgs.straightLegRaise.imageNames[1]]),
     
-    PositionBlock(title: PositionImgs.stabilityPushup.0,
+    Position(title: PositionImgs.stabilityPushup.0,
                   imageName: [PositionImgs.stabilityPushup.imageNames[0], PositionImgs.stabilityPushup.imageNames[1]]),
     
-    PositionBlock(title: PositionImgs.rotaryStability.0,
+    Position(title: PositionImgs.rotaryStability.0,
                   imageName:[PositionImgs.rotaryStability.imageNames[0], PositionImgs.rotaryStability.imageNames[1]]),
     
-    PositionBlock(title: PositionImgs.shoulderClearing.0,
+    Position(title: PositionImgs.shoulderClearing.0,
                   imageName: [PositionImgs.shoulderClearing.imageNames[0], PositionImgs.shoulderClearing.imageNames[1]]),
     
     
-    PositionBlock(title: PositionImgs.extensionClearing.0, imageName: [PositionImgs.extensionClearing.imageNames[0]]),
-    PositionBlock(title: PositionImgs.flexionClearing.0, imageName: [PositionImgs.flexionClearing.imageNames[0]])
+    Position(title: PositionImgs.extensionClearing.0, imageName: [PositionImgs.extensionClearing.imageNames[0]]),
+    Position(title: PositionImgs.flexionClearing.0, imageName: [PositionImgs.flexionClearing.imageNames[0]])
 ]
 
 enum PositionListEnum {
-    static let deepsquat = PositionBlock(title: PositionImgs.deepSquat.0,
+    static let deepsquat = Position(title: PositionImgs.deepSquat.0,
                                          imageName: [PositionImgs.deepSquat.imageNames[0]])
     
-    static let hurdleStep = PositionBlock(title: PositionImgs.hurdleStep.0,
+    static let hurdleStep = Position(title: PositionImgs.hurdleStep.0,
                                           imageName: [PositionImgs.hurdleStep.imageNames[0],
                                                       PositionImgs.hurdleStep.imageNames[1]])
-    static let inlineLunge = PositionBlock(title: PositionImgs.inlineLunge.0,
+    static let inlineLunge = Position(title: PositionImgs.inlineLunge.0,
                                            imageName: [PositionImgs.inlineLunge.imageNames[0],
                                                        PositionImgs.inlineLunge.imageNames[1]])
     
-    static let ankleClearing = PositionBlock(title: PositionImgs.ankleClearing.0,
+    static let ankleClearing = Position(title: PositionImgs.ankleClearing.0,
                                            imageName: [PositionImgs.ankleClearing.imageNames[0],
                                                        PositionImgs.ankleClearing.imageNames[1]])
     
     
     
-    static let shoulderMobility = PositionBlock(title: PositionImgs.shoulderMobility.0,
+    static let shoulderMobility = Position(title: PositionImgs.shoulderMobility.0,
                                                 imageName: [PositionImgs.shoulderMobility.imageNames[0],
                                                             PositionImgs.shoulderMobility.imageNames[1]])
-    static let shoulderClearing = PositionBlock(title: PositionImgs.shoulderClearing.0,
+    static let shoulderClearing = Position(title: PositionImgs.shoulderClearing.0,
                                         imageName: [PositionImgs.shoulderClearing.imageNames[0],
                                                     PositionImgs.shoulderClearing.imageNames[1]])
-    static let straightLegRaise = PositionBlock(title: PositionImgs.straightLegRaise.0,
+    static let straightLegRaise = Position(title: PositionImgs.straightLegRaise.0,
                                                 imageName: [PositionImgs.straightLegRaise.imageNames[0],
                                                             PositionImgs.straightLegRaise.imageNames[1]])
     
-    static let stabilityPushup = PositionBlock(title: PositionImgs.stabilityPushup.0,
+    static let stabilityPushup = Position(title: PositionImgs.stabilityPushup.0,
                                                imageName: [PositionImgs.stabilityPushup.imageNames[0]])
-    static let extensionClearing = PositionBlock(title: PositionImgs.extensionClearing.0,
+    static let extensionClearing = Position(title: PositionImgs.extensionClearing.0,
                                           imageName: [PositionImgs.extensionClearing.imageNames[0]])
-    static let rotaryStability = PositionBlock(title: PositionImgs.rotaryStability.0,
+    static let rotaryStability = Position(title: PositionImgs.rotaryStability.0,
                                                imageName:[PositionImgs.rotaryStability.imageNames[0],
                                                           PositionImgs.rotaryStability.imageNames[1]])
-    static let flexionClearing = PositionBlock(title: PositionImgs.flexionClearing.0, imageName:
+    static let flexionClearing = Position(title: PositionImgs.flexionClearing.0, imageName:
                                         [PositionImgs.flexionClearing.imageNames[0]])
 }
