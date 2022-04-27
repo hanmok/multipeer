@@ -51,19 +51,19 @@ class PositionSelectingController: UIViewController {
         self.present(actionSheet, animated: true, completion: nil)
     }
     
-    private let squatView = PositionBlockView(PositionListEnum.deepsquat)
+    private let deepSquat = PositionBlockView(PositionListEnum.deepsquat)
     private let hurdleStep = PositionBlockView(PositionListEnum.hurdleStep)
     private let inlineLunge = PositionBlockView(PositionListEnum.inlineLunge)
+    private let ankleClearing = PositionBlockView(PositionListEnum.ankleClearing)
+    
     private let shoulderMobility = PositionBlockView(PositionListEnum.shoulderMobility)
-    
+    private let shoulderClearing = PositionBlockView(PositionListEnum.shoulderClearing)
     private let straightLegRaise = PositionBlockView(PositionListEnum.straightLegRaise)
-//
-    private let stabilityPushup = PositionBlockView(PositionListEnum.stabilityPushup)
-    private let rotaryStability = PositionBlockView(PositionListEnum.rotaryStability)
     
-    private let shoulder = PositionBlockView(PositionListEnum.shoulder)
-    private let extensions = PositionBlockView(PositionListEnum.extensions)
-    private let flexion = PositionBlockView(PositionListEnum.flexion)
+    private let stabilityPushup = PositionBlockView(PositionListEnum.stabilityPushup)
+    private let extensionClearing = PositionBlockView(PositionListEnum.extensionClearing)
+    private let rotaryStability = PositionBlockView(PositionListEnum.rotaryStability)
+    private let flexionClearing = PositionBlockView(PositionListEnum.flexionClearing)
     
     private let topView: UIView = {
         let v = UIView()
@@ -83,9 +83,9 @@ class PositionSelectingController: UIViewController {
     private func setupLayout() {
 
         let allViews = [
-            squatView,hurdleStep, inlineLunge, shoulderMobility,
-            straightLegRaise, stabilityPushup, rotaryStability,
-            shoulder, extensions, flexion
+            deepSquat,hurdleStep, inlineLunge, ankleClearing,
+            shoulderMobility, shoulderClearing, straightLegRaise,
+             stabilityPushup, extensionClearing, rotaryStability, flexionClearing
         ]
         
         let otherViews = [topView]
@@ -100,8 +100,6 @@ class PositionSelectingController: UIViewController {
         
         topView.addSubview(sessionButton)
         
-        
-        
         topView.snp.makeConstraints { make in
             make.left.top.right.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(40)
@@ -112,17 +110,15 @@ class PositionSelectingController: UIViewController {
             make.width.equalTo(100)
         }
         
-        squatView.snp.makeConstraints { make in
+        deepSquat.snp.makeConstraints { make in
             make.left.equalToSuperview()
-//            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.top.equalTo(topView.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
        
         hurdleStep.snp.makeConstraints { make in
-            make.leading.equalTo(squatView.snp.trailing)
-//            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.leading.equalTo(deepSquat.snp.trailing)
             make.top.equalTo(topView.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
@@ -130,62 +126,70 @@ class PositionSelectingController: UIViewController {
 
         inlineLunge.snp.makeConstraints { make in
             make.leading.equalTo(hurdleStep.snp.trailing)
-//            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-            make.top.equalTo(topView.snp.bottom)
-            make.height.equalToSuperview().dividedBy(4)
-            make.width.equalToSuperview().dividedBy(4)
-        }
-
-        shoulderMobility.snp.makeConstraints { make in
-            make.leading.equalTo(inlineLunge.snp.trailing)
-//            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.top.equalTo(topView.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
         
-        straightLegRaise.snp.makeConstraints { make in
+        ankleClearing.snp.makeConstraints { make in
+            make.leading.equalTo(inlineLunge.snp.trailing)
+            make.top.equalTo(topView.snp.bottom)
+            make.height.equalToSuperview().dividedBy(4)
+            make.width.equalToSuperview().dividedBy(4)
+        }
+        
+        
+        
+        shoulderMobility.snp.makeConstraints { make in
             make.leading.equalToSuperview()
-            make.top.equalTo(squatView.snp.bottom)
+            make.top.equalTo(deepSquat.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(3)
         }
 //
-        stabilityPushup.snp.makeConstraints { make in
-            make.leading.equalTo(straightLegRaise.snp.trailing)
-            make.top.equalTo(squatView.snp.bottom)
+        shoulderClearing.snp.makeConstraints { make in
+            make.leading.equalTo(shoulderMobility.snp.trailing)
+            make.top.equalTo(deepSquat.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(3)
+        }
+        
+        straightLegRaise.snp.makeConstraints { make in
+            make.leading.equalTo(shoulderClearing.snp.trailing)
+            make.top.equalTo(deepSquat.snp.bottom)
+            make.height.equalToSuperview().dividedBy(4)
+            make.width.equalToSuperview().dividedBy(3)
+        }
+        
+        
+        
+        stabilityPushup.snp.makeConstraints { make in
+            make.leading.equalToSuperview()
+            make.top.equalTo(shoulderMobility.snp.bottom)
+            make.height.equalToSuperview().dividedBy(4)
+            make.width.equalToSuperview().dividedBy(4)
+        }
+
+        extensionClearing.snp.makeConstraints { make in
+            make.leading.equalTo(stabilityPushup.snp.trailing)
+            make.top.equalTo(shoulderMobility.snp.bottom)
+            make.height.equalToSuperview().dividedBy(4)
+            make.width.equalToSuperview().dividedBy(4)
         }
         
         rotaryStability.snp.makeConstraints { make in
-            make.leading.equalTo(stabilityPushup.snp.trailing)
-            make.top.equalTo(squatView.snp.bottom)
+            make.leading.equalTo(extensionClearing.snp.trailing)
+            make.top.equalTo(shoulderMobility.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
-            make.width.equalToSuperview().dividedBy(3)
+            make.width.equalToSuperview().dividedBy(4)
         }
         
-        shoulder.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
-            make.top.equalTo(straightLegRaise.snp.bottom)
+        flexionClearing.snp.makeConstraints { make in
+            make.leading.equalTo(rotaryStability.snp.trailing)
+            make.top.equalTo(shoulderMobility.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
-            make.width.equalToSuperview().dividedBy(3)
+            make.width.equalToSuperview().dividedBy(4)
         }
-
-        extensions.snp.makeConstraints { make in
-            make.leading.equalTo(shoulder.snp.trailing)
-            make.top.equalTo(straightLegRaise.snp.bottom)
-            make.height.equalToSuperview().dividedBy(4)
-            make.width.equalToSuperview().dividedBy(3)
-        }
-        
-        flexion.snp.makeConstraints { make in
-            make.leading.equalTo(extensions.snp.trailing)
-            make.top.equalTo(straightLegRaise.snp.bottom)
-            make.height.equalToSuperview().dividedBy(4)
-            make.width.equalToSuperview().dividedBy(3)
-        }
-        
     }
 }
 

@@ -8,14 +8,27 @@
 import UIKit
 import SnapKit
 
+
+enum PositionDirection {
+    case left
+    case right
+    case none // represent 'Center' or 'Neutral'
+}
+
+// has no idea for direction
 class ScoreView: UILabel {
     var score: Int? {
         didSet {
             self.loadView()
         }
     }
-    init( score: Int? = nil, frame: CGRect = .zero) {
+    
+    var direction: PositionDirection
+    
+    
+    init(direction: PositionDirection = .none, score: Int? = nil, frame: CGRect = .zero) {
         self.score = score
+        self.direction = direction
         super.init(frame: frame)
 //        self.backgroundColor = .magenta
         loadView()
@@ -30,17 +43,17 @@ class ScoreView: UILabel {
             make.height.equalToSuperview().dividedBy(2)
         }
         
-        scoreLabel.text = "\(score)"
+//        scoreLabel.text = "\(score)"
         
         if let validScore = score {
             scoreLabel.text = String(validScore)
         } else {
-            scoreLabel.text = ""
+            switch direction {
+            case .right: scoreLabel.text = "R"
+            case .left: scoreLabel.text = "L"
+            case .none: scoreLabel.text = "N"
+            }
         }
-        
-//        self.layer.borderColor = UIColor.magenta.cgColor
-//        self.layer.borderWidth = 1
-//        self.layer.cornerRadius = 10
         
         print("successfully loaded scoreView")
     }

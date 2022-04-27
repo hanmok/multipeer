@@ -34,7 +34,6 @@ class PositionBlockView: UIView {
     }()
     
     var scoreView1 = ScoreView()
-
     var scoreView2 = ScoreView()
     
     let nameLabel = UILabel()
@@ -43,7 +42,6 @@ class PositionBlockView: UIView {
         self.positionBlock = positionBlock
         super.init(frame: frame)
         loadView()
-//        self.backgroundColor = .magenta
         self.backgroundColor = .white
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.gray.cgColor
@@ -55,6 +53,7 @@ class PositionBlockView: UIView {
     
     private func loadView() {
         // two images
+        print("flag0")
         imageView1.contentMode = .scaleAspectFit
         imageView2.contentMode = .scaleAspectFit
 
@@ -74,13 +73,19 @@ class PositionBlockView: UIView {
         }
         
         print("started loading positionBlockView")
+        print("position Title: \(positionBlock.title)")
+        
         if positionBlock.leftRight {
             print("two pose started")
-            
+            print("positionImageName1 : \(positionBlock.imageName[0])")
+            print("positionImageName2 : \(positionBlock.imageName[1])")
             imageView1.image = UIImage(imageLiteralResourceName: positionBlock.imageName[0])
             imageView2.image = UIImage(imageLiteralResourceName: positionBlock.imageName[1])
-
-            
+            print("flag1")
+            scoreView1 = ScoreView(direction: .left, score: positionBlock.score[0])
+            print("flag2")
+            scoreView2 = ScoreView(direction: .right, score: positionBlock.score[1]) // index out of range
+            print("flag3")
             let imageStackView = UIStackView(arrangedSubviews: [imageView1, imageView2])
             self.addSubview(imageStackView)
 
@@ -93,16 +98,14 @@ class PositionBlockView: UIView {
                 make.right.equalToSuperview().offset(-10)
                 make.height.equalToSuperview().dividedBy(2)
             }
-            
-            
-            
-            // score need to be optional!
-            scoreView1 = ScoreView(score: positionBlock.score[0])
-            
+        print("flag4")
             if positionBlock.score.count == 2 {
+                print("flag5")
                 scoreView2 = ScoreView(score: positionBlock.score[1])
+//                scoreView2 = scoreView2(score: )
             }
-            scoreView2 = ScoreView(score: positionBlock.score[0])
+            print("flag6")
+//            scoreView2 = ScoreView(score: positionBlock.score[0])
 
             let scoreStackView = UIStackView(arrangedSubviews: [scoreView1, scoreView2])
 
@@ -116,6 +119,7 @@ class PositionBlockView: UIView {
                 make.right.equalToSuperview().offset(-10)
                 make.height.equalTo(50)
             }
+            print("flag7")
             
 
             
@@ -125,28 +129,37 @@ class PositionBlockView: UIView {
             // one Image
         } else {
             print("one pose started")
+            print("positionImageName1 : \(positionBlock.imageName[0])")
             let allViews = [imageView1,
                             scoreView1
             ]
+            print("flag8")
+            
             allViews.forEach { view in
                 self.addSubview(view)
-                
             }
+            print("flag9")
             imageView1.image = UIImage(imageLiteralResourceName: positionBlock.imageName[0])
             imageView1.snp.makeConstraints { make in
                 make.left.top.equalToSuperview().offset(10)
                 make.right.equalToSuperview().offset(-10)
                 make.height.equalToSuperview().dividedBy(2)
             }
-
-            scoreView1.snp.makeConstraints { make in
-                make.top.equalTo(imageView1.snp.bottom)
-                make.left.equalToSuperview().offset(10)
-                make.right.equalToSuperview().offset(-10)
-                make.height.equalTo(50)
-            }
+            print("flag10")
+            scoreView1 = ScoreView(direction: .none, score: positionBlock.score[0])
+print("flag11")
+//            scoreView1.snp.makeConstraints { make in
+//                make.top.equalTo(imageView1.snp.bottom)
+//                make.left.equalToSuperview().offset(10)
+//                make.right.equalToSuperview().offset(-10)
+//                make.height.equalTo(50)
+//            }
+            
+            print("flag12")
+            // 여기서 막히는것 같은ㄷ ㅔ??
             
             self.addSubview(scoreView2)
+            print("flag13")
             self.addSubview(imageView2)
             scoreView2.isHidden = true
             imageView2.isHidden = true
