@@ -6,14 +6,6 @@
 	<array>
 		<string>_jobmanager-chat._tcp</string>
 	</array>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>Please allow access to connect devices</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>please allow access to save videos</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>please allow access to camera to take videos</string>
-	<key>NSCameraUsageDescription</key>
-	<string>please allow access to camera to take videos</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -27,8 +19,6 @@
 					<string>Default Configuration</string>
 					<key>UISceneDelegateClassName</key>
 					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
-					<key>UISceneStoryboardFile</key>
-					<string>Main</string>
 				</dict>
 			</array>
 		</dict>

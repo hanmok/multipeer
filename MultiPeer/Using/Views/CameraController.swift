@@ -19,7 +19,7 @@ class CameraController: UIViewController {
         super.viewDidLoad()
         setupLayout()
         setupAddTargets()
-
+        presentPicker()
     }
     
     @objc func video(_ videoPath: String, didFinishSavingWithError error: Error?, contextInfo info: AnyObject) {
@@ -35,26 +35,18 @@ class CameraController: UIViewController {
 
     
     private func setupLayout() {
-        view.addSubview(button)
-        button.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
-//            make.bottom.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide)
-            make.height.equalTo(40)
-        }
+        
     }
     
     private func setupAddTargets() {
-        button.addTarget(self, action: #selector(didTapPressed(_:)), for: .touchUpInside)
+
         recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
         dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
     }
     
     @objc func dismissBtnTapped(_ sender: UIButton) {
-        let mydelegate = picker?.delegate
-//        mydelegate?.imagePickerController?(picker!, didFinishPickingMediaWithInfo: [UIImagePickerController.InfoKey : Any] as String)
-        
-        mydelegate?.imagePickerController?(picker!, didFinishPickingMediaWithInfo: [UIImagePickerController.InfoKey.mediaType: kUTTypeMovie, UIImagePickerController.InfoKey.mediaURL: URL(fileURLWithPath: "file:private/var/mobile/Containers/Data/Application/DCEAA1AD-2808-4FF6-9182-C39D74A5E04B/tmp/67265451586__72322A03-DADC-4049-8597-EB8336AFC209.MOV")])
+//        let mydelegate = picker?.delegate
+
         
         picker?.dismiss(animated: true)
     }
@@ -71,59 +63,76 @@ class CameraController: UIViewController {
         isRecording.toggle()
     }
     
-    @objc func didTapPressed(_ sender: UIButton) {
-        
-        let someView = UIView(frame: CGRect(x: 100.0, y: screenHeight - 200, width: screenWidth - 200.0, height: 200))
-        someView.backgroundColor = .magenta
-        
-        someView.addSubview(recordingBtn)
-        recordingBtn.snp.makeConstraints { make in
-            make.left.bottom.equalToSuperview()
-            make.height.equalTo(50)
-            make.width.equalTo(200)
+    func presentPicker() {
+        let customHeight: CGFloat = 150
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            let someView = UIView(frame: CGRect(x:0, y: screenHeight - customHeight, width: screenWidth, height: customHeight))
+            someView.backgroundColor = .magenta
             
+            someView.addSubview(self.recordingBtn)
+            self.recordingBtn.snp.makeConstraints { make in
+//                make.left.bottom.equalToSuperview()
+                make.center.equalToSuperview()
+                make.height.equalTo(50)
+                make.width.equalTo(200)
+                
+            }
+            
+            someView.addSubview(self.dismissBtn)
+            self.dismissBtn.snp.makeConstraints { make in
+                make.right.equalToSuperview()
+                make.centerY.equalToSuperview()
+                make.height.equalTo(50)
+                make.width.equalTo(100)
+            }
+            
+            self.picker = UIImagePickerController()
+            
+            guard let picker = self.picker else { return }
+            picker.allowsEditing = true
+            picker.sourceType = .camera
+            picker.delegate = self
+            picker.mediaTypes = [kUTTypeMovie as String]
+            picker.cameraOverlayView = someView
+            picker.showsCameraControls = false
+            picker.preferredContentSize = CGSize(width: self.view.frame.width, height: self.view.frame.width)
+            
+            self.present(picker, animated: true)
         }
-        
-        someView.addSubview(dismissBtn)
-        dismissBtn.snp.makeConstraints { make in
-            make.left.top.right.equalToSuperview()
-            make.width.equalTo(200)
-        }
-        
-        
-        print("btn tapped!!")
-//        let picker = UIImagePickerController()
-        picker = UIImagePickerController()
-        
-        guard let picker = picker else { return }
-        picker.allowsEditing = true
-        picker.sourceType = .camera
-        picker.delegate = self
-        picker.mediaTypes = [kUTTypeMovie as String]
-//        picker.isBeingDismissed = true
-//        picker.imageExportPreset = .
-//        picker.cameraOverlayView = testView
-        picker.cameraOverlayView = someView
-        picker.showsCameraControls = false
-        
-//        picker.fin
-//        picker.tabBarObservedScrollView?.zoomScale = 0.5
-//        picker.tabBarObservedScrollView?.setZoomScale(0.5, animated: true)
-//        picker.zoom
-//        picker.cameraViewTransform = CGAffineTransform.scaledBy(CGAffineTransform(translationX: 1, y: 1))
-//        picker.size
-        picker.preferredContentSize = CGSize(width: view.frame.width, height: view.frame.width)
-        
-        present(picker, animated: true)
-        
+    print("present Picker!!")
+//        let someView = UIView(frame: CGRect(x: 100.0, y: screenHeight - 200, width: screenWidth - 200.0, height: 200))
+//        someView.backgroundColor = .magenta
+//
+//        someView.addSubview(recordingBtn)
+//        recordingBtn.snp.makeConstraints { make in
+//            make.left.bottom.equalToSuperview()
+//            make.height.equalTo(50)
+//            make.width.equalTo(200)
+//
+//        }
+//
+//        someView.addSubview(dismissBtn)
+//        dismissBtn.snp.makeConstraints { make in
+//            make.left.top.right.equalToSuperview()
+//            make.width.equalTo(200)
+//        }
+//
+//        picker = UIImagePickerController()
+//
+//        guard let picker = picker else { return }
+//        picker.allowsEditing = true
+//        picker.sourceType = .camera
+//        picker.delegate = self
+//        picker.mediaTypes = [kUTTypeMovie as String]
+//        picker.cameraOverlayView = someView
+//        picker.showsCameraControls = false
+//        picker.preferredContentSize = CGSize(width: view.frame.width, height: view.frame.width)
+//
+//        present(picker, animated: true)
     }
     
-    private let button: UIButton = {
-        let btn = UIButton()
-        btn.setTitle("present", for: .normal)
-        return btn
-        
-    }()
+
+    
     
     private let testView: UIView = {
         let v = UIView()
@@ -175,6 +184,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
       else {
           print("fail!")
           return }
+        
       print("success!!")
 //        picker.edi
       // If it can, save it.

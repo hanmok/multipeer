@@ -27,39 +27,13 @@ class ImageButton: ButtonWithInfo {
 
 class PositionSelectingController: UIViewController {
     
+    // MARK: - Properties
+    
     var connectionManager = ConnectionManager()
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupLayout()
-        setupTargets()
-        connectionManager.delegate = self
-        
-    }
-    
-
-    private let testImg = UIImageView().then { $0.isUserInteractionEnabled = true }
-    
-    private func setupTargets() {
-        sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
-    }
-    
-    @objc func showConnectivityAction(_ sender: UIButton) {
-        let actionSheet = UIAlertController(title: "Todo Exchange", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
-        
-        actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
-            self.connectionManager.host()
-            
-        }))
-        
-        actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
-            self.connectionManager.join()
-        }))
-        
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        self.present(actionSheet, animated: true, completion: nil)
-    }
+    var count = 0
+    var timer: Timer?
+//    private let testImg = UIImageView().then { $0.isUserInteractionEnabled = true }
     
     private let deepSquat = PositionBlockView(PositionListEnum.deepsquat)
     private let hurdleStep = PositionBlockView(PositionListEnum.hurdleStep)
@@ -75,11 +49,148 @@ class PositionSelectingController: UIViewController {
     private let rotaryStability = PositionBlockView(PositionListEnum.rotaryStability)
     private let flexionClearing = PositionBlockView(PositionListEnum.flexionClearing)
     
-    private let topView: UIView = {
-        let v = UIView()
-        v.backgroundColor = .systemPink
-        return v
-    }()
+
+    private let topView = UIView().then { $0.backgroundColor = .systemPink}
+    
+    private let sessionButton = UIButton().then {
+        $0.setTitle("Connect", for: .normal)
+        $0.setTitleColor(.green, for: .normal)
+    }
+    
+    private let connectionStateLabel = UILabel().then {
+        $0.textColor = .blue
+        $0.text = "Not Connected"
+    }
+    
+    private let durationLabel = UILabel().then { $0.textColor = .black
+        $0.text = "duration"
+    }
+    
+    private let timerTestBtn = UIButton().then { $0.setTitle("start Timer", for: .normal)
+        $0.setTitleColor(.yellow, for: .normal)
+        
+    }
+    
+    // MARK: - Life Cycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupLayout()
+        setupTargets()
+        connectionManager.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        print("viewWillAppear PositionselectingController")
+//        triggerTimer()
+    }
+ 
+    override func viewDidDisappear(_ animated: Bool) {
+        print("viewDidDisAppear POsitionselectingCOntroller")
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        print("viewWillDisAppear PositionSelectingConroller")
+    }
+
+    
+     // MARK: - Targets
+    
+    private func setupTargets() {
+        sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
+        timerTestBtn.addTarget(self, action: #selector(testBtnTapped(_:)), for: .touchUpInside)
+    }
+    
+    @objc func showConnectivityAction(_ sender: UIButton) {
+        let actionSheet = UIAlertController(title: "Connect Camera", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
+            self.connectionManager.host()
+            
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
+            self.connectionManager.join()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(actionSheet, animated: true, completion: nil)
+    }
+    
+    
+    @objc func testBtnTapped(_ sender: UIButton) {
+        connectionManager.send("test message")
+        print("test Btn Tapped!!")
+        // trigger timer
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+            guard let `self` = self else {
+                print("self is nil ")
+                return }
+            
+            print("hi!!!!!")
+            self.count += 1
+            DispatchQueue.main.async {
+                self.durationLabel.text = "\(self.count) s"
+            }
+        }
+        let cameraVC = CameraController()
+        self.present(cameraVC, animated: true)
+    }
+    
+    func triggerTimer() {
+        print("timer triggered!!")
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+            guard let `self` = self else {
+                print("self is nil ")
+                return }
+            
+            print("hi!!!!!")
+            self.count += 1
+            DispatchQueue.main.async {
+                self.durationLabel.text = "\(self.count) s"
+            }
+        }
+    }
+    
+//    @objc func triggerTimer(_ sender: UIButton) {
+//    func triggerTimer() {
+//        print("Timer triggered!")
+////        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countUp), userInfo: nil, repeats: true)
+//
+//        // not Triggered
+////        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { [weak self] _ in
+////            guard let `self` = self else {
+////                print("self is nil!!")
+////                return }
+////            self.count += 1
+////            print("helloo")
+////            DispatchQueue.main.async {
+////                self.durationLabel.text = String("\(self.count) s")
+////                print("hihi")
+////            }
+////        })
+//        // not triggered
+////        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(PositionSelectingController.countUp), userInfo: nil, repeats: true)
+//
+//        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+//            guard let `self` = self else { return }
+//
+//            print("hi!!!!!")
+//            DispatchQueue.main.async {
+//                self.durationLabel.text = String(self.count) + " s"
+//                print("updating?")
+//            }
+//        }
+//    }
+    
+    @objc func countUp() {
+        print("countUp triggered!!")
+        count += 1
+        
+        DispatchQueue.main.async {
+            self.durationLabel.text = String(self.count) + " s"
+        }
+    }
     
     @objc func btnTapped( _ sender: UIButton) {
         switch sender.tag {
@@ -90,15 +201,19 @@ class PositionSelectingController: UIViewController {
         }
     }
     
+    
     @objc func imgTapped(_ sender: ButtonWithInfo) {
+        // TODO: move to cameraView With Info
         print("img Tapped,")
         print("title: \(sender.title)")
         print("direction: \(sender.direction)")
-    
         print("sender.score: \(sender.score ?? 0)")
     }
     
     @objc func scoreTapped(_ sender: ButtonWithInfo) {
+        // TODO: if none recorded, move to cameraView With Info
+        // TODO: if Not, popup score Action to modify
+        
         print("score Tapped,")
         print("title: \(sender.title)")
         print("direction: \(sender.direction)")
@@ -106,18 +221,9 @@ class PositionSelectingController: UIViewController {
         print("sender.score: \(sender.score ?? 0)")
     }
     
-    let sessionButton: UIButton = {
-        let btn = UIButton()
-        btn.setTitle("Connect", for: .normal)
-        btn.setTitleColor(.green, for: .normal)
-        return btn
-    }()
     
-    
-    // MARK: - UI PART
+    // MARK: - UI SETUP
     private func setupLayout() {
-        
-
         
         let allViews = [deepSquat, hurdleStep, inlineLunge, ankleClearing,
                         shoulderMobility, shoulderClearing, straightLegRaise,
@@ -129,33 +235,39 @@ class PositionSelectingController: UIViewController {
             eachPosition.isUserInteractionEnabled = true // do we need it ?
         }
         
-
         
         allViews.forEach { each in
             each.isUserInteractionEnabled = true
         }
         
-        [topView].forEach { otherView in
-            self.view.addSubview(otherView)
-        }
         
+        view.addSubview(topView)
         
         topView.snp.makeConstraints { make in
             make.left.top.right.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(40)
         }
 
-        topView.addSubview(sessionButton)
+
+        [sessionButton, connectionStateLabel, durationLabel].forEach { v in
+            topView.addSubview(v)
+        }
         
         sessionButton.snp.makeConstraints { make in
             make.top.bottom.right.equalToSuperview()
             make.width.equalTo(100)
         }
         
-        topView.addSubview(testImg)
-        testImg.snp.makeConstraints { make in
-            make.leading.top.bottom.equalToSuperview()
-            make.width.equalTo(100)
+        connectionStateLabel.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.leading.equalToSuperview().offset(10)
+            make.width.equalTo(150)
+        }
+        
+        durationLabel.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.leading.equalTo(connectionStateLabel.snp.trailing)
+            make.trailing.equalTo(sessionButton.snp.leading)
         }
         
         deepSquat.snp.makeConstraints { make in
@@ -194,7 +306,7 @@ class PositionSelectingController: UIViewController {
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(3)
         }
-//
+        
         shoulderClearing.snp.makeConstraints { make in
             make.leading.equalTo(shoulderMobility.snp.trailing)
             make.top.equalTo(deepSquat.snp.bottom)
@@ -239,8 +351,19 @@ class PositionSelectingController: UIViewController {
             make.width.equalToSuperview().dividedBy(4)
         }
         
-
+        view.addSubview(timerTestBtn)
+        timerTestBtn.snp.makeConstraints { make in
+            make.leading.bottom.equalToSuperview()
+            make.top.equalTo(stabilityPushup.snp.bottom)
+            make.width.equalTo(150)
+        }
     }
+    
+    func stopTimer() {
+        timer?.invalidate()
+    }
+    
+    
 }
 
 
@@ -249,25 +372,28 @@ extension PositionSelectingController: ConnectionManagerDelegate {
         
     }
     
-    func showDuration(_ startAt: Date, _ endAt: Date) {
-        
+    func updateState(state: ConnectionState) {
+        switch state {
+        case .connected:
+        triggerTimer()
+        case .disconnected:
+            stopTimer()
+        case .connecting: break
+        }
+
+        DispatchQueue.main.async {
+            self.connectionStateLabel.text = state.rawValue
+        }
     }
     
-    func showStart(_ startAt: Date) {
-        
+    func updateDuration(in seconds: Int) {
+        DispatchQueue.main.async {
+            self.durationLabel.text = "\(seconds) s"
+        }
     }
-    
-    func updateDuration(_ startAt: Date, current: Date) {
-        
-    }
-    
-    func updateState(state: String) {
-        
-    }
-    
-    func disconnected(state: String, timeDuration: Int) {
-        
-    }
-    
-    
 }
+
+
+    
+    
+

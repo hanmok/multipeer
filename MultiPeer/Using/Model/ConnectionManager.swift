@@ -50,18 +50,16 @@ extension ConnectionManager: MCNearbyServiceAdvertiserDelegate {
     }
 }
 
-public enum ConnectionState {
+public enum ConnectionState: String {
     case connected
     case disconnected
+    case connecting
 }
 
 protocol ConnectionManagerDelegate: NSObject {
     func presentVideo()
-    func showDuration(_ startAt: Date, _ endAt: Date)
-    func showStart(_ startAt: Date)
-    func updateDuration(_ startAt: Date, current: Date )
-    func updateState(state: String)
-    func disconnected(state: String, timeDuration: Int)
+    func updateState(state: ConnectionState)
+    func updateDuration(in seconds: Int)
 }
 
 
@@ -70,7 +68,7 @@ class ConnectionManager: NSObject {
     var connectionState: ConnectionState = .disconnected
     var duration = 0
     
-     var timer: Timer?
+     var sessionTimer: Timer?
     
     static let shared = ConnectionManager()
     
@@ -78,7 +76,6 @@ class ConnectionManager: NSObject {
     
     weak var delegate: ConnectionManagerDelegate?
     
-//    static var messages: [ChatMessage] = [] // for testing
     static var peers: [MCPeerID] = []
     static var connectedToChat = false
     
@@ -124,9 +121,11 @@ class ConnectionManager: NSObject {
               let session = session else { return }
         
         let mcBrowerViewController = MCBrowserViewController(serviceType: ConnectionManager.service, session: session)
-        
+        mcBrowerViewController.modalPresentationStyle = .formSheet
         mcBrowerViewController.delegate = self
+//        present(mcBrowerViewController)
         window.rootViewController?.present(mcBrowerViewController, animated: true)
+//        window.pres
     }
     
     func host() {
@@ -151,21 +150,41 @@ class ConnectionManager: NSObject {
     }
     
     @objc func updateTime() {
-        delegate?.updateDuration(startTime, current: Date())
+//        delegate?.updateDuration(startTime, current: Date())
     }
     
     func startDurationTimer() {
         print("connection timer has started!")
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-            guard let `self` = self else { return }
+//        sessionTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+//            guard let `self` = self else { return }
+//
+//
+//            self.duration += 1
+//            self.delegate?.updateDuration(in: self.duration)
+//
+//            print("ConnectionManager.duration: \(self.duration)")
+//        }
+        
+        
+        sessionTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+            guard let `self` = self else {
+                print("self is nil ")
+                return }
             
-//            self.secondsOfTimer += 1
-//            self?.duration += 1
+            print("hi!!!!!")
+//            self.count += 1
             self.duration += 1
-            print("ConnectionManager.duration: \(self.duration)")
-//            self.timerLabel.text = Double(self.secondsOfTimer).format(units: [.hour ,.minute, .second])
+            self.delegate?.updateDuration(in: self.duration)
+            
+//            DispatchQueue.main.async {
+//                self.durationLabel.text = "\(self.count) s"
+//            }
         }
+        
+        
     }
+
+    
 }
 
 
@@ -207,8 +226,8 @@ extension ConnectionManager: MCSessionDelegate {
             print("state: connected !")
             startTime = Date()
             
-            delegate?.showStart(startTime)
-            delegate?.updateState(state: "connected!")
+//            delegate?.showStart(startTime)
+            delegate?.updateState(state: .connected)
             
             NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.connectedKey), object: nil)
             
@@ -225,12 +244,14 @@ extension ConnectionManager: MCSessionDelegate {
             
             endTime = Date()
             
-            delegate?.updateState(state: "not connected!")
+//            delegate?.updateState(state: "not connected!")
+            delegate?.updateState(state: .disconnected)
             
             
             NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.disconnectedKey), object: nil)
             
-            delegate?.disconnected(state: "disconnected!", timeDuration: Int(endTime.timeIntervalSince1970 - startTime.timeIntervalSince1970))
+//            delegate?.disconnected(state: "disconnected!", timeDuration: Int(endTime.timeIntervalSince1970 - startTime.timeIntervalSince1970))
+        
             print("disconnected!!")
         case .connecting:
             print("it's connecting .. ")

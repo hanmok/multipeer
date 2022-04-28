@@ -132,7 +132,6 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
         setupTarget()
         
         connectionManager.delegate = self
-//        videoHelper.delegate = self
         
         addNotifications()
         
@@ -149,12 +148,11 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
     @objc func orderStartRecording(_ notification: Notification) {
         print("flag4")
         print("orderStartRecording!")
-        // 여기 코드가 문제임..
+        
         connectionManager.send(OrderMessageTypes.startRecording)
     }
 
     @objc func orderStopRecording(_ notification: Notification) {
-//        print("orderStopRecording!")
         connectionManager.send(OrderMessageTypes.stopRecording)
     }
 
@@ -326,6 +324,14 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
 
 // MARK: - ConnectionManagerDelegate
 extension MainViewController: ConnectionManagerDelegate {
+    func updateDuration(in seconds: Int) {
+        
+    }
+    
+    func updateState(state: ConnectionState) {
+        
+    }
+    
     
 
     func updateState(state: String) {
@@ -360,7 +366,6 @@ extension MainViewController: ConnectionManagerDelegate {
             self.durationLabel.text = ""
             self.endTimeLabel.text = ""
         }
-        
     }
     
     func updateDuration(_ startAt: Date, current: Date) {

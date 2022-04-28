@@ -213,7 +213,7 @@ class RecordingViewController: SwiftyCamViewController, SwiftyCamViewControllerD
             self.connectionDurationLabel.text = "remained for \(self.maxSessionDuration) s"
         }
         
-        connectionManager.timer?.invalidate()
+        connectionManager.sessionTimer?.invalidate()
         
     }
     
