@@ -12,6 +12,26 @@ import Photos
 
 class CameraController: UIViewController {
 
+    let positionTitle: String
+    let direction: PositionDirection
+    var score: Int?
+    
+    var connectionManger: ConnectionManager
+    
+//    init(positionTitle: String, direction: PositionDirection, score: Int?, connectionManager: ConnectionManager) {
+    
+    init(positionWithDirectionInfo: PositionWithDirectionInfo, connectionManager: ConnectionManager) {
+        self.positionTitle = positionWithDirectionInfo.title
+        self.direction = positionWithDirectionInfo.direction
+        self.score = positionWithDirectionInfo.score
+        self.connectionManger = connectionManager
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private var picker : UIImagePickerController?
     private var isRecording = false
     
@@ -20,6 +40,7 @@ class CameraController: UIViewController {
         setupLayout()
         setupAddTargets()
         presentPicker()
+//        connectionManger.send
     }
     
     @objc func video(_ videoPath: String, didFinishSavingWithError error: Error?, contextInfo info: AnyObject) {
@@ -189,17 +210,9 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         // Save Video To Photos Album
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
         
-        dismiss(animated: true)
+//        dismiss(animated: true)
     }
-    
-    
-    
-    
-    
-    
 }
-
-
 
 
 public var screenWidth: CGFloat {

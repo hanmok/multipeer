@@ -37,6 +37,8 @@ import AVFoundation
 //    }
 //}
 
+
+
 public enum OrderMessageTypes {
     static let presentCamera = "presentCamera"
     static let startRecording = "startRecording"
@@ -96,10 +98,10 @@ class ConnectionManager: NSObject {
     var endTime = Date()
     
     func send(_ message: String) {
-        
+
 //        let chatMessage = ChatMessage(displayName: myPeerId.displayName, body: message)
 //        ConnectionManager.messages.append(chatMessage)
-        
+
         guard let session = session,
               let data = message.data(using: .utf8),
               !session.connectedPeers.isEmpty else { return }
@@ -110,10 +112,41 @@ class ConnectionManager: NSObject {
         }
     }
     
+    func send(_ message: MessageType) {
+
+        let encoder = JSONEncoder()
+
+        guard let session = session else { return }
+        
+        do {
+            let data = try encoder.encode(message)
+            try session.send(data, toPeers: session.connectedPeers, with: .reliable)
+        } catch {
+            print(error.localizedDescription)
+            fatalError("Fatal Error during encoding!!", file: #function)
+        }
+    }
+    
+    
+    
+    func send(_ position: DetailPositionWIthMsgInfo) {
+        
+        let encoder = JSONEncoder()
+
+        guard let session = session else { return }
+        
+        do {
+            let data = try encoder.encode(position)
+            try session.send(data, toPeers: session.connectedPeers, with: .reliable)
+        } catch {
+            print(error.localizedDescription)
+            fatalError("Fatal Error during encoding!!", file: #function)
+        }
+    }
+    
     func join() {
         ConnectionManager.peers.removeAll()
-//        ConnectionManager.messages.removeAll()
-        
+
         session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .required)
         session?.delegate = self
         
@@ -123,15 +156,13 @@ class ConnectionManager: NSObject {
         let mcBrowerViewController = MCBrowserViewController(serviceType: ConnectionManager.service, session: session)
         mcBrowerViewController.modalPresentationStyle = .formSheet
         mcBrowerViewController.delegate = self
-//        present(mcBrowerViewController)
+
         window.rootViewController?.present(mcBrowerViewController, animated: true)
-//        window.pres
     }
     
     func host() {
         isHosting = true
         ConnectionManager.peers.removeAll()
-//        ConnectionManager.messages.removeAll()
         ConnectionManager.connectedToChat = true
         session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .required)
         session?.delegate = self
@@ -144,7 +175,6 @@ class ConnectionManager: NSObject {
         isHosting = false
         ConnectionManager.connectedToChat = false
         advertiserAssistant?.stopAdvertisingPeer()
-//        ConnectionManager.messages.removeAll()
         session = nil
         advertiserAssistant = nil
     }
@@ -155,16 +185,6 @@ class ConnectionManager: NSObject {
     
     func startDurationTimer() {
         print("connection timer has started!")
-//        sessionTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-//            guard let `self` = self else { return }
-//
-//
-//            self.duration += 1
-//            self.delegate?.updateDuration(in: self.duration)
-//
-//            print("ConnectionManager.duration: \(self.duration)")
-//        }
-        
         
         sessionTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
             guard let `self` = self else {
@@ -172,48 +192,55 @@ class ConnectionManager: NSObject {
                 return }
             
             print("hi!!!!!")
-//            self.count += 1
             self.duration += 1
             self.delegate?.updateDuration(in: self.duration)
             
-//            DispatchQueue.main.async {
-//                self.durationLabel.text = "\(self.count) s"
-//            }
         }
-        
-        
     }
-
-    
 }
 
 
 extension ConnectionManager: MCSessionDelegate {
     
-
+//didreceive
+    
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        
-        guard let orderMessage = String(data: data, encoding: .utf8) else { return }
-        
-        switch orderMessage {
+        print("data received via ConnectionManager !!")
+        let jsonDecoder = JSONDecoder()
+        do {
+            let positionInfoWithMsg = try jsonDecoder.decode(DetailPositionWIthMsgInfo.self, from: data)
             
-        case OrderMessageTypes.presentCamera:
-            delegate?.presentVideo()
+            let detailInfo = positionInfoWithMsg.detailInfo
+            let msg = positionInfoWithMsg.message
             
-        case OrderMessageTypes.startRecording:
-            print("received data: \(OrderMessageTypes.startRecording)")
+            let detailInfoDic: [AnyHashable: Any] = ["title": detailInfo.title,"direction": detailInfo.direction, "score": detailInfo.score ?? -1 ]
             
-            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.startRecordingKey), object: nil)
-            
-        case OrderMessageTypes.stopRecording:
-            print("received data: \(OrderMessageTypes.stopRecording)")
-            
-            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.stopRecordingKey), object: nil)
-            
-        default:
-            break
-            
+            switch msg {
+                
+            case .presentCamera:
+                // TODO: Send Message with position Info
+                
+                NotificationCenter.default.post(name: NotificationKeys.presentCamera, object: nil, userInfo: detailInfoDic)
+                print("NotificationKey named presentCamera has posted.")
+                break
+            case .startRecording:
+                NotificationCenter.default.post(name: NotificationKeys.startRecording, object: nil, userInfo: nil)
+                
+                // TODO: Send Message with position Info
+                
+                break
+            case .stopRecording:
+                NotificationCenter.default.post(name: NotificationKeys.stopRecording, object: nil, userInfo: nil)
+                // TODO: Send Message with position Info
+                break
+            case .none:
+                // TODO: Nothing !
+                break
+            }
+        } catch {
+            fatalError("Fatal Error during decoding!!")
         }
+        
     }
     
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
@@ -226,10 +253,9 @@ extension ConnectionManager: MCSessionDelegate {
             print("state: connected !")
             startTime = Date()
             
-//            delegate?.showStart(startTime)
             delegate?.updateState(state: .connected)
             
-            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.connectedKey), object: nil)
+//            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.connectedKey), object: nil)
             
             self.startDurationTimer()
             
@@ -248,7 +274,7 @@ extension ConnectionManager: MCSessionDelegate {
             delegate?.updateState(state: .disconnected)
             
             
-            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.disconnectedKey), object: nil)
+//            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.disconnectedKey), object: nil)
             
 //            delegate?.disconnected(state: "disconnected!", timeDuration: Int(endTime.timeIntervalSince1970 - startTime.timeIntervalSince1970))
         

@@ -10,14 +10,13 @@ import SnapKit
 
 
 
-// has no idea for direction
+// title, direction, Score
 class ScoreBtnView: ButtonWithInfo {
     
     override init(title: String = "", direction: PositionDirection = .neutral, score: Int? = nil, frame: CGRect = .zero) {
         super.init(title: title, direction: direction, score: score, frame: frame)
-        let anotherSelf = self as ButtonWithInfo
         
-        self.addTarget(nil, action: #selector(PositionSelectingController.scoreTapped(_:)), for: .touchUpInside)
+        self.addTarget(nil, action: #selector(PositionController.scoreTapped(_:)), for: .touchUpInside)
         loadView()
 
     }
@@ -32,16 +31,16 @@ class ScoreBtnView: ButtonWithInfo {
         }
         
         
-        if let validScore = score {
+        if let validScore = positionWithDirectionInfo.score {
             scoreLabel.text = String(validScore)
             print("validScore : \(validScore)")
         } else {
-            switch direction {
+            switch positionWithDirectionInfo.direction {
             case .right: scoreLabel.text = "R"
             case .left: scoreLabel.text = "L"
             case .neutral: scoreLabel.text = "N"
             }
-            print("direction: \(direction)")
+            print("direction: \(positionWithDirectionInfo.direction)")
         }
         scoreLabel.textAlignment = .center
         scoreLabel.textColor = .magenta
@@ -62,38 +61,3 @@ class ScoreBtnView: ButtonWithInfo {
 }
 
 
-class ImgBtnView: ButtonWithInfo {
-    
-    override init(title: String = "", direction: PositionDirection = .neutral, score: Int? = nil, frame: CGRect = .zero) {
-        super.init(title: title, direction: direction, score: score, frame: frame)
-//        let anotherSelf = self as! ButtonWithInfo
-        
-        self.addTarget(nil, action: #selector(PositionSelectingController.imgTapped(_:)), for: .touchUpInside)
-//        loadView()
-
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-
-class ButtonWithInfo: UIButton {
-    var title: String
-    var direction: PositionDirection
-    var score: Int? // could be nil if not proceed yet.
-    
-    init( title: String, direction: PositionDirection, score: Int? = nil, frame: CGRect = .zero) {
-        self.title = title
-        self.direction = direction
-        self.score = score
-        super.init(frame: frame)
-        
-        self.addTarget(nil, action: #selector(PositionSelectingController.imgTapped(_:)), for: .touchUpInside)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}

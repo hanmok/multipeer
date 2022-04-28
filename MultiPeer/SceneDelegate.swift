@@ -21,8 +21,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
 
-//        window?.rootViewController = PositionSelectingController()
-        window?.rootViewController = CameraController()
+        window?.rootViewController = PositionController()
+//        window?.rootViewController = CameraController()
 
         window?.makeKeyAndVisible()
     }

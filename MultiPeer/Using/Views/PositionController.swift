@@ -11,21 +11,7 @@ import Then
 
 
 
-
-// This is Main Screen From now on.. ^_^
-
-class ImageButton: ButtonWithInfo {
-    override init(title: String, direction: PositionDirection = .neutral, score: Int? = nil, frame: CGRect = .zero) {
-        super.init(title: title, direction: direction, score: score, frame: frame)
-        self.addTarget(nil, action: #selector(PositionSelectingController.imgTapped(_:)), for: .touchUpInside)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class PositionSelectingController: UIViewController {
+class PositionController: UIViewController {
     
     // MARK: - Properties
     
@@ -33,7 +19,6 @@ class PositionSelectingController: UIViewController {
 
     var count = 0
     var timer: Timer?
-//    private let testImg = UIImageView().then { $0.isUserInteractionEnabled = true }
     
     private let deepSquat = PositionBlockView(PositionListEnum.deepsquat)
     private let hurdleStep = PositionBlockView(PositionListEnum.hurdleStep)
@@ -79,6 +64,7 @@ class PositionSelectingController: UIViewController {
         setupLayout()
         setupTargets()
         connectionManager.delegate = self
+        addNotificationObservers()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -93,12 +79,15 @@ class PositionSelectingController: UIViewController {
         print("viewWillDisAppear PositionSelectingConroller")
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     
      // MARK: - Targets
     
     private func setupTargets() {
         sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
-        timerTestBtn.addTarget(self, action: #selector(testBtnTapped(_:)), for: .touchUpInside)
+//        timerTestBtn.addTarget(self, action: #selector(testBtnTapped(_:)), for: .touchUpInside)
     }
     
     @objc func showConnectivityAction(_ sender: UIButton) {
@@ -118,24 +107,28 @@ class PositionSelectingController: UIViewController {
     }
     
     
-    @objc func testBtnTapped(_ sender: UIButton) {
-        connectionManager.send("test message")
-        print("test Btn Tapped!!")
-        // trigger timer
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-            guard let `self` = self else {
-                print("self is nil ")
-                return }
-            
-            print("hi!!!!!")
-            self.count += 1
-            DispatchQueue.main.async {
-                self.durationLabel.text = "\(self.count) s"
-            }
-        }
-        let cameraVC = CameraController()
-        self.present(cameraVC, animated: true)
-    }
+//    @objc func testBtnTapped(_ sender: UIButton) {
+//        connectionManager.send("test message")
+//        print("test Btn Tapped!!")
+//        // trigger timer
+//        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+//            guard let `self` = self else {
+//                print("self is nil ")
+//                return }
+//
+//            print("hi!!!!!")
+//            self.count += 1
+//            DispatchQueue.main.async {
+//                self.durationLabel.text = "\(self.count) s"
+//            }
+//        }
+//
+//        let cameraVC = CameraController(
+//            positionTitle: "hi", direction: .left, score: 0,
+//            connectionManager: connectionManager)
+//
+//        self.present(cameraVC, animated: true)
+//    }
     
     func triggerTimer() {
         print("timer triggered!!")
@@ -183,6 +176,11 @@ class PositionSelectingController: UIViewController {
 //        }
 //    }
     
+    
+    private func stopTimer() {
+        timer?.invalidate()
+    }
+    
     @objc func countUp() {
         print("countUp triggered!!")
         count += 1
@@ -205,9 +203,26 @@ class PositionSelectingController: UIViewController {
     @objc func imgTapped(_ sender: ButtonWithInfo) {
         // TODO: move to cameraView With Info
         print("img Tapped,")
-        print("title: \(sender.title)")
-        print("direction: \(sender.direction)")
-        print("sender.score: \(sender.score ?? 0)")
+        let positionWithDirectionInfo = sender.positionWithDirectionInfo
+        
+        let title = positionWithDirectionInfo.title
+        let direction = positionWithDirectionInfo.direction
+        let score = positionWithDirectionInfo.score
+        
+        connectionManager.send(DetailPositionWIthMsgInfo(message: .presentCamera, detailInfo: PositionWithDirectionInfo(title: title, direction: direction, score: score)))
+        print("connectionManager has sent message")
+//        print("title: \(sender.title)")
+        print("title: \(sender.positionWithDirectionInfo.title)")
+//        print("direction: \(sender.direction)")
+        print("direction: \(sender.positionWithDirectionInfo.direction)")
+//        print("sender.score: \(sender.score ?? 0)")
+        print("sender.score: \(sender.positionWithDirectionInfo.score ?? 0)")
+        
+        let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: connectionManager)
+        
+        DispatchQueue.main.async {
+            self.present(cameraVC, animated: true)
+        }
     }
     
     @objc func scoreTapped(_ sender: ButtonWithInfo) {
@@ -215,12 +230,60 @@ class PositionSelectingController: UIViewController {
         // TODO: if Not, popup score Action to modify
         
         print("score Tapped,")
-        print("title: \(sender.title)")
-        print("direction: \(sender.direction)")
+//        print("title: \(sender.title)")
+        print("title: \(sender.positionWithDirectionInfo.title)")
+//        print("direction: \(sender.direction)")
+        print("direction: \(sender.positionWithDirectionInfo.direction)")
     
-        print("sender.score: \(sender.score ?? 0)")
+//        print("sender.score: \(sender.score ?? 0)")
+        print("sender.score: \(sender.positionWithDirectionInfo.score ?? 0)")
+    }
+    // observer, add observer
+    private func addNotificationObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(presentCamera(_:)),
+                                               name: NotificationKeys.presentCamera, object: nil)
     }
     
+    @objc func presentCamera(_ notification: Notification) {
+        print("presentCamera triggered by observing notification")
+        
+        
+        
+        guard let title = notification.userInfo?["title"] as? String,
+              let direction = notification.userInfo?["direction"] as? PositionDirection,
+              let score = notification.userInfo?["score"] as? Int? else {
+            print("failed to converting userInfo back.")
+            return }
+        
+//        if let title = notification.userInfo?["title"] as? String {
+//            print("successfully got title! \(title)")
+//            if let direction = notification.userInfo?["direction"] as? PositionDirection {
+//                print("successfully got direction! \(direction)")
+//                if let score = notification.userInfo?["score"] as? Int {
+//                    print("successfully got score! \(score)")
+//
+//                    let positionWithDirectionInfo = PositionWithDirectionInfo(title: title, direction: direction, score: score)
+//
+//                    let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: connectionManager)
+//
+//                    DispatchQueue.main.async {
+//                        self.present(cameraVC, animated: true)
+//                    }
+//
+//                }
+//            }
+//        }
+        
+        let positionWithDirectionInfo = PositionWithDirectionInfo(title: title, direction: direction, score: score)
+
+        let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: connectionManager)
+
+        DispatchQueue.main.async {
+            self.present(cameraVC, animated: true)
+        }
+        
+        
+    }
     
     // MARK: - UI SETUP
     private func setupLayout() {
@@ -359,15 +422,13 @@ class PositionSelectingController: UIViewController {
         }
     }
     
-    func stopTimer() {
-        timer?.invalidate()
-    }
     
     
 }
 
 
-extension PositionSelectingController: ConnectionManagerDelegate {
+extension PositionController: ConnectionManagerDelegate {
+    
     func presentVideo() {
         
     }

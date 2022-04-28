@@ -12,7 +12,7 @@ import Then
 
 class PositionBlockView: UIView {
     
-    var positionBlock: Position {
+    var positionBlock: PositionInfo {
         didSet {
             DispatchQueue.main.async {
                 self.loadView()
@@ -38,7 +38,7 @@ class PositionBlockView: UIView {
     
     let nameLabel = UILabel()
     
-    init(_ positionBlock: Position, frame: CGRect = .zero) {
+    init(_ positionBlock: PositionInfo, frame: CGRect = .zero) {
         self.positionBlock = positionBlock
         super.init(frame: frame)
         loadView()

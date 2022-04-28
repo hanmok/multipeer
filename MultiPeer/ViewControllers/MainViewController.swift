@@ -12,30 +12,6 @@ import AVFoundation
 import MobileCoreServices
 
 
-public enum NotificationKeys {
-
-
-    // ViewController -> ImagePickerCOntroller
-    static let startRecordingFromVC = "startRecordingFromVC"
-
-    // New
-    static let presentVideoKey = "presentVideo"
-    static let startRecordingKey = "startRecording"
-    static let stopRecordingKey = "stopRecording"
-    static let disconnectedKey = "disconnected"
-    
-    static let connectedKey = "connected"
-    
-}
-
-struct OrderMessage: Identifiable, Equatable, Codable {
-
-    var id = UUID()
-
-    var orderTypeString: String
-}
-
-
 
 
 protocol MainVCDelegate: NSObject {
@@ -140,7 +116,7 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
     }
     
     func addNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(presentNewVideo), name: Notification.Name(NotificationKeys.presentVideoKey), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(presentNewVideo), name: Notification.Name(NotificationKeys.presentVideoKey), object: nil)
     }
     
     
@@ -189,7 +165,7 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
       
     }
     
-    func setupTarget() {
+    private func setupTarget() {
         
         sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
         
@@ -198,12 +174,19 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
         uiButton.addTarget(self, action: #selector(moveToUIView(_:)), for: .touchUpInside)
     }
     
+    private func addNotificationObserver() {
+       
+    }
+    
+    
+    
+    
     @objc func moveToUIView(_ sender: UIButton) {
         moveToUIView()
     }
     
     func moveToUIView() {
-        let vc = PositionSelectingController()
+        let vc = PositionController()
         
         DispatchQueue.main.async {
             vc.modalPresentationStyle = .fullScreen
@@ -223,12 +206,12 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
     }
     
     @objc func presentNewVideo() {
-        let recordingVC = RecordingViewController(connectionManager: connectionManager, vcTimer: count)
+//        let recordingVC = RecordingViewController(connectionManager: connectionManager, vcTimer: count)
 
         DispatchQueue.main.async {
-            recordingVC.modalPresentationStyle = .fullScreen
+//            recordingVC.modalPresentationStyle = .fullScreen
 
-            self.present(recordingVC, animated: true)
+//            self.present(recordingVC, animated: true)
         }
     }
     
@@ -238,7 +221,7 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
 
         connectionManager.send(OrderMessageTypes.presentCamera)
         
-        NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.presentVideoKey), object: nil)
+//        NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.presentVideoKey), object: nil)
         
         presentNewVideo()
         

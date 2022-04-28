@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2265AC022816918700E0FCCF /* PositionSelectingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC012816918700E0FCCF /* PositionSelectingController.swift */; };
+		2265AC022816918700E0FCCF /* PositionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC012816918700E0FCCF /* PositionController.swift */; };
 		2265AC0528169D6C00E0FCCF /* PositionBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */; };
 		2265AC072816A11E00E0FCCF /* ScoreBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */; };
-		2265AC0928177FD800E0FCCF /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC0828177FD800E0FCCF /* Position.swift */; };
+		2265AC0928177FD800E0FCCF /* PositionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC0828177FD800E0FCCF /* PositionInfo.swift */; };
 		2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC4D2817F42300E0FCCF /* CameraController.swift */; };
 		226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226E0445280EBBE4004A8A28 /* RecordingViewController.swift */; };
 		2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */; };
@@ -22,6 +22,9 @@
 		2282DD8F28164707008928A4 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD8E28164707008928A4 /* PreviewView.swift */; };
 		2282DD912816473C008928A4 /* SwiftyCamButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD902816473C008928A4 /* SwiftyCamButton.swift */; };
 		2282DD9328167944008928A4 /* SwiftyRecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD9228167944008928A4 /* SwiftyRecordButton.swift */; };
+		2283BEBE281A5F5E007D74FC /* ImgBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEBD281A5F5E007D74FC /* ImgBtnView.swift */; };
+		2283BEC0281A5F78007D74FC /* ButtonWithInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */; };
+		2283BEC2281A884F007D74FC /* NotificationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC1281A884F007D74FC /* NotificationKeys.swift */; };
 		228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A32E92812A5EF00AC3447 /* ZoomRelated.swift */; };
 		228B88372806577A007A6842 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88362806577A007A6842 /* AppDelegate.swift */; };
 		228B88392806577A007A6842 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88382806577A007A6842 /* SceneDelegate.swift */; };
@@ -35,10 +38,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2265AC012816918700E0FCCF /* PositionSelectingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionSelectingController.swift; sourceTree = "<group>"; };
+		2265AC012816918700E0FCCF /* PositionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionController.swift; sourceTree = "<group>"; };
 		2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionBlockView.swift; sourceTree = "<group>"; };
 		2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBtnView.swift; sourceTree = "<group>"; };
-		2265AC0828177FD800E0FCCF /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
+		2265AC0828177FD800E0FCCF /* PositionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionInfo.swift; sourceTree = "<group>"; };
 		2265AC4D2817F42300E0FCCF /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		226E0445280EBBE4004A8A28 /* RecordingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatManagerFromRay.swift; sourceTree = "<group>"; };
@@ -50,6 +53,9 @@
 		2282DD8E28164707008928A4 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		2282DD902816473C008928A4 /* SwiftyCamButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyCamButton.swift; sourceTree = "<group>"; };
 		2282DD9228167944008928A4 /* SwiftyRecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyRecordButton.swift; sourceTree = "<group>"; };
+		2283BEBD281A5F5E007D74FC /* ImgBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImgBtnView.swift; sourceTree = "<group>"; };
+		2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWithInfo.swift; sourceTree = "<group>"; };
+		2283BEC1281A884F007D74FC /* NotificationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationKeys.swift; sourceTree = "<group>"; };
 		228A32E92812A5EF00AC3447 /* ZoomRelated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomRelated.swift; sourceTree = "<group>"; };
 		228B88332806577A007A6842 /* MultiPeer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MultiPeer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B88362806577A007A6842 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -82,10 +88,12 @@
 			isa = PBXGroup;
 			children = (
 				2265AC4D2817F42300E0FCCF /* CameraController.swift */,
-				2265AC012816918700E0FCCF /* PositionSelectingController.swift */,
+				2265AC012816918700E0FCCF /* PositionController.swift */,
 				2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */,
-				2265AC0828177FD800E0FCCF /* Position.swift */,
+				2265AC0828177FD800E0FCCF /* PositionInfo.swift */,
 				2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */,
+				2283BEBD281A5F5E007D74FC /* ImgBtnView.swift */,
+				2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -142,7 +150,6 @@
 				228B883C2806577B007A6842 /* Main.storyboard */,
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				22ADC439281A226700B1C639 /* Using */,
-				228A32E92812A5EF00AC3447 /* ZoomRelated.swift */,
 				22ADC438281A200300B1C639 /* NotUsing */,
 				228B883F28065784007A6842 /* Assets.xcassets */,
 				228B884128065784007A6842 /* LaunchScreen.storyboard */,
@@ -156,6 +163,7 @@
 			children = (
 				2278625E2807EB8300C9EB79 /* ConnectionManager.swift */,
 				22ADC436281947C100B1C639 /* PositionDirection.swift */,
+				2283BEC1281A884F007D74FC /* NotificationKeys.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -163,6 +171,7 @@
 		22ADC438281A200300B1C639 /* NotUsing */ = {
 			isa = PBXGroup;
 			children = (
+				228A32E92812A5EF00AC3447 /* ZoomRelated.swift */,
 			);
 			path = NotUsing;
 			sourceTree = "<group>";
@@ -313,21 +322,24 @@
 				2282DD912816473C008928A4 /* SwiftyCamButton.swift in Sources */,
 				2282DD9328167944008928A4 /* SwiftyRecordButton.swift in Sources */,
 				227862632808024900C9EB79 /* VideoHelper.swift in Sources */,
+				2283BEC0281A5F78007D74FC /* ButtonWithInfo.swift in Sources */,
 				226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */,
 				228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */,
 				22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */,
 				228B883B2806577A007A6842 /* MainViewController.swift in Sources */,
 				2265AC0528169D6C00E0FCCF /* PositionBlockView.swift in Sources */,
 				2282DD8D281646E0008928A4 /* Orientation.swift in Sources */,
+				2283BEC2281A884F007D74FC /* NotificationKeys.swift in Sources */,
 				2265AC072816A11E00E0FCCF /* ScoreBtnView.swift in Sources */,
 				2282DD8F28164707008928A4 /* PreviewView.swift in Sources */,
 				2282DD882816466A008928A4 /* SwiftyCamViewController.swift in Sources */,
 				2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */,
 				22ADC437281947C100B1C639 /* PositionDirection.swift in Sources */,
-				2265AC022816918700E0FCCF /* PositionSelectingController.swift in Sources */,
+				2265AC022816918700E0FCCF /* PositionController.swift in Sources */,
 				228B88372806577A007A6842 /* AppDelegate.swift in Sources */,
 				2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */,
-				2265AC0928177FD800E0FCCF /* Position.swift in Sources */,
+				2283BEBE281A5F5E007D74FC /* ImgBtnView.swift in Sources */,
+				2265AC0928177FD800E0FCCF /* PositionInfo.swift in Sources */,
 				228B88392806577A007A6842 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
