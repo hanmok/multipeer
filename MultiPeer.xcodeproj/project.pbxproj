@@ -145,6 +145,7 @@
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				22ADC435281947A900B1C639 /* Model */,
 				228A32E92812A5EF00AC3447 /* ZoomRelated.swift */,
+				22ADC438281A200300B1C639 /* NotUsing */,
 				228B883F28065784007A6842 /* Assets.xcassets */,
 				228B884128065784007A6842 /* LaunchScreen.storyboard */,
 				228B884428065784007A6842 /* Info.plist */,
@@ -158,6 +159,13 @@
 				22ADC436281947C100B1C639 /* PositionDirection.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		22ADC438281A200300B1C639 /* NotUsing */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = NotUsing;
 			sourceTree = "<group>";
 		};
 		6C823DBE391EE5CB5A4C0AA5 /* Pods */ = {

@@ -15,7 +15,7 @@ class ScoreBtnView: ButtonWithInfo {
     
     override init(title: String = "", direction: PositionDirection = .neutral, score: Int? = nil, frame: CGRect = .zero) {
         super.init(title: title, direction: direction, score: score, frame: frame)
-        let anotherSelf = self as! ButtonWithInfo
+        let anotherSelf = self as ButtonWithInfo
         
         self.addTarget(nil, action: #selector(PositionSelectingController.scoreTapped(_:)), for: .touchUpInside)
         loadView()
@@ -34,19 +34,21 @@ class ScoreBtnView: ButtonWithInfo {
         
         if let validScore = score {
             scoreLabel.text = String(validScore)
+            print("validScore : \(validScore)")
         } else {
             switch direction {
             case .right: scoreLabel.text = "R"
             case .left: scoreLabel.text = "L"
             case .neutral: scoreLabel.text = "N"
             }
+            print("direction: \(direction)")
         }
         scoreLabel.textAlignment = .center
+        scoreLabel.textColor = .magenta
         
         self.layer.borderColor = UIColor.blue.cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 20
-        
     }
     
     let scoreLabel: UILabel = {

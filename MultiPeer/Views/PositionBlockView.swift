@@ -9,12 +9,6 @@ import UIKit
 import SnapKit
 import Then
 
-/// implement tap gesture recognizer to be button
-///
-
-
-
-
 
 class PositionBlockView: UIView {
     
@@ -26,16 +20,15 @@ class PositionBlockView: UIView {
         }
     }
     
-    let imageView1 = UIImageView().then{ $0.isUserInteractionEnabled = true
+    let imageView1 = UIImageView().then{
+        $0.isUserInteractionEnabled = true
         $0.backgroundColor = .blue
     }
     
-    let imageView2 = UIImageView().then { $0.isUserInteractionEnabled = true
+    let imageView2 = UIImageView().then {
+        $0.isUserInteractionEnabled = true
         $0.backgroundColor = .orange
     }
-    
-//    var imgBtnLeft: ButtonWithInfo = ButtonWithInfo(title: "", direction: .neutral)
-//    var imgBtnRight: ButtonWithInfo = ButtonWithInfo(title: "", direction: .neutral)
     
     var imgBtnLeft = ImgBtnView(title: "", direction: .neutral)
     var imgBtnRight = ImgBtnView(title: "", direction: .neutral)

@@ -14,16 +14,10 @@ import MobileCoreServices
 
 public enum NotificationKeys {
 
-    // ImagePickerController -> ViewController
-//    static let startRecordingFromIPC = "startRecordingFromIPC"
-//    static let stopRecordingFromIPC = "stopRecordingFromIPC"
-//    static let saveFromIPC = "saveFromIPC"
 
     // ViewController -> ImagePickerCOntroller
     static let startRecordingFromVC = "startRecordingFromVC"
-//    static let stopRecordingFromVC = "stopRecordingFromVC"
 
-    
     // New
     static let presentVideoKey = "presentVideo"
     static let startRecordingKey = "startRecording"
@@ -55,8 +49,6 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
     weak var delegate: MainVCDelegate?
     
     var connectionManager = ConnectionManager()
-    
-//    let recordingVC = RecordingViewController(connectionManager: connectionmana)
     
     // MARK: - Properties
 //    var videoHelper = VideoHelper()
@@ -134,6 +126,7 @@ class MainViewController: UIViewController, UINavigationBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("mainVC has been loaded!")
         
         setupLayout()
         setupTarget()
