@@ -72,6 +72,9 @@ class PositionBlockView: UIView {
         }
         
         if positionBlock.leftRight {
+            print("imageName[0]: \(positionBlock.imageName[0])")
+            print("imageName[1]: \(positionBlock.imageName[1])")
+            
             imageView1.image = UIImage(imageLiteralResourceName: positionBlock.imageName[0])
             imageView2.image = UIImage(imageLiteralResourceName: positionBlock.imageName[1])
             
@@ -80,7 +83,6 @@ class PositionBlockView: UIView {
             
             let imageStackView = UIStackView(arrangedSubviews: [imageView1, imageView2])
             self.addSubview(imageStackView)
-            
             
             imageStackView.distribution = .fillEqually
             imageStackView.spacing = 10
@@ -127,7 +129,7 @@ class PositionBlockView: UIView {
             allViews.forEach { view in
                 self.addSubview(view)
             }
-            
+            print("imageName: \(positionBlock.imageName[0])")
             imageView1.image = UIImage(imageLiteralResourceName: positionBlock.imageName[0])
             imageView1.snp.makeConstraints { make in
                 make.left.top.equalToSuperview().offset(10)
