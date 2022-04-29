@@ -68,15 +68,15 @@ class PositionController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        print("viewWillAppear PositionselectingController")
+        print("viewWillAppear PositionController")
 //        triggerTimer()
     }
  
     override func viewDidDisappear(_ animated: Bool) {
-        print("viewDidDisAppear POsitionselectingCOntroller")
+        print("viewDidDisAppear POsitionController")
     }
     override func viewWillDisappear(_ animated: Bool) {
-        print("viewWillDisAppear PositionSelectingConroller")
+        print("viewWillDisAppear PositionConroller")
     }
 
     deinit {
