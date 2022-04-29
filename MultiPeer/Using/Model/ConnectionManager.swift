@@ -206,6 +206,8 @@ extension ConnectionManager: MCSessionDelegate {
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         print("data received via ConnectionManager !!")
+        // Type 을 나눠야해요 ..
+        
         let jsonDecoder = JSONDecoder()
         do {
             let positionInfoWithMsg = try jsonDecoder.decode(DetailPositionWIthMsgInfo.self, from: data)
@@ -224,22 +226,33 @@ extension ConnectionManager: MCSessionDelegate {
                 print("NotificationKey named presentCamera has posted.")
                 break
             case .startRecording:
-                NotificationCenter.default.post(name: NotificationKeys.startRecording, object: nil, userInfo: nil)
-                
                 // TODO: Send Message with position Info
-                
-                break
+                print("post startRecording !!")
+                NotificationCenter.default.post(name: NotificationKeys.startRecording, object: nil, userInfo: detailInfoDic)
             case .stopRecording:
-                NotificationCenter.default.post(name: NotificationKeys.stopRecording, object: nil, userInfo: nil)
                 // TODO: Send Message with position Info
+                NotificationCenter.default.post(name: NotificationKeys.stopRecording, object: nil, userInfo: detailInfoDic)
                 break
             case .none:
-                // TODO: Nothing !
                 break
             }
         } catch {
-            fatalError("Fatal Error during decoding!!")
+            print("Error Occurred during Decoding !!!")
         }
+        
+//        do {
+//            let message = try jsonDecoder.decode(MessageType.self, from: data)
+//            switch message {
+//            case .startRecording: break
+//                NotificationCenter.default.post(name: NotificationKeys.startRecording, object: nil, userInfo: nil)
+//            case .stopRecording: break
+//
+//            default: break
+//            }
+//
+//        } catch {
+//            print("Error occurred during converting messageType")
+//        }
         
     }
     

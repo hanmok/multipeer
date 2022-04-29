@@ -25,6 +25,7 @@
 		2283BEBE281A5F5E007D74FC /* ImgBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEBD281A5F5E007D74FC /* ImgBtnView.swift */; };
 		2283BEC0281A5F78007D74FC /* ButtonWithInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */; };
 		2283BEC2281A884F007D74FC /* NotificationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC1281A884F007D74FC /* NotificationKeys.swift */; };
+		2283BEC4281B8732007D74FC /* Util+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC3281B8732007D74FC /* Util+.swift */; };
 		228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A32E92812A5EF00AC3447 /* ZoomRelated.swift */; };
 		228B88372806577A007A6842 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88362806577A007A6842 /* AppDelegate.swift */; };
 		228B88392806577A007A6842 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88382806577A007A6842 /* SceneDelegate.swift */; };
@@ -56,6 +57,7 @@
 		2283BEBD281A5F5E007D74FC /* ImgBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImgBtnView.swift; sourceTree = "<group>"; };
 		2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWithInfo.swift; sourceTree = "<group>"; };
 		2283BEC1281A884F007D74FC /* NotificationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationKeys.swift; sourceTree = "<group>"; };
+		2283BEC3281B8732007D74FC /* Util+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Util+.swift"; sourceTree = "<group>"; };
 		228A32E92812A5EF00AC3447 /* ZoomRelated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomRelated.swift; sourceTree = "<group>"; };
 		228B88332806577A007A6842 /* MultiPeer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MultiPeer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B88362806577A007A6842 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 				2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */,
 				2283BEBD281A5F5E007D74FC /* ImgBtnView.swift */,
 				2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */,
+				2283BEC3281B8732007D74FC /* Util+.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -323,6 +326,7 @@
 				2282DD9328167944008928A4 /* SwiftyRecordButton.swift in Sources */,
 				227862632808024900C9EB79 /* VideoHelper.swift in Sources */,
 				2283BEC0281A5F78007D74FC /* ButtonWithInfo.swift in Sources */,
+				2283BEC4281B8732007D74FC /* Util+.swift in Sources */,
 				226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */,
 				228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */,
 				22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */,

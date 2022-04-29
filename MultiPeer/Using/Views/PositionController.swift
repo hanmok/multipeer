@@ -255,25 +255,6 @@ class PositionController: UIViewController {
             print("failed to converting userInfo back.")
             return }
         
-//        if let title = notification.userInfo?["title"] as? String {
-//            print("successfully got title! \(title)")
-//            if let direction = notification.userInfo?["direction"] as? PositionDirection {
-//                print("successfully got direction! \(direction)")
-//                if let score = notification.userInfo?["score"] as? Int {
-//                    print("successfully got score! \(score)")
-//
-//                    let positionWithDirectionInfo = PositionWithDirectionInfo(title: title, direction: direction, score: score)
-//
-//                    let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: connectionManager)
-//
-//                    DispatchQueue.main.async {
-//                        self.present(cameraVC, animated: true)
-//                    }
-//
-//                }
-//            }
-//        }
-        
         let positionWithDirectionInfo = PositionWithDirectionInfo(title: title, direction: direction, score: score)
 
         let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: connectionManager)
