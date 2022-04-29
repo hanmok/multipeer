@@ -257,9 +257,10 @@ class PositionController: UIViewController {
         
         let positionWithDirectionInfo = PositionWithDirectionInfo(title: title, direction: direction, score: score)
 
-        let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: connectionManager)
 
         DispatchQueue.main.async {
+            let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
+
             self.present(cameraVC, animated: true)
         }
         

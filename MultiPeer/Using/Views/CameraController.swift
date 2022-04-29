@@ -32,6 +32,7 @@ class CameraController: UIViewController {
         self.direction = positionWithDirectionInfo.direction
         self.score = positionWithDirectionInfo.score
         self.connectionManger = connectionManager
+//        dispatchqueue
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -164,14 +165,14 @@ class CameraController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             
             self.bottomView.frame = CGRect(x:0, y: screenHeight - (screenHeight - screenWidth) / 2, width: screenWidth, height: (screenHeight - screenWidth) / 2)
-            
+
             self.bottomView.addSubview(self.recordingBtn)
             self.recordingBtn.snp.makeConstraints { make in
                 make.center.equalToSuperview()
                 make.height.equalTo(50)
                 make.width.equalTo(200)
             }
-            
+//
             self.bottomView.addSubview(self.durationLabel)
             self.durationLabel.snp.makeConstraints { make in
                 make.centerX.equalToSuperview()
@@ -179,14 +180,14 @@ class CameraController: UIViewController {
                 make.height.equalTo(50)
                 make.width.equalTo(100)
             }
-            
+
             self.bottomView.addSubview(self.connectionStateLabel)
             self.connectionStateLabel.snp.makeConstraints { make in
                 make.top.bottom.equalToSuperview()
                 make.leading.equalToSuperview().offset(10)
                 make.trailing.equalTo(self.recordingBtn.snp.leading)
             }
-            
+
             self.bottomView.addSubview(self.dismissBtn)
             self.dismissBtn.snp.makeConstraints { make in
                 make.right.equalToSuperview()
@@ -204,7 +205,8 @@ class CameraController: UIViewController {
             picker.mediaTypes = [kUTTypeMovie as String]
             picker.cameraOverlayView = self.bottomView
             picker.showsCameraControls = false
-            picker.preferredContentSize = CGSize(width: self.view.frame.width, height: self.view.frame.width)
+            picker.preferredContentSize = CGSize(width: self.view.frame.width,
+                                                 height: self.view.frame.width)
             
                 self.present(picker, animated: true)
         }
@@ -217,25 +219,25 @@ class CameraController: UIViewController {
         $0.backgroundColor = .magenta
         $0.frame = CGRect(x: 300, y: screenHeight - 100, width: 400.0, height: 100)
     }
-    
+
     private let imageView = UIImageView()
 
     private let connectionStateLabel = UILabel().then {
-        
+
         $0.textColor = .black
     }
-    
+
     private let recordingBtn = UIButton().then {
         $0.setTitle("Record", for: .normal)
         $0.setTitleColor(.white, for: .normal)
     }
-    
+//
     private let durationLabel = UILabel().then {
         $0.textColor = .white
         $0.text = "00:00"
         $0.textAlignment = .center
     }
-    
+
     private let dismissBtn = UIButton().then {
         $0.setTitle("Dismiss!", for: .normal)
     }
