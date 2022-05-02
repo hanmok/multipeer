@@ -29,7 +29,8 @@ class CameraController: UIViewController {
     var timer = Timer()
     var count = 0
     
-    private var picker : UIImagePickerController?
+//    private var picker : UIImagePickerController?
+    private var picker = UIImagePickerController()
     
     private var isRecording = false
     
@@ -46,7 +47,7 @@ class CameraController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupAddTargets()
-        presentPicker()
+        setupLayout()
         addNotificationObservers()
         updateInitialConnectionState()
     }
@@ -67,7 +68,7 @@ class CameraController: UIViewController {
     
     // MARK: - Notification
     private func addNotificationObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(startRecording(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingTriggered(_:)),
                                                name: .startRecording, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(stopRecording(_:)),
@@ -84,14 +85,13 @@ class CameraController: UIViewController {
     @objc func startRecordingAt(_ notification: Notification) {
         guard let milliTime = notification.userInfo?["receivedTime"] as? Int else {
             print("fail to convert receivedTime to Int")
-        return
-    }
+            // millisec since 1970
+            return
+        }
         
-        /*
-//        let recordingTimer = Timer(fireAt: Date(milliseconds: milliTime), interval: 0, target: self, selector: #selector(), userInfo: <#T##Any?#>, repeats: <#T##Bool#>)
-        
-//        RunLoop.main.add(recordingTimer, forMode: .common)
-        */
+            let recordingTimer = Timer(fireAt: Date(milliseconds: milliTime), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+            
+            RunLoop.main.add(recordingTimer, forMode: .common)
     }
     
     @objc func updateConnectionState(_ notification: Notification) {
@@ -111,25 +111,34 @@ class CameraController: UIViewController {
         }
     }
     
-    @objc func startRecording(_ notification: Notification) {
+    @objc func startRecordingTriggered(_ notification: Notification) {
         print("startRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? PositionDirection,
               let score = notification.userInfo?["score"] as? Int? else { return }
         
-//        startVideoCapture
-        if !isRecording {
-        DispatchQueue.main.async {
-            self.picker?.startVideoCapture()
-            self.isRecording = true
-            print("started Video Capturing! ")
-            self.recordingBtn.setTitle("Stop", for: .normal)
+        startRecording()
         }
+    
+    
+    @objc private func startRecording() {
         
-        triggerTimer() // 이거 왜 안돼..? 몰라.. 안되면 카운트다운은 애초에 어떻게 해 ? // not working
+        //        startVideoCapture
+        if !isRecording {
+            DispatchQueue.main.async {
+                self.picker.startVideoCapture()
+                self.isRecording = true
+                print("started Video Capturing! ")
+                self.recordingBtn.setTitle("Stop", for: .normal)
+            }
+            
+            triggerTimer() // 이거 왜 안돼..? 몰라.. 안되면 카운트다운은 애초에 어떻게 해 ? // not working
             // 이것부터 해결하자..
+            
         }
     }
+    
+    
     
     @objc func stopRecording(_ notification: Notification) {
         print("startRecording has been triggered by observer. ")
@@ -140,7 +149,7 @@ class CameraController: UIViewController {
 
         if isRecording {
         DispatchQueue.main.async {
-            self.picker?.stopVideoCapture()
+            self.picker.stopVideoCapture()
             self.isRecording = false
             print("started Video Capturing! ")
             self.recordingBtn.setTitle("Record", for: .normal)
@@ -189,9 +198,10 @@ class CameraController: UIViewController {
     }
     
     @objc func dismissBtnTapped(_ sender: UIButton) {
-        DispatchQueue.main.async {
-            self.picker?.dismiss(animated: true)
-        }
+//        DispatchQueue.main.async {
+//            self.picker.dismiss(animated: true)
+//        }
+        self.dismiss(animated: true)
     }
     
     @objc func timerRecordingBtnTapped(_ sender: UIButton) {
@@ -245,7 +255,7 @@ class CameraController: UIViewController {
         if !isRecording {
             
             DispatchQueue.main.async {
-                self.picker?.startVideoCapture()
+                self.picker.startVideoCapture()
             }
              
             sendRecordingMsg()
@@ -259,7 +269,7 @@ class CameraController: UIViewController {
         // STOP Recording !!
         } else {
             DispatchQueue.main.async {
-                self.picker?.stopVideoCapture()
+                self.picker.stopVideoCapture()
                 self.recordingBtn.setTitle("Record", for: .normal)
                 self.stopTimer()
             }
@@ -275,7 +285,7 @@ class CameraController: UIViewController {
         timer.invalidate()
     }
     
-    func presentPicker() {
+    func setupLayout() {
         print("present Picker!!")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -320,19 +330,25 @@ class CameraController: UIViewController {
                 make.height.equalTo(50)
             }
             
-            self.picker = UIImagePickerController()
+//            self.picker = UIImagePickerController()
             
-            guard let picker = self.picker else { return }
-            picker.allowsEditing = true
-            picker.sourceType = .camera
-            picker.delegate = self
-            picker.mediaTypes = [kUTTypeMovie as String]
-            picker.cameraOverlayView = self.bottomView
-            picker.showsCameraControls = false
-            picker.preferredContentSize = CGSize(width: self.view.frame.width,
+//            guard let picker = self.picker else { return }
+            
+            self.picker.allowsEditing = true
+            self.picker.sourceType = .camera
+            self.picker.delegate = self
+            self.picker.mediaTypes = [kUTTypeMovie as String]
+            self.picker.cameraOverlayView = self.bottomView
+            self.picker.showsCameraControls = false
+            self.picker.preferredContentSize = CGSize(width: self.view.frame.width,
                                                  height: self.view.frame.width)
             
-            self.present(picker, animated: true)
+            self.view.addSubview(self.picker.view)
+            self.picker.view.snp.makeConstraints { make in
+                make.leading.top.trailing.bottom.equalToSuperview()
+            }
+            
+//            self.present(picker, animated: true)
         }
     }
     
@@ -381,7 +397,8 @@ class CameraController: UIViewController {
 // MARK: - UIImagePickerController Delegate
 extension CameraController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true)
+//        picker.dismiss(animated: true)
+        self.dismiss(animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
