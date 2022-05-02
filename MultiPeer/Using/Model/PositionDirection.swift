@@ -64,5 +64,5 @@ public enum RecordingType: String, Codable {
 
 struct MsgWithTime: Codable {
     let msg: RecordingType
-    let time: Date
+    let timeInMilliSec: Int
 }

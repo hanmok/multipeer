@@ -278,27 +278,20 @@ extension ConnectionManager: MCSessionDelegate {
                 break
             }
         } catch {
-            
-          
                 print("Error Occurred during Decoding DetailPositionWithMsgInfo!!!")
                 do {
     //                let testInfoMsg = try jsonDecoder.decode(String.self, from: data)
                     let testInfoMsg = try jsonDecoder.decode(MsgWithTime.self, from: data)
-                let myStr = testInfoMsg
-                    print("sent Time: \(myStr)")
+//                let myStr = testInfoMsg
                     
-                    let receivedTime = Date()
-                    let df = DateFormatter()
-                    df.dateFormat = "y-MM-dd H:mm:ss.SSS"
-                    let receivedStr = df.string(from: receivedTime)
-                    print("received Time: \(df.string(from: receivedTime))")
-                    let receivedMillisec = Date().millisecondsSince1970
-                    let timeInfo: [AnyHashable: Any] = ["receivedTime": receivedMillisec]
+                    let msgReceived = testInfoMsg.msg
+                    let timeReceived = testInfoMsg.timeInMilliSec
+                    
+                    let timeInfo: [AnyHashable: Any] = ["msg": msgReceived,"receivedTime": timeReceived]
                     NotificationCenter.default.post(name: .startRecordingAt, object: nil, userInfo: timeInfo)
-                    
-    //                print("currentTime: \()")
+
                 } catch {
-                    print("Error Occurred during Decoding String!!!")
+                    print("Error Occurred during Decoding String!!!", #file, #line)
                     print("Error : \(error.localizedDescription)")
                 }
             

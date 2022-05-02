@@ -66,6 +66,10 @@ class PositionController: UIViewController {
         connectionManager.delegate = self
         addNotificationObservers()
 //        testCode()
+        
+        print("PositionCOntorller has appeared!")
+        print("-------------------------------\n\n\n")
+        print("-------------------------------")
     }
     
     @objc func testBtnTapped(_ sender: UIButton) {

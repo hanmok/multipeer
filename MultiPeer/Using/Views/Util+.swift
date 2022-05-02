@@ -18,7 +18,7 @@ public var screenHeight: CGFloat {
 }
 
 
-public func convertIntoFormat(_ seconds: Int) -> String {
+public func convertIntoRecordingTimeFormat(_ seconds: Int) -> String {
     
     let minutes = Int(seconds) / 60 % 60
     let seconds = Int(seconds) % 60
