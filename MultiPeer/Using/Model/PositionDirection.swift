@@ -51,18 +51,20 @@ public enum MessageType: String, Codable {
     case presentCamera
     // Do I need to dismiss ?
     // Timer ?
-    case startRecording
-    case stopRecording
+    case startRecordingMsg
+    case stopRecordingMsg
     case none
-    case startRecordingAt
+    case startRecordingAfterMsg
+    case startCountDownMsg
 }
 
-public enum RecordingType: String, Codable {
-    case startRecording
-    case stopRecording
-}
+//public enum RecordingType: String, Codable {
+//    case startRecordingMsg
+//    case stopRecordingMsg
+//}
 
 struct MsgWithTime: Codable {
-    let msg: RecordingType
+//    let msg: RecordingType
+    let msg: MessageType
     let timeInMilliSec: Int
 }

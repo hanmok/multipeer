@@ -43,9 +43,9 @@ public enum OrderMessageTypes {
 //    static let presentCamera = "presentCamera"
 //    static let startRecording = "startRecording"
 //    static let stopRecording = "stopRecording"
-    case presentCamera
-    case startRecording
-    case stopRecording
+    case presentCameraMsg
+    case startRecordingMsg
+    case stopRecordingMsg
 }
 
 //struct MessageTypes {
@@ -258,60 +258,60 @@ extension ConnectionManager: MCSessionDelegate {
             case .presentCamera:
                 // TODO: Send Message with position Info
                 
-                NotificationCenter.default.post(name: .presentCamera, object: nil, userInfo: detailInfoDic)
+                NotificationCenter.default.post(name: .presentCameraKey, object: nil, userInfo: detailInfoDic)
                 print("NotificationKey named presentCamera has posted.")
                 break
-            case .startRecording:
+                
+            case .startRecordingMsg:
                 // TODO: Send Message with position Info
                 print("post startRecording !!")
-                NotificationCenter.default.post(name: .startRecording, object: nil, userInfo: detailInfoDic)
-            case .stopRecording:
+                NotificationCenter.default.post(name: .startRecordingKey, object: nil, userInfo: detailInfoDic)
+                
+            case .stopRecordingMsg:
                 // TODO: Send Message with position Info
-                NotificationCenter.default.post(name: .stopRecording, object: nil, userInfo: detailInfoDic)
+                NotificationCenter.default.post(name: .stopRecordingKey, object: nil, userInfo: detailInfoDic)
                 break
-            case .startRecordingAt:
+                
+            case .startRecordingAfterMsg:
                 let date = Date().addingTimeInterval(3)
                 let timeInfo: [AnyHashable: Any] = ["triggerAt": date]
-                NotificationCenter.default.post(name: .startRecordingAt, object: nil, userInfo: timeInfo)
+                NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
+            
             case .none:
                 print("none has been passed!")
+                break
+            
+            case .startCountDownMsg:
                 break
             }
         } catch {
                 print("Error Occurred during Decoding DetailPositionWithMsgInfo!!!")
                 do {
-    //                let testInfoMsg = try jsonDecoder.decode(String.self, from: data)
                     let testInfoMsg = try jsonDecoder.decode(MsgWithTime.self, from: data)
-//                let myStr = testInfoMsg
                     
                     let msgReceived = testInfoMsg.msg
                     let timeReceived = testInfoMsg.timeInMilliSec
                     
                     let timeInfo: [AnyHashable: Any] = ["msg": msgReceived,"receivedTime": timeReceived]
-                    NotificationCenter.default.post(name: .startRecordingAt, object: nil, userInfo: timeInfo)
-
+                    
+                    switch msgReceived {
+                        
+                    case .startRecordingAfterMsg:
+                        NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
+                    print("successfully post startRecordingAfterKey")
+                    case .startCountDownMsg:
+                        NotificationCenter.default.post(name: .startCountdownAfterKey, object: nil, userInfo: timeInfo)
+                        print("post startCountdownAfterKey")
+                    
+                    default:
+                        print("something has posted! \(msgReceived.rawValue)")
+                    }
+                    print(#function, #line)
                 } catch {
                     print("Error Occurred during Decoding String!!!", #file, #line)
                     print("Error : \(error.localizedDescription)")
                 }
-            
-            
         }
-        
-//        do {
-//            let message = try jsonDecoder.decode(MessageType.self, from: data)
-//            switch message {
-//            case .startRecording: break
-//                NotificationCenter.default.post(name: NotificationKeys.startRecording, object: nil, userInfo: nil)
-//            case .stopRecording: break
-//
-//            default: break
-//            }
-//
-//        } catch {
-//            print("Error occurred during converting messageType")
-//        }
-        
     }
     
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
@@ -351,7 +351,7 @@ extension ConnectionManager: MCSessionDelegate {
         }
         
         let connectionInfo: [AnyHashable: Any] = ["connectionState": connectionState]
-        NotificationCenter.default.post(name: .updateConnectionState, object: nil, userInfo: connectionInfo)
+        NotificationCenter.default.post(name: .updateConnectionStateKey, object: nil, userInfo: connectionInfo)
         
         
 //        delegate?.updateState(state: state)

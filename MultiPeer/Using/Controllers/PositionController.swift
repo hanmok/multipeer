@@ -263,7 +263,7 @@ class PositionController: UIViewController {
     // observer, add observer
     private func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(presentCamera(_:)),
-                                               name: .presentCamera, object: nil)
+                                               name: .presentCameraKey, object: nil)
     }
     
     @objc func presentCamera(_ notification: Notification) {

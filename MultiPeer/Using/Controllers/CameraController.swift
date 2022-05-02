@@ -12,11 +12,6 @@ import Photos
 import MultipeerConnectivity
 
 
-
-
-
-
-
 class CameraController: UIViewController {
     
     // MARK: - Properties
@@ -26,8 +21,10 @@ class CameraController: UIViewController {
     
     var connectionManager: ConnectionManager
     
-    var timer = Timer()
+    var updatingDurationTimer = Timer()
+    var decreasingTimer = Timer()
     var count = 0
+    var decreasingCount = 3
     
     //    private var picker : UIImagePickerController?
     private var picker = UIImagePickerController()
@@ -69,41 +66,90 @@ class CameraController: UIViewController {
     // MARK: - Notification
     private func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(startRecordingTriggered(_:)),
-                                               name: .startRecording, object: nil)
+                                               name: .startRecordingKey, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(stopRecordingNotificationTriggered(_:)),
-                                               name: .stopRecording, object: nil)
+                                               name: .stopRecordingKey, object: nil)
+        
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAfter(_:)),
+                                               name: .startRecordingAfterKey, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(startCountdownAfter(_:)),
+                                               name: .startCountdownAfterKey, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnectionState(_:)),
-                                               name: .updateConnectionState, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAt(_:)),
-                                               name: .startRecordingAt, object: nil)
-        
+                                               name: .updateConnectionStateKey, object: nil)
     }
     
-    @objc func startRecordingAt(_ notification: Notification) {
+    @objc func startRecordingTriggered(_ notification: Notification) {
+        print("flag1")
+        print("startRecording has been triggered by observer. ")
+        guard let title = notification.userInfo?["title"] as? String,
+              let direction = notification.userInfo?["direction"] as? PositionDirection,
+              let score = notification.userInfo?["score"] as? Int? else { return }
+        
+        startRecording()
+        // duration update needed
+    }
+    
+    
+    @objc func stopRecordingNotificationTriggered(_ notification: Notification) {
+        print("flag2")
+        print("stopRecording has been triggered by observer. ")
+        guard let title = notification.userInfo?["title"] as? String,
+              let direction = notification.userInfo?["direction"] as? PositionDirection,
+              let score = notification.userInfo?["score"] as? Int? else { return }
+        
+            stopRecording()
+    }
+    
+    @objc func startRecordingAfter(_ notification: Notification) {
+        print("flag3")
+        print(#function, #line)
         guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
-              let msg = notification.userInfo?["msg"] as? RecordingType
+//              let msg = notification.userInfo?["msg"] as? RecordingType
+              let msg = notification.userInfo?["msg"] as? MessageType
         else {
-            print("fail to convert receivedTime to Int")
+            print("fail to convert receivedTime to Int", #line)
             // millisec since 1970
+//            print(error?.localizedDescription)
             return
         }
-        print("received Msg: \(msg.rawValue)")
-        
+        print(#function, #line)
         print("receivedMillisecData: \(milliTime)")
         print("currentMillisecData: \(Date().millisecondsSince1970)")
         
-        
         let recordingTimer = Timer(fireAt: Date(milliseconds: milliTime), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
-        RunLoop.main.add(recordingTimer, forMode: .common)
+        DispatchQueue.main.async {
+            self.recordingTimerBtn.setTitle("\(milliTime)", for: .normal)
+            
+        }
         
+        RunLoop.main.add(recordingTimer, forMode: .common)
+        print("startRecordingAfter has ended", #line)
     }
     
-    @objc func updateConnectionState(_ notification: Notification) {
+    
+    @objc func startCountdownAfter(_ notification: Notification) {
+        print("flag4")
+        guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
+//              let msg = notification.userInfo?["msg"] as? RecordingType
+              let msg = notification.userInfo?["msg"] as? MessageType
+        else {
+            print("success to convert receivedTime to Int", #line)
+            // millisec since 1970
+            return
+        }
         
+        let countdownTimer = Timer(fireAt: Date(milliseconds: milliTime), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
+        print("startCountdownAfter has triggered", #line)
+    }
+    
+    
+    @objc func updateConnectionState(_ notification: Notification) {
+        print("flag5")
         guard let state = notification.userInfo?["connectionState"] as? ConnectionState else {
             print("failed to get connectionState normally")
             return }
@@ -119,20 +165,80 @@ class CameraController: UIViewController {
         }
     }
     
-    @objc func startRecordingTriggered(_ notification: Notification) {
-        print("startRecording has been triggered by observer. ")
-        guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? PositionDirection,
-              let score = notification.userInfo?["score"] as? Int? else { return }
-        
-        startRecording()
-        // duration update needed
+    
+    
+    // MARK: - Button Actions
+    private func setupAddTargets() {
+        recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
+        dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
+        recordingTimerBtn.addTarget(self, action: #selector(timerRecordingBtnTapped(_:)), for: .touchUpInside)
     }
     
     
-    @objc private func startRecording() {
+    
+    @objc func recordingBtnTapped(_ sender: UIButton) {
+        print("recordingBtn Tapped!!")
         
-        //        startVideoCapture
+        recordingBtnAction()
+    }
+    
+    func recordingBtnAction() {
+        // Start Recording!!
+        if !isRecording {
+            // Send Start Msg
+            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
+            
+            startRecording()
+            // STOP Recording !!
+        } else {
+            
+            stopRecording()
+            // Send Stop Msg
+            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
+        }
+    }
+    
+    
+    @objc func dismissBtnTapped(_ sender: UIButton) {
+        self.dismiss(animated: true)
+    }
+    
+    @objc func timerRecordingBtnTapped(_ sender: UIButton) {
+        print(#function, #line)
+        let dateIn1500ms = Date().millisecondsSince1970 + 1500 // give 1.5s to sync better
+//        let dateIn1500ms = Date().millisecondsSince1970 + 3000 // give 1.5s to sync better
+        let dateIn4500ms = Date().millisecondsSince1970 + 4500
+        
+        connectionManager.send(MsgWithTime(msg: .startCountDownMsg, timeInMilliSec: Int(dateIn1500ms)))
+        
+        connectionManager.send(MsgWithTime(msg: .startRecordingAfterMsg, timeInMilliSec: Int(dateIn4500ms)))
+        
+        // Make in sync with receiver
+        
+        let countdownTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
+        
+        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn4500ms)), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+//        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+        
+
+        DispatchQueue.main.async {
+//            self.recordingTimerBtn.setTitle(String(Int(dateIn1500ms)), for: .normal)
+        }
+        
+        RunLoop.main.add(countdownTimer, forMode: .common)
+        RunLoop.main.add(recordingTimer, forMode: .common)
+//        RunLoop.main.minimumTolerance = 0.01
+//        print("tolerarnce: \(RunLoop.main.minimumTolerance)")
+        
+//        RunLoop.main.add(recordingTimer, forMode: .)
+
+        
+    }
+    
+    
+    // MARK: - Basic Functions
+    @objc private func startRecording() {
+         print("startRecording triggered!! ")
         if !isRecording {
             DispatchQueue.main.async {
                 self.picker.startVideoCapture()
@@ -140,33 +246,25 @@ class CameraController: UIViewController {
             }
             
             self.isRecording = true
-            print("started Video Capturing! ")
-        
-            triggerDurationTimer() // 이거 왜 안돼..? 몰라.. 안되면 카운트다운은 애초에 어떻게 해 ? // not working
+            
+            triggerDurationTimer()
             // 이것부터 해결하자..
         }
     }
     
-    
-    
-    @objc func stopRecordingNotificationTriggered(_ notification: Notification) {
-        print("startRecording has been triggered by observer. ")
-        guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? PositionDirection,
-              let score = notification.userInfo?["score"] as? Int? else { return }
-        
-        
+    private func stopRecording() {
         if isRecording {
             DispatchQueue.main.async {
                 self.picker.stopVideoCapture()
-                self.isRecording = false
-                print("started Video Capturing! ")
                 self.recordingBtn.setTitle("Record", for: .normal)
+                self.recordingTimerBtn.setTitle("Record in 3s", for: .normal)
             }
             
+            self.isRecording = false
             stopTimer()
         }
     }
+    
     
     /// updating durationLabel contained
     private func triggerDurationTimer() {
@@ -174,8 +272,10 @@ class CameraController: UIViewController {
         print("timer triggered!!")
         // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ??
         
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-            guard let `self` = self else { return }
+        updatingDurationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+            guard let `self` = self else {
+                print("self is nil in timer!!")
+                return }
             
             print("trigger working!") // 왜.. 시행하는 쪽에서만 되냐 ?? 아님. 받는 쪽에서도 작동하넹.
             self.count += 1
@@ -195,84 +295,40 @@ class CameraController: UIViewController {
         }
     }
     
-    
-    
-    // MARK: - Button Actions
-    private func setupAddTargets() {
-        
-        recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
-        dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
-        timerRecordingBtn.addTarget(self, action: #selector(timerRecordingBtnTapped(_:)), for: .touchUpInside)
-    }
-    
-    @objc func dismissBtnTapped(_ sender: UIButton) {
-        //        DispatchQueue.main.async {
-        //            self.picker.dismiss(animated: true)
-        //        }
-        self.dismiss(animated: true)
-    }
-    
-    @objc func timerRecordingBtnTapped(_ sender: UIButton) {
-        // 정보를 보내기만 하고 여기서 뭘 안하네..
-        // TODO: - Trigger Video Recording
-        startRecording()
-        let dateInMilliSec = Date().millisecondsSince1970 + 1500 // give 1.5s to sync better
-        connectionManager.send(MsgWithTime(msg: .startRecording, timeInMilliSec: Int(dateInMilliSec)))
-        
-    }
-    
-    
-    
-    @objc func recordingBtnTapped(_ sender: UIButton) {
-        print("recordingBtn Tapped!!")
-        
-        recordingBtnAction()
-    }
-    
-    
-    private func sendRecordingMsg() {
-        connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecording, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
-    }
-    
-    private func sendStopMsg() {
-        connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecording, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
-    }
-    
-    
-    func recordingBtnAction() {
-        // Start Recording!!
-        if !isRecording {
-            
-            DispatchQueue.main.async {
-                self.picker.startVideoCapture()
-            }
-            
-            sendRecordingMsg()
-            
-            DispatchQueue.main.async {
-                self.recordingBtn.setTitle("Stop", for: .normal)
-            }
-            
-            print("START Recording")
-            triggerDurationTimer() // working fine
-            // STOP Recording !!
-        } else {
-            DispatchQueue.main.async {
-                self.picker.stopVideoCapture()
-                self.recordingBtn.setTitle("Record", for: .normal)
-                self.stopTimer()
-            }
-            sendStopMsg()
-            
-            print("STOP Recording")
+    @objc private func triggerCountDownTimer() {
+        DispatchQueue.main.async {
+//            self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
+            self.durationLabel.text = "00:00"
         }
         
-        isRecording.toggle()
+        decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+            guard let `self` = self else { return }
+            if self.decreasingCount > 0 {
+                
+                self.decreasingCount -= 1
+                
+                DispatchQueue.main.async {
+                    if self.decreasingCount == 0 {
+                        self.recordingTimerBtn.setTitle("Recording!", for: .normal)
+                    } else {
+
+                    self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
+                    }
+                }
+            } else {
+                self.decreasingTimer.invalidate()
+//                DispatchQueue.main.async {
+//                    self.timerRecordingBtn.setTitle("Recording!", for: .normal)
+//                }
+                self.decreasingCount = 3
+            }
+        }
     }
     
     private func stopTimer() {
-        timer.invalidate()
+        updatingDurationTimer.invalidate()
     }
+    
     
     func setupLayout() {
         print("present Picker!!")
@@ -303,28 +359,21 @@ class CameraController: UIViewController {
                 make.width.equalTo(100)
             }
             
-            self.bottomView.addSubview(self.timerRecordingBtn)
-            self.timerRecordingBtn.snp.makeConstraints { make in
+            self.bottomView.addSubview(self.recordingTimerBtn)
+            self.recordingTimerBtn.snp.makeConstraints { make in
                 make.centerX.equalToSuperview()
                 make.bottom.equalTo(self.recordingBtn.snp.top).offset(-10)
-                //                make.width.equalToSuperview()
                 make.width.equalTo(150)
                 make.height.equalTo(50)
             }
             
             self.bottomView.addSubview(self.durationLabel)
             self.durationLabel.snp.makeConstraints { make in
-                //                make.centerX.equalToSuperview()
-                make.centerY.equalTo(self.timerRecordingBtn.snp.centerY)
+                make.centerY.equalTo(self.recordingTimerBtn.snp.centerY)
                 make.height.equalTo(50)
-                make.leading.equalTo(self.timerRecordingBtn.snp.trailing)
+                make.leading.equalTo(self.recordingTimerBtn.snp.trailing)
                 make.trailing.equalToSuperview()
             }
-            
-            
-            //            self.picker = UIImagePickerController()
-            
-            //            guard let picker = self.picker else { return }
             
             self.picker.allowsEditing = true
             self.picker.sourceType = .camera
@@ -339,19 +388,11 @@ class CameraController: UIViewController {
             self.picker.view.snp.makeConstraints { make in
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
-            
-            //            self.present(picker, animated: true)
         }
     }
     
     // MARK: - UI Properties
     private let bottomView = UIView().then { $0.backgroundColor = .black }
-    
-    //    private let testView = UIView().then {
-    //
-    //        $0.backgroundColor = .magenta
-    //        $0.frame = CGRect(x: 300, y: screenHeight - 100, width: 400.0, height: 100)
-    //    }
     
     private let imageView = UIImageView()
     
@@ -376,7 +417,7 @@ class CameraController: UIViewController {
         $0.setTitle("Dismiss!", for: .normal)
     }
     
-    private let timerRecordingBtn = UIButton().then {
+    private let recordingTimerBtn = UIButton().then {
         $0.setTitle("Record in 3s", for: .normal)
         $0.setTitleColor(.white, for: .normal)
     }
