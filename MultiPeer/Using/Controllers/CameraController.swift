@@ -9,6 +9,12 @@ import UIKit
 import SnapKit
 import MobileCoreServices
 import Photos
+import MultipeerConnectivity
+
+
+
+
+
 
 
 class CameraController: UIViewController {
@@ -18,7 +24,7 @@ class CameraController: UIViewController {
     let direction: PositionDirection
     var score: Int?
     
-    var connectionManger: ConnectionManager
+    var connectionManager: ConnectionManager
         
     var timer = Timer()
     var count = 0
@@ -31,8 +37,7 @@ class CameraController: UIViewController {
         self.positionTitle = positionWithDirectionInfo.title
         self.direction = positionWithDirectionInfo.direction
         self.score = positionWithDirectionInfo.score
-        self.connectionManger = connectionManager
-//        dispatchqueue
+        self.connectionManager = connectionManager
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -43,13 +48,67 @@ class CameraController: UIViewController {
         setupAddTargets()
         presentPicker()
         addNotificationObservers()
+        updateInitialConnectionState()
     }
     
+    func updateInitialConnectionState() {
+        
+        switch connectionManager.connectionState {
+        case .connected:
+            DispatchQueue.main.async {
+                self.connectionStateLabel.text = "Connected!"
+            }
+        case .disconnected:
+            DispatchQueue.main.async {
+                self.connectionStateLabel.text = "Disconnected!"
+            }
+        }
+    }
     
     // MARK: - Notification
     private func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(startRecording(_:)),
-                                               name: NotificationKeys.startRecording, object: nil)
+                                               name: .startRecording, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(stopRecording(_:)),
+                                               name: .stopRecording, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateConnectionState(_:)),
+                                               name: .updateConnectionState, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAt(_:)),
+                                               name: .startRecordingAt, object: nil)
+        
+    }
+    
+    @objc func startRecordingAt(_ notification: Notification) {
+        guard let milliTime = notification.userInfo?["receivedTime"] as? Int else {
+            print("fail to convert receivedTime to Int")
+        return
+    }
+        
+        /*
+//        let recordingTimer = Timer(fireAt: Date(milliseconds: milliTime), interval: 0, target: self, selector: #selector(), userInfo: <#T##Any?#>, repeats: <#T##Bool#>)
+        
+//        RunLoop.main.add(recordingTimer, forMode: .common)
+        */
+    }
+    
+    @objc func updateConnectionState(_ notification: Notification) {
+        
+        guard let state = notification.userInfo?["connectionState"] as? ConnectionState else {
+            print("failed to get connectionState normally")
+            return }
+        switch state {
+        case .disconnected:
+            DispatchQueue.main.async {
+                self.connectionStateLabel.text = "Disconnected!"
+            }
+        case .connected:
+            DispatchQueue.main.async {
+                self.connectionStateLabel.text = "Connected!"
+            }
+        }
     }
     
     @objc func startRecording(_ notification: Notification) {
@@ -58,26 +117,54 @@ class CameraController: UIViewController {
               let direction = notification.userInfo?["direction"] as? PositionDirection,
               let score = notification.userInfo?["score"] as? Int? else { return }
         
-        let positionWithDirectionInfo = PositionWithDirectionInfo(title: title, direction: direction, score: score)
-        
-        print("positionInfo -> title: \(title) , direction: \(direction), score: \(score)")
 //        startVideoCapture
+        if !isRecording {
         DispatchQueue.main.async {
             self.picker?.startVideoCapture()
+            self.isRecording = true
+            print("started Video Capturing! ")
+            self.recordingBtn.setTitle("Stop", for: .normal)
+        }
+        
+        triggerTimer() // 이거 왜 안돼..? 몰라.. 안되면 카운트다운은 애초에 어떻게 해 ? // not working
+            // 이것부터 해결하자..
         }
     }
     
-    
-    // Duration
+    @objc func stopRecording(_ notification: Notification) {
+        print("startRecording has been triggered by observer. ")
+        guard let title = notification.userInfo?["title"] as? String,
+              let direction = notification.userInfo?["direction"] as? PositionDirection,
+              let score = notification.userInfo?["score"] as? Int? else { return }
+        
+
+        if isRecording {
+        DispatchQueue.main.async {
+            self.picker?.stopVideoCapture()
+            self.isRecording = false
+            print("started Video Capturing! ")
+            self.recordingBtn.setTitle("Record", for: .normal)
+        }
+        
+        stopTimer()
+        }
+    }
+
+    /// updating durationLabel contained
     private func triggerTimer() {
         count = 0
         print("timer triggered!!")
+        // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ??
+        
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
             guard let `self` = self else { return }
             
-            print("trigger working!")
+            print("trigger working!") // 왜.. 시행하는 쪽에서만 되냐 ??
             self.count += 1
-            self.updateDurationLabel()
+
+            DispatchQueue.main.async {
+                self.updateDurationLabel()
+            }
         }
     }
     
@@ -92,36 +179,66 @@ class CameraController: UIViewController {
     }
     
    
-    
-    
-//    @objc func video(_ videoPath: String, didFinishSavingWithError error: Error?, contextInfo info: AnyObject) {
-//      let title = (error == nil) ? "Success" : "Error"
-//      let message = ( error == nil) ? "Video was saved" : "Video failed to save"
-//
-//      let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-//
-//      alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
-//      present(alert, animated: true)
-//
-//    }
 
     // MARK: - Button Actions
     private func setupAddTargets() {
 
         recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
         dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
+        timerRecordingBtn.addTarget(self, action: #selector(timerRecordingBtnTapped(_:)), for: .touchUpInside)
     }
     
     @objc func dismissBtnTapped(_ sender: UIButton) {
-        picker?.dismiss(animated: true)
+        DispatchQueue.main.async {
+            self.picker?.dismiss(animated: true)
+        }
     }
+    
+    @objc func timerRecordingBtnTapped(_ sender: UIButton) {
+        
+//   let date = Date()
+        
+//        let testTimer = Timer(fireAt: date, interval: 0, target: self, selector: #selector(<#T##@objc method#>), userInfo: <#T##Any?#>, repeats: false)
+//        RunLoop.main.add(testTimer, forMode: .common)
+        
+//        connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingAt, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
+//        connectionManager.send("hhheeeeelllloooo")
+        
+//        connectionManager.send(.startRecordingAt)
+//        connectionManager.send(.startRecordingAt)
+    
+//        connectionManager.
+//        connectionStateLabel.text = "\(Date())"
+        
+        let date = Date()
+        let df = DateFormatter()
+        df.dateFormat = "y-MM-dd H:mm:ss.SSS"
+        let str = df.string(from: date)
+        timerRecordingBtn.setTitle("\(df.string(from: date))", for: .normal)
+        connectionManager.send(str)
+//        connectionManager.send("hi")
+        
+//        connectionManager.send
+    }
+    
+    
     
     @objc func recordingBtnTapped(_ sender: UIButton) {
         print("recordingBtn Tapped!!")
+        
         recordingBtnAction()
+        
     }
     
-
+    
+    private func sendRecordingMsg() {
+        connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecording, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
+    }
+    
+    private func sendStopMsg() {
+        connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecording, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
+    }
+    
     
     func recordingBtnAction() {
         // Start Recording!!
@@ -131,14 +248,14 @@ class CameraController: UIViewController {
                 self.picker?.startVideoCapture()
             }
              
-            connectionManger.send(DetailPositionWIthMsgInfo(message: .startRecording, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
+            sendRecordingMsg()
             
             DispatchQueue.main.async {
                 self.recordingBtn.setTitle("Stop", for: .normal)
             }
             
             print("START Recording")
-            triggerTimer()
+            triggerTimer() // working fine
         // STOP Recording !!
         } else {
             DispatchQueue.main.async {
@@ -146,6 +263,7 @@ class CameraController: UIViewController {
                 self.recordingBtn.setTitle("Record", for: .normal)
                 self.stopTimer()
             }
+            sendStopMsg()
             
             print("STOP Recording")
         }
@@ -160,8 +278,6 @@ class CameraController: UIViewController {
     func presentPicker() {
         print("present Picker!!")
         
-//        let customHeight: CGFloat = (screenHeight - screenWidth) / 2
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             
             self.bottomView.frame = CGRect(x:0, y: screenHeight - (screenHeight - screenWidth) / 2, width: screenWidth, height: (screenHeight - screenWidth) / 2)
@@ -170,9 +286,9 @@ class CameraController: UIViewController {
             self.recordingBtn.snp.makeConstraints { make in
                 make.center.equalToSuperview()
                 make.height.equalTo(50)
-                make.width.equalTo(200)
+                make.width.equalTo(150)
             }
-//
+
             self.bottomView.addSubview(self.durationLabel)
             self.durationLabel.snp.makeConstraints { make in
                 make.centerX.equalToSuperview()
@@ -184,7 +300,7 @@ class CameraController: UIViewController {
             self.bottomView.addSubview(self.connectionStateLabel)
             self.connectionStateLabel.snp.makeConstraints { make in
                 make.top.bottom.equalToSuperview()
-                make.leading.equalToSuperview().offset(10)
+                make.leading.equalToSuperview()
                 make.trailing.equalTo(self.recordingBtn.snp.leading)
             }
 
@@ -194,6 +310,14 @@ class CameraController: UIViewController {
                 make.centerY.equalToSuperview()
                 make.height.equalTo(50)
                 make.width.equalTo(100)
+            }
+            
+            self.bottomView.addSubview(self.timerRecordingBtn)
+            self.timerRecordingBtn.snp.makeConstraints { make in
+                make.centerX.equalToSuperview()
+                make.bottom.equalTo(self.recordingBtn.snp.top).offset(-10)
+                make.width.equalToSuperview()
+                make.height.equalTo(50)
             }
             
             self.picker = UIImagePickerController()
@@ -208,30 +332,31 @@ class CameraController: UIViewController {
             picker.preferredContentSize = CGSize(width: self.view.frame.width,
                                                  height: self.view.frame.width)
             
-                self.present(picker, animated: true)
+            self.present(picker, animated: true)
         }
     }
     
     // MARK: - UI Properties
     private let bottomView = UIView().then { $0.backgroundColor = .black }
 
-    private let testView = UIView().then {
-        $0.backgroundColor = .magenta
-        $0.frame = CGRect(x: 300, y: screenHeight - 100, width: 400.0, height: 100)
-    }
+//    private let testView = UIView().then {
+//
+//        $0.backgroundColor = .magenta
+//        $0.frame = CGRect(x: 300, y: screenHeight - 100, width: 400.0, height: 100)
+//    }
 
     private let imageView = UIImageView()
 
     private let connectionStateLabel = UILabel().then {
-
-        $0.textColor = .black
+        
+        $0.textColor = .white
     }
 
     private let recordingBtn = UIButton().then {
         $0.setTitle("Record", for: .normal)
         $0.setTitleColor(.white, for: .normal)
     }
-//
+
     private let durationLabel = UILabel().then {
         $0.textColor = .white
         $0.text = "00:00"
@@ -242,11 +367,15 @@ class CameraController: UIViewController {
         $0.setTitle("Dismiss!", for: .normal)
     }
     
+    private let timerRecordingBtn = UIButton().then {
+        $0.setTitle("Record in 3s", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+    }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
 
 // MARK: - UIImagePickerController Delegate
@@ -268,40 +397,52 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
               UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(url.path)
 
       else {
-          print("fail!")
+          print("failed to get url Path!")
           return
       }
         print("save success !")
         // Save Video To Photos Album
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
         
-//        dismiss(animated: true)
     }
 }
 
 // MARK: - Connection Manager Delegate
+
+
+
+ 
+ 
+//    @objc func video(_ videoPath: String, didFinishSavingWithError error: Error?, contextInfo info: AnyObject) {
+//      let title = (error == nil) ? "Success" : "Error"
+//      let message = ( error == nil) ? "Video was saved" : "Video failed to save"
+//
+//      let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+//
+//      alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
+//      present(alert, animated: true)
+//
+//    }
+
+
 extension CameraController: ConnectionManagerDelegate {
-    func updateDuration(in seconds: Int) {
-        
-    }
-    
-    func presentVideo() {
-        
-    }
-    
     func updateState(state: ConnectionState) {
-        
         switch state {
         case .disconnected:
             DispatchQueue.main.async {
-                self.connectionStateLabel.text = "DisConnected!"
+                self.connectionStateLabel.text = "Disconnected!"
             }
+            
         case .connected:
             DispatchQueue.main.async {
                 self.connectionStateLabel.text = "Connected!"
             }
-        case .connecting:
-            break
         }
     }
+    
+    func updateDuration(in seconds: Int) {
+        
+    }
+    
+    
 }

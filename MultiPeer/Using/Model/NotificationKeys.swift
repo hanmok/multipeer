@@ -10,23 +10,19 @@ import Foundation
 
 
 public enum NotificationKeys {
-
-
-    // ViewController -> ImagePickerCOntroller
-//    static let startRecordingFromVC: Notification.Name = Notification.Name(rawValue: "startRecordingFromVC")
-//
-//    // New
-//    static let presentVideoKey = "presentVideo"
-//    static let startRecordingKey = "startRecording"
-//    static let stopRecordingKey = "stopRecording"
-//    static let disconnectedKey = "disconnected"
-//
-//    static let connectedKey = "connected"
-    
-    // New New
-    
     static let presentCamera = Notification.Name(rawValue: "presentCamera")
     static let startRecording = Notification.Name(rawValue: "startRecording")
     static let stopRecording = Notification.Name(rawValue: "stopRecording")
-    
+    static let updateConnectionState = Notification.Name(rawValue: "updateConnectionState")
+    static let startRecordingAt = Notification.Name(rawValue: "startRecordingAt")
 }
+
+
+extension Notification.Name {
+    static let presentCamera = NotificationKeys.presentCamera
+    static let startRecording = NotificationKeys.startRecording
+    static let stopRecording = NotificationKeys.stopRecording
+    static let updateConnectionState = NotificationKeys.updateConnectionState
+    static let startRecordingAt = NotificationKeys.startRecordingAt
+}
+

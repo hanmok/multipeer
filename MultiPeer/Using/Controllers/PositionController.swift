@@ -65,7 +65,25 @@ class PositionController: UIViewController {
         setupTargets()
         connectionManager.delegate = self
         addNotificationObservers()
+//        testCode()
     }
+    
+    @objc func testBtnTapped(_ sender: UIButton) {
+        testCode()
+    }
+    
+    func testCode() {
+        let date = Date().addingTimeInterval(5)
+        print("hi!")
+        let timer = Timer(fireAt: date, interval: 0, target: self, selector: #selector(runCode), userInfo: nil, repeats: false)
+        // 잘 작동 하는구만!!!
+        RunLoop.main.add(timer, forMode: .common)
+    }
+    
+    @objc func runCode() {
+        print("hello!")
+    }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         print("viewWillAppear PositionController")
@@ -87,7 +105,7 @@ class PositionController: UIViewController {
     
     private func setupTargets() {
         sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
-//        timerTestBtn.addTarget(self, action: #selector(testBtnTapped(_:)), for: .touchUpInside)
+        timerTestBtn.addTarget(self, action: #selector(testBtnTapped(_:)), for: .touchUpInside)
     }
     
     @objc func showConnectivityAction(_ sender: UIButton) {
@@ -218,9 +236,9 @@ class PositionController: UIViewController {
 //        print("sender.score: \(sender.score ?? 0)")
         print("sender.score: \(sender.positionWithDirectionInfo.score ?? 0)")
         
-        let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: connectionManager)
         
         DispatchQueue.main.async {
+            let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
             self.present(cameraVC, animated: true)
         }
     }
@@ -241,7 +259,7 @@ class PositionController: UIViewController {
     // observer, add observer
     private func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(presentCamera(_:)),
-                                               name: NotificationKeys.presentCamera, object: nil)
+                                               name: .presentCamera, object: nil)
     }
     
     @objc func presentCamera(_ notification: Notification) {
@@ -411,9 +429,9 @@ class PositionController: UIViewController {
 
 extension PositionController: ConnectionManagerDelegate {
     
-    func presentVideo() {
+//    func presentVideo() {
         
-    }
+//    }
     
     func updateState(state: ConnectionState) {
         switch state {
@@ -421,7 +439,7 @@ extension PositionController: ConnectionManagerDelegate {
         triggerTimer()
         case .disconnected:
             stopTimer()
-        case .connecting: break
+//        case .connecting: break
         }
 
         DispatchQueue.main.async {

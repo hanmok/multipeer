@@ -46,7 +46,7 @@ struct DetailPositionWIthMsgInfo: Codable {
     var detailInfo: PositionWithDirectionInfo
 }
 
-
+// 이건 되네 ??
 public enum MessageType: String, Codable {
     case presentCamera
     // Do I need to dismiss ?
@@ -54,4 +54,15 @@ public enum MessageType: String, Codable {
     case startRecording
     case stopRecording
     case none
+    case startRecordingAt
+}
+
+public enum RecordingType: String, Codable {
+    case startRecording
+    case stopRecording
+}
+
+struct MsgWithTime: Codable {
+    let msg: RecordingType
+    let time: Date
 }
