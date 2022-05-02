@@ -37,6 +37,8 @@ class CameraController: UIViewController {
         self.score = positionWithDirectionInfo.score
         self.connectionManager = connectionManager
         super.init(nibName: nil, bundle: nil)
+        
+        self.title = positionWithDirectionInfo.title
     }
     
     
@@ -299,6 +301,7 @@ class CameraController: UIViewController {
         DispatchQueue.main.async {
 //            self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
             self.durationLabel.text = "00:00"
+            
         }
         
         decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
@@ -333,9 +336,19 @@ class CameraController: UIViewController {
     func setupLayout() {
         print("present Picker!!")
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             
-            self.bottomView.frame = CGRect(x:0, y: screenHeight - (screenHeight - screenWidth) / 2, width: screenWidth, height: (screenHeight - screenWidth) / 2)
+        self.topView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: (screenHeight - screenWidth) / 2)
+        
+//        view.addSubview(topView)
+//        topView.snp.makeConstraints { make in
+//            make.top.leading.trailing.equalToSuperview()
+//            make.height.equalTo((screenHeight - screenWidth) / 2)
+//        }
+        
+        
+            self.bottomView.frame = CGRect(x:0, y: screenHeight - (screenHeight - screenWidth) / 2,
+                                           width: screenWidth, height: (screenHeight - screenWidth) / 2)
             
             self.bottomView.addSubview(self.recordingBtn)
             self.recordingBtn.snp.makeConstraints { make in
@@ -388,11 +401,18 @@ class CameraController: UIViewController {
             self.picker.view.snp.makeConstraints { make in
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
+            
+        view.addSubview(topView)
+        topView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo((screenHeight - screenWidth) / 2)
         }
+//        }
     }
     
     // MARK: - UI Properties
     private let bottomView = UIView().then { $0.backgroundColor = .black }
+    private let topView = UIView().then { $0.backgroundColor = .black }
     
     private let imageView = UIImageView()
     

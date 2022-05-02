@@ -243,7 +243,9 @@ class PositionController: UIViewController {
         
         DispatchQueue.main.async {
             let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
-            self.present(cameraVC, animated: true)
+//            self.present(cameraVC, animated: true)
+//            UINavigationController.pushViewController(cameraVC)
+            self.navigationController?.pushViewController(cameraVC, animated: true)
         }
     }
     
