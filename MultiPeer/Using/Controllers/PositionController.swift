@@ -20,19 +20,19 @@ class PositionController: UIViewController {
     var count = 0
     var timer: Timer?
     
-    private let deepSquat = PositionBlockView(PositionListEnum.deepsquat)
-    private let hurdleStep = PositionBlockView(PositionListEnum.hurdleStep)
-    private let inlineLunge = PositionBlockView(PositionListEnum.inlineLunge)
-    private let ankleClearing = PositionBlockView(PositionListEnum.ankleClearing)
+    private let deepSquat = PositionBlockView(PositionWithImageListEnum.deepsquat)
+    private let hurdleStep = PositionBlockView(PositionWithImageListEnum.hurdleStep)
+    private let inlineLunge = PositionBlockView(PositionWithImageListEnum.inlineLunge)
+    private let ankleClearing = PositionBlockView(PositionWithImageListEnum.ankleClearing)
     
-    private let shoulderMobility = PositionBlockView(PositionListEnum.shoulderMobility)
-    private let shoulderClearing = PositionBlockView(PositionListEnum.shoulderClearing)
-    private let straightLegRaise = PositionBlockView(PositionListEnum.straightLegRaise)
+    private let shoulderMobility = PositionBlockView(PositionWithImageListEnum.shoulderMobility)
+    private let shoulderClearing = PositionBlockView(PositionWithImageListEnum.shoulderClearing)
+    private let straightLegRaise = PositionBlockView(PositionWithImageListEnum.straightLegRaise)
     
-    private let stabilityPushup = PositionBlockView(PositionListEnum.stabilityPushup)
-    private let extensionClearing = PositionBlockView(PositionListEnum.extensionClearing)
-    private let rotaryStability = PositionBlockView(PositionListEnum.rotaryStability)
-    private let flexionClearing = PositionBlockView(PositionListEnum.flexionClearing)
+    private let stabilityPushup = PositionBlockView(PositionWithImageListEnum.stabilityPushup)
+    private let extensionClearing = PositionBlockView(PositionWithImageListEnum.extensionClearing)
+    private let rotaryStability = PositionBlockView(PositionWithImageListEnum.rotaryStability)
+    private let flexionClearing = PositionBlockView(PositionWithImageListEnum.flexionClearing)
     
 
     private let topView = UIView().then { $0.backgroundColor = .systemPink}

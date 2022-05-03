@@ -28,6 +28,7 @@
 		2283BEC4281B8732007D74FC /* Util+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC3281B8732007D74FC /* Util+.swift */; };
 		2283BEC7281FDFB6007D74FC /* ScoringController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC6281FDFB5007D74FC /* ScoringController.swift */; };
 		22889EFD2820CA96002A9C4F /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22889EFC2820CA96002A9C4F /* VideoPlayerViewController.swift */; };
+		22889F012820EE1E002A9C4F /* ScoreCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22889F002820EE1E002A9C4F /* ScoreCell.swift */; };
 		228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A32E92812A5EF00AC3447 /* ZoomRelated.swift */; };
 		228B88372806577A007A6842 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88362806577A007A6842 /* AppDelegate.swift */; };
 		228B88392806577A007A6842 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88382806577A007A6842 /* SceneDelegate.swift */; };
@@ -61,6 +62,7 @@
 		2283BEC3281B8732007D74FC /* Util+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Util+.swift"; sourceTree = "<group>"; };
 		2283BEC6281FDFB5007D74FC /* ScoringController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringController.swift; sourceTree = "<group>"; };
 		22889EFC2820CA96002A9C4F /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
+		22889F002820EE1E002A9C4F /* ScoreCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreCell.swift; sourceTree = "<group>"; };
 		228A32E92812A5EF00AC3447 /* ZoomRelated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomRelated.swift; sourceTree = "<group>"; };
 		228B88332806577A007A6842 /* MultiPeer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MultiPeer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B88362806577A007A6842 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -96,7 +98,7 @@
 				2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */,
 				2283BEBD281A5F5E007D74FC /* ImgBtnView.swift */,
 				2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */,
-				2283BEC3281B8732007D74FC /* Util+.swift */,
+				22889EFE2820EDC1002A9C4F /* Extensions */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -117,12 +119,29 @@
 		2283BEC5281BAD50007D74FC /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				2283BEC6281FDFB5007D74FC /* ScoringController.swift */,
 				2265AC4D2817F42300E0FCCF /* CameraController.swift */,
 				2265AC012816918700E0FCCF /* PositionController.swift */,
 				22889EFC2820CA96002A9C4F /* VideoPlayerViewController.swift */,
+				22889EFF2820EDCF002A9C4F /* Score */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		22889EFE2820EDC1002A9C4F /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2283BEC3281B8732007D74FC /* Util+.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		22889EFF2820EDCF002A9C4F /* Score */ = {
+			isa = PBXGroup;
+			children = (
+				2283BEC6281FDFB5007D74FC /* ScoringController.swift */,
+				22889F002820EE1E002A9C4F /* ScoreCell.swift */,
+			);
+			path = Score;
 			sourceTree = "<group>";
 		};
 		228A32EB2812A75E00AC3447 /* ViewControllers */ = {
@@ -338,6 +357,7 @@
 				227862632808024900C9EB79 /* VideoHelper.swift in Sources */,
 				2283BEC0281A5F78007D74FC /* ButtonWithInfo.swift in Sources */,
 				2283BEC4281B8732007D74FC /* Util+.swift in Sources */,
+				22889F012820EE1E002A9C4F /* ScoreCell.swift in Sources */,
 				226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */,
 				228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */,
 				22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */,

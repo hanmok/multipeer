@@ -69,7 +69,6 @@ class CameraController: UIViewController {
                 self.title = self.positionTitle + " " + self.direction.rawValue
             }
         }
-        
     }
     
     private func setupNavigationButton() {

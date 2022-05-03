@@ -169,5 +169,16 @@ class PositionBlockView: UIView {
                 make.height.width.equalToSuperview()
             }
         }
+//        if positionBlock.title == PositionList.
+        switch positionBlock.title {
+        case PositionList.ankleClearing.rawValue: fallthrough
+        case PositionList.flexionClearing.rawValue: fallthrough
+        case PositionList.shoulderClearing.rawValue: fallthrough
+        case PositionList.extensionClearing.rawValue:
+            imgBtnLeft.isUserInteractionEnabled = false
+            imgBtnRight.isUserInteractionEnabled = false
+        default:
+            break
+        }
     }
 }
