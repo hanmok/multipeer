@@ -175,7 +175,7 @@ class ConnectionManager: NSObject {
             try session.send(data, toPeers: session.connectedPeers, with: .reliable)
         } catch {
             print(error.localizedDescription)
-            fatalError("Fatal Error during encoding!!", file: #function)
+//            fatalError("Fatal Error during encoding!!", file: #function)
         }
     }
     

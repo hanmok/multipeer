@@ -32,7 +32,7 @@ class CameraController: UIViewController {
     
     private var isRecording = false
     
-    var previewVC: VideoPlayerViewController?
+    var previewVC: PreviewController?
     
     init(positionWithDirectionInfo: PositionWithDirectionInfo, connectionManager: ConnectionManager) {
         self.positionTitle = positionWithDirectionInfo.title
@@ -116,7 +116,7 @@ class CameraController: UIViewController {
     }
     
     @objc func startRecordingTriggered(_ notification: Notification) {
-        print("flag1")
+//        print("flag1")
         print("startRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? PositionDirection,
@@ -128,7 +128,7 @@ class CameraController: UIViewController {
     
     
     @objc func stopRecordingNotificationTriggered(_ notification: Notification) {
-        print("flag2")
+//        print("flag2")
         print("stopRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? PositionDirection,
@@ -138,7 +138,7 @@ class CameraController: UIViewController {
     }
     
     @objc func startRecordingAfter(_ notification: Notification) {
-        print("flag3")
+//        print("flag3")
         print(#function, #line)
         guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
 //              let msg = notification.userInfo?["msg"] as? RecordingType
@@ -166,7 +166,7 @@ class CameraController: UIViewController {
     
     
     @objc func startCountdownAfter(_ notification: Notification) {
-        print("flag4")
+//        print("flag4")
         guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
 //              let msg = notification.userInfo?["msg"] as? RecordingType
               let msg = notification.userInfo?["msg"] as? MessageType
@@ -215,11 +215,14 @@ class CameraController: UIViewController {
         print("recordingBtn Tapped!!")
         
         recordingBtnAction()
+        
     }
     
     func recordingBtnAction() {
         // Start Recording!!
+        removePreview()
         if !isRecording {
+//            removePreview()
             // Send Start Msg
             connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
             
@@ -304,7 +307,7 @@ class CameraController: UIViewController {
     /// updating durationLabel contained
     private func triggerDurationTimer() {
         count = 0
-        print("timer triggered!!")
+//        print("timer triggered!!")
         // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ??
         
         updatingDurationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
@@ -312,7 +315,7 @@ class CameraController: UIViewController {
                 print("self is nil in timer!!")
                 return }
             
-            print("trigger working!") // 왜.. 시행하는 쪽에서만 되냐 ?? 아님. 받는 쪽에서도 작동하넹.
+//            print("trigger working!") // 왜.. 시행하는 쪽에서만 되냐 ?? 아님. 받는 쪽에서도 작동하넹.
             self.count += 1
             
             self.updateDurationLabel()
@@ -320,13 +323,13 @@ class CameraController: UIViewController {
     }
     
     private func updateDurationLabel() {
-        print("updateDuration Triggered!")
+//        print("updateDuration Triggered!")
         
         let recordingDuration = convertIntoRecordingTimeFormat(count)
         
         DispatchQueue.main.async {
             self.durationLabel.text = recordingDuration // is this code working?
-            print(#function, #line, "updating Duration Label!")
+//            print(#function, #line, "updating Duration Label!")
         }
     }
     
@@ -370,7 +373,7 @@ class CameraController: UIViewController {
     
     private func presentPreview(with videoURL: URL) {
         
-        previewVC = VideoPlayerViewController(videoURL: videoURL)
+        previewVC = PreviewController(videoURL: videoURL)
         guard let previewVC = previewVC else {
             return
         }
@@ -388,14 +391,19 @@ class CameraController: UIViewController {
     }
     
     private func removePreview() {
+//        print("flag1")
         guard let previewVC = previewVC else {
+//            print("flag2")
             return
         }
-        previewVC.removeFromParent()
-        
+//        print("flag3")
+//        previewVC.removeFromParent()
+//        print("flag4")
         if self.children.count > 0 {
+//            print("flag5")
             let viewcontrollers: [UIViewController] = self.children
             for vc in viewcontrollers {
+//                print("flag6")
                 vc.willMove(toParent: nil)
                 vc.view.removeFromSuperview()
                 vc.removeFromParent()

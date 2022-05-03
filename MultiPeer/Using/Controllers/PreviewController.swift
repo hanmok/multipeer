@@ -17,7 +17,7 @@ import UIKit
 import AVFoundation
 import AVKit
 
-class VideoPlayerViewController: UIViewController {
+class PreviewController: UIViewController {
     
     override var prefersStatusBarHidden: Bool {
         return true
