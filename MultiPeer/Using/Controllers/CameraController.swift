@@ -33,6 +33,7 @@ class CameraController: UIViewController {
     
     private var isRecording = false
     
+    var previewVC: VideoPlayerViewController?
     
     init(positionWithDirectionInfo: PositionWithDirectionInfo, connectionManager: ConnectionManager) {
         self.positionTitle = positionWithDirectionInfo.title
@@ -46,16 +47,21 @@ class CameraController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setNavigationTitle()
+        setupNavigationBar()
         setupAddTargets()
         setupLayout()
         addNotificationObservers()
         updateInitialConnectionState()
     }
     
+    private let nextBtn = UIButton().then {
+        $0.setTitle("Score >", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+        
+    }
     
     
-    private func setNavigationTitle() {
+    private func setupNavigationBar() {
         DispatchQueue.main.async {
             if self.direction == .neutral {
                 self.title = self.positionTitle
@@ -63,6 +69,17 @@ class CameraController: UIViewController {
                 self.title = self.positionTitle + " " + self.direction.rawValue
             }
         }
+        
+    }
+    
+    private func setupNavigationButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Score >", style: .plain, target: self, action: #selector(presentScoreView))
+    }
+    
+    @objc func presentScoreView() {
+        let scoreView = ScoringController(positionWithDirectionInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score))
+        scoreView.modalPresentationStyle = .fullScreen
+        self.present(scoreView, animated: true)
     }
     
     func updateInitialConnectionState() {
@@ -344,6 +361,45 @@ class CameraController: UIViewController {
         updatingDurationTimer.invalidate()
     }
     
+    // TODO: For now, it's ratio not accurate, so it looks weird.
+    // TODO: Don't need to change for now.
+
+    
+    private func presentPreview(with videoURL: URL) {
+        
+        previewVC = VideoPlayerViewController(videoURL: videoURL)
+        guard let previewVC = previewVC else {
+            return
+        }
+
+        addChild(previewVC)
+        view.addSubview(previewVC.view)
+        previewVC.view.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(view.snp.width)
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        removePreview()
+    }
+    
+    private func removePreview() {
+        guard let previewVC = previewVC else {
+            return
+        }
+        previewVC.removeFromParent()
+        
+        if self.children.count > 0 {
+            let viewcontrollers: [UIViewController] = self.children
+            for vc in viewcontrollers {
+                vc.willMove(toParent: nil)
+                vc.view.removeFromSuperview()
+                vc.removeFromParent()
+            }
+        }
+    }
+    
     
     func setupLayout() {
         print("present Picker!!")
@@ -486,8 +542,14 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         print("save success !")
         // Save Video To Photos Album
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
-        // present video immediately after took video 
-        self.present(VideoPlayerViewController(videoURL: url), animated: true)
+        
+        // TODO: Present Preview In a second
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//            self.present(VideoPlayerViewController(videoURL: url), animated: true)
+            self.presentPreview(with: url)
+            self.setupNavigationButton()
+        }
+
     }
 }
 

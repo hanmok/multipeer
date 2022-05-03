@@ -26,6 +26,12 @@ class ScoringController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(white: 0.3, alpha: 0.3)
+//        view.backgroundColor =
+        view.addSubview(scoreLabel)
+        scoreLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(100)
+        }
         // Do any additional setup after loading the view.
     }
     
