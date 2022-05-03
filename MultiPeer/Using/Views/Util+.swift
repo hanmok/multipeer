@@ -18,10 +18,24 @@ public var screenHeight: CGFloat {
 }
 
 
-public func convertIntoFormat(_ seconds: Int) -> String {
+public func convertIntoRecordingTimeFormat(_ seconds: Int) -> String {
     
     let minutes = Int(seconds) / 60 % 60
     let seconds = Int(seconds) % 60
     return String(format:"%02i:%02i", minutes, seconds)
     
 }
+
+
+extension Date {
+ var millisecondsSince1970:Int64 {
+        return Int64((self.timeIntervalSince1970 * 1000.0).rounded())
+        //RESOLVED CRASH HERE
+    }
+
+    init(milliseconds:Int) {
+        self = Date(timeIntervalSince1970: TimeInterval(milliseconds / 1000))
+    }
+}
+
+

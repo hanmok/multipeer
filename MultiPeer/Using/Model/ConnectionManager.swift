@@ -40,9 +40,23 @@ import AVFoundation
 
 
 public enum OrderMessageTypes {
-    static let presentCamera = "presentCamera"
-    static let startRecording = "startRecording"
-    static let stopRecording = "stopRecording"
+//    static let presentCamera = "presentCamera"
+//    static let startRecording = "startRecording"
+//    static let stopRecording = "stopRecording"
+    case presentCameraMsg
+    case startRecordingMsg
+    case stopRecordingMsg
+}
+
+//struct MessageTypes {
+//    var message:
+//}
+
+struct MessageWithInfo {
+    
+    var date: Date
+    
+    var messageType: OrderMessageTypes
 }
 
 
@@ -52,14 +66,14 @@ extension ConnectionManager: MCNearbyServiceAdvertiserDelegate {
     }
 }
 
-public enum ConnectionState: String {
+public enum ConnectionState: String, Codable {
     case connected
     case disconnected
-    case connecting
+//    case connecting
 }
 
 protocol ConnectionManagerDelegate: NSObject {
-    func presentVideo()
+//    func presentVideo()
     func updateState(state: ConnectionState)
     func updateDuration(in seconds: Int)
 }
@@ -97,18 +111,39 @@ class ConnectionManager: NSObject {
     var startTime = Date()
     var endTime = Date()
     
-    func send(_ message: String) {
+    func send(_ customMsg: String) {
 
 //        let chatMessage = ChatMessage(displayName: myPeerId.displayName, body: message)
 //        ConnectionManager.messages.append(chatMessage)
 
-        guard let session = session,
-              let data = message.data(using: .utf8),
-              !session.connectedPeers.isEmpty else { return }
+        let encoder = JSONEncoder()
+        
+        guard let session = session else {return }
         do {
+            let data = try encoder.encode(customMsg)
             try session.send(data, toPeers: session.connectedPeers, with: .reliable)
         } catch {
-            print("Error ! \(error.localizedDescription) ")
+            print(error.localizedDescription)
+        }
+//        guard let session = session,
+//              let data = customMsg.data(using: .utf8),
+//              !session.connectedPeers.isEmpty else { return }
+//        do {
+//            try session.send(data, toPeers: session.connectedPeers, with: .reliable)
+//        } catch {
+//            print("Error ! \(error.localizedDescription) ")
+//        }
+    }
+    
+    func send(_ messageWithTime: MsgWithTime) {
+        let encoder = JSONEncoder()
+        
+        guard let session = session else {return }
+        do {
+            let data = try encoder.encode(messageWithTime)
+            try session.send(data, toPeers: session.connectedPeers, with: .reliable)
+        } catch {
+            print(error.localizedDescription)
         }
     }
     
@@ -206,9 +241,10 @@ extension ConnectionManager: MCSessionDelegate {
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         print("data received via ConnectionManager !!")
-        // Type 을 나눠야해요 ..
+        
         
         let jsonDecoder = JSONDecoder()
+        
         do {
             let positionInfoWithMsg = try jsonDecoder.decode(DetailPositionWIthMsgInfo.self, from: data)
             
@@ -222,38 +258,60 @@ extension ConnectionManager: MCSessionDelegate {
             case .presentCamera:
                 // TODO: Send Message with position Info
                 
-                NotificationCenter.default.post(name: NotificationKeys.presentCamera, object: nil, userInfo: detailInfoDic)
+                NotificationCenter.default.post(name: .presentCameraKey, object: nil, userInfo: detailInfoDic)
                 print("NotificationKey named presentCamera has posted.")
                 break
-            case .startRecording:
+                
+            case .startRecordingMsg:
                 // TODO: Send Message with position Info
                 print("post startRecording !!")
-                NotificationCenter.default.post(name: NotificationKeys.startRecording, object: nil, userInfo: detailInfoDic)
-            case .stopRecording:
+                NotificationCenter.default.post(name: .startRecordingKey, object: nil, userInfo: detailInfoDic)
+                
+            case .stopRecordingMsg:
                 // TODO: Send Message with position Info
-                NotificationCenter.default.post(name: NotificationKeys.stopRecording, object: nil, userInfo: detailInfoDic)
+                NotificationCenter.default.post(name: .stopRecordingKey, object: nil, userInfo: detailInfoDic)
                 break
+                
+            case .startRecordingAfterMsg:
+                let date = Date().addingTimeInterval(3)
+                let timeInfo: [AnyHashable: Any] = ["triggerAt": date]
+                NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
+            
             case .none:
+                print("none has been passed!")
+                break
+            
+            case .startCountDownMsg:
                 break
             }
         } catch {
-            print("Error Occurred during Decoding !!!")
+                print("Error Occurred during Decoding DetailPositionWithMsgInfo!!!")
+                do {
+                    let testInfoMsg = try jsonDecoder.decode(MsgWithTime.self, from: data)
+                    
+                    let msgReceived = testInfoMsg.msg
+                    let timeReceived = testInfoMsg.timeInMilliSec
+                    
+                    let timeInfo: [AnyHashable: Any] = ["msg": msgReceived,"receivedTime": timeReceived]
+                    
+                    switch msgReceived {
+                        
+                    case .startRecordingAfterMsg:
+                        NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
+                    print("successfully post startRecordingAfterKey")
+                    case .startCountDownMsg:
+                        NotificationCenter.default.post(name: .startCountdownAfterKey, object: nil, userInfo: timeInfo)
+                        print("post startCountdownAfterKey")
+                    
+                    default:
+                        print("something has posted! \(msgReceived.rawValue)")
+                    }
+                    print(#function, #line)
+                } catch {
+                    print("Error Occurred during Decoding String!!!", #file, #line)
+                    print("Error : \(error.localizedDescription)")
+                }
         }
-        
-//        do {
-//            let message = try jsonDecoder.decode(MessageType.self, from: data)
-//            switch message {
-//            case .startRecording: break
-//                NotificationCenter.default.post(name: NotificationKeys.startRecording, object: nil, userInfo: nil)
-//            case .stopRecording: break
-//
-//            default: break
-//            }
-//
-//        } catch {
-//            print("Error occurred during converting messageType")
-//        }
-        
     }
     
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
@@ -267,36 +325,36 @@ extension ConnectionManager: MCSessionDelegate {
             startTime = Date()
             
             delegate?.updateState(state: .connected)
-            
+//            self.connectionState =
 //            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.connectedKey), object: nil)
             
             self.startDurationTimer()
             
         case .notConnected:
-            self.connectionState = .disconnected
+
             if let index = ConnectionManager.peers.firstIndex(of: peerID) {
                 ConnectionManager.peers.remove(at: index)
             }
             if ConnectionManager.peers.isEmpty && !self.isHosting {
                 ConnectionManager.connectedToChat = false
             }
-            
+            self.connectionState = .disconnected
             endTime = Date()
             
-//            delegate?.updateState(state: "not connected!")
             delegate?.updateState(state: .disconnected)
             
-            
-//            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.disconnectedKey), object: nil)
-            
-//            delegate?.disconnected(state: "disconnected!", timeDuration: Int(endTime.timeIntervalSince1970 - startTime.timeIntervalSince1970))
-        
             print("disconnected!!")
         case .connecting:
             print("it's connecting .. ")
         @unknown default:
             fatalError(" it's in unknown state")
         }
+        
+        let connectionInfo: [AnyHashable: Any] = ["connectionState": connectionState]
+        NotificationCenter.default.post(name: .updateConnectionStateKey, object: nil, userInfo: connectionInfo)
+        
+        
+//        delegate?.updateState(state: state)
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {}

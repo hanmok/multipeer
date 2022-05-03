@@ -21,7 +21,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
 
-        window?.rootViewController = PositionController()
+        let positionVC = PositionController()
+//        window?.rootViewController = PositionController()
+//        window?.rootViewController = UIViewController(nibName: nil, bundle: nil)
+        window?.rootViewController = UINavigationController(rootViewController: positionVC)
 //        window?.rootViewController = CameraController()
 
         window?.makeKeyAndVisible()

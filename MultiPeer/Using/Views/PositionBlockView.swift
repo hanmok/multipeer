@@ -22,12 +22,12 @@ class PositionBlockView: UIView {
     
     let imageView1 = UIImageView().then{
         $0.isUserInteractionEnabled = true
-        $0.backgroundColor = .blue
+//        $0.backgroundColor = .blue
     }
     
     let imageView2 = UIImageView().then {
         $0.isUserInteractionEnabled = true
-        $0.backgroundColor = .orange
+//        $0.backgroundColor = .orange
     }
     
     var imgBtnLeft = ImgBtnView(title: "", direction: .neutral)
@@ -93,15 +93,13 @@ class PositionBlockView: UIView {
                 make.height.equalToSuperview().dividedBy(2)
             }
             
-            //            dummyBtnLeft
-//            imgBtnLeft = ButtonWithInfo(title: positionBlock.title, direction: .left)
+
             imgBtnLeft = ImgBtnView(title: positionBlock.title, direction: .left)
             imageView1.addSubview(imgBtnLeft)
             imgBtnLeft.snp.makeConstraints { make in
                 make.leading.top.trailing.bottom.equalToSuperview()
-            }
+            } 
             
-//            imgBtnRight = ButtonWithInfo(title: positionBlock.title, direction: .right)
             imgBtnRight = ImgBtnView(title: positionBlock.title, direction: .right)
             imageView2.addSubview(imgBtnRight)
             imgBtnRight.snp.makeConstraints { make in
@@ -118,7 +116,8 @@ class PositionBlockView: UIView {
                 make.top.equalTo(imageStackView.snp.bottom)
                 make.left.equalToSuperview().offset(10)
                 make.right.equalToSuperview().offset(-10)
-                make.height.equalTo(50)
+//                make.height.equalTo(50)
+                make.bottom.equalTo(nameLabel.snp.top)
             }
             
             // one Image
@@ -136,7 +135,7 @@ class PositionBlockView: UIView {
                 make.right.equalToSuperview().offset(-10)
                 make.height.equalToSuperview().dividedBy(2)
             }
-//            imgBtnLeft = ButtonWithInfo(title: positionBlock.title, direction: .neutral)
+
             imgBtnLeft = ImgBtnView(title: positionBlock.title, direction: .neutral)
             imageView1.addSubview(imgBtnLeft)
             imgBtnLeft.snp.makeConstraints { make in
@@ -150,7 +149,8 @@ class PositionBlockView: UIView {
                 make.top.equalTo(imageView1.snp.bottom)
                 make.left.equalToSuperview().offset(10)
                 make.right.equalToSuperview().offset(-10)
-                make.height.equalTo(50)
+//                make.height.equalTo(50)
+                make.bottom.equalTo(nameLabel.snp.top)
             }
             
             self.addSubview(scoreView2)
@@ -158,6 +158,7 @@ class PositionBlockView: UIView {
             scoreView2.isHidden = true
             imageView2.isHidden = true
             
+            // 이것들 반드시 필요함..?
             scoreView2.snp.makeConstraints { make in
                 make.center.equalToSuperview()
                 make.height.width.equalToSuperview()

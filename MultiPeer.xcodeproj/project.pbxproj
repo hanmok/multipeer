@@ -26,10 +26,10 @@
 		2283BEC0281A5F78007D74FC /* ButtonWithInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */; };
 		2283BEC2281A884F007D74FC /* NotificationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC1281A884F007D74FC /* NotificationKeys.swift */; };
 		2283BEC4281B8732007D74FC /* Util+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC3281B8732007D74FC /* Util+.swift */; };
+		2283BEC7281FDFB6007D74FC /* ScoringController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC6281FDFB5007D74FC /* ScoringController.swift */; };
 		228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A32E92812A5EF00AC3447 /* ZoomRelated.swift */; };
 		228B88372806577A007A6842 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88362806577A007A6842 /* AppDelegate.swift */; };
 		228B88392806577A007A6842 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88382806577A007A6842 /* SceneDelegate.swift */; };
-		228B883B2806577A007A6842 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B883A2806577A007A6842 /* MainViewController.swift */; };
 		228B883E2806577B007A6842 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B883C2806577B007A6842 /* Main.storyboard */; };
 		228B884028065784007A6842 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 228B883F28065784007A6842 /* Assets.xcassets */; };
 		228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B884128065784007A6842 /* LaunchScreen.storyboard */; };
@@ -58,11 +58,11 @@
 		2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWithInfo.swift; sourceTree = "<group>"; };
 		2283BEC1281A884F007D74FC /* NotificationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationKeys.swift; sourceTree = "<group>"; };
 		2283BEC3281B8732007D74FC /* Util+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Util+.swift"; sourceTree = "<group>"; };
+		2283BEC6281FDFB5007D74FC /* ScoringController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringController.swift; sourceTree = "<group>"; };
 		228A32E92812A5EF00AC3447 /* ZoomRelated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomRelated.swift; sourceTree = "<group>"; };
 		228B88332806577A007A6842 /* MultiPeer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MultiPeer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B88362806577A007A6842 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		228B88382806577A007A6842 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		228B883A2806577A007A6842 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		228B883D2806577B007A6842 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		228B883F28065784007A6842 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		228B884228065784007A6842 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -89,8 +89,6 @@
 		2265AC03281699D600E0FCCF /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				2265AC4D2817F42300E0FCCF /* CameraController.swift */,
-				2265AC012816918700E0FCCF /* PositionController.swift */,
 				2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */,
 				2265AC0828177FD800E0FCCF /* PositionInfo.swift */,
 				2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */,
@@ -114,11 +112,20 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		2283BEC5281BAD50007D74FC /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				2283BEC6281FDFB5007D74FC /* ScoringController.swift */,
+				2265AC4D2817F42300E0FCCF /* CameraController.swift */,
+				2265AC012816918700E0FCCF /* PositionController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
 		228A32EB2812A75E00AC3447 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
 				226E0445280EBBE4004A8A28 /* RecordingViewController.swift */,
-				228B883A2806577A007A6842 /* MainViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -182,6 +189,7 @@
 		22ADC439281A226700B1C639 /* Using */ = {
 			isa = PBXGroup;
 			children = (
+				2283BEC5281BAD50007D74FC /* Controllers */,
 				22ADC435281947A900B1C639 /* Model */,
 				2265AC03281699D600E0FCCF /* Views */,
 			);
@@ -330,7 +338,6 @@
 				226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */,
 				228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */,
 				22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */,
-				228B883B2806577A007A6842 /* MainViewController.swift in Sources */,
 				2265AC0528169D6C00E0FCCF /* PositionBlockView.swift in Sources */,
 				2282DD8D281646E0008928A4 /* Orientation.swift in Sources */,
 				2283BEC2281A884F007D74FC /* NotificationKeys.swift in Sources */,
@@ -342,6 +349,7 @@
 				2265AC022816918700E0FCCF /* PositionController.swift in Sources */,
 				228B88372806577A007A6842 /* AppDelegate.swift in Sources */,
 				2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */,
+				2283BEC7281FDFB6007D74FC /* ScoringController.swift in Sources */,
 				2283BEBE281A5F5E007D74FC /* ImgBtnView.swift in Sources */,
 				2265AC0928177FD800E0FCCF /* PositionInfo.swift in Sources */,
 				228B88392806577A007A6842 /* SceneDelegate.swift in Sources */,

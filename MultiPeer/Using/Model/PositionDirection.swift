@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum PositionDirection:Codable {
+enum PositionDirection:String, Codable  {
     case left
     case right
     case neutral // represent 'Center' or 'Neutral'
@@ -46,12 +46,25 @@ struct DetailPositionWIthMsgInfo: Codable {
     var detailInfo: PositionWithDirectionInfo
 }
 
-
+// 이건 되네 ??
 public enum MessageType: String, Codable {
     case presentCamera
     // Do I need to dismiss ?
     // Timer ?
-    case startRecording
-    case stopRecording
+    case startRecordingMsg
+    case stopRecordingMsg
     case none
+    case startRecordingAfterMsg
+    case startCountDownMsg
+}
+
+//public enum RecordingType: String, Codable {
+//    case startRecordingMsg
+//    case stopRecordingMsg
+//}
+
+struct MsgWithTime: Codable {
+//    let msg: RecordingType
+    let msg: MessageType
+    let timeInMilliSec: Int
 }
