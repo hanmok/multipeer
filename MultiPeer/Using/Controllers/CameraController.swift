@@ -478,15 +478,16 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
                 // Verify that the app can save the file to the device's photo album
               
                 UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(url.path)
-                
         else {
             print("failed to get url Path!")
             return
         }
+        
         print("save success !")
         // Save Video To Photos Album
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
-        
+        // present video immediately after took video 
+        self.present(VideoPlayerViewController(videoURL: url), animated: true)
     }
 }
 
