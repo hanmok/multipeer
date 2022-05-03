@@ -9,27 +9,36 @@ import UIKit
 import SnapKit
 import Then
 
-protocol ScoringControllerDelegate: AnyObject {
+protocol ScoreControllerDelegate: AnyObject {
     func nextTapped()
     func retryTapped()
 }
 
 private let cellIdentifier = "ScoreIdentifier"
 // TODO: apply MVVM Pattern for selected button color ( for convenience.. )
-class ScoringController: UIViewController {
+class ScoreController: UIViewController {
 
     let positionToScoreType: [String: ScoreType] = [
         PositionList.deepSquat.rawValue: .zeroThreeHold,
+        PositionList.deepSquatVar.rawValue: .zeroToTwo,
+        
         PositionList.hurdleStep.rawValue: .zeroToThree,
         PositionList.inlineLunge.rawValue: .zeroToThree,
-        PositionList.ankleClearing.rawValue: .zeroToThree,
+
+        PositionList.ankleClearing.rawValue: .painOrNot,
+//        PositionList.ankleClearing.rawValue: .RGB,
+        
         PositionList.shoulderMobility.rawValue: .zeroToThree,
-        PositionList.shoulderClearing.rawValue: .zeroToThree,
+        PositionList.shoulderClearing.rawValue: .painOrNot,
+        
         PositionList.activeStraightLegRaise.rawValue: .zeroToThree,
-        PositionList.trunkStabilityPushUp.rawValue: .zeroToThree,
-        PositionList.extensionClearing.rawValue: .zeroToThree,
+        
+        PositionList.trunkStabilityPushUp.rawValue: .zeroThreeHold,
+        PositionList.trunkStabilityPushUpVar.rawValue: .zeroToTwo,
+        PositionList.extensionClearing.rawValue: .painOrNot,
+        
         PositionList.rotaryStability.rawValue: .zeroToThree,
-        PositionList.flexionClearing.rawValue: .zeroToThree
+        PositionList.flexionClearing.rawValue: .painOrNot
     ]
     
     let positionTitle: String
@@ -37,8 +46,7 @@ class ScoringController: UIViewController {
     var score: Int?
     var scoreType: ScoreType
     
-    weak var delegate: ScoringControllerDelegate?
-    
+    weak var delegate: ScoreControllerDelegate?
     
     private let scoreLabel = UILabel().then {
         $0.text = "Score"
@@ -94,25 +102,9 @@ class ScoringController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    
     private func setupLayout() {
         
     }
-    
-    
-//    private func setupCollectionView() {
-//        scoreCollectionView.delegate = self
-//        scoreCollectionView.dataSource = self
-//        scoreCollectionView.register(ScoreCell.self, forCellWithReuseIdentifier: cellIdentifier)
-//    }
-//
-//    private let scoreCollectionView: UICollectionView = {
-//        let layout = UICollectionViewFlowLayout()
-//        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//        return cv
-//    }()
-    
     
     
     private let zeroThreeHoldView = UIView()
@@ -120,27 +112,12 @@ class ScoringController: UIViewController {
     private let zeroToTwoView = UIView()
 }
 
-//extension ScoringController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        switch scoreType {
-//        case .zeroThreeHold:
-//            return 3
-//        case .zeroToThree:
-//            return 4
-//        case .zeroToTwo:
-//            return 3
-//        }
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//
-//    }
-//}
 
 class ScoreView: UIView {
     var scoreType: ScoreType {
         didSet {
-            loadView()
+//            loadView()
+            setupLayout()
         }
     }
     
@@ -151,27 +128,59 @@ class ScoreView: UIView {
     init(scoreType: ScoreType = .zeroToThree, frame: CGRect = .zero) {
         self.scoreType = scoreType
         super.init(frame: frame)
-        setupLayout()
+//        setupLayout()
     }
+    
     private func setupLayout() {
         addSubview(scoreLabel)
         scoreLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-//            make.leadi
             make.width.equalToSuperview()
             make.height.equalTo(40)
             make.top.equalToSuperview().offset(50)
         }
         
         
-        
-        [view1, view2, view3, view4].forEach {
+        [view1, view2, view3].forEach {
             addSubview($0)
+        }
+        
+        
+        // Three Elements
+        if scoreType == .zeroThreeHold || scoreType == .zeroToTwo{
+            view1.snp.makeConstraints { make in
+//                make.leading.equalToSuperview()
+                make.leading.top.equalToSuperview()
+                make.height.equalTo(40)
+                make.width.equalToSuperview().dividedBy(3)
+            }
+            
+            view2.snp.makeConstraints { make in
+//                make.leading.top.equalToSuperview()
+                make.top.equalToSuperview()
+                make.leading.equalTo(view1.snp.trailing)
+                make.height.equalTo(40)
+                make.width.equalToSuperview().dividedBy(3)
+            }
+            
+            view3.snp.makeConstraints { make in
+//                make.leading.top.equalToSuperview()
+                make.top.equalToSuperview()
+                make.leading.equalTo(view2.snp.trailing)
+                make.height.equalTo(40)
+                make.width.equalToSuperview().dividedBy(3)
+            }
+            
+            
+            // Four Elements
+        } else if scoreType == .zeroToThree {
+            addSubview(view4)
         }
         
         view1.snp.makeConstraints { make in
             make.top.equalTo(scoreLabel.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview()
+//            make.leading.trailing.equalToSuperview()
+//            make.leading.
             
         }
     }
@@ -198,9 +207,8 @@ class ScoreView: UIView {
         $0.layer.borderColor = UIColor.black.cgColor
         $0.layer.borderWidth = 1
     }
-
-    
 }
+
 
 
 
@@ -208,5 +216,6 @@ public enum ScoreType {
     case zeroThreeHold
     case zeroToThree
     case zeroToTwo
+    case painOrNot
+    case RGB
 }
-

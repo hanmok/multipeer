@@ -28,7 +28,6 @@ class CameraController: UIViewController {
     
     var isRecordingEnded = false
     
-    //    private var picker : UIImagePickerController?
     private var picker = UIImagePickerController()
     
     private var isRecording = false
@@ -40,7 +39,9 @@ class CameraController: UIViewController {
         self.direction = positionWithDirectionInfo.direction
         self.score = positionWithDirectionInfo.score
         self.connectionManager = connectionManager
+        
         super.init(nibName: nil, bundle: nil)
+        connectionManager.delegate = self
     }
     
     // TODO: 
@@ -76,12 +77,13 @@ class CameraController: UIViewController {
     }
     
     @objc func presentScoreView() {
-        let scoreView = ScoringController(positionWithDirectionInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score))
+        let scoreView = ScoreController(positionWithDirectionInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score))
         scoreView.modalPresentationStyle = .fullScreen
         self.present(scoreView, animated: true)
     }
     
     func updateInitialConnectionState() {
+        print(#file, #line)
         switch connectionManager.connectionState {
         case .connected:
             DispatchQueue.main.async {
@@ -178,9 +180,10 @@ class CameraController: UIViewController {
         print("startCountdownAfter has triggered", #line)
     }
     
-    
+    // this one called!!
     @objc func updateConnectionState(_ notification: Notification) {
-        print("flag5")
+//        print("flag5")
+        print(#file, #line)
         guard let state = notification.userInfo?["connectionState"] as? ConnectionState else {
             print("failed to get connectionState normally")
             return }
@@ -188,6 +191,7 @@ class CameraController: UIViewController {
         case .disconnected:
             DispatchQueue.main.async {
                 self.connectionStateLabel.text = "Disconnected!"
+                self.showReconnectionGuideAction()
             }
         case .connected:
             DispatchQueue.main.async {
@@ -474,8 +478,26 @@ class CameraController: UIViewController {
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo((screenHeight - screenWidth) / 2)
         }
-//        }
+
+        
+        
     }
+    //MARK: Reconnect! when it ends.
+    func showConnectivityAction() {
+        let actionSheet = UIAlertController(title: "Connect Camera", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
+            self.connectionManager.host()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
+            self.connectionManager.join()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(actionSheet, animated: true, completion: nil)
+    }
+    
     
     // MARK: - UI Properties
     private let bottomView = UIView().then { $0.backgroundColor = .black }
@@ -548,7 +570,18 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             self.presentPreview(with: url)
             self.setupNavigationButton()
         }
-
+    }
+    
+    private func showReconnectionGuideAction() {
+        let actionSheet = UIAlertController(title: "Connection Lost", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        actionSheet.addAction(UIAlertAction(title: "Reconnect Session", style: .default, handler: { (action: UIAlertAction) in
+            self.showConnectivityAction()
+        }))
+        
+        self.present(actionSheet, animated: true, completion: nil)
     }
 }
 
@@ -575,7 +608,11 @@ extension CameraController: ConnectionManagerDelegate {
         switch state {
         case .disconnected:
             DispatchQueue.main.async {
+                print(#file, #line)
                 self.connectionStateLabel.text = "Disconnected!"
+//                self.showConnectivityAction()
+                print("showReconnectionGuideAction!")
+                self.showReconnectionGuideAction()
             }
             
         case .connected:

@@ -13,6 +13,7 @@ import UIKit
 
 enum PositionList: String {
     case deepSquat = "Deep Squat"
+    case deepSquatVar = "Deep Squat Var"
     case hurdleStep = "Hurdle Step"
     case inlineLunge = "Inline Lunge"
     case ankleClearing = "Ankle Clearing"
@@ -20,6 +21,7 @@ enum PositionList: String {
     case shoulderClearing = "Shoulder Clearing"
     case activeStraightLegRaise = "Active Straight-LegRaise"
     case trunkStabilityPushUp = "Trunk Stability Push-up"
+    case trunkStabilityPushUpVar = "Trunk Stability Push-up Var"
     case extensionClearing = "Extension Clearing"
     case rotaryStability = "Rotary Stability"
     case flexionClearing = "Flexion Clearing"

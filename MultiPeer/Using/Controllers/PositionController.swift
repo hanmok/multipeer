@@ -241,14 +241,28 @@ class PositionController: UIViewController {
         print("sender.score: \(sender.positionWithDirectionInfo.score ?? 0)")
         
         
-        DispatchQueue.main.async {
-            let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
-//            self.present(cameraVC, animated: true)
-//            UINavigationController.pushViewController(cameraVC)
-            self.navigationController?.pushViewController(cameraVC, animated: true)
-        }
+//        DispatchQueue.main.async {
+//            let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
+////            self.present(cameraVC, animated: true)
+////            UINavigationController.pushViewController(cameraVC)
+//            self.navigationController?.pushViewController(cameraVC, animated: true)
+//        }
+        
+        presentCamera(positionWithDirectionInfo: positionWithDirectionInfo)
     }
     
+    private func presentCamera(positionWithDirectionInfo: PositionWithDirectionInfo) {
+        DispatchQueue.main.async {
+            let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
+//            self.navigationController?.pushViewController(cameraVC, animated: true)
+            self.addChild(cameraVC)
+            self.view.addSubview(cameraVC.view)
+            cameraVC.view.snp.makeConstraints { make in
+                make.leading.top.trailing.bottom.equalToSuperview()
+            }
+        }
+    }
+
     @objc func scoreTapped(_ sender: ButtonWithInfo) {
         // TODO: if none recorded, move to cameraView With Info
         // TODO: if Not, popup score Action to modify
