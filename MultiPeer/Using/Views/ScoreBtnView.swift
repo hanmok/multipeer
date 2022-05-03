@@ -45,9 +45,9 @@ class ScoreBtnView: ButtonWithInfo {
         scoreLabel.textAlignment = .center
         scoreLabel.textColor = .magenta
         
-        self.layer.borderColor = UIColor.blue.cgColor
+        self.layer.borderColor = UIColor.black.cgColor
         self.layer.borderWidth = 1
-        self.layer.cornerRadius = 20
+        self.layer.cornerRadius = 10
     }
     
     let scoreLabel: UILabel = {
@@ -59,5 +59,6 @@ class ScoreBtnView: ButtonWithInfo {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
 
 

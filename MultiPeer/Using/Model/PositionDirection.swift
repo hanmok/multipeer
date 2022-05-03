@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum PositionDirection:Codable {
+enum PositionDirection:String, Codable  {
     case left
     case right
     case neutral // represent 'Center' or 'Neutral'

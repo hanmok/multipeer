@@ -26,10 +26,13 @@ class CameraController: UIViewController {
     var count = 0
     var decreasingCount = 3
     
+    var isRecordingEnded = false
+    
     //    private var picker : UIImagePickerController?
     private var picker = UIImagePickerController()
     
     private var isRecording = false
+    
     
     init(positionWithDirectionInfo: PositionWithDirectionInfo, connectionManager: ConnectionManager) {
         self.positionTitle = positionWithDirectionInfo.title
@@ -37,22 +40,32 @@ class CameraController: UIViewController {
         self.score = positionWithDirectionInfo.score
         self.connectionManager = connectionManager
         super.init(nibName: nil, bundle: nil)
-        
-        self.title = positionWithDirectionInfo.title
     }
     
-    
+    // TODO: 
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        setNavigationTitle()
         setupAddTargets()
         setupLayout()
         addNotificationObservers()
         updateInitialConnectionState()
     }
     
+    
+    
+    private func setNavigationTitle() {
+        DispatchQueue.main.async {
+            if self.direction == .neutral {
+                self.title = self.positionTitle
+            } else {
+                self.title = self.positionTitle + " " + self.direction.rawValue
+            }
+        }
+    }
+    
     func updateInitialConnectionState() {
-        
         switch connectionManager.connectionState {
         case .connected:
             DispatchQueue.main.async {
@@ -299,9 +312,8 @@ class CameraController: UIViewController {
     
     @objc private func triggerCountDownTimer() {
         DispatchQueue.main.async {
-//            self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
             self.durationLabel.text = "00:00"
-            
+            self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
         }
         
         decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in

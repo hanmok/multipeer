@@ -43,7 +43,8 @@ class PositionController: UIViewController {
     }
     
     private let connectionStateLabel = UILabel().then {
-        $0.textColor = .blue
+//        $0.textColor = .blue
+        $0.textColor = .black
         $0.text = "Not Connected"
     }
     
@@ -51,10 +52,10 @@ class PositionController: UIViewController {
         $0.text = "duration"
     }
     
-    private let timerTestBtn = UIButton().then { $0.setTitle("start Timer", for: .normal)
-        $0.setTitleColor(.yellow, for: .normal)
-        
-    }
+//    private let timerTestBtn = UIButton().then { $0.setTitle("start Timer", for: .normal)
+//        $0.setTitleColor(.yellow, for: .normal)
+//
+//    }
     
     // MARK: - Life Cycle
     
@@ -109,7 +110,7 @@ class PositionController: UIViewController {
     
     private func setupTargets() {
         sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
-        timerTestBtn.addTarget(self, action: #selector(testBtnTapped(_:)), for: .touchUpInside)
+//        timerTestBtn.addTarget(self, action: #selector(testBtnTapped(_:)), for: .touchUpInside)
     }
     
     @objc func showConnectivityAction(_ sender: UIButton) {
@@ -117,7 +118,6 @@ class PositionController: UIViewController {
         
         actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
             self.connectionManager.host()
-            
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
@@ -420,12 +420,12 @@ class PositionController: UIViewController {
             make.width.equalToSuperview().dividedBy(4)
         }
         
-        view.addSubview(timerTestBtn)
-        timerTestBtn.snp.makeConstraints { make in
-            make.leading.bottom.equalToSuperview()
-            make.top.equalTo(stabilityPushup.snp.bottom)
-            make.width.equalTo(150)
-        }
+//        view.addSubview(timerTestBtn)
+//        timerTestBtn.snp.makeConstraints { make in
+//            make.leading.bottom.equalToSuperview()
+//            make.top.equalTo(stabilityPushup.snp.bottom)
+//            make.width.equalTo(150)
+//        }
     }
     
     
