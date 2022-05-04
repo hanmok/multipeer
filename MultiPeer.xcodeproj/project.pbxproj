@@ -27,6 +27,7 @@
 		2283BEC2281A884F007D74FC /* NotificationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC1281A884F007D74FC /* NotificationKeys.swift */; };
 		2283BEC4281B8732007D74FC /* Util+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC3281B8732007D74FC /* Util+.swift */; };
 		2283BEC7281FDFB6007D74FC /* ScoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC6281FDFB5007D74FC /* ScoreController.swift */; };
+		2285C4A92822865000666CEA /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2285C4A82822864F00666CEA /* ScoreView.swift */; };
 		22889EFD2820CA96002A9C4F /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22889EFC2820CA96002A9C4F /* PreviewController.swift */; };
 		22889F012820EE1E002A9C4F /* ScoreCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22889F002820EE1E002A9C4F /* ScoreCell.swift */; };
 		228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A32E92812A5EF00AC3447 /* ZoomRelated.swift */; };
@@ -61,6 +62,7 @@
 		2283BEC1281A884F007D74FC /* NotificationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationKeys.swift; sourceTree = "<group>"; };
 		2283BEC3281B8732007D74FC /* Util+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Util+.swift"; sourceTree = "<group>"; };
 		2283BEC6281FDFB5007D74FC /* ScoreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreController.swift; sourceTree = "<group>"; };
+		2285C4A82822864F00666CEA /* ScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
 		22889EFC2820CA96002A9C4F /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
 		22889F002820EE1E002A9C4F /* ScoreCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreCell.swift; sourceTree = "<group>"; };
 		228A32E92812A5EF00AC3447 /* ZoomRelated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomRelated.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 		228B882A2806577A007A6842 = {
 			isa = PBXGroup;
 			children = (
+				2285C4A82822864F00666CEA /* ScoreView.swift */,
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
 				6C823DBE391EE5CB5A4C0AA5 /* Pods */,
@@ -375,6 +378,7 @@
 				2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */,
 				2283BEC7281FDFB6007D74FC /* ScoreController.swift in Sources */,
 				2283BEBE281A5F5E007D74FC /* ImgBtnView.swift in Sources */,
+				2285C4A92822865000666CEA /* ScoreView.swift in Sources */,
 				2265AC0928177FD800E0FCCF /* PositionInfo.swift in Sources */,
 				228B88392806577A007A6842 /* SceneDelegate.swift in Sources */,
 			);

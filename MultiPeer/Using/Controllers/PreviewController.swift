@@ -40,26 +40,42 @@ class PreviewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.gray
+        view.backgroundColor = .magenta
+        
         player = AVPlayer(url: videoURL)
         playerController = AVPlayerViewController()
         
         guard player != nil && playerController != nil else {
             return
         }
-        playerController!.showsPlaybackControls = false
+        
+        playerController!.showsPlaybackControls = true
+        
+//        playerController?.showsPlaybackControls = false
         
         playerController!.player = player!
         self.addChild(playerController!)
         self.view.addSubview(playerController!.view)
         playerController!.view.frame = view.frame
+        
         NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.player!.currentItem)
         
-        let cancelButton = UIButton(frame: CGRect(x: 10.0, y: 10.0, width: 30.0, height: 30.0))
-//        cancelButton.setImage(#imageLiteral(resourceName: "cancel"), for: UIControl.State())
-        cancelButton.setTitle("Cancel", for: .normal)
-        cancelButton.setTitleColor(.red, for: .normal)
-        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-        view.addSubview(cancelButton)
+
+        
+//        let playButton = UIButton(frame: CGRect(x: view.frame.width - 50, y: view.frame.height - 50, width: 100, height: 100))
+//        playButton.setImage(UIImage(systemName: "play.circle"), for: .normal)
+//        playButton.setTitle(".asdnasmdkamsdk", for: .normal)
+//        playButton.setTitleColor(.magenta, for: .normal)
+//        playButton.addTarget(self, action: #selector(playBtnTapped(_:)), for: .touchUpInside)
+        
+//        let cancelButton = UIButton(frame: CGRect(x: 10.0, y: 10.0, width: 30.0, height: 30.0))
+//        cancelButton.setTitle("Cancel", for: .normal)
+//        cancelButton.setTitleColor(.red, for: .normal)
+//        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
+//        view.addSubview(cancelButton)
+//        view.addSubview(playButton)
+        
+//        let playButton = UIButton(frame: CGRect(x: screenWidth, y: <#T##CGFloat#>, width: <#T##CGFloat#>, height: <#T##CGFloat#>))
         
         
         // Allow background audio to continue to play
@@ -81,6 +97,10 @@ class PreviewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+//        player?.play()
+    }
+    
+    @objc func playBtnTapped(_ sender: UIButton) {
         player?.play()
     }
     
@@ -89,10 +109,10 @@ class PreviewController: UIViewController {
     }
     
     @objc fileprivate func playerItemDidReachEnd(_ notification: Notification) {
-        if self.player != nil {
-            self.player!.seek(to: CMTime.zero)
-            self.player!.play()
-        }
+//        if self.player != nil {
+//            self.player!.seek(to: CMTime.zero)
+//            self.player!.play()
+//        }
     }
 }
 

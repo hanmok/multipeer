@@ -19,6 +19,7 @@ class CameraController: UIViewController {
     let direction: PositionDirection
     var score: Int?
     
+    
     var connectionManager: ConnectionManager
     
     var updatingDurationTimer = Timer()
@@ -207,8 +208,10 @@ class CameraController: UIViewController {
         recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
         dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
         recordingTimerBtn.addTarget(self, action: #selector(timerRecordingBtnTapped(_:)), for: .touchUpInside)
+        testScoreView.addTarget(self, action: #selector(showMore(_:)), for: .touchUpInside)
     }
     
+
     
     
     @objc func recordingBtnTapped(_ sender: UIButton) {
@@ -233,6 +236,20 @@ class CameraController: UIViewController {
             stopRecording()
             // Send Stop Msg
             connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
+//            showScoreView() // 여기 넣으면 뭔가 끊김..!!
+        }
+    }
+    
+    private func showScoreView() {
+        view.addSubview(testScoreView)
+        UIView.animate(withDuration: 0.4) {
+            self.testScoreView.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
+        }
+    }
+    
+    @objc func showMore(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.4) {
+            self.testScoreView.frame = CGRect(x: 0, y: screenHeight - 500, width: screenWidth, height: screenHeight)
         }
     }
     
@@ -254,8 +271,8 @@ class CameraController: UIViewController {
         // Make in sync with receiver
         
         let countdownTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
-        
-        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn4500ms)), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+        // give it 0.2s delay
+        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn4500ms) + 200), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
 //        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
 
@@ -381,9 +398,12 @@ class CameraController: UIViewController {
         addChild(previewVC)
         view.addSubview(previewVC.view)
         previewVC.view.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(bottomView.snp.top)
             make.width.height.equalTo(view.snp.width)
         }
+//        view.addSubview(testScoreView)
+//        showScoreView()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -391,19 +411,15 @@ class CameraController: UIViewController {
     }
     
     private func removePreview() {
-//        print("flag1")
+
         guard let previewVC = previewVC else {
-//            print("flag2")
             return
         }
-//        print("flag3")
-//        previewVC.removeFromParent()
-//        print("flag4")
+        
         if self.children.count > 0 {
-//            print("flag5")
+
             let viewcontrollers: [UIViewController] = self.children
             for vc in viewcontrollers {
-//                print("flag6")
                 vc.willMove(toParent: nil)
                 vc.view.removeFromSuperview()
                 vc.removeFromParent()
@@ -488,6 +504,8 @@ class CameraController: UIViewController {
         }
 
         
+//        view.addSubview(testScoreView)
+        
         
     }
     //MARK: Reconnect! when it ends.
@@ -508,6 +526,9 @@ class CameraController: UIViewController {
     
     
     // MARK: - UI Properties
+    
+    private let testScoreView = UIButton(frame: CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)).then { $0.backgroundColor = .orange }
+    
     private let bottomView = UIView().then { $0.backgroundColor = .black }
     private let topView = UIView().then { $0.backgroundColor = .black }
     
@@ -576,7 +597,8 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
 //            self.present(VideoPlayerViewController(videoURL: url), animated: true)
             self.presentPreview(with: url)
-            self.setupNavigationButton()
+//            self.setupNavigationButton()
+            self.showScoreView()
         }
     }
     
