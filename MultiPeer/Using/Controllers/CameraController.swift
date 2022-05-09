@@ -10,15 +10,22 @@ import SnapKit
 import MobileCoreServices
 import Photos
 import MultipeerConnectivity
+import AVFoundation
 
+protocol CameraControllerDelegate: AnyObject {
+    func dismissCamera()
+}
 
+// CameraController don't need to know 'score'
 class CameraController: UIViewController {
     
     // MARK: - Properties
-    let positionTitle: String
-    let direction: PositionDirection
-    var score: Int?
+    var positionTitle: String
+    var direction: PositionDirection
+//    var score: Int?
+    var systemSoundID: SystemSoundID = 1057
     
+    weak var delegate: CameraControllerDelegate?
     
     var connectionManager: ConnectionManager
     
@@ -35,17 +42,25 @@ class CameraController: UIViewController {
     
     var previewVC: PreviewController?
     
-    init(positionWithDirectionInfo: PositionWithDirectionInfo, connectionManager: ConnectionManager) {
-        self.positionTitle = positionWithDirectionInfo.title
-        self.direction = positionWithDirectionInfo.direction
-        self.score = positionWithDirectionInfo.score
+    private var scoreVC: ScoreController
+    //    private var scoreNav: UINavigationController
+    var variationName: String?
+    
+    var sequentialPainPosition: String?
+    
+    init(positionDirectionScoreInfo: PositionDirectionScoreInfo, connectionManager: ConnectionManager) {
+        self.positionTitle = positionDirectionScoreInfo.title
+        self.direction = positionDirectionScoreInfo.direction
+//        self.score = positionDirectionScoreInfo.score // score ?? not necessary .. ;;
         self.connectionManager = connectionManager
-        
+        self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
+        //        self.scoreNav = UINavigationController(rootViewController: scoreVC)
         super.init(nibName: nil, bundle: nil)
+        scoreVC.delegate = self
         connectionManager.delegate = self
     }
     
-    // TODO: 
+    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,11 +69,8 @@ class CameraController: UIViewController {
         setupLayout()
         addNotificationObservers()
         updateInitialConnectionState()
-    }
-    
-    private let nextBtn = UIButton().then {
-        $0.setTitle("Score >", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
+        
+        //        prepareScoreView()
         
     }
     
@@ -66,22 +78,17 @@ class CameraController: UIViewController {
     private func setupNavigationBar() {
         DispatchQueue.main.async {
             if self.direction == .neutral {
-                self.title = self.positionTitle
+                self.positionNameLabel.text = self.positionTitle
             } else {
-                self.title = self.positionTitle + " " + self.direction.rawValue
+                self.positionNameLabel.text = self.positionTitle + " " + self.direction.rawValue
             }
         }
     }
     
-    private func setupNavigationButton() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Score >", style: .plain, target: self, action: #selector(presentScoreView))
+    private func resetTimer() {
+        durationLabel.text = "00:00"
     }
     
-    @objc func presentScoreView() {
-        let scoreView = ScoreController(positionWithDirectionInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score))
-        scoreView.modalPresentationStyle = .fullScreen
-        self.present(scoreView, animated: true)
-    }
     
     func updateInitialConnectionState() {
         print(#file, #line)
@@ -117,7 +124,7 @@ class CameraController: UIViewController {
     }
     
     @objc func startRecordingTriggered(_ notification: Notification) {
-//        print("flag1")
+        //        print("flag1")
         print("startRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? PositionDirection,
@@ -129,25 +136,25 @@ class CameraController: UIViewController {
     
     
     @objc func stopRecordingNotificationTriggered(_ notification: Notification) {
-//        print("flag2")
+        //        print("flag2")
         print("stopRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? PositionDirection,
               let score = notification.userInfo?["score"] as? Int? else { return }
         
-            stopRecording()
+        stopRecording()
     }
     
     @objc func startRecordingAfter(_ notification: Notification) {
-//        print("flag3")
+        //        print("flag3")
         print(#function, #line)
         guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
-//              let msg = notification.userInfo?["msg"] as? RecordingType
+              //              let msg = notification.userInfo?["msg"] as? RecordingType
               let msg = notification.userInfo?["msg"] as? MessageType
         else {
             print("fail to convert receivedTime to Int", #line)
             // millisec since 1970
-//            print(error?.localizedDescription)
+            //            print(error?.localizedDescription)
             return
         }
         print(#function, #line)
@@ -167,9 +174,9 @@ class CameraController: UIViewController {
     
     
     @objc func startCountdownAfter(_ notification: Notification) {
-//        print("flag4")
+        //        print("flag4")
         guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
-//              let msg = notification.userInfo?["msg"] as? RecordingType
+              //              let msg = notification.userInfo?["msg"] as? RecordingType
               let msg = notification.userInfo?["msg"] as? MessageType
         else {
             print("success to convert receivedTime to Int", #line)
@@ -183,7 +190,7 @@ class CameraController: UIViewController {
     
     // this one called!!
     @objc func updateConnectionState(_ notification: Notification) {
-//        print("flag5")
+        //        print("flag5")
         print(#file, #line)
         guard let state = notification.userInfo?["connectionState"] as? ConnectionState else {
             print("failed to get connectionState normally")
@@ -201,17 +208,27 @@ class CameraController: UIViewController {
         }
     }
     
-    
+    deinit {
+        print("cameraController deinit triggered!")
+        if self.children.count > 0 {
+            let viewControllers: [UIViewController] = self.children
+            for vc in viewControllers {
+                vc.willMove(toParent: nil)
+                vc.view.removeFromSuperview()
+                vc.removeFromParent()
+            }
+        }
+    }
     
     // MARK: - Button Actions
     private func setupAddTargets() {
         recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
         dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
         recordingTimerBtn.addTarget(self, action: #selector(timerRecordingBtnTapped(_:)), for: .touchUpInside)
-        testScoreView.addTarget(self, action: #selector(showMore(_:)), for: .touchUpInside)
+        //        testScoreView.addTarget(self, action: #selector(showMore(_:)), for: .touchUpInside)
     }
     
-
+    
     
     
     @objc func recordingBtnTapped(_ sender: UIButton) {
@@ -223,11 +240,14 @@ class CameraController: UIViewController {
     
     func recordingBtnAction() {
         // Start Recording!!
-        removePreview()
+        removeChildrenVC()
         if !isRecording {
-//            removePreview()
+            //            removePreview()
             // Send Start Msg
-            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
+//            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
+            
+            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
+            
             
             startRecording()
             // STOP Recording !!
@@ -235,33 +255,59 @@ class CameraController: UIViewController {
             
             stopRecording()
             // Send Stop Msg
-            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionWithDirectionInfo(title: positionTitle, direction: direction, score: score)))
-//            showScoreView() // 여기 넣으면 뭔가 끊김..!!
+//            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
+            
+            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
+            
         }
+    }
+    
+    @objc func prepareScoreView() {
+        
+        //       scoreNav = UINavigationController(rootViewController: scoreVC)
+        //        guard let scoreNav = scoreNav else { return }
+        addChild(scoreVC)
+        
+        //        addChild(scoreNav)
+        
+        view.addSubview(scoreVC.view)
+        
+//        UIView.animate(withDuration: 0.3) {
+            scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+//        }
     }
     
     private func showScoreView() {
         view.addSubview(testScoreView)
         UIView.animate(withDuration: 0.4) {
-            self.testScoreView.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
+            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
+            //            self.scoreNav.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
         }
     }
     
-    @objc func showMore(_ sender: UIButton) {
+    private func showMore() {
         UIView.animate(withDuration: 0.4) {
-            self.testScoreView.frame = CGRect(x: 0, y: screenHeight - 500, width: screenWidth, height: screenHeight)
+            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 500, width: screenWidth, height: screenHeight)
+            //            self.scoreNav.view.frame = CGRect(x: 0, y: screenHeight - 500, width: screenWidth, height: screenHeight)
         }
     }
     
+    private func hideScoreView() {
+        UIView.animate(withDuration: 0.4) {
+            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+            //            self.scoreNav.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+        }
+    }
     
     @objc func dismissBtnTapped(_ sender: UIButton) {
-        self.dismiss(animated: true)
+        delegate?.dismissCamera()
     }
     
     @objc func timerRecordingBtnTapped(_ sender: UIButton) {
+        
         print(#function, #line)
         let dateIn1500ms = Date().millisecondsSince1970 + 1500 // give 1.5s to sync better
-//        let dateIn1500ms = Date().millisecondsSince1970 + 3000 // give 1.5s to sync better
+        //        let dateIn1500ms = Date().millisecondsSince1970 + 3000 // give 1.5s to sync better
         let dateIn4500ms = Date().millisecondsSince1970 + 4500
         
         connectionManager.send(MsgWithTime(msg: .startCountDownMsg, timeInMilliSec: Int(dateIn1500ms)))
@@ -273,27 +319,27 @@ class CameraController: UIViewController {
         let countdownTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
         // give it 0.2s delay
         let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn4500ms) + 200), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
-//        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+        //        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
-
+        
         DispatchQueue.main.async {
-//            self.recordingTimerBtn.setTitle(String(Int(dateIn1500ms)), for: .normal)
+            //            self.recordingTimerBtn.setTitle(String(Int(dateIn1500ms)), for: .normal)
         }
         
         RunLoop.main.add(countdownTimer, forMode: .common)
         RunLoop.main.add(recordingTimer, forMode: .common)
-//        RunLoop.main.minimumTolerance = 0.01
-//        print("tolerarnce: \(RunLoop.main.minimumTolerance)")
+        //        RunLoop.main.minimumTolerance = 0.01
+        //        print("tolerarnce: \(RunLoop.main.minimumTolerance)")
         
-//        RunLoop.main.add(recordingTimer, forMode: .)
-
+        //        RunLoop.main.add(recordingTimer, forMode: .)
+        
         
     }
     
     
     // MARK: - Basic Functions
     @objc private func startRecording() {
-         print("startRecording triggered!! ")
+        print("startRecording triggered!! ")
         if !isRecording {
             DispatchQueue.main.async {
                 self.picker.startVideoCapture()
@@ -324,7 +370,7 @@ class CameraController: UIViewController {
     /// updating durationLabel contained
     private func triggerDurationTimer() {
         count = 0
-//        print("timer triggered!!")
+        //        print("timer triggered!!")
         // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ??
         
         updatingDurationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
@@ -332,7 +378,7 @@ class CameraController: UIViewController {
                 print("self is nil in timer!!")
                 return }
             
-//            print("trigger working!") // 왜.. 시행하는 쪽에서만 되냐 ?? 아님. 받는 쪽에서도 작동하넹.
+            //            print("trigger working!") // 왜.. 시행하는 쪽에서만 되냐 ?? 아님. 받는 쪽에서도 작동하넹.
             self.count += 1
             
             self.updateDurationLabel()
@@ -340,13 +386,13 @@ class CameraController: UIViewController {
     }
     
     private func updateDurationLabel() {
-//        print("updateDuration Triggered!")
+        //        print("updateDuration Triggered!")
         
         let recordingDuration = convertIntoRecordingTimeFormat(count)
         
         DispatchQueue.main.async {
             self.durationLabel.text = recordingDuration // is this code working?
-//            print(#function, #line, "updating Duration Label!")
+            //            print(#function, #line, "updating Duration Label!")
         }
     }
     
@@ -361,20 +407,26 @@ class CameraController: UIViewController {
             if self.decreasingCount > 0 {
                 
                 self.decreasingCount -= 1
-                
+//                AudioServicesPlaySystemSound(self.systemSoundID)
+                AudioServicesPlaySystemSound(1057)
                 DispatchQueue.main.async {
                     if self.decreasingCount == 0 {
+                        // make sound
+                        AudioServicesPlaySystemSound(self.systemSoundID)
+                        AudioServicesPlaySystemSound(1000)
                         self.recordingTimerBtn.setTitle("Recording!", for: .normal)
                     } else {
-
-                    self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
+                        // make sound
+                        AudioServicesPlaySystemSound(self.systemSoundID)
+                        AudioServicesPlaySystemSound(1052)
+                        self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
                     }
                 }
             } else {
                 self.decreasingTimer.invalidate()
-//                DispatchQueue.main.async {
-//                    self.timerRecordingBtn.setTitle("Recording!", for: .normal)
-//                }
+                //                DispatchQueue.main.async {
+                //                    self.timerRecordingBtn.setTitle("Recording!", for: .normal)
+                //                }
                 self.decreasingCount = 3
             }
         }
@@ -386,7 +438,11 @@ class CameraController: UIViewController {
     
     // TODO: For now, it's ratio not accurate, so it looks weird.
     // TODO: Don't need to change for now.
-
+    
+    
+    //    private func preparePreview() {
+    //
+    //    }
     
     private func presentPreview(with videoURL: URL) {
         
@@ -394,7 +450,7 @@ class CameraController: UIViewController {
         guard let previewVC = previewVC else {
             return
         }
-
+        
         addChild(previewVC)
         view.addSubview(previewVC.view)
         previewVC.view.snp.makeConstraints { make in
@@ -402,27 +458,31 @@ class CameraController: UIViewController {
             make.bottom.equalTo(bottomView.snp.top)
             make.width.height.equalTo(view.snp.width)
         }
-//        view.addSubview(testScoreView)
-//        showScoreView()
+        //        view.addSubview(testScoreView)
+        //        showScoreView()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        removePreview()
+        removeChildrenVC()
     }
     
-    private func removePreview() {
-
+    private func removeChildrenVC() {
+        
         guard let previewVC = previewVC else {
             return
         }
         
         if self.children.count > 0 {
-
+            // 이거.. 하면 ScoreView 도 없어지는거 아님? 맞음. 이거로 방지가 되려나.. ??
             let viewcontrollers: [UIViewController] = self.children
             for vc in viewcontrollers {
-                vc.willMove(toParent: nil)
-                vc.view.removeFromSuperview()
-                vc.removeFromParent()
+                print("vc1: \(vc)")
+                if vc != scoreVC {
+                print("vc2: \(vc)")
+                    vc.willMove(toParent: nil)
+                    vc.view.removeFromSuperview()
+                    vc.removeFromParent()
+                }
             }
         }
     }
@@ -431,83 +491,80 @@ class CameraController: UIViewController {
     func setupLayout() {
         print("present Picker!!")
         
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            
         self.topView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: (screenHeight - screenWidth) / 2)
         
-//        view.addSubview(topView)
-//        topView.snp.makeConstraints { make in
-//            make.top.leading.trailing.equalToSuperview()
-//            make.height.equalTo((screenHeight - screenWidth) / 2)
-//        }
         
+        self.bottomView.frame = CGRect(x:0, y: screenHeight - (screenHeight - screenWidth) / 2,
+                                       width: screenWidth, height: (screenHeight - screenWidth) / 2)
         
-            self.bottomView.frame = CGRect(x:0, y: screenHeight - (screenHeight - screenWidth) / 2,
-                                           width: screenWidth, height: (screenHeight - screenWidth) / 2)
-            
-            self.bottomView.addSubview(self.recordingBtn)
-            self.recordingBtn.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-                make.height.equalTo(50)
-                make.width.equalTo(150)
-            }
-            
-            self.bottomView.addSubview(self.connectionStateLabel)
-            self.connectionStateLabel.snp.makeConstraints { make in
-                make.top.bottom.equalToSuperview()
-                make.leading.equalToSuperview()
-                make.trailing.equalTo(self.recordingBtn.snp.leading)
-            }
-            
-            self.bottomView.addSubview(self.dismissBtn)
-            self.dismissBtn.snp.makeConstraints { make in
-                make.right.equalToSuperview()
-                make.centerY.equalToSuperview()
-                make.height.equalTo(50)
-                make.width.equalTo(100)
-            }
-            
-            self.bottomView.addSubview(self.recordingTimerBtn)
-            self.recordingTimerBtn.snp.makeConstraints { make in
-                make.centerX.equalToSuperview()
-                make.bottom.equalTo(self.recordingBtn.snp.top).offset(-10)
-                make.width.equalTo(150)
-                make.height.equalTo(50)
-            }
-            
-            self.bottomView.addSubview(self.durationLabel)
-            self.durationLabel.snp.makeConstraints { make in
-                make.centerY.equalTo(self.recordingTimerBtn.snp.centerY)
-                make.height.equalTo(50)
-                make.leading.equalTo(self.recordingTimerBtn.snp.trailing)
-                make.trailing.equalToSuperview()
-            }
-            
-            self.picker.allowsEditing = true
-            self.picker.sourceType = .camera
-            self.picker.delegate = self
-            self.picker.mediaTypes = [kUTTypeMovie as String]
-            self.picker.cameraOverlayView = self.bottomView
-            self.picker.showsCameraControls = false
-            self.picker.preferredContentSize = CGSize(width: self.view.frame.width,
-                                                      height: self.view.frame.width)
-            
-            self.view.addSubview(self.picker.view)
-            self.picker.view.snp.makeConstraints { make in
-                make.leading.top.trailing.bottom.equalToSuperview()
-            }
-            
+        self.bottomView.addSubview(self.recordingBtn)
+        self.recordingBtn.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.height.equalTo(50)
+            make.width.equalTo(150)
+        }
+        
+        self.bottomView.addSubview(self.connectionStateLabel)
+        self.connectionStateLabel.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalTo(self.recordingBtn.snp.leading)
+        }
+        
+        self.bottomView.addSubview(self.dismissBtn)
+        self.dismissBtn.snp.makeConstraints { make in
+            make.right.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.height.equalTo(50)
+            make.width.equalTo(100)
+        }
+        
+        self.bottomView.addSubview(self.recordingTimerBtn)
+        self.recordingTimerBtn.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(self.recordingBtn.snp.top).offset(-10)
+            make.width.equalTo(150)
+            make.height.equalTo(50)
+        }
+        
+        self.bottomView.addSubview(self.durationLabel)
+        self.durationLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(self.recordingTimerBtn.snp.centerY)
+            make.height.equalTo(50)
+            make.leading.equalTo(self.recordingTimerBtn.snp.trailing)
+            make.trailing.equalToSuperview()
+        }
+        
+        self.picker.allowsEditing = true
+        self.picker.sourceType = .camera
+        self.picker.delegate = self
+        self.picker.mediaTypes = [kUTTypeMovie as String]
+        self.picker.cameraOverlayView = self.bottomView
+        self.picker.showsCameraControls = false
+        self.picker.preferredContentSize = CGSize(width: self.view.frame.width,
+                                                  height: self.view.frame.width)
+        
+        self.view.addSubview(self.picker.view)
+        self.picker.view.snp.makeConstraints { make in
+            make.leading.top.trailing.bottom.equalToSuperview()
+        }
+        
         view.addSubview(topView)
         topView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo((screenHeight - screenWidth) / 2)
         }
-
-        
-//        view.addSubview(testScoreView)
         
         
+        topView.addSubview(positionNameLabel)
+        positionNameLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(60)
+            make.centerX.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(30)
+            make.height.equalTo(50)
+        }
     }
+    
     //MARK: Reconnect! when it ends.
     func showConnectivityAction() {
         let actionSheet = UIAlertController(title: "Connect Camera", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
@@ -531,8 +588,16 @@ class CameraController: UIViewController {
     
     private let bottomView = UIView().then { $0.backgroundColor = .black }
     private let topView = UIView().then { $0.backgroundColor = .black }
+    private let positionNameLabel = UILabel().then {
+        $0.textColor = .white
+        //        $0.textAlignment = .center
+        $0.textAlignment = .left
+        $0.font = UIFont.systemFont(ofSize: 20)
+    }
     
     private let imageView = UIImageView()
+    
+    private var videoUrl: URL?
     
     private let connectionStateLabel = UILabel().then {
         
@@ -592,13 +657,28 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         print("save success !")
         // Save Video To Photos Album
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
+        videoUrl = url
+        //        removeItem(at: <#T##URL#>)
+        print("url: \(url.path)")
+        
+        //        do {
+        //            try FileManager().removeItem(at: url)
+        //            print("success to remove URL!! ")
+        //        } catch {
+        //            print("failed to remove URL !!")
+        //            print(error.localizedDescription)
+        //        }
         
         // TODO: Present Preview In a second
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//            self.present(VideoPlayerViewController(videoURL: url), animated: true)
+            //            self.present(VideoPlayerViewController(videoURL: url), animated: true)
             self.presentPreview(with: url)
-//            self.setupNavigationButton()
+            self.prepareScoreView()
             self.showScoreView()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.showMore()
         }
     }
     
@@ -640,7 +720,7 @@ extension CameraController: ConnectionManagerDelegate {
             DispatchQueue.main.async {
                 print(#file, #line)
                 self.connectionStateLabel.text = "Disconnected!"
-//                self.showConnectivityAction()
+                //                self.showConnectivityAction()
                 print("showReconnectionGuideAction!")
                 self.showReconnectionGuideAction()
             }
@@ -655,6 +735,84 @@ extension CameraController: ConnectionManagerDelegate {
     func updateDuration(in seconds: Int) {
         
     }
+}
+
+
+extension CameraController: ScoreControllerDelegate {
+    func nextAction() {
+        // TODO: Dismiss Camera
+    }
     
     
+    func retryAction() {
+        //TODO:  Upload to the Server, and Redo
+        resetTimer()
+        removeChildrenVC()
+        prepareScoreView()
+    }
+    
+    func deleteAction() {
+        // 왜 제거가 안됨 ?? ;;; 글쎄다
+        guard let validVideoUrl = videoUrl else { return }
+        print("file exist ? 1 \(FileManager().fileExists(atPath: validVideoUrl.path))")
+        do {
+            try FileManager().removeItem(at: validVideoUrl)
+            print("file exist ? 2 \(FileManager().fileExists(atPath: validVideoUrl.path))")
+            print("successfully deleted video !") // ?? 삭제 안됐는데 ?
+        } catch {
+            print("error: \(error.localizedDescription)")
+            print("file exist ? 3 \(FileManager().fileExists(atPath: validVideoUrl.path))")
+        }
+        
+        prepareRecording()
+    }
+    
+
+    func saveAction(with info: PositionDirectionScoreInfo) {
+        
+        // TODO: Upload to Server, moving forward to next screen
+        guard let validVideoUrl = videoUrl else {return }
+        
+        APIManager.shared.postRequest(
+            positionDirectionScoreInfo: PositionDirectionScoreInfo(
+                title: info.title,
+                direction: info.direction,
+                score: info.score,
+                pain: info.pain),
+            videoUrl: validVideoUrl
+        )
+    }
+    
+    
+    func moveUp() {
+        // TODO: Move ScoreController up
+    }
+    
+    func updatePosition(with positionDirectionScoreInfo: PositionDirectionScoreInfo) {
+        self.positionTitle = positionDirectionScoreInfo.title
+        print("positition updated to \(self.positionTitle)") // 정상 .
+        self.direction = positionDirectionScoreInfo.direction
+        // 이게.. 필요한가... ??
+//        self.score = positionDirectionScoreInfo.score
+        self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
+        // scoreVC 에 대한 delegate 가 필요 .. ??
+    }
+    
+    func hideScoreController() {
+        hideScoreView()
+    }
+    
+    func prepareRecording() {
+        print("prepareRecording called from CameraController")
+        setupNavigationBar()
+        removeChildrenVC()
+        resetTimer()
+        
+//        prepareScoreView()
+        hideScoreView()
+    }
+    
+    func dismissCameraController() {
+        delegate?.dismissCamera() // CameraController Delegate
+    }
 }

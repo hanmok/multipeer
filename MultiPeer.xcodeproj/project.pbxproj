@@ -10,12 +10,14 @@
 		2265AC022816918700E0FCCF /* PositionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC012816918700E0FCCF /* PositionController.swift */; };
 		2265AC0528169D6C00E0FCCF /* PositionBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */; };
 		2265AC072816A11E00E0FCCF /* ScoreBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */; };
-		2265AC0928177FD800E0FCCF /* PositionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC0828177FD800E0FCCF /* PositionInfo.swift */; };
+		2265AC0928177FD800E0FCCF /* DataLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC0828177FD800E0FCCF /* DataLists.swift */; };
 		2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC4D2817F42300E0FCCF /* CameraController.swift */; };
 		226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226E0445280EBBE4004A8A28 /* RecordingViewController.swift */; };
 		2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */; };
 		2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625E2807EB8300C9EB79 /* ConnectionManager.swift */; };
 		227862632808024900C9EB79 /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227862622808024900C9EB79 /* VideoHelper.swift */; };
+		227DA6C22828F5C20097F8F1 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227DA6C12828F5C20097F8F1 /* APIManager.swift */; };
+		227DA6C42829103D0097F8F1 /* SoundTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */; };
 		2282DD882816466A008928A4 /* SwiftyCamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD872816466A008928A4 /* SwiftyCamViewController.swift */; };
 		2282DD8A28164695008928A4 /* SwiftyCamViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD8928164695008928A4 /* SwiftyCamViewControllerDelegate.swift */; };
 		2282DD8D281646E0008928A4 /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD8C281646E0008928A4 /* Orientation.swift */; };
@@ -29,7 +31,6 @@
 		2283BEC7281FDFB6007D74FC /* ScoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283BEC6281FDFB5007D74FC /* ScoreController.swift */; };
 		2285C4A92822865000666CEA /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2285C4A82822864F00666CEA /* ScoreView.swift */; };
 		22889EFD2820CA96002A9C4F /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22889EFC2820CA96002A9C4F /* PreviewController.swift */; };
-		22889F012820EE1E002A9C4F /* ScoreCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22889F002820EE1E002A9C4F /* ScoreCell.swift */; };
 		228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A32E92812A5EF00AC3447 /* ZoomRelated.swift */; };
 		228B88372806577A007A6842 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88362806577A007A6842 /* AppDelegate.swift */; };
 		228B88392806577A007A6842 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88382806577A007A6842 /* SceneDelegate.swift */; };
@@ -37,7 +38,7 @@
 		228B884028065784007A6842 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 228B883F28065784007A6842 /* Assets.xcassets */; };
 		228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B884128065784007A6842 /* LaunchScreen.storyboard */; };
 		22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACAF5428094ACF007277A7 /* DateExt+.swift */; };
-		22ADC437281947C100B1C639 /* PositionDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ADC436281947C100B1C639 /* PositionDirection.swift */; };
+		22ADC437281947C100B1C639 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ADC436281947C100B1C639 /* DataModel.swift */; };
 		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 /* End PBXBuildFile section */
 
@@ -45,12 +46,14 @@
 		2265AC012816918700E0FCCF /* PositionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionController.swift; sourceTree = "<group>"; };
 		2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionBlockView.swift; sourceTree = "<group>"; };
 		2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBtnView.swift; sourceTree = "<group>"; };
-		2265AC0828177FD800E0FCCF /* PositionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionInfo.swift; sourceTree = "<group>"; };
+		2265AC0828177FD800E0FCCF /* DataLists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataLists.swift; sourceTree = "<group>"; };
 		2265AC4D2817F42300E0FCCF /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		226E0445280EBBE4004A8A28 /* RecordingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatManagerFromRay.swift; sourceTree = "<group>"; };
 		2278625E2807EB8300C9EB79 /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
 		227862622808024900C9EB79 /* VideoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
+		227DA6C12828F5C20097F8F1 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
+		227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundTestViewController.swift; sourceTree = "<group>"; };
 		2282DD872816466A008928A4 /* SwiftyCamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyCamViewController.swift; sourceTree = "<group>"; };
 		2282DD8928164695008928A4 /* SwiftyCamViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyCamViewControllerDelegate.swift; sourceTree = "<group>"; };
 		2282DD8C281646E0008928A4 /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
@@ -64,7 +67,6 @@
 		2283BEC6281FDFB5007D74FC /* ScoreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreController.swift; sourceTree = "<group>"; };
 		2285C4A82822864F00666CEA /* ScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
 		22889EFC2820CA96002A9C4F /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
-		22889F002820EE1E002A9C4F /* ScoreCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreCell.swift; sourceTree = "<group>"; };
 		228A32E92812A5EF00AC3447 /* ZoomRelated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomRelated.swift; sourceTree = "<group>"; };
 		228B88332806577A007A6842 /* MultiPeer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MultiPeer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B88362806577A007A6842 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -74,7 +76,7 @@
 		228B884228065784007A6842 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		228B884428065784007A6842 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22ACAF5428094ACF007277A7 /* DateExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateExt+.swift"; sourceTree = "<group>"; };
-		22ADC436281947C100B1C639 /* PositionDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionDirection.swift; sourceTree = "<group>"; };
+		22ADC436281947C100B1C639 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA8C32117F417B1A5C42D8EC /* Pods-MultiPeer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MultiPeer.debug.xcconfig"; path = "Target Support Files/Pods-MultiPeer/Pods-MultiPeer.debug.xcconfig"; sourceTree = "<group>"; };
 		B72406CCD7171172A8776BA5 /* Pods-MultiPeer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MultiPeer.release.xcconfig"; path = "Target Support Files/Pods-MultiPeer/Pods-MultiPeer.release.xcconfig"; sourceTree = "<group>"; };
@@ -96,7 +98,6 @@
 			isa = PBXGroup;
 			children = (
 				2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */,
-				2265AC0828177FD800E0FCCF /* PositionInfo.swift */,
 				2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */,
 				2283BEBD281A5F5E007D74FC /* ImgBtnView.swift */,
 				2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */,
@@ -124,7 +125,7 @@
 				2265AC4D2817F42300E0FCCF /* CameraController.swift */,
 				2265AC012816918700E0FCCF /* PositionController.swift */,
 				22889EFC2820CA96002A9C4F /* PreviewController.swift */,
-				22889EFF2820EDCF002A9C4F /* Score */,
+				2283BEC6281FDFB5007D74FC /* ScoreController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -135,15 +136,6 @@
 				2283BEC3281B8732007D74FC /* Util+.swift */,
 			);
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		22889EFF2820EDCF002A9C4F /* Score */ = {
-			isa = PBXGroup;
-			children = (
-				2283BEC6281FDFB5007D74FC /* ScoreController.swift */,
-				22889F002820EE1E002A9C4F /* ScoreCell.swift */,
-			);
-			path = Score;
 			sourceTree = "<group>";
 		};
 		228A32EB2812A75E00AC3447 /* ViewControllers */ = {
@@ -158,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				2285C4A82822864F00666CEA /* ScoreView.swift */,
+				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
 				6C823DBE391EE5CB5A4C0AA5 /* Pods */,
@@ -197,7 +190,9 @@
 			isa = PBXGroup;
 			children = (
 				2278625E2807EB8300C9EB79 /* ConnectionManager.swift */,
-				22ADC436281947C100B1C639 /* PositionDirection.swift */,
+				227DA6C12828F5C20097F8F1 /* APIManager.swift */,
+				22ADC436281947C100B1C639 /* DataModel.swift */,
+				2265AC0828177FD800E0FCCF /* DataLists.swift */,
 				2283BEC1281A884F007D74FC /* NotificationKeys.swift */,
 			);
 			path = Model;
@@ -360,7 +355,6 @@
 				227862632808024900C9EB79 /* VideoHelper.swift in Sources */,
 				2283BEC0281A5F78007D74FC /* ButtonWithInfo.swift in Sources */,
 				2283BEC4281B8732007D74FC /* Util+.swift in Sources */,
-				22889F012820EE1E002A9C4F /* ScoreCell.swift in Sources */,
 				226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */,
 				228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */,
 				22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */,
@@ -372,14 +366,16 @@
 				22889EFD2820CA96002A9C4F /* PreviewController.swift in Sources */,
 				2282DD882816466A008928A4 /* SwiftyCamViewController.swift in Sources */,
 				2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */,
-				22ADC437281947C100B1C639 /* PositionDirection.swift in Sources */,
+				22ADC437281947C100B1C639 /* DataModel.swift in Sources */,
 				2265AC022816918700E0FCCF /* PositionController.swift in Sources */,
+				227DA6C22828F5C20097F8F1 /* APIManager.swift in Sources */,
 				228B88372806577A007A6842 /* AppDelegate.swift in Sources */,
 				2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */,
 				2283BEC7281FDFB6007D74FC /* ScoreController.swift in Sources */,
 				2283BEBE281A5F5E007D74FC /* ImgBtnView.swift in Sources */,
+				227DA6C42829103D0097F8F1 /* SoundTestViewController.swift in Sources */,
 				2285C4A92822865000666CEA /* ScoreView.swift in Sources */,
-				2265AC0928177FD800E0FCCF /* PositionInfo.swift in Sources */,
+				2265AC0928177FD800E0FCCF /* DataLists.swift in Sources */,
 				228B88392806577A007A6842 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

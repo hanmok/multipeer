@@ -39,25 +39,11 @@ import AVFoundation
 
 
 
-public enum OrderMessageTypes {
-//    static let presentCamera = "presentCamera"
-//    static let startRecording = "startRecording"
-//    static let stopRecording = "stopRecording"
-    case presentCameraMsg
-    case startRecordingMsg
-    case stopRecordingMsg
-}
 
 //struct MessageTypes {
 //    var message:
 //}
 
-struct MessageWithInfo {
-    
-    var date: Date
-    
-    var messageType: OrderMessageTypes
-}
 
 
 extension ConnectionManager: MCNearbyServiceAdvertiserDelegate {
@@ -66,11 +52,6 @@ extension ConnectionManager: MCNearbyServiceAdvertiserDelegate {
     }
 }
 
-public enum ConnectionState: String, Codable {
-    case connected
-    case disconnected
-//    case connecting
-}
 
 protocol ConnectionManagerDelegate: NSObject {
 //    func presentVideo()

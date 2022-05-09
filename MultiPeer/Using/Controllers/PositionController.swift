@@ -52,6 +52,8 @@ class PositionController: UIViewController {
         $0.text = "duration"
     }
     
+    var cameraVC: CameraController?
+    
 //    private let timerTestBtn = UIButton().then { $0.setTitle("start Timer", for: .normal)
 //        $0.setTitleColor(.yellow, for: .normal)
 //
@@ -129,29 +131,6 @@ class PositionController: UIViewController {
     }
     
     
-//    @objc func testBtnTapped(_ sender: UIButton) {
-//        connectionManager.send("test message")
-//        print("test Btn Tapped!!")
-//        // trigger timer
-//        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-//            guard let `self` = self else {
-//                print("self is nil ")
-//                return }
-//
-//            print("hi!!!!!")
-//            self.count += 1
-//            DispatchQueue.main.async {
-//                self.durationLabel.text = "\(self.count) s"
-//            }
-//        }
-//
-//        let cameraVC = CameraController(
-//            positionTitle: "hi", direction: .left, score: 0,
-//            connectionManager: connectionManager)
-//
-//        self.present(cameraVC, animated: true)
-//    }
-    
     func triggerTimer() {
         print("timer triggered!!")
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
@@ -167,36 +146,6 @@ class PositionController: UIViewController {
         }
     }
     
-//    @objc func triggerTimer(_ sender: UIButton) {
-//    func triggerTimer() {
-//        print("Timer triggered!")
-////        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countUp), userInfo: nil, repeats: true)
-//
-//        // not Triggered
-////        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { [weak self] _ in
-////            guard let `self` = self else {
-////                print("self is nil!!")
-////                return }
-////            self.count += 1
-////            print("helloo")
-////            DispatchQueue.main.async {
-////                self.durationLabel.text = String("\(self.count) s")
-////                print("hihi")
-////            }
-////        })
-//        // not triggered
-////        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(PositionSelectingController.countUp), userInfo: nil, repeats: true)
-//
-//        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-//            guard let `self` = self else { return }
-//
-//            print("hi!!!!!")
-//            DispatchQueue.main.async {
-//                self.durationLabel.text = String(self.count) + " s"
-//                print("updating?")
-//            }
-//        }
-//    }
     
     
     private func stopTimer() {
@@ -225,20 +174,20 @@ class PositionController: UIViewController {
     @objc func imgTapped(_ sender: ButtonWithInfo) {
         // TODO: move to cameraView With Info
         print("img Tapped,")
-        let positionWithDirectionInfo = sender.positionWithDirectionInfo
+        let positionDirectionScoreInfo = sender.positionDirectionScoreInfo
         
-        let title = positionWithDirectionInfo.title
-        let direction = positionWithDirectionInfo.direction
-        let score = positionWithDirectionInfo.score
+        let title = positionDirectionScoreInfo.title
+        let direction = positionDirectionScoreInfo.direction
+        let score = positionDirectionScoreInfo.score
         
-        connectionManager.send(DetailPositionWIthMsgInfo(message: .presentCamera, detailInfo: PositionWithDirectionInfo(title: title, direction: direction, score: score)))
+        connectionManager.send(DetailPositionWIthMsgInfo(message: .presentCamera, detailInfo: PositionDirectionScoreInfo(title: title, direction: direction, score: score)))
         print("connectionManager has sent message")
 //        print("title: \(sender.title)")
-        print("title: \(sender.positionWithDirectionInfo.title)")
+        print("title: \(sender.positionDirectionScoreInfo.title)")
 //        print("direction: \(sender.direction)")
-        print("direction: \(sender.positionWithDirectionInfo.direction)")
+        print("direction: \(sender.positionDirectionScoreInfo.direction)")
 //        print("sender.score: \(sender.score ?? 0)")
-        print("sender.score: \(sender.positionWithDirectionInfo.score ?? 0)")
+        print("sender.score: \(sender.positionDirectionScoreInfo.score ?? 0)")
         
         
 //        DispatchQueue.main.async {
@@ -248,33 +197,38 @@ class PositionController: UIViewController {
 //            self.navigationController?.pushViewController(cameraVC, animated: true)
 //        }
         
-        presentCamera(positionWithDirectionInfo: positionWithDirectionInfo)
+        presentCamera(positionDirectionScoreInfo: positionDirectionScoreInfo)
     }
     
-    private func presentCamera(positionWithDirectionInfo: PositionWithDirectionInfo) {
+    // 너무.. 갑자기 출현시키는데.. ?? Animation 을 좀 줘봐..
+    private func presentCamera(positionDirectionScoreInfo: PositionDirectionScoreInfo) {
         DispatchQueue.main.async {
-            let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
+            self.cameraVC = CameraController(positionDirectionScoreInfo: positionDirectionScoreInfo, connectionManager: self.connectionManager)
+            guard self.cameraVC != nil else { return }
+            self.cameraVC!.delegate = self
 //            self.navigationController?.pushViewController(cameraVC, animated: true)
-            self.addChild(cameraVC)
-            self.view.addSubview(cameraVC.view)
-            cameraVC.view.snp.makeConstraints { make in
-                make.leading.top.trailing.bottom.equalToSuperview()
+            self.addChild(self.cameraVC!)
+            self.view.addSubview(self.cameraVC!.view)
+            self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+            
+            UIView.animate(withDuration: 0.3) {
+                self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
             }
         }
     }
-
+    
     @objc func scoreTapped(_ sender: ButtonWithInfo) {
         // TODO: if none recorded, move to cameraView With Info
         // TODO: if Not, popup score Action to modify
         
         print("score Tapped,")
 //        print("title: \(sender.title)")
-        print("title: \(sender.positionWithDirectionInfo.title)")
+        print("title: \(sender.positionDirectionScoreInfo.title)")
 //        print("direction: \(sender.direction)")
-        print("direction: \(sender.positionWithDirectionInfo.direction)")
+        print("direction: \(sender.positionDirectionScoreInfo.direction)")
     
 //        print("sender.score: \(sender.score ?? 0)")
-        print("sender.score: \(sender.positionWithDirectionInfo.score ?? 0)")
+        print("sender.score: \(sender.positionDirectionScoreInfo.score ?? 0)")
     }
     // observer, add observer
     private func addNotificationObservers() {
@@ -293,16 +247,14 @@ class PositionController: UIViewController {
             print("failed to converting userInfo back.")
             return }
         
-        let positionWithDirectionInfo = PositionWithDirectionInfo(title: title, direction: direction, score: score)
+        let positionWithDirectionInfo = PositionDirectionScoreInfo(title: title, direction: direction, score: score)
 
 
         DispatchQueue.main.async {
-            let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
-
+            let cameraVC = CameraController(positionDirectionScoreInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
+            
             self.present(cameraVC, animated: true)
         }
-        
-        
     }
     
     // MARK: - UI SETUP
@@ -475,6 +427,27 @@ extension PositionController: ConnectionManagerDelegate {
 }
 
 
-    
-    
-
+extension PositionController: CameraControllerDelegate {
+    func dismissCamera() {
+        guard let cameraVC = cameraVC else {
+            print("cameraVC is nil!", #file, #function, #line)
+            return }
+        
+        UIView.animate(withDuration: 0.3) {
+            cameraVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+        } completion: { done in
+            if done {
+                if self.children.count > 0 {
+                    let viewControllers: [UIViewController] = self.children
+                    for vc in viewControllers {
+                        vc.willMove(toParent: nil)
+                        vc.view.removeFromSuperview()
+                        vc.removeFromParent()
+                    }
+                }
+            }
+        }
+        
+       
+    }
+}

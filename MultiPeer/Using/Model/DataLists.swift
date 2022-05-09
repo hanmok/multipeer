@@ -10,14 +10,14 @@ import UIKit
 
 
 
-
+// MARK: - Position
 enum PositionList: String {
     case deepSquat = "Deep Squat"
     case deepSquatVar = "Deep Squat Var"
     case hurdleStep = "Hurdle Step"
     case inlineLunge = "Inline Lunge"
     case ankleClearing = "Ankle Clearing"
-    case shoulderMobility = "shoulder Mobility"
+    case shoulderMobility = "Shoulder Mobility"
     case shoulderClearing = "Shoulder Clearing"
     case activeStraightLegRaise = "Active Straight-LegRaise"
     case trunkStabilityPushUp = "Trunk Stability Push-up"
@@ -28,7 +28,10 @@ enum PositionList: String {
 }
 
 
+
 enum PositionImgs {
+//    static let some = PositionInfoDetail(title: "some", imageNames: ["Hello"])
+//    static let another = PositionInfoDetail(
     static let deepSquat = (title: PositionList.deepSquat.rawValue, imageNames: ["deepSquat"])
     static let hurdleStep = (title: PositionList.hurdleStep.rawValue, imageNames: ["hurdleStepLeft", "hurdleStepRight"])
     static let inlineLunge = (title: PositionList.inlineLunge.rawValue, imageNames: ["inlineLungeLeft","inlineLungeRight"])
@@ -46,35 +49,6 @@ enum PositionImgs {
 
 
 
-var positionList: [PositionInfo] = [
-    PositionInfo(title: PositionImgs.deepSquat.0,
-                  imageName: [PositionImgs.deepSquat.imageNames[0]]),
-
-    PositionInfo(title: PositionImgs.deepSquat.0,
-                  imageName: [PositionImgs.hurdleStep.imageNames[0], PositionImgs.hurdleStep.imageNames[1]]),
-    
-    PositionInfo(title: PositionImgs.inlineLunge.0,
-                  imageName: [PositionImgs.inlineLunge.imageNames[0],PositionImgs.inlineLunge.imageNames[1]]),
-    
-    PositionInfo(title: PositionImgs.shoulderMobility.0,
-                  imageName: [PositionImgs.shoulderMobility.imageNames[0], PositionImgs.shoulderMobility.imageNames[1]]),
-    
-    PositionInfo(title: PositionImgs.straightLegRaise.0,
-                  imageName: [PositionImgs.straightLegRaise.imageNames[0], PositionImgs.straightLegRaise.imageNames[1]]),
-    
-    PositionInfo(title: PositionImgs.stabilityPushup.0,
-                  imageName: [PositionImgs.stabilityPushup.imageNames[0], PositionImgs.stabilityPushup.imageNames[1]]),
-    
-    PositionInfo(title: PositionImgs.rotaryStability.0,
-                  imageName:[PositionImgs.rotaryStability.imageNames[0], PositionImgs.rotaryStability.imageNames[1]]),
-    
-    PositionInfo(title: PositionImgs.shoulderClearing.0,
-                  imageName: [PositionImgs.shoulderClearing.imageNames[0], PositionImgs.shoulderClearing.imageNames[1]]),
-    
-    
-    PositionInfo(title: PositionImgs.extensionClearing.0, imageName: [PositionImgs.extensionClearing.imageNames[0]]),
-    PositionInfo(title: PositionImgs.flexionClearing.0, imageName: [PositionImgs.flexionClearing.imageNames[0]])
-]
 
 enum PositionWithImageListEnum {
     static let deepsquat = PositionInfo(title: PositionImgs.deepSquat.0,
@@ -113,3 +87,97 @@ enum PositionWithImageListEnum {
     static let flexionClearing = PositionInfo(title: PositionImgs.flexionClearing.0, imageName:
                                         [PositionImgs.flexionClearing.imageNames[0]])
 }
+
+
+
+// 위, 아래가 중복 데이터임. ;; 어.. 어떤 형태로 사용할 지 정해주는게 좋을 것 같은데 ??
+public enum PositionWithPain {
+    case ankleClearing
+    case shoulderClearing
+    case extensionClearing
+    case flexionClearing
+}
+
+
+public let positionsHasPain = [
+    PositionList.ankleClearing.rawValue,
+    PositionList.shoulderClearing.rawValue,
+    PositionList.flexionClearing.rawValue,
+    PositionList.extensionClearing.rawValue
+]
+
+public let positionWithPainTestTitle: [String: String ] = [
+    PositionList.ankleClearing.rawValue : PositionList.ankleClearing.rawValue,
+    PositionList.shoulderMobility.rawValue: PositionList.shoulderClearing.rawValue,
+    PositionList.trunkStabilityPushUp.rawValue: PositionList.extensionClearing.rawValue,
+    PositionList.trunkStabilityPushUpVar.rawValue: PositionList.extensionClearing.rawValue,
+    PositionList.rotaryStability.rawValue: PositionList.flexionClearing.rawValue
+]
+
+public let positionWithVariation: [String: String] = [
+    PositionList.deepSquat.rawValue : PositionList.deepSquatVar.rawValue,
+    PositionList.trunkStabilityPushUp.rawValue: PositionList.trunkStabilityPushUpVar.rawValue
+]
+
+// MARK: - Score
+
+public enum ScoreType {
+    case zeroThreeHold
+    case zeroToThree
+    case zeroToTwo
+    case painOrNot
+    case RYG
+}
+
+let positionToScoreType: [String: ScoreType] = [
+    PositionList.deepSquat.rawValue: .zeroThreeHold,
+    PositionList.deepSquatVar.rawValue: .zeroToTwo,
+    
+    PositionList.hurdleStep.rawValue: .zeroToThree,
+    PositionList.inlineLunge.rawValue: .zeroToThree,
+
+    PositionList.ankleClearing.rawValue: .RYG,
+//        PositionList.ankleClearing.rawValue: .RGB,
+    
+    PositionList.shoulderMobility.rawValue: .zeroToThree,
+//        PositionList.shoulderClearing.rawValue: .painOrNot,
+    
+    PositionList.activeStraightLegRaise.rawValue: .zeroToThree,
+    
+    PositionList.trunkStabilityPushUp.rawValue: .zeroThreeHold,
+    PositionList.trunkStabilityPushUpVar.rawValue: .zeroToTwo,
+//        PositionList.extensionClearing.rawValue: .painOrNot,
+    
+    PositionList.rotaryStability.rawValue: .zeroToThree,
+//        PositionList.flexionClearing.rawValue: .painOrNot
+]
+
+
+
+// MARK: - Message
+
+public enum MessageType: String, Codable {
+    case presentCamera
+    // Do I need to dismiss ?
+    // Timer ?
+    case startRecordingMsg
+    case stopRecordingMsg
+    case none
+    case startRecordingAfterMsg
+    case startCountDownMsg
+}
+
+
+public enum OrderMessageTypes {
+    case presentCameraMsg
+    case startRecordingMsg
+    case stopRecordingMsg
+}
+
+
+// MARK: - Connection State
+public enum ConnectionState: String, Codable {
+    case connected
+    case disconnected
+}
+
