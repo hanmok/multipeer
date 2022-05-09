@@ -181,3 +181,8 @@ public enum ConnectionState: String, Codable {
     case disconnected
 }
 
+
+public enum CapturingAngle: String {
+    case front
+    case side
+}

@@ -12,6 +12,8 @@ import Photos
 import MultipeerConnectivity
 import AVFoundation
 
+
+
 protocol CameraControllerDelegate: AnyObject {
     func dismissCamera()
 }
@@ -43,7 +45,7 @@ class CameraController: UIViewController {
     var previewVC: PreviewController?
     
     private var scoreVC: ScoreController
-    //    private var scoreNav: UINavigationController
+
     var variationName: String?
     
     var sequentialPainPosition: String?
@@ -773,14 +775,35 @@ extension CameraController: ScoreControllerDelegate {
         // TODO: Upload to Server, moving forward to next screen
         guard let validVideoUrl = videoUrl else {return }
         
+        let trialId = UUID()
+        
+        let key = mergeKeys(title: info.title, direction: info.direction.rawValue)
+        
+        // trial Starts From zero ?? or 1 ?
+        if trialDictionary[key] != nil {
+            trialDictionary[key]! += 1
+        } else {
+            trialDictionary[key] = 1
+        }
+        
         APIManager.shared.postRequest(
             positionDirectionScoreInfo: PositionDirectionScoreInfo(
                 title: info.title,
                 direction: info.direction,
                 score: info.score,
                 pain: info.pain),
-            videoUrl: validVideoUrl
+            videoUrl: validVideoUrl,
+            trialCount: trialDictionary[key]!,
+            trialId: trialId,
+            angle: .front // need to specify within positionController
         )
+        
+//        connectionManager.send
+    }
+
+    /// merge Position Title + Direction  into Unique Key
+    private func mergeKeys(title: String, direction: String) -> String {
+        return title + direction
     }
     
     

@@ -97,4 +97,13 @@ struct MessageWithInfo {
 }
 
 
-
+struct PostModel: Codable {
+    let title: String
+    let direction: String
+    let score: Int?
+    let pain: Bool?
+    let videoUrl: URL?
+    let trialCount: Int
+    let angle: String
+    let trialId: String
+}

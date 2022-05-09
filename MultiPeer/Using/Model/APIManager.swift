@@ -12,7 +12,7 @@ class APIManager {
     
     static let shared = APIManager()
     
-    func postRequest(positionDirectionScoreInfo: PositionDirectionScoreInfo, videoUrl: URL) {
+    func postRequest(positionDirectionScoreInfo: PositionDirectionScoreInfo, videoUrl: URL, trialCount: Int, trialId: UUID, angle: CapturingAngle) {
         let detailInfo = positionDirectionScoreInfo
         print("post request!! ")
         print("title : \(detailInfo.title)")
@@ -22,3 +22,16 @@ class APIManager {
         print("video: \(videoUrl)")
     }
 }
+
+public var trialDictionary: [String: Int] = [:]
+
+
+/*
+struct PositionDirectionScoreInfo: Codable {
+    var title: String
+    
+    var direction: PositionDirection
+    var score: Int?
+    var pain: Bool?
+}
+*/ 

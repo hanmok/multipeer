@@ -18,6 +18,7 @@
 		227862632808024900C9EB79 /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227862622808024900C9EB79 /* VideoHelper.swift */; };
 		227DA6C22828F5C20097F8F1 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227DA6C12828F5C20097F8F1 /* APIManager.swift */; };
 		227DA6C42829103D0097F8F1 /* SoundTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */; };
+		227DA6C628291D450097F8F1 /* Memos in Resources */ = {isa = PBXBuildFile; fileRef = 227DA6C528291D450097F8F1 /* Memos */; };
 		2282DD882816466A008928A4 /* SwiftyCamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD872816466A008928A4 /* SwiftyCamViewController.swift */; };
 		2282DD8A28164695008928A4 /* SwiftyCamViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD8928164695008928A4 /* SwiftyCamViewControllerDelegate.swift */; };
 		2282DD8D281646E0008928A4 /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD8C281646E0008928A4 /* Orientation.swift */; };
@@ -54,6 +55,7 @@
 		227862622808024900C9EB79 /* VideoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
 		227DA6C12828F5C20097F8F1 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundTestViewController.swift; sourceTree = "<group>"; };
+		227DA6C528291D450097F8F1 /* Memos */ = {isa = PBXFileReference; lastKnownFileType = text; path = Memos; sourceTree = "<group>"; };
 		2282DD872816466A008928A4 /* SwiftyCamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyCamViewController.swift; sourceTree = "<group>"; };
 		2282DD8928164695008928A4 /* SwiftyCamViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyCamViewControllerDelegate.swift; sourceTree = "<group>"; };
 		2282DD8C281646E0008928A4 /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				2285C4A82822864F00666CEA /* ScoreView.swift */,
+				227DA6C528291D450097F8F1 /* Memos */,
 				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
@@ -295,6 +298,7 @@
 			files = (
 				228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */,
 				228B884028065784007A6842 /* Assets.xcassets in Resources */,
+				227DA6C628291D450097F8F1 /* Memos in Resources */,
 				228B883E2806577B007A6842 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
