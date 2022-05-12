@@ -9,8 +9,6 @@ import UIKit
 import SnapKit
 import Then
 
-
-
 class PositionController: UIViewController {
     
     // MARK: - Properties
@@ -19,6 +17,40 @@ class PositionController: UIViewController {
 
     var count = 0
     var timer: Timer?
+    
+    var currentSubject: Subject? {
+        didSet {
+            setupSubjectInfo()
+        }
+    }
+    
+    var currentScreenId: UUID?
+    
+    private func updateSubjectWithScreen(subject: Subject, screenId: UUID) {
+        currentSubject = subject
+        currentScreenId = screenId
+//        renderCurrentState()
+    }
+    
+    private func updateScoreLabels() {
+
+        //TODO: Update Score ! for Each of PositionBlockView below
+//        ex) deepSquat.scoreView1.scoreLabel =
+    }
+    
+    private func setupSubjectInfo() {
+        guard let currentSubject = currentSubject else { return }
+        subjectNameLabel.text = currentSubject.name
+        subjectDetailLabel.text = String(currentSubject.isMale ? "남" : "여") + " / " + String(calculateAge(from: currentSubject.birthday))
+    }
+    
+    private let subjectNameLabel = UILabel().then { $0.textColor = .cyan
+        $0.textAlignment = .right
+    }
+    
+    private let subjectDetailLabel = UILabel().then { $0.textColor = .yellow
+        $0.textAlignment = .right
+    }
     
     private let deepSquat = PositionBlockView(PositionWithImageListEnum.deepsquat)
     private let hurdleStep = PositionBlockView(PositionWithImageListEnum.hurdleStep)
@@ -52,12 +84,30 @@ class PositionController: UIViewController {
         $0.text = "duration"
     }
     
+    private let subjectSettingBtn = UIButton().then {
+//        let someImage = UIImageView(image: UIImage(systemName: "plus.circle.fill"))
+//        let someImage = UIImageView(image: UIImage(systemName: "person.fill"))
+        let someImage = UIImageView(image: UIImage(systemName: "person.crop.circle.fill"))
+        someImage.tintColor = .white
+        $0.addSubview(someImage)
+        someImage.snp.makeConstraints { make in
+            make.leading.top.trailing.bottom.equalToSuperview()
+        }
+        $0.addTarget(self, action: #selector(subjectBtnTapped), for: .touchUpInside)
+    }
+    
+    @objc func subjectBtnTapped(_ sender: UIButton) {
+        print("btn tapped!")
+//        let subjectSettingVC = cameraVC
+        let subjectSettingVC = SubjectController()
+        subjectSettingVC.basicDelegate = self
+//        UINavigationController.pushViewController(subjectSettingVC!)
+        self.navigationController?.pushViewController(subjectSettingVC, animated: true)
+        
+    }
+    
     var cameraVC: CameraController?
     
-//    private let timerTestBtn = UIButton().then { $0.setTitle("start Timer", for: .normal)
-//        $0.setTitleColor(.yellow, for: .normal)
-//
-//    }
     
     // MARK: - Life Cycle
     
@@ -98,8 +148,9 @@ class PositionController: UIViewController {
     }
  
     override func viewDidDisappear(_ animated: Bool) {
-        print("viewDidDisAppear POsitionController")
+        print("viewDidDisappear PositionController")
     }
+    
     override func viewWillDisappear(_ animated: Bool) {
         print("viewWillDisAppear PositionConroller")
     }
@@ -171,6 +222,7 @@ class PositionController: UIViewController {
     }
     
     
+    
     @objc func imgTapped(_ sender: ButtonWithInfo) {
         // TODO: move to cameraView With Info
         print("img Tapped,")
@@ -193,7 +245,7 @@ class PositionController: UIViewController {
 //        DispatchQueue.main.async {
 //            let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
 ////            self.present(cameraVC, animated: true)
-////            UINavigationController.pushViewController(cameraVC)
+//            UINavigationController.pushViewController(cameraVC)
 //            self.navigationController?.pushViewController(cameraVC, animated: true)
 //        }
         
@@ -279,7 +331,10 @@ class PositionController: UIViewController {
         view.addSubview(topView)
         
         topView.snp.makeConstraints { make in
-            make.left.top.right.equalTo(view.safeAreaLayoutGuide)
+//            make.left.top.right.equalTo(view.safeAreaLayoutGuide)
+//            make.left.top.right.equalToSuperview().offset(40)
+            make.left.right.equalToSuperview()
+            make.top.equalToSuperview().offset(40)
             make.height.equalTo(40)
         }
 
@@ -386,16 +441,34 @@ class PositionController: UIViewController {
             make.width.equalToSuperview().dividedBy(4)
         }
         
-//        view.addSubview(timerTestBtn)
-//        timerTestBtn.snp.makeConstraints { make in
-//            make.leading.bottom.equalToSuperview()
-//            make.top.equalTo(stabilityPushup.snp.bottom)
-//            make.width.equalTo(150)
-//        }
+        view.addSubview(subjectSettingBtn)
+        subjectSettingBtn.snp.makeConstraints { make in
+            make.top.equalTo(rotaryStability.snp.bottom).offset(20)
+            make.trailing.equalToSuperview().offset(-30)
+            make.height.width.equalTo(60)
+        }
+        
+        view.addSubview(subjectNameLabel)
+        subjectNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(subjectSettingBtn.snp.top)
+            make.trailing.equalTo(subjectSettingBtn.snp.leading).offset(-30)
+            make.width.equalTo(200)
+            make.height.equalTo(25)
+        }
+        
+        
+        view.addSubview(subjectDetailLabel)
+        subjectDetailLabel.snp.makeConstraints { make in
+            make.top.equalTo(subjectNameLabel.snp.bottom).offset(5)
+            make.trailing.equalTo(subjectSettingBtn.snp.leading).offset(-30)
+            make.width.equalTo(200)
+            make.height.equalTo(25)
+        }
     }
     
-    
-    
+    private func configureUserWithScreen(subject: Subject, screenId: UUID) {
+        
+    }
 }
 
 
@@ -447,7 +520,46 @@ extension PositionController: CameraControllerDelegate {
                 }
             }
         }
-        
-       
     }
+}
+
+
+extension PositionController: SubjectControllerDelegate {
+    func updateCurrentScreen(from subject: Subject, with screenId: UUID, closure: () -> Void) {
+        updateSubjectWithScreen(subject: subject, screenId: screenId)
+        // when currentSubject set, it calls setupSubjectInfo()
+        updateScoreLabels()
+        closure()
+    }
+}
+
+extension PositionController {
+    
+    private func calculateAge(from birthday: Date) -> Int {
+        
+        let calendar = Calendar.current
+        let birthComponent = calendar.dateComponents([.year], from: birthday)
+        let currentComponent = calendar.dateComponents([.year], from: Date())
+        
+        guard let birthYear = birthComponent.year,
+              let currentYear = currentComponent.year else { return 0 }
+        
+        let age = currentYear - birthYear + 1
+        
+        return age
+    }
+}
+
+public func calculateAge(from birthday: Date) -> Int {
+    
+    let calendar = Calendar.current
+    let birthComponent = calendar.dateComponents([.year], from: birthday)
+    let currentComponent = calendar.dateComponents([.year], from: Date())
+    
+    guard let birthYear = birthComponent.year,
+          let currentYear = currentComponent.year else { return 0 }
+    
+    let age = currentYear - birthYear + 1
+    
+    return age
 }

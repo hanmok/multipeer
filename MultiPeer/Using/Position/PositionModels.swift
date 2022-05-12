@@ -1,11 +1,12 @@
 //
-//  PositionDirection.swift
+//  PositionModels.swift
 //  MultiPeer
 //
-//  Created by 핏투비 iOS on 2022/04/27.
+//  Created by 핏투비 iOS on 2022/05/11.
 //
 
 import Foundation
+
 
 enum PositionDirection: String, Codable  {
     case left = "Left"
@@ -43,7 +44,6 @@ struct PositionInfo: Codable {
 
 struct PositionDirectionScoreInfo: Codable {
     var title: String
-    
     var direction: PositionDirection
     var score: Int?
     var pain: Bool?
@@ -64,9 +64,7 @@ struct PositionWithVarName {
 
 
 struct DetailPositionWIthMsgInfo: Codable {
-
     var message: MessageType
-    
     var detailInfo: PositionDirectionScoreInfo
 }
 
@@ -80,30 +78,4 @@ public struct PositionWithPainTestName {
         self.positionName = name
         self.painTestName = testName
     }
-}
-
-
-struct MsgWithTime: Codable {
-    let msg: MessageType
-    let timeInMilliSec: Int
-}
-
-
-struct MessageWithInfo {
-    
-    var date: Date
-    
-    var messageType: OrderMessageTypes
-}
-
-
-struct PostModel: Codable {
-    let title: String
-    let direction: String
-    let score: Int?
-    let pain: Bool?
-    let videoUrl: URL?
-    let trialCount: Int
-    let angle: String
-    let trialId: String
 }

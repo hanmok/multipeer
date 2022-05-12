@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="PositionDetail" representedClassName="PositionDetail" syncable="YES" codeGenerationType="class">
+        <attribute name="direction" optional="YES" attributeType="Transformable"/>
+        <attribute name="pain" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="trialNo" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="representative" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PositionRepresentative" inverseName="positionDetails" inverseEntity="PositionRepresentative"/>
+    </entity>
+    <entity name="PositionRepresentative" representedClassName="PositionRepresentative" syncable="YES" codeGenerationType="class">
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="parentScreen" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Screen" inverseName="positionRepresentatives" inverseEntity="Screen"/>
+        <relationship name="positionDetails" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PositionDetail" inverseName="representative" inverseEntity="PositionDetail"/>
+    </entity>
+    <entity name="Screen" representedClassName="Screen" syncable="YES" codeGenerationType="class">
+        <attribute name="date_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id_" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isFinished" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="screenIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="totalScore" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="belongTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Subject" inverseName="screens_" inverseEntity="Subject"/>
+        <relationship name="positionRepresentatives" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PositionRepresentative" inverseName="parentScreen" inverseEntity="PositionRepresentative"/>
+    </entity>
+    <entity name="Subject" representedClassName="Subject" syncable="YES" codeGenerationType="class">
+        <attribute name="birthday_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="imageUrl" optional="YES" attributeType="String"/>
+        <attribute name="isMale" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lastUpdateDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name_" optional="YES" attributeType="String"/>
+        <attribute name="numOfTestConducted" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="phoneNumber_" optional="YES" attributeType="String"/>
+        <relationship name="screens_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Screen" inverseName="belongTo" inverseEntity="Screen"/>
+    </entity>
+    <elements>
+        <element name="PositionDetail" positionX="-36" positionY="63" width="128" height="104"/>
+        <element name="PositionRepresentative" positionX="-18" positionY="99" width="128" height="74"/>
+        <element name="Screen" positionX="-54" positionY="54" width="128" height="14"/>
+        <element name="Subject" positionX="-63" positionY="-18" width="128" height="164"/>
+    </elements>
+</model>

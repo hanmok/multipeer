@@ -23,6 +23,7 @@ class APIManager {
     }
 }
 
+// 이거.. 지금은 딱히 손 안봐도 되나..? 봐야할걸 ??
 public var trialDictionary: [String: Int] = [:]
 
 
@@ -34,4 +35,4 @@ struct PositionDirectionScoreInfo: Codable {
     var score: Int?
     var pain: Bool?
 }
-*/ 
+*/

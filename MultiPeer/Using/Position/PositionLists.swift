@@ -1,13 +1,11 @@
 //
-//  Position.swift
+//  PositionLists.swift
 //  MultiPeer
 //
-//  Created by 핏투비 iOS on 2022/04/26.
+//  Created by 핏투비 iOS on 2022/05/11.
 //
 
 import Foundation
-import UIKit
-
 
 
 // MARK: - Position
@@ -151,38 +149,3 @@ let positionToScoreType: [String: ScoreType] = [
     PositionList.rotaryStability.rawValue: .zeroToThree,
 //        PositionList.flexionClearing.rawValue: .painOrNot
 ]
-
-
-
-// MARK: - Message
-
-public enum MessageType: String, Codable {
-    case presentCamera
-    // Do I need to dismiss ?
-    // Timer ?
-    case startRecordingMsg
-    case stopRecordingMsg
-    case none
-    case startRecordingAfterMsg
-    case startCountDownMsg
-}
-
-
-public enum OrderMessageTypes {
-    case presentCameraMsg
-    case startRecordingMsg
-    case stopRecordingMsg
-}
-
-
-// MARK: - Connection State
-public enum ConnectionState: String, Codable {
-    case connected
-    case disconnected
-}
-
-
-public enum CapturingAngle: String {
-    case front
-    case side
-}

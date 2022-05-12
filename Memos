@@ -3,3 +3,48 @@
 몇번째 Trial 인지 기록해야함
 Score 정할 때, Save 인 경우 Peer 에게 전달해야함.
 
+방향은 Front, Size (Left, Right), between
+Screen Data(촬영 날) 과 Score Date (스코어 입력한 날짜) 은 다를 수 있음.
+
+Trial Date 필수.
+Test Count, Trial Count
+검사 회차 필요.
+사용자 식별 데이터 필요 ;; 휴대폰 번호로 UUID 생성 ? hashValue 로 생성. Unique Int 생성.
+
+01090417421.hashValue
+
+어디까지 했는지도 기억해야함.
+검사 하는사람 이름도 있어야하나 ? ㅇㅇ ;;
+
+
+방향을 카메라 내에서 선택도 할 수 있도록.
+
+
+사용자 정보 기록.
+
+이름, 성별, 생년월일, 국가(한국 고정), 핸드폰번호
+
+PositionController 에 + 버튼 만들기,
++ 버튼 누르면 피시험자 입력 화면으로 이동.
+
+
+
+
+Hold 는 안보낸다 ~~
+
+
+Pro: 검사자
+Instructor: 평가자
+
+
+
+Hold 는 Next 라고 생각하라고 하심.
+그럼,, 결국 안보내도 된다는 것 ?
+
+
+마지막 Trial 점수로 현재 Direction Label 을 메우기.
+점수 못바꾸게. (눌러서 점수 못바꾸게 하도록 하는 것을 말씀하신 듯 함. 테스트를 여러번 할 수 있으니 trial 을 막아놓지는 말자.)
+
+Ankle Clearing 은 영상 저장하는거 맞음. (재차 확인함)
+
+

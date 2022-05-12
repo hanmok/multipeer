@@ -66,7 +66,7 @@ class ConnectionManager: NSObject {
     var duration = 0
     
      var sessionTimer: Timer?
-    
+//    let uuid = UUID(uuidString: <#T##String#>)
     static let shared = ConnectionManager()
     
     private static let service = "jobmanager-chat"
