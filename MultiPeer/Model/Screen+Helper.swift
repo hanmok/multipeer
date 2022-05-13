@@ -5,7 +5,6 @@
 //  Created by 핏투비 iOS on 2022/05/11.
 //
 
-import Foundation
 import CoreData
 import UIKit
 
@@ -34,8 +33,13 @@ extension Screen {
         }
     }
     
-    public func save(belongTo subject: Subject) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+    @discardableResult
+    static func save(belongTo subject: Subject) -> Screen {
+        print("screen save has called")
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+//            return
+            fatalError("fail to case to appDelegate")
+        }
         
         let managedContext = appDelegate.persistentContainer.viewContext
         
@@ -46,35 +50,25 @@ extension Screen {
             fatalError("screen downcasting has failed!")
         }
         
-        validScreen.belongTo = subject
+        validScreen.parentSubject = subject
         let currentDate = Date()
         let randomUUID = UUID()
         
         validScreen.setValue(currentDate, forKey: .Screen.date)
         validScreen.setValue(randomUUID, forKey: "id_")
+        validScreen.setValue(0, forKey: .Screen.totalScore)
+        
+        PositionTitleCore.createBasicPositions(screen: validScreen)
+        // PositionTitleCore 도 만들어야지
         
         do {
             try managedContext.save()
             print("successfully saved screen  : \(screen)")
+            
+            return validScreen
         } catch let error as NSError {
             print("Could not save, \(error), \(error.userInfo)")
+            fatalError("faield to save screen !")
         }
-    }
-}
-
-
-extension Screen {
-    static let date = "date_"
-    
-}
-
-
-extension String {
-    struct Screen {
-        static let date = "date_"
-        static let id = "id_"
-        static let isFinished = "isFinished"
-        static let screenIndex = "screenIndex"
-        static let totalScore = "totalScore"
     }
 }

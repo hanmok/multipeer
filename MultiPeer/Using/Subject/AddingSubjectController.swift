@@ -10,12 +10,20 @@ import SnapKit
 import Then
 import CoreData
 
+
+protocol AddingSubjectDelegate: AnyObject {
+    func updateAfterAdded()
+}
+
 class AddingSubjectController: UIViewController {
     
     // MARK: - Properties
+    
+    weak var delegate: AddingSubjectDelegate?
+    
     var appDelegate: AppDelegate?
     var context: NSManagedObjectContext?
-//    let uiapplication = UIApplication()
+
     private let nameLabel = UILabel().then { $0.text = "Name : "}
     private let nameTF = UITextField().then { $0.placeholder = "Enter Name"}
     
@@ -70,11 +78,12 @@ class AddingSubjectController: UIViewController {
             fatalError("context is nil")
              }
         
-        Subject().save(name: name, phoneNumber: phoneNumber, isMale: genderStackView.selectedBtnIndex! == 0, birthday: birthday)
+        Subject.save(name: name, phoneNumber: phoneNumber, isMale: genderStackView.selectedBtnIndex! == 0, birthday: birthday)
         
 //        Subject.init(name: name, phoneNumber: phoneNumber, isMale: genderStackView.selectedBtnIndex! == 0, birthday: birthday!, context: context)
+        delegate?.updateAfterAdded()
+//        self.navigationController?.popViewController(animated: true)
         
-        self.navigationController?.popViewController(animated: true)
     }
     
     func setupDelegate() {
@@ -267,3 +276,7 @@ extension AddingSubjectController: UITextFieldDelegate {
     
     
 }
+
+
+//extension AddingSubjectController : adding
+

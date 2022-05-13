@@ -18,17 +18,17 @@ class PositionController: UIViewController {
     var count = 0
     var timer: Timer?
     
-    var currentSubject: Subject? {
+    var subject: Subject? {
         didSet {
             setupSubjectInfo()
         }
     }
     
-    var currentScreenId: UUID?
+    var screen: Screen?
     
-    private func updateSubjectWithScreen(subject: Subject, screenId: UUID) {
-        currentSubject = subject
-        currentScreenId = screenId
+    private func updateSubjectWithScreen(subject: Subject, screen: Screen) {
+        self.subject = subject
+        self.screen = screen
 //        renderCurrentState()
     }
     
@@ -39,7 +39,7 @@ class PositionController: UIViewController {
     }
     
     private func setupSubjectInfo() {
-        guard let currentSubject = currentSubject else { return }
+        guard let currentSubject = subject else { return }
         subjectNameLabel.text = currentSubject.name
         subjectDetailLabel.text = String(currentSubject.isMale ? "남" : "여") + " / " + String(calculateAge(from: currentSubject.birthday))
     }
@@ -51,7 +51,7 @@ class PositionController: UIViewController {
     private let subjectDetailLabel = UILabel().then { $0.textColor = .yellow
         $0.textAlignment = .right
     }
-    
+
     private let deepSquat = PositionBlockView(PositionWithImageListEnum.deepsquat)
     private let hurdleStep = PositionBlockView(PositionWithImageListEnum.hurdleStep)
     private let inlineLunge = PositionBlockView(PositionWithImageListEnum.inlineLunge)
@@ -123,10 +123,27 @@ class PositionController: UIViewController {
         print("PositionCOntorller has appeared!")
         print("-------------------------------\n\n\n")
         print("-------------------------------")
+        
+        
+    }
+    
+    private func executeTestCodeWhenLaunched() {
+        
+//        let currentDate = Date()
+
+        //print("currentDate with Formatter: \(currentDate.toStringUsingFormat())")
+//        print(currentDate.toStringUsingStyle())
+//        print(currentDate.toStringUsingFormat())
+//        print(currentDate.toStringUsingStyle(.full)) // full
+//        print(currentDate.toStringUsingStyle(.long))
+//        print(currentDate.toStringUsingFormat(.))
     }
     
     @objc func testBtnTapped(_ sender: UIButton) {
         testCode()
+        
+//        deepSquat.scoreView1.wrappr
+        // 여기서 업데이트를 어떻게해.. ? ? /
     }
     
     func testCode() {
@@ -252,13 +269,23 @@ class PositionController: UIViewController {
         presentCamera(positionDirectionScoreInfo: positionDirectionScoreInfo)
     }
     
-    // 너무.. 갑자기 출현시키는데.. ?? Animation 을 좀 줘봐..
+    
     private func presentCamera(positionDirectionScoreInfo: PositionDirectionScoreInfo) {
+        guard let subject = subject,
+              let screen = screen else {
+            fatalError("fail to get subject and screen. Plz select target first")
+        }
+        
         DispatchQueue.main.async {
-            self.cameraVC = CameraController(positionDirectionScoreInfo: positionDirectionScoreInfo, connectionManager: self.connectionManager)
+            self.cameraVC = CameraController(
+                positionDirectionScoreInfo: positionDirectionScoreInfo,
+                connectionManager: self.connectionManager,
+                subject:subject,
+                screen: screen
+            )
+            
             guard self.cameraVC != nil else { return }
             self.cameraVC!.delegate = self
-//            self.navigationController?.pushViewController(cameraVC, animated: true)
             self.addChild(self.cameraVC!)
             self.view.addSubview(self.cameraVC!.view)
             self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
@@ -291,7 +318,10 @@ class PositionController: UIViewController {
     @objc func presentCamera(_ notification: Notification) {
         print("presentCamera triggered by observing notification")
         
-        
+        guard let subject = subject,
+              let screen = screen else {
+            fatalError("fail to get subject and screen. Plz select target first")
+        }
         
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? PositionDirection,
@@ -303,7 +333,9 @@ class PositionController: UIViewController {
 
 
         DispatchQueue.main.async {
-            let cameraVC = CameraController(positionDirectionScoreInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
+            let cameraVC = CameraController(positionDirectionScoreInfo: positionWithDirectionInfo, connectionManager: self.connectionManager,
+            subject: subject,
+            screen: screen)
             
             self.present(cameraVC, animated: true)
         }
@@ -466,7 +498,7 @@ class PositionController: UIViewController {
         }
     }
     
-    private func configureUserWithScreen(subject: Subject, screenId: UUID) {
+    private func configureUserWithScreen(subject: Subject, screen: Screen) {
         
     }
 }
@@ -525,8 +557,8 @@ extension PositionController: CameraControllerDelegate {
 
 
 extension PositionController: SubjectControllerDelegate {
-    func updateCurrentScreen(from subject: Subject, with screenId: UUID, closure: () -> Void) {
-        updateSubjectWithScreen(subject: subject, screenId: screenId)
+    func updateCurrentScreen(from subject: Subject, with screen: Screen, closure: () -> Void) {
+        updateSubjectWithScreen(subject: subject, screen: screen)
         // when currentSubject set, it calls setupSubjectInfo()
         updateScoreLabels()
         closure()

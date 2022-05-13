@@ -11,7 +11,7 @@ import MobileCoreServices
 import Photos
 import MultipeerConnectivity
 import AVFoundation
-
+import CoreData
 
 
 protocol CameraControllerDelegate: AnyObject {
@@ -26,7 +26,8 @@ class CameraController: UIViewController {
     var direction: PositionDirection
 //    var score: Int?
     var systemSoundID: SystemSoundID = 1057
-    
+    var subject: Subject
+    var screen: Screen
     weak var delegate: CameraControllerDelegate?
     
     var connectionManager: ConnectionManager
@@ -50,7 +51,9 @@ class CameraController: UIViewController {
     
     var sequentialPainPosition: String?
     
-    init(positionDirectionScoreInfo: PositionDirectionScoreInfo, connectionManager: ConnectionManager) {
+    init(positionDirectionScoreInfo: PositionDirectionScoreInfo, connectionManager: ConnectionManager, subject: Subject, screen: Screen) {
+        self.subject = subject
+        self.screen = screen
         self.positionTitle = positionDirectionScoreInfo.title
         self.direction = positionDirectionScoreInfo.direction
 //        self.score = positionDirectionScoreInfo.score // score ?? not necessary .. ;;

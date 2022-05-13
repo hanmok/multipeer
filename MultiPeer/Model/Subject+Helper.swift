@@ -27,7 +27,7 @@ extension Subject {
 //        }
 //    }
     
-    public func save(name: String, phoneNumber: String, isMale: Bool, birthday: Date) {
+    static func save(name: String, phoneNumber: String, isMale: Bool, birthday: Date) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext

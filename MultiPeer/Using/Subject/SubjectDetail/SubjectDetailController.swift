@@ -12,7 +12,7 @@ import SnapKit
 import Then
 
 protocol SubjectDetailDelegate: AnyObject {
-    func sendback(_ subject: Subject, with screenId: UUID) // 없으면 새로 생성해야지 뭐 ..
+    func sendback(_ subject: Subject, with screen: Screen) // 없으면 새로 생성해야지 뭐 ..
 }
 
 
@@ -21,7 +21,33 @@ class SubjectDetailController: UIViewController {
     
     weak var detailDelegate: SubjectDetailDelegate?
     let subject: Subject
-    var screens: [Screen] = []
+    
+    var screens: [Screen] = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.screenCollectionView.reloadData()
+            }
+        }
+    }
+    
+    var selectedScreen: Screen? // Screen ? or Screen id ?
+    
+    let reuseId = "ScreenCellId"
+    
+    private let screenCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        return collectionView
+    }()
+    
+    
+    private func registerCollectionView(customCollectionView: UICollectionView) {
+        customCollectionView.register(ScreenCell.self, forCellWithReuseIdentifier: reuseId)
+        customCollectionView.delegate = self
+        customCollectionView.dataSource = self
+    }
     
     private let nameLabel = UILabel().then { $0.backgroundColor = .brown }
     
@@ -53,9 +79,15 @@ class SubjectDetailController: UIViewController {
     @objc func continueTapped(_ sender: UIButton) {
         print("numofScreens: \(subject.screens.count)")
         if screens.isEmpty {
-            Screen().save(belongTo: subject)
+            let myScreen = Screen.save(belongTo: subject)
+             selectedScreen = myScreen
         }
-        detailDelegate?.sendback(subject, with: subject.screens.first!.id)
+// selectedScreen ?? what is that for now ??
+        guard let selectedScreen = selectedScreen else {
+            fatalError("selected screen is nil", file: #function)
+        }
+
+        detailDelegate?.sendback(subject, with: selectedScreen)
         
         self.navigationController?.popViewController(animated: true)
         
@@ -63,42 +95,47 @@ class SubjectDetailController: UIViewController {
     
     
     private func fetchScreens(from subject: Subject) {
-//        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
-
+        print("flag 1 fetched screen count: \(screens.count) \n screen fetched: \(screens) ")
+        
         switch subject.screens.count {
         case 0: continueBtn.setTitle("Start Testing", for: .normal)
-            return
+            print("flag 3 case 0")
         case 1: screens.append(subject.screens.first!)
-            return
-        default: break
+            print("flag 4 case 1")
+        default:
+            print("flag 5 ")
+            break
         }
         
+        // sorting !
+        if screens.count >= 2 {
         screens = subject.screens.sorted(by: { screen1, screen2 in
-//            guard let date1 = screen1.date,
-//                  let date2 = screen2.date else {
-//                      fatalError("fatal error occurred during fetching screens")
-//                  }
+            print("its sorting .. ")
             return screen1.date < screen2.date
         })
+        }
         
-        print("fetched screen count: \(screens.count) \n screen fetched: \(screens)")
         
+        print("flag 2 fetched screen count: \(screens.count) \n screen fetched: \(screens)")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        fetchScreens(from: subject)
+        registerCollectionView(customCollectionView: screenCollectionView)
+        screenCollectionView.reloadData()
         setupLayout()
         configureLayout()
-        fetchScreens(from: subject)
+
     }
     
-
+    
     private func setupLayout() {
         
         [imageView, nameLabel, detailInfoLabel, phoneLabel,
-         continueBtn
+         continueBtn,
+         screenCollectionView
         ].forEach { self.view.addSubview($0)
         }
         
@@ -135,6 +172,13 @@ class SubjectDetailController: UIViewController {
             make.width.equalTo(200)
             make.height.equalTo(50)
         }
+        
+        screenCollectionView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(20)
+            make.top.equalTo(imageView.snp.bottom).offset(30)
+            make.trailing.equalToSuperview().offset(-20)
+            make.bottom.equalTo(continueBtn.snp.top).offset(-20)
+        }
     }
     
     
@@ -142,7 +186,6 @@ class SubjectDetailController: UIViewController {
         nameLabel.text = subject.name
         detailInfoLabel.text = String(subject.isMale ? "남" : "여") + " / " + String(calculateAge(from: subject.birthday))
         phoneLabel.text = subject.phoneNumber
-        
     }
     
     
@@ -153,4 +196,30 @@ class SubjectDetailController: UIViewController {
 }
 
 
-// dismiss 시키면서 delegate 이용해야 할 것 같은데 ... ??
+extension SubjectDetailController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        return screens.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! ScreenCell
+        
+        cell.viewModel = ScreenViewModel(screen: screens[indexPath.row], index: indexPath.row)
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: screenWidth - 40, height: 40)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedScreen = screens[indexPath.row]
+        print("screen has been selected !!")
+        
+    }
+}
+
+
+
+

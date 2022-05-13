@@ -10,22 +10,34 @@ import UIKit
 import Foundation
 
 extension Date {
-public func toString(dateFormat: String = "HH:mm") -> String {
-    let formatter = DateFormatter.current
-    formatter.dateFormat = dateFormat
+    /// dateFormat = "HH:mm"
+    public func toStringUsingFormat(_ dateFormat: String = "HH:mm") -> String {
+        let formatter = DateFormatter.current
+        formatter.dateStyle = .medium
+        formatter.dateFormat = dateFormat
+        
+        return formatter.string(from: self)
+    }
     
-    return formatter.string(from: self)
+    public func toStringUsingStyle(_ dateStyle: DateFormatter.Style = .medium) -> String {
+        let formatter = DateFormatter.current
+        formatter.dateStyle = dateStyle
+        return formatter.string(from: self)
+    }
 }
 
 
 
-}
+
 extension String {
     public func toDate(dateFormat: String = "HH:mm") -> Date? {
         let formatter = DateFormatter.current
         formatter.dateFormat = dateFormat
         return formatter.date(from: self)
     }
+}
+
+extension Date {
     
 }
 
@@ -33,7 +45,7 @@ let date2 = Date()
 //let formattedDate = date.toString(dateformat)
 
 
-let some = date2.toString(dateFormat: "a HH:mm")
+//let some = date2.toString(dateFormat: "a HH:mm")
 
 
 extension DateFormatter {

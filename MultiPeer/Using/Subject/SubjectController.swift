@@ -13,15 +13,20 @@ import CoreData
 let reuseId = "SubjectId"
 
 protocol SubjectControllerDelegate: AnyObject {
-    func updateCurrentScreen(from subject: Subject, with screenId: UUID, closure: () -> Void)
+    func updateCurrentScreen(from subject: Subject, with screen: Screen, closure: () -> Void)
 }
 
 class SubjectController: UIViewController {
 // TODO: import CoreData
 //    let persistenceController = PersistenceController.shared
-    var subjects: [NSManagedObject] = []
+    var subjects: [Subject] = []
     
     weak var basicDelegate: SubjectControllerDelegate?
+    
+    override func viewWillAppear(_ animated: Bool) {
+        print("viewWillAppear called")
+        subjectCollectionView.reloadData()
+    }
     
     private func fetchSubjects() {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -33,9 +38,12 @@ class SubjectController: UIViewController {
         
         do {
             let result = try context.fetch(request)
-            for data in result as! [NSManagedObject] {
-                print(data.value(forKey: "name_") as! String)
-                subjects.append(data)
+//            subjects.removeAll() // initialize.
+            subjects = []
+            guard let fetchedSubjects = result as? [Subject] else { return }
+            for subject in fetchedSubjects {
+                print(subject.value(forKey: "name_") as! String)
+                subjects.append(subject)
             }
         } catch {
             fatalError("failed to fetch Subjects!")
@@ -71,6 +79,7 @@ class SubjectController: UIViewController {
     
     @objc func addBtnTapped(_ sender: UIButton) {
         let addingController = AddingSubjectController()
+        addingController.delegate = self
         self.navigationController?.pushViewController(addingController, animated: true)
     }
     
@@ -84,6 +93,7 @@ class SubjectController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("subjectcontroller viewdidload called")
         fetchSubjects()
         registerCollectionView()
         setupLayout()
@@ -142,7 +152,7 @@ extension SubjectController: UICollectionViewDelegateFlowLayout, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! SubjectCell
         
-        cell.viewModel = SubjectViewModel(subject: subjects[indexPath.row] as! Subject)
+        cell.viewModel = SubjectViewModel(subject: subjects[indexPath.row])
         return cell
     }
     
@@ -151,7 +161,7 @@ extension SubjectController: UICollectionViewDelegateFlowLayout, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let subjectInfoVC = SubjectDetailController(subject: subjects[indexPath.row] as! Subject)
+        let subjectInfoVC = SubjectDetailController(subject: subjects[indexPath.row])
         subjectInfoVC.detailDelegate = self
         self.navigationController?.pushViewController(subjectInfoVC, animated: true)
     }
@@ -159,12 +169,28 @@ extension SubjectController: UICollectionViewDelegateFlowLayout, UICollectionVie
 
 extension SubjectController: SubjectDetailDelegate {
     // Detail 이 명령하면
-    func sendback(_ subject: Subject, with screenId: UUID) {
-        // SubController 의 delegate 을 받는 PositionController 에게 명령, 그 후 pop
-        basicDelegate?.updateCurrentScreen(from: subject, with: screenId) {
+    func sendback(_ subject: Subject, with screen: Screen) {
+//       SubController 의 delegate 을 받는 PositionController 에게
+//       update  명령, 그 후 pop
+        
+        basicDelegate?.updateCurrentScreen(from: subject, with: screen) {
+                // update -
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
             }
+        }
+    }
+}
+
+
+extension SubjectController: AddingSubjectDelegate {
+    func updateAfterAdded() {
+        print("updateAfterAdded called")
+        self.navigationController?.popViewController(animated: true)
+        DispatchQueue.main.async {
+            self.fetchSubjects()
+
+            self.subjectCollectionView.reloadData()
         }
     }
 }

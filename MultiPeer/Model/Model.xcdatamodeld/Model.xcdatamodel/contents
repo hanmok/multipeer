@@ -1,41 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="PositionDetail" representedClassName="PositionDetail" syncable="YES" codeGenerationType="class">
-        <attribute name="direction" optional="YES" attributeType="Transformable"/>
-        <attribute name="pain" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="trialNo" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="representative" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PositionRepresentative" inverseName="positionDetails" inverseEntity="PositionRepresentative"/>
+    <entity name="DirectionCore" representedClassName="DirectionCore" syncable="YES" codeGenerationType="class">
+        <attribute name="direction" optional="YES" attributeType="String"/>
+        <attribute name="latestScore" optional="YES" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="latestWasPainful" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="parentPositionTitle" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PositionTitleCore" inverseName="directions" inverseEntity="PositionTitleCore"/>
+        <relationship name="trials" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrialDetail" inverseName="parentDirection" inverseEntity="TrialDetail"/>
     </entity>
-    <entity name="PositionRepresentative" representedClassName="PositionRepresentative" syncable="YES" codeGenerationType="class">
+    <entity name="PositionTitleCore" representedClassName="PositionTitleCore" syncable="YES" codeGenerationType="class">
         <attribute name="title" optional="YES" attributeType="String"/>
-        <relationship name="parentScreen" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Screen" inverseName="positionRepresentatives" inverseEntity="Screen"/>
-        <relationship name="positionDetails" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PositionDetail" inverseName="representative" inverseEntity="PositionDetail"/>
+        <relationship name="directions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DirectionCore" inverseName="parentPositionTitle" inverseEntity="DirectionCore"/>
+        <relationship name="parentScreen_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Screen" inverseName="positionRepresentatives" inverseEntity="Screen"/>
     </entity>
     <entity name="Screen" representedClassName="Screen" syncable="YES" codeGenerationType="class">
         <attribute name="date_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id_" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isFinished" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="screenIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="totalScore" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="belongTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Subject" inverseName="screens_" inverseEntity="Subject"/>
-        <relationship name="positionRepresentatives" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PositionRepresentative" inverseName="parentScreen" inverseEntity="PositionRepresentative"/>
+        <relationship name="parentSubject" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Subject" inverseName="screens_" inverseEntity="Subject"/>
+        <relationship name="positionRepresentatives" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PositionTitleCore" inverseName="parentScreen_" inverseEntity="PositionTitleCore"/>
     </entity>
     <entity name="Subject" representedClassName="Subject" syncable="YES" codeGenerationType="class">
         <attribute name="birthday_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="id_" optional="YES" attributeType="String"/>
         <attribute name="imageUrl" optional="YES" attributeType="String"/>
         <attribute name="isMale" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastUpdateDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name_" optional="YES" attributeType="String"/>
-        <attribute name="numOfTestConducted" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="numOfTestConducted" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
         <attribute name="phoneNumber_" optional="YES" attributeType="String"/>
-        <relationship name="screens_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Screen" inverseName="belongTo" inverseEntity="Screen"/>
+        <relationship name="screens_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Screen" inverseName="parentSubject" inverseEntity="Screen"/>
+    </entity>
+    <entity name="TrialDetail" representedClassName="TrialDetail" syncable="YES" codeGenerationType="class">
+        <attribute name="isPainful" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="trialNo" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="parentDirection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DirectionCore" inverseName="trials" inverseEntity="DirectionCore"/>
     </entity>
     <elements>
-        <element name="PositionDetail" positionX="-36" positionY="63" width="128" height="104"/>
-        <element name="PositionRepresentative" positionX="-18" positionY="99" width="128" height="74"/>
-        <element name="Screen" positionX="-54" positionY="54" width="128" height="14"/>
-        <element name="Subject" positionX="-63" positionY="-18" width="128" height="164"/>
+        <element name="TrialDetail" positionX="-271.5946044921875" positionY="134.26513671875" width="128" height="89"/>
+        <element name="PositionTitleCore" positionX="-18" positionY="99" width="128" height="74"/>
+        <element name="Screen" positionX="-65.186279296875" positionY="261.2911987304688" width="128" height="119"/>
+        <element name="Subject" positionX="-323.895751953125" positionY="235.299560546875" width="128" height="164"/>
+        <element name="DirectionCore" positionX="-171" positionY="243" width="128" height="104"/>
     </elements>
 </model>

@@ -7,10 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22315E3B282E1F8F0093079B /* ScreenCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3A282E1F8F0093079B /* ScreenCell.swift */; };
+		22315E3D282E1FCB0093079B /* ScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3C282E1FCB0093079B /* ScreenViewModel.swift */; };
+		22315E3F282E38D40093079B /* DirectionCore+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3E282E38D40093079B /* DirectionCore+Helper.swift */; };
+		22315E41282E4CA40093079B /* MemoForCoreData in Resources */ = {isa = PBXBuildFile; fileRef = 22315E40282E4CA30093079B /* MemoForCoreData */; };
 		2265AC022816918700E0FCCF /* PositionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC012816918700E0FCCF /* PositionController.swift */; };
 		2265AC0528169D6C00E0FCCF /* PositionBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */; };
 		2265AC072816A11E00E0FCCF /* ScoreBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */; };
 		2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC4D2817F42300E0FCCF /* CameraController.swift */; };
+		226D20DF282DE6C6001D6019 /* StringExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D20DE282DE6C5001D6019 /* StringExt+.swift */; };
 		226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226E0445280EBBE4004A8A28 /* RecordingViewController.swift */; };
 		2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */; };
 		2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625E2807EB8300C9EB79 /* ConnectionManager.swift */; };
@@ -29,8 +34,7 @@
 		227950B2282BB8F900B675A1 /* Subject+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227950B1282BB8F900B675A1 /* Subject+Helper.swift */; };
 		227950B5282BBE1600B675A1 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227950B4282BBE1600B675A1 /* PersistenceController.swift */; };
 		227950B7282BBF8500B675A1 /* Screen+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227950B6282BBF8500B675A1 /* Screen+Helper.swift */; };
-		227950B9282BBF8F00B675A1 /* PositionDetail+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227950B8282BBF8F00B675A1 /* PositionDetail+Helper.swift */; };
-		227950BB282BBF9F00B675A1 /* PositionRepresentative+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227950BA282BBF9F00B675A1 /* PositionRepresentative+Helper.swift */; };
+		227950B9282BBF8F00B675A1 /* PositionTitleCore+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227950B8282BBF8F00B675A1 /* PositionTitleCore+Helper.swift */; };
 		227DA6C22828F5C20097F8F1 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227DA6C12828F5C20097F8F1 /* APIManager.swift */; };
 		227DA6C42829103D0097F8F1 /* SoundTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */; };
 		227DA6C628291D450097F8F1 /* Memos in Resources */ = {isa = PBXBuildFile; fileRef = 227DA6C528291D450097F8F1 /* Memos */; };
@@ -59,10 +63,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		22315E3A282E1F8F0093079B /* ScreenCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCell.swift; sourceTree = "<group>"; };
+		22315E3C282E1FCB0093079B /* ScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewModel.swift; sourceTree = "<group>"; };
+		22315E3E282E38D40093079B /* DirectionCore+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DirectionCore+Helper.swift"; sourceTree = "<group>"; };
+		22315E40282E4CA30093079B /* MemoForCoreData */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemoForCoreData; sourceTree = "<group>"; };
 		2265AC012816918700E0FCCF /* PositionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionController.swift; sourceTree = "<group>"; };
 		2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionBlockView.swift; sourceTree = "<group>"; };
 		2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBtnView.swift; sourceTree = "<group>"; };
 		2265AC4D2817F42300E0FCCF /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
+		226D20DE282DE6C5001D6019 /* StringExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringExt+.swift"; sourceTree = "<group>"; };
 		226E0445280EBBE4004A8A28 /* RecordingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		2278625C2807EB5B00C9EB79 /* ChatManagerFromRay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatManagerFromRay.swift; sourceTree = "<group>"; };
 		2278625E2807EB8300C9EB79 /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
@@ -81,8 +90,7 @@
 		227950B1282BB8F900B675A1 /* Subject+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Subject+Helper.swift"; sourceTree = "<group>"; };
 		227950B4282BBE1600B675A1 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		227950B6282BBF8500B675A1 /* Screen+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Screen+Helper.swift"; sourceTree = "<group>"; };
-		227950B8282BBF8F00B675A1 /* PositionDetail+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PositionDetail+Helper.swift"; sourceTree = "<group>"; };
-		227950BA282BBF9F00B675A1 /* PositionRepresentative+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PositionRepresentative+Helper.swift"; sourceTree = "<group>"; };
+		227950B8282BBF8F00B675A1 /* PositionTitleCore+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PositionTitleCore+Helper.swift"; sourceTree = "<group>"; };
 		227DA6C12828F5C20097F8F1 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundTestViewController.swift; sourceTree = "<group>"; };
 		227DA6C528291D450097F8F1 /* Memos */ = {isa = PBXFileReference; lastKnownFileType = text; path = Memos; sourceTree = "<group>"; };
@@ -126,6 +134,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		22315E39282E1F750093079B /* SubjectDetail */ = {
+			isa = PBXGroup;
+			children = (
+				22795074282B965D00B675A1 /* SubjectDetailController.swift */,
+				22315E3A282E1F8F0093079B /* ScreenCell.swift */,
+				22315E3C282E1FCB0093079B /* ScreenViewModel.swift */,
+			);
+			path = SubjectDetail;
+			sourceTree = "<group>";
+		};
 		22795064282B922800B675A1 /* Position */ = {
 			isa = PBXGroup;
 			children = (
@@ -153,7 +171,7 @@
 				22795069282B92DA00B675A1 /* Subject.swift */,
 				227DA6C7282B60180097F8F1 /* SubjectController.swift */,
 				22795062282B8F8C00B675A1 /* AddingSubjectController.swift */,
-				22795074282B965D00B675A1 /* SubjectDetailController.swift */,
+				22315E39282E1F750093079B /* SubjectDetail */,
 				2279505D282B87BC00B675A1 /* SubjectViewModel.swift */,
 				22795060282B880800B675A1 /* SubjectCell.swift */,
 			);
@@ -206,8 +224,8 @@
 				227950B4282BBE1600B675A1 /* PersistenceController.swift */,
 				227950B1282BB8F900B675A1 /* Subject+Helper.swift */,
 				227950B6282BBF8500B675A1 /* Screen+Helper.swift */,
-				227950B8282BBF8F00B675A1 /* PositionDetail+Helper.swift */,
-				227950BA282BBF9F00B675A1 /* PositionRepresentative+Helper.swift */,
+				227950B8282BBF8F00B675A1 /* PositionTitleCore+Helper.swift */,
+				22315E3E282E38D40093079B /* DirectionCore+Helper.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -238,6 +256,7 @@
 			children = (
 				227DA6C528291D450097F8F1 /* Memos */,
 				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
+				22315E40282E4CA30093079B /* MemoForCoreData */,
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
 				6C823DBE391EE5CB5A4C0AA5 /* Pods */,
@@ -261,6 +280,7 @@
 				22ADC439281A226700B1C639 /* Using */,
 				227950B3282BBDA500B675A1 /* Model */,
 				2283BEC3281B8732007D74FC /* Util+.swift */,
+				226D20DE282DE6C5001D6019 /* StringExt+.swift */,
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				228B883F28065784007A6842 /* Assets.xcassets */,
 				22ADC438281A200300B1C639 /* NotUsing */,
@@ -375,6 +395,7 @@
 			files = (
 				228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */,
 				228B884028065784007A6842 /* Assets.xcassets in Resources */,
+				22315E41282E4CA40093079B /* MemoForCoreData in Resources */,
 				227DA6C628291D450097F8F1 /* Memos in Resources */,
 				228B883E2806577B007A6842 /* Main.storyboard in Resources */,
 			);
@@ -436,13 +457,13 @@
 				2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */,
 				22795072282B939B00B675A1 /* PositionLists.swift in Sources */,
 				22795078282BA51D00B675A1 /* SelectableButtons.swift in Sources */,
-				227950BB282BBF9F00B675A1 /* PositionRepresentative+Helper.swift in Sources */,
 				2282DD8A28164695008928A4 /* SwiftyCamViewControllerDelegate.swift in Sources */,
 				2282DD912816473C008928A4 /* SwiftyCamButton.swift in Sources */,
 				22795063282B8F8D00B675A1 /* AddingSubjectController.swift in Sources */,
 				2282DD9328167944008928A4 /* SwiftyRecordButton.swift in Sources */,
 				227862632808024900C9EB79 /* VideoHelper.swift in Sources */,
-				227950B9282BBF8F00B675A1 /* PositionDetail+Helper.swift in Sources */,
+				22315E3B282E1F8F0093079B /* ScreenCell.swift in Sources */,
+				227950B9282BBF8F00B675A1 /* PositionTitleCore+Helper.swift in Sources */,
 				2279507B282BA58600B675A1 /* Model.xcdatamodeld in Sources */,
 				2283BEC0281A5F78007D74FC /* ButtonWithInfo.swift in Sources */,
 				2283BEC4281B8732007D74FC /* Util+.swift in Sources */,
@@ -456,6 +477,7 @@
 				22795070282B937C00B675A1 /* MsgModels.swift in Sources */,
 				22795068282B929A00B675A1 /* PositionModels.swift in Sources */,
 				2282DD8D281646E0008928A4 /* Orientation.swift in Sources */,
+				226D20DF282DE6C6001D6019 /* StringExt+.swift in Sources */,
 				2279506A282B92DA00B675A1 /* Subject.swift in Sources */,
 				2283BEC2281A884F007D74FC /* NotificationKeys.swift in Sources */,
 				2265AC072816A11E00E0FCCF /* ScoreBtnView.swift in Sources */,
@@ -467,10 +489,12 @@
 				227DA6C22828F5C20097F8F1 /* APIManager.swift in Sources */,
 				228B88372806577A007A6842 /* AppDelegate.swift in Sources */,
 				2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */,
+				22315E3F282E38D40093079B /* DirectionCore+Helper.swift in Sources */,
 				2283BEC7281FDFB6007D74FC /* ScoreController.swift in Sources */,
 				2283BEBE281A5F5E007D74FC /* ImgBtnView.swift in Sources */,
 				227DA6C42829103D0097F8F1 /* SoundTestViewController.swift in Sources */,
 				22795061282B880800B675A1 /* SubjectCell.swift in Sources */,
+				22315E3D282E1FCB0093079B /* ScreenViewModel.swift in Sources */,
 				2285C4A92822865000666CEA /* ScoreButton.swift in Sources */,
 				228B88392806577A007A6842 /* SceneDelegate.swift in Sources */,
 			);

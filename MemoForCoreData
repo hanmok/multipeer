@@ -1,0 +1,14 @@
+
+
+converting optional between NonOptional is buggy and not working properly.
+
+so.. in this app,
+mark
+
+Painful:        1,
+not painful:    -1 ,
+not determined: 0
+
+
+and, define Score default value as -1
+(applied to total Score too. )

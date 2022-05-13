@@ -9,7 +9,7 @@ import Foundation
 
 
 // MARK: - Position
-enum PositionList: String {
+enum PositionList: String, CaseIterable {
     case deepSquat = "Deep Squat"
     case deepSquatVar = "Deep Squat Var"
     case hurdleStep = "Hurdle Step"
@@ -24,6 +24,30 @@ enum PositionList: String {
     case rotaryStability = "Rotary Stability"
     case flexionClearing = "Flexion Clearing"
 }
+struct Dummy {
+    static let directionName: [Int: [String]] = [1: ["Neutral"], 2: ["Left", "Right"]]
+    static let numOfDirections: [PositionList: Int] = [
+        .deepSquat : 1,
+        .deepSquatVar : 1,
+        .hurdleStep:2,
+        .inlineLunge:2,
+        .ankleClearing: 2,
+        .shoulderMobility:2,
+        .shoulderClearing:2,
+        .activeStraightLegRaise:2,
+        .trunkStabilityPushUp:1,
+        .trunkStabilityPushUpVar:2,
+        .extensionClearing:1,
+        .rotaryStability:2,
+        .flexionClearing:1
+    ]
+    
+//    static let 
+    
+}
+
+
+
 
 
 
@@ -44,8 +68,6 @@ enum PositionImgs {
     static let rotaryStability = (title: PositionList.rotaryStability.rawValue, imageNames: ["rotaryStabilityLeft","rotaryStabilityRight"])
     static let flexionClearing = (title: PositionList.flexionClearing.rawValue, imageNames: ["flexionClearing"])
 }
-
-
 
 
 enum PositionWithImageListEnum {
