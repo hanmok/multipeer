@@ -24,7 +24,11 @@ class PositionController: UIViewController {
         }
     }
     
-    var screen: Screen?
+    var screen: Screen? {
+        didSet {
+            
+        }
+    }
     
     private func updateSubjectWithScreen(subject: Subject, screen: Screen) {
         self.subject = subject
@@ -33,9 +37,11 @@ class PositionController: UIViewController {
     }
     
     private func updateScoreLabels() {
-
+print("updateScoreLabels called")
         //TODO: Update Score ! for Each of PositionBlockView below
 //        ex) deepSquat.scoreView1.scoreLabel =
+//  //first, fetch all the informations to check if it valid
+//        screen?.positionTitleCores
     }
     
     private func setupSubjectInfo() {
@@ -103,7 +109,6 @@ class PositionController: UIViewController {
         subjectSettingVC.basicDelegate = self
 //        UINavigationController.pushViewController(subjectSettingVC!)
         self.navigationController?.pushViewController(subjectSettingVC, animated: true)
-        
     }
     
     var cameraVC: CameraController?

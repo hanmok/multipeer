@@ -11,7 +11,21 @@ import UIKit
 
 extension Subject {
     
-
+    public var id: UUID {
+        get {
+            if let validId = self.id_ {
+                return validId
+            } else {
+                let uuid = UUID()
+                self.id_ = uuid
+                return uuid
+            }
+        }
+        set {
+            self.id_ = newValue
+        }
+    }
+    
 //    public func save(name: String) {
 //        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
 //
@@ -32,11 +46,16 @@ extension Subject {
         
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "Subject", in: managedContext)!
-        let subject = NSManagedObject(entity: entity, insertInto: managedContext)
+        guard let subject = NSManagedObject(entity: entity, insertInto: managedContext) as? Subject else {
+            fatalError()
+        }
+        
         subject.setValue(name, forKey: "name_")
         subject.setValue(phoneNumber, forKey: "phoneNumber_")
         subject.setValue(isMale, forKey: "isMale")
         subject.setValue(birthday, forKey: "birthday_")
+        
+        subject.provideInitialScreen()
         
         do {
             try managedContext.save()
@@ -47,22 +66,22 @@ extension Subject {
     }
     
     
-    @discardableResult
-    convenience init(name: String, phoneNumber: String, isMale: Bool, birthday: Date, context: NSManagedObjectContext) {
-        self.init(context: context)
-        self.name = name
-        self.phoneNumber = phoneNumber
-        self.isMale = isMale
-        self.birthday = birthday
-        DispatchQueue.global().async {
-            do {
-                try context.save()
-                print("saved Data: \(name), \(phoneNumber), \(isMale), \(birthday)")
-            } catch {
-                fatalError("Fatal Error occurred during saving Subject CoreData!")
-            }
-        }
-    }
+//    @discardableResult
+//    convenience init(name: String, phoneNumber: String, isMale: Bool, birthday: Date, context: NSManagedObjectContext) {
+//        self.init(context: context)
+//        self.name = name
+//        self.phoneNumber = phoneNumber
+//        self.isMale = isMale
+//        self.birthday = birthday
+//        DispatchQueue.global().async {
+//            do {
+//                try context.save()
+//                print("saved Data: \(name), \(phoneNumber), \(isMale), \(birthday)")
+//            } catch {
+//                fatalError("Fatal Error occurred during saving Subject CoreData!")
+//            }
+//        }
+//    }//        let subject = Subject(name: <#T##String#>, phoneNumber: <#T##String#>, isMale: <#T##Bool#>, birthday: <#T##Date#>, context: <#T##NSManagedObjectContext#>)
     
 //    convenience init(name: String, phoneNumber: String, isMale: Bool, birthday: Date) {
 //
@@ -108,5 +127,12 @@ extension Subject {
     
     public var screens: Set<Screen> {
         get { screens_ as? Set<Screen> ?? []}
+        set { screens_ = newValue as NSSet}
+    }
+}
+
+extension Subject {
+    func provideInitialScreen() {
+        self.screens.update(with: Screen.save())
     }
 }

@@ -11,6 +11,17 @@ import UIKit
 
 extension PositionTitleCore {
     
+    
+    public var title: String {
+        get {
+            return self.title_ ?? "N/D"
+        }
+        set {
+            self.title_ = newValue
+        }
+    }
+    
+    
     @discardableResult
     static func save(name: String, belongTo parentScreen: Screen) -> PositionTitleCore {
         print("PositionTitleCore save has called")
@@ -20,28 +31,27 @@ extension PositionTitleCore {
         
         let managedContext = appDelegate.persistentContainer.viewContext
         
-        let entity = NSEntityDescription.entity(forEntityName: .CoreEntities.positionTitleCore, in: managedContext)!
+        let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.positionTitleCore, in: managedContext)!
         let positionTitleCore = NSManagedObject(entity: entity, insertInto: managedContext)
         
         guard let positionTitleCore = positionTitleCore as? PositionTitleCore else {
             fatalError("screen downcasting has failed!")
         }
         
-        positionTitleCore.setValue(name, forKey: .PositionTitleCore.title)
+        positionTitleCore.setValue(name, forKey: .PositionTitleCoreStr.title)
         // make corresponding direction Cores along with positionTitleCore
-        DirectionCore.save(belongTo: positionTitleCore)
+        TrialCore.save(belongTo: positionTitleCore)
         
         
         do {
             try managedContext.save()
-            print("successfully saved PositionTitleCore  : \(positionTitleCore.title)")
+            print("successfully saved PositionTitleCore  : \(String(describing: positionTitleCore.title))")
             return positionTitleCore
         } catch let error as NSError {
             print("Could not save, \(error), \(error.userInfo)")
             fatalError("faield to save screen !")
         }
     }
-    
 }
 
 extension PositionTitleCore {

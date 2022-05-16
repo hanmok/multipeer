@@ -216,7 +216,8 @@ extension SubjectDetailController: UICollectionViewDelegateFlowLayout, UICollect
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedScreen = screens[indexPath.row]
         print("screen has been selected !!")
-        
+        let trialDetailController = TrialDetailController(screen: selectedScreen!)
+        self.navigationController?.pushViewController(trialDetailController, animated: true)
     }
 }
 

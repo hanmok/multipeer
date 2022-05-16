@@ -92,7 +92,6 @@ class PositionBlockView: UIView {
                 make.right.equalToSuperview().offset(-10)
                 make.height.equalToSuperview().dividedBy(2)
             }
-            
 
             imgBtnLeft = ImgBtnView(title: positionBlock.title, direction: .left)
             imageView1.addSubview(imgBtnLeft)

@@ -65,7 +65,7 @@ class SelectableButtonStackView: UIStackView {
     
     public func buttonSelected(_ id: UUID) {
         prevPressedBtnId = currentPressedBtnId // both can be nil for the first selection
-        
+
         for (index, button) in buttons.enumerated() {
             
             if button.id == id {

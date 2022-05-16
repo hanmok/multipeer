@@ -10,23 +10,24 @@ import Foundation
 
 extension String {
     
-    struct CoreEntities {
+    struct CoreEntitiesStr {
         static let positionTitleCore = "PositionTitleCore"
-        static let directionCore = "DirectionCore"
+        static let trialCore = "TrialCore"
         static let screen = "Screen"
         static let subject = "Subject"
         static let trialDetail = "TrialDetail"
     }
 
-    struct Screen {
+    struct ScreenStr {
         static let id = "id_"
         static let date = "date_"
         static let isFinished = "isFinished"
 
         static let totalScore = "totalScore"
+        
     }
     
-    struct Subject {
+    struct SubjectStr {
         static let birthday = "birthday_"
         static let lastUpdateDate = "lastUpdateDate"
         static let isMale = "isMale"
@@ -39,26 +40,23 @@ extension String {
         static let screens = "screens"
     }
     
-    struct DirectionCore {
+    struct TrialCoreStr {
         static let direction = "direction"
         static let latestWasPainful = "latestWasPainful"
         static let latestScore = "latestScore"
-        
         
         static let parentPositionTitle = "parentPositionTitle"
         static let trials = "trials"
     }
     
-    struct PositionTitleCore {
+    struct PositionTitleCoreStr {
         static let title = "title"
         static let directions = "directions"
-
         
         static let parentScreen = "parentScreen_" //
     }
     
-    struct TrialDetail {
-
+    struct TrialDetailStr {
         static let isPainful = "isPainful_"
         
         static let score = "score_"
