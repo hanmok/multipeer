@@ -82,10 +82,16 @@ class SubjectDetailController: UIViewController {
             let myScreen = Screen.save(belongTo: subject)
              selectedScreen = myScreen
         }
-// selectedScreen ?? what is that for now ??
+
+        // if none is selected before, select the latest one
+        if selectedScreen == nil {
+            selectedScreen = screens.sorted { $0.date < $1.date}.last
+        }
+        
         guard let selectedScreen = selectedScreen else {
             fatalError("selected screen is nil", file: #function)
         }
+        
 
         detailDelegate?.sendback(subject, with: selectedScreen)
         
@@ -216,11 +222,9 @@ extension SubjectDetailController: UICollectionViewDelegateFlowLayout, UICollect
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedScreen = screens[indexPath.row]
         print("screen has been selected !!")
+        print("numOfScreen's cores: \(selectedScreen!.trialCores.count)")
         let trialDetailController = TrialDetailController(screen: selectedScreen!)
+        print("passing screen id: \(selectedScreen!.id)")
         self.navigationController?.pushViewController(trialDetailController, animated: true)
     }
 }
-
-
-
-

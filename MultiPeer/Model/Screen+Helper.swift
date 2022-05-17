@@ -33,13 +33,23 @@ extension Screen {
         }
     }
     
-    public var positionTitleCores: Set<PositionTitleCore> {
+//    public var positionTitleCores: Set<PositionTitleCore> {
+//        get {
+////            return self.positionTitleCores_ as! Set<PositionTitleCore>
+//            return self.positionTitleCores_ as? Set<PositionTitleCore> ?? []
+//        }
+//        set {
+//            self.positionTitleCores_ = newValue as NSSet
+//        }
+//    }
+    
+    public var trialCores: Set<TrialCore> {
         get {
 //            return self.positionTitleCores_ as! Set<PositionTitleCore>
-            return self.positionTitleCores_ as? Set<PositionTitleCore> ?? []
+            return self.trialCores_ as? Set<TrialCore> ?? []
         }
         set {
-            self.positionTitleCores_ = newValue as NSSet
+            self.trialCores_ = newValue as NSSet
         }
     }
     
@@ -59,7 +69,7 @@ extension Screen {
             fatalError("screen downcasting has failed!")
         }
         
-        validScreen.parentSubject = subject
+        validScreen.parentSubject = subject // 이거 빼고 모두 같음 .
         let currentDate = Date()
         let randomUUID = UUID()
         
@@ -67,54 +77,49 @@ extension Screen {
         validScreen.setValue(randomUUID, forKey: "id_")
         validScreen.setValue(0, forKey: .ScreenStr.totalScore)
         
-        PositionTitleCore.createBasicPositions(screen: validScreen)
-        // PositionTitleCore 도 만들어야지
-        
+        TrialCore.saveBundle(belongTo: validScreen)
+        // dma ... ;; 저장이 정상적으로 되지 않는ㄷ ㅔ ??
         do {
             try managedContext.save()
-            print("successfully saved screen  : \(screen)")
-            
+            print("successfully saved screen  : \(validScreen.trialCores.count)")
+            print("validScreen id : \(validScreen.id)")
             return validScreen
         } catch let error as NSError {
-            print("could not save, \(error.localizedDescription)")
-            fatalError("faield to save screen !")
+            fatalError("failed to save screen ! error : \(error.localizedDescription)")
         }
     }
     
-    static func save() -> Screen {
-        print("screen save has called")
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            fatalError("fail to case to appDelegate")
-        }
-        
-        let managedContext = appDelegate.persistentContainer.viewContext
-        
-        let entity = NSEntityDescription.entity(forEntityName: "Screen", in: managedContext)!
-        let screen = NSManagedObject(entity: entity, insertInto: managedContext)
-        
-        guard let validScreen = screen as? Screen else {
-            fatalError("screen downcasting has failed!")
-        }
-        
-        let currentDate = Date()
-        let randomUUID = UUID()
-        
-        validScreen.setValue(currentDate, forKey: .ScreenStr.date)
-        validScreen.setValue(randomUUID, forKey: "id_")
-        validScreen.setValue(0, forKey: .ScreenStr.totalScore)
-        
-        PositionTitleCore.createBasicPositions(screen: validScreen)
-        // PositionTitleCore 도 만들어야지
-        
-        do {
-            try managedContext.save()
-            print("successfully saved screen  : \(screen)")
-            
-            return validScreen
-        } catch let error as NSError {
-//            print("Could not save, \(error), \(error.userInfo)")
-            print("could not save, \(error.localizedDescription)")
-            fatalError("faield to save screen !")
-        }
-    }
+//    static func save() -> Screen {
+//        print("screen save has called")
+//        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+//            fatalError("fail to case to appDelegate")
+//        }
+//
+//        let managedContext = appDelegate.persistentContainer.viewContext
+//
+//        let entity = NSEntityDescription.entity(forEntityName: "Screen", in: managedContext)!
+//        let screen = NSManagedObject(entity: entity, insertInto: managedContext)
+//
+//        guard let validScreen = screen as? Screen else {
+//            fatalError("screen downcasting has failed!")
+//        }
+//
+//        let currentDate = Date()
+//        let randomUUID = UUID()
+//
+//        validScreen.setValue(currentDate, forKey: .ScreenStr.date)
+//        validScreen.setValue(randomUUID, forKey: "id_")
+//        validScreen.setValue(0, forKey: .ScreenStr.totalScore)
+//
+//        do {
+//            try managedContext.save()
+//            print("successfully saved screen  : \(screen)")
+//
+//            return validScreen
+//        } catch let error as NSError {
+////            print("Could not save, \(error), \(error.userInfo)")
+//            print("could not save, \(error.localizedDescription)")
+//            fatalError("faield to save screen !")
+//        }
+//    }
 }

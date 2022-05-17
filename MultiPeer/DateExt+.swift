@@ -56,3 +56,20 @@ extension DateFormatter {
         return formatter
     }
 }
+
+
+
+public func calculateAge(from birthday: Date) -> Int {
+    
+    let calendar = Calendar.current
+    let birthComponent = calendar.dateComponents([.year], from: birthday)
+    let currentComponent = calendar.dateComponents([.year], from: Date())
+    
+    guard let birthYear = birthComponent.year,
+          let currentYear = currentComponent.year else { return 0 }
+    
+    let age = currentYear - birthYear + 1
+    
+    return age
+}
+

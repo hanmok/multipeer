@@ -8,15 +8,20 @@
 import UIKit
 import SnapKit
 import Then
+import CoreData
 
 class PositionController: UIViewController {
     
     // MARK: - Properties
     
     var connectionManager = ConnectionManager()
-
+    
+    var screen: Screen?
+    
+    var cameraVC: CameraController?
+    
     var count = 0
-    var timer: Timer?
+    var durationTimer: Timer?
     
     var subject: Subject? {
         didSet {
@@ -24,32 +29,13 @@ class PositionController: UIViewController {
         }
     }
     
-    var screen: Screen? {
-        didSet {
-            
-        }
-    }
+    var scoreBtnViews: [ScoreBtnView] = []
     
-    private func updateSubjectWithScreen(subject: Subject, screen: Screen) {
-        self.subject = subject
-        self.screen = screen
-//        renderCurrentState()
-    }
+    var trialCores: [TrialCore] = []
     
-    private func updateScoreLabels() {
-print("updateScoreLabels called")
-        //TODO: Update Score ! for Each of PositionBlockView below
-//        ex) deepSquat.scoreView1.scoreLabel =
-//  //first, fetch all the informations to check if it valid
-//        screen?.positionTitleCores
-    }
+    var selectedTrialCore: TrialCore?
     
-    private func setupSubjectInfo() {
-        guard let currentSubject = subject else { return }
-        subjectNameLabel.text = currentSubject.name
-        subjectDetailLabel.text = String(currentSubject.isMale ? "남" : "여") + " / " + String(calculateAge(from: currentSubject.birthday))
-    }
-    
+   
     private let subjectNameLabel = UILabel().then { $0.textColor = .cyan
         $0.textAlignment = .right
     }
@@ -57,8 +43,9 @@ print("updateScoreLabels called")
     private let subjectDetailLabel = UILabel().then { $0.textColor = .yellow
         $0.textAlignment = .right
     }
-
+    
     private let deepSquat = PositionBlockView(PositionWithImageListEnum.deepsquat)
+    
     private let hurdleStep = PositionBlockView(PositionWithImageListEnum.hurdleStep)
     private let inlineLunge = PositionBlockView(PositionWithImageListEnum.inlineLunge)
     private let ankleClearing = PositionBlockView(PositionWithImageListEnum.ankleClearing)
@@ -69,10 +56,12 @@ print("updateScoreLabels called")
     
     private let stabilityPushup = PositionBlockView(PositionWithImageListEnum.stabilityPushup)
     private let extensionClearing = PositionBlockView(PositionWithImageListEnum.extensionClearing)
+    
     private let rotaryStability = PositionBlockView(PositionWithImageListEnum.rotaryStability)
     private let flexionClearing = PositionBlockView(PositionWithImageListEnum.flexionClearing)
     
-
+    
+    
     private let topView = UIView().then { $0.backgroundColor = .systemPink}
     
     private let sessionButton = UIButton().then {
@@ -81,7 +70,6 @@ print("updateScoreLabels called")
     }
     
     private let connectionStateLabel = UILabel().then {
-//        $0.textColor = .blue
         $0.textColor = .black
         $0.text = "Not Connected"
     }
@@ -91,102 +79,89 @@ print("updateScoreLabels called")
     }
     
     private let subjectSettingBtn = UIButton().then {
-//        let someImage = UIImageView(image: UIImage(systemName: "plus.circle.fill"))
-//        let someImage = UIImageView(image: UIImage(systemName: "person.fill"))
+        
         let someImage = UIImageView(image: UIImage(systemName: "person.crop.circle.fill"))
         someImage.tintColor = .white
         $0.addSubview(someImage)
         someImage.snp.makeConstraints { make in
             make.leading.top.trailing.bottom.equalToSuperview()
         }
-        $0.addTarget(self, action: #selector(subjectBtnTapped), for: .touchUpInside)
     }
     
-    @objc func subjectBtnTapped(_ sender: UIButton) {
-        print("btn tapped!")
-//        let subjectSettingVC = cameraVC
-        let subjectSettingVC = SubjectController()
-        subjectSettingVC.basicDelegate = self
-//        UINavigationController.pushViewController(subjectSettingVC!)
-        self.navigationController?.pushViewController(subjectSettingVC, animated: true)
-    }
     
-    var cameraVC: CameraController?
-    
-    
+
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupLayout()
-        setupTargets()
-        connectionManager.delegate = self
-        addNotificationObservers()
-//        testCode()
-        
-        print("PositionCOntorller has appeared!")
-        print("-------------------------------\n\n\n")
-        print("-------------------------------")
-        
-        
-    }
-    
-    private func executeTestCodeWhenLaunched() {
-        
-//        let currentDate = Date()
-
-        //print("currentDate with Formatter: \(currentDate.toStringUsingFormat())")
-//        print(currentDate.toStringUsingStyle())
-//        print(currentDate.toStringUsingFormat())
-//        print(currentDate.toStringUsingStyle(.full)) // full
-//        print(currentDate.toStringUsingStyle(.long))
-//        print(currentDate.toStringUsingFormat(.))
-    }
-    
-    @objc func testBtnTapped(_ sender: UIButton) {
-        testCode()
-        
-//        deepSquat.scoreView1.wrappr
-        // 여기서 업데이트를 어떻게해.. ? ? /
-    }
-    
-    func testCode() {
-        let date = Date().addingTimeInterval(5)
-        print("hi!")
-        let timer = Timer(fireAt: date, interval: 0, target: self, selector: #selector(runCode), userInfo: nil, repeats: false)
-        // 잘 작동 하는구만!!!
-        RunLoop.main.add(timer, forMode: .common)
-    }
-    
-    @objc func runCode() {
-        print("hello!")
-    }
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        print("viewWillAppear PositionController")
-//        triggerTimer()
-    }
- 
-    override func viewDidDisappear(_ animated: Bool) {
-        print("viewDidDisappear PositionController")
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        print("viewWillDisAppear PositionConroller")
-    }
-
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
     
-     // MARK: - Targets
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupLayout()
+        setupTargets()
+        connectionManager.delegate = self
+        addNotificationObservers()
+        
+        updateScoreLabels()
+    }
+    
+    private func updateSubjectWithScreen(subject: Subject, screen: Screen) {
+        print("updateSubjectWithScreen")
+        self.subject = subject
+        self.screen = screen
+        
+        self.trialCores = screen.trialCores.sorted {
+            if $0.tag != $1.tag {
+                return $0.tag < $1.tag
+            } else {
+                return $0.direction.count < $1.direction.count
+            }
+        }
+    }
+    
+    private func updateScoreLabels() {
+        print("updateScoreLabels called")
+        
+        //TODO: Update Score ! for Each of PositionBlockView below
+        
+        for (index, eachTrial) in trialCores.enumerated() {
+            if index == 5 { eachTrial.latestScore = 2 } // For test
+            DispatchQueue.main.async {
+                self.scoreBtnViews[index].scoreLabel.text = eachTrial.finalResult
+            }
+        }
+    }
+    
+    private func setupSubjectInfo() {
+        guard let currentSubject = subject else { return }
+        subjectNameLabel.text = currentSubject.name
+        subjectDetailLabel.text = String(currentSubject.isMale ? "남" : "여") + " / " + String(calculateAge(from: currentSubject.birthday))
+    }
+    
+    
+    // MARK: - Targets
     
     private func setupTargets() {
+        
+        subjectSettingBtn.addTarget(self, action: #selector(subjectBtnTapped), for: .touchUpInside)
+        
         sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
-//        timerTestBtn.addTarget(self, action: #selector(testBtnTapped(_:)), for: .touchUpInside)
     }
+    
+    
+    @objc func subjectBtnTapped(_ sender: UIButton) {
+moveToSubjectController()
+
+    }
+    private func moveToSubjectController() {
+        let subjectSettingVC = SubjectController()
+        subjectSettingVC.basicDelegate = self
+
+        self.navigationController?.pushViewController(subjectSettingVC, animated: true)
+    }
+    
     
     @objc func showConnectivityAction(_ sender: UIButton) {
         let actionSheet = UIAlertController(title: "Connect Camera", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
@@ -203,10 +178,41 @@ print("updateScoreLabels called")
         self.present(actionSheet, animated: true, completion: nil)
     }
     
+    @objc func imgTapped(_ sender: ButtonWithInfo) {
+        // TODO: move to cameraView With Info
+        print("img Tapped,")
+        let positionDirectionScoreInfo = sender.positionDirectionScoreInfo
+        
+        let title = positionDirectionScoreInfo.title
+        let direction = positionDirectionScoreInfo.direction
+        let score = positionDirectionScoreInfo.score
+        
+        selectedTrialCore = trialCores.filter { $0.title == title }.first
+        
+        guard let selectedTrialCore = selectedTrialCore else {
+            self.moveToSubjectController()
+            return
+        }
+        
+        connectionManager.send(DetailPositionWIthMsgInfo(message: .presentCamera, detailInfo: PositionDirectionScoreInfo(title: title, direction: direction, score: score)))
+        
+        print("connectionManager has sent message")
+        
+        print("title: \(sender.positionDirectionScoreInfo.title)")
+        
+        print("direction: \(sender.positionDirectionScoreInfo.direction)")
+        
+        print("sender.score: \(sender.positionDirectionScoreInfo.score ?? 0)")
+        
+        presentCamera(positionDirectionScoreInfo: positionDirectionScoreInfo, with: selectedTrialCore)
+    }
     
-    func triggerTimer() {
+    
+    // MARK: - Timer
+    /// update Duration
+    func triggerDurationTimer() {
         print("timer triggered!!")
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+        durationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
             guard let `self` = self else {
                 print("self is nil ")
                 return }
@@ -219,10 +225,8 @@ print("updateScoreLabels called")
         }
     }
     
-    
-    
-    private func stopTimer() {
-        timer?.invalidate()
+    private func stopDurationTimer() {
+        durationTimer?.invalidate()
     }
     
     @objc func countUp() {
@@ -234,59 +238,25 @@ print("updateScoreLabels called")
         }
     }
     
-    @objc func btnTapped( _ sender: UIButton) {
-        switch sender.tag {
-        case 0: print("from left")
-        case 1: print("from right")
-        case 2: print("from center")
-        default: print("other")
-        }
-    }
     
     
     
-    @objc func imgTapped(_ sender: ButtonWithInfo) {
-        // TODO: move to cameraView With Info
-        print("img Tapped,")
-        let positionDirectionScoreInfo = sender.positionDirectionScoreInfo
-        
-        let title = positionDirectionScoreInfo.title
-        let direction = positionDirectionScoreInfo.direction
-        let score = positionDirectionScoreInfo.score
-        
-        connectionManager.send(DetailPositionWIthMsgInfo(message: .presentCamera, detailInfo: PositionDirectionScoreInfo(title: title, direction: direction, score: score)))
-        print("connectionManager has sent message")
-//        print("title: \(sender.title)")
-        print("title: \(sender.positionDirectionScoreInfo.title)")
-//        print("direction: \(sender.direction)")
-        print("direction: \(sender.positionDirectionScoreInfo.direction)")
-//        print("sender.score: \(sender.score ?? 0)")
-        print("sender.score: \(sender.positionDirectionScoreInfo.score ?? 0)")
-        
-        
-//        DispatchQueue.main.async {
-//            let cameraVC = CameraController(positionWithDirectionInfo: positionWithDirectionInfo, connectionManager: self.connectionManager)
-////            self.present(cameraVC, animated: true)
-//            UINavigationController.pushViewController(cameraVC)
-//            self.navigationController?.pushViewController(cameraVC, animated: true)
-//        }
-        
-        presentCamera(positionDirectionScoreInfo: positionDirectionScoreInfo)
-    }
-    
-    
-    private func presentCamera(positionDirectionScoreInfo: PositionDirectionScoreInfo) {
-        guard let subject = subject,
-              let screen = screen else {
-            fatalError("fail to get subject and screen. Plz select target first")
+    private func presentCamera(
+        positionDirectionScoreInfo: PositionDirectionScoreInfo,
+        with selectedTrial: TrialCore) {
+            
+        guard let screen = screen else {
+            self.moveToSubjectController()
+            return
         }
         
         DispatchQueue.main.async {
             self.cameraVC = CameraController(
                 positionDirectionScoreInfo: positionDirectionScoreInfo,
                 connectionManager: self.connectionManager,
-                subject:subject,
-                screen: screen
+//                subject:subject,
+                screen: screen,
+                trialCore: selectedTrial
             )
             
             guard self.cameraVC != nil else { return }
@@ -301,25 +271,17 @@ print("updateScoreLabels called")
         }
     }
     
-    @objc func scoreTapped(_ sender: ButtonWithInfo) {
-        // TODO: if none recorded, move to cameraView With Info
-        // TODO: if Not, popup score Action to modify
-        
-        print("score Tapped,")
-//        print("title: \(sender.title)")
-        print("title: \(sender.positionDirectionScoreInfo.title)")
-//        print("direction: \(sender.direction)")
-        print("direction: \(sender.positionDirectionScoreInfo.direction)")
     
-//        print("sender.score: \(sender.score ?? 0)")
-        print("sender.score: \(sender.positionDirectionScoreInfo.score ?? 0)")
-    }
     // observer, add observer
+    // MARK: - NOTIFICATIONS
     private func addNotificationObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(presentCamera(_:)),
-                                               name: .presentCameraKey, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(presentCamera(_:)),
+            name: .presentCameraKey, object: nil)
     }
     
+    /// triggered by Notification
     @objc func presentCamera(_ notification: Notification) {
         print("presentCamera triggered by observing notification")
         
@@ -336,11 +298,17 @@ print("updateScoreLabels called")
         
         let positionWithDirectionInfo = PositionDirectionScoreInfo(title: title, direction: direction, score: score)
 
+        guard let selectedTrialCore = selectedTrialCore else {
+            return
+        }
 
         DispatchQueue.main.async {
-            let cameraVC = CameraController(positionDirectionScoreInfo: positionWithDirectionInfo, connectionManager: self.connectionManager,
-            subject: subject,
-            screen: screen)
+            let cameraVC = CameraController(
+                positionDirectionScoreInfo: positionWithDirectionInfo,
+                connectionManager: self.connectionManager,
+                screen: screen,
+                trialCore: selectedTrialCore
+            )
             
             self.present(cameraVC, animated: true)
         }
@@ -366,16 +334,13 @@ print("updateScoreLabels called")
         
         
         view.addSubview(topView)
-        
         topView.snp.makeConstraints { make in
-//            make.left.top.right.equalTo(view.safeAreaLayoutGuide)
-//            make.left.top.right.equalToSuperview().offset(40)
             make.left.right.equalToSuperview()
             make.top.equalToSuperview().offset(40)
             make.height.equalTo(40)
         }
-
-
+        
+        
         [sessionButton, connectionStateLabel, durationLabel].forEach { v in
             topView.addSubview(v)
         }
@@ -403,14 +368,14 @@ print("updateScoreLabels called")
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
-       
+        
         hurdleStep.snp.makeConstraints { make in
             make.leading.equalTo(deepSquat.snp.trailing)
             make.top.equalTo(topView.snp.bottom)
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
-
+        
         inlineLunge.snp.makeConstraints { make in
             make.leading.equalTo(hurdleStep.snp.trailing)
             make.top.equalTo(topView.snp.bottom)
@@ -456,7 +421,7 @@ print("updateScoreLabels called")
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
-
+        
         extensionClearing.snp.makeConstraints { make in
             make.leading.equalTo(stabilityPushup.snp.trailing)
             make.top.equalTo(shoulderMobility.snp.bottom)
@@ -477,6 +442,8 @@ print("updateScoreLabels called")
             make.height.equalToSuperview().dividedBy(4)
             make.width.equalToSuperview().dividedBy(4)
         }
+        
+        
         
         view.addSubview(subjectSettingBtn)
         subjectSettingBtn.snp.makeConstraints { make in
@@ -501,29 +468,57 @@ print("updateScoreLabels called")
             make.width.equalTo(200)
             make.height.equalTo(25)
         }
+        
+        // direction 이 1개 -> scoreView1 만 추가
+        // direction 이 2개 -> scoreView2 도 추가.
+//        setupScoreBtnViews(using allViews: [PositionBlockView])
+        
+        setupScoreBtnViews(using: allViews)
+
     }
     
-    private func configureUserWithScreen(subject: Subject, screen: Screen) {
+    private func setupScoreBtnViews(using allViews: [PositionBlockView]) {
+        for eachView in allViews {
+            let title = eachView.positionBlock.title
+            
+            guard let positionFromList = PositionList(rawValue: title),
+                  let numOfDirections = Dummy.numOfDirections[positionFromList] else { return }
+            
+            switch numOfDirections {
+            case 1:
+                scoreBtnViews.append(eachView.scoreView1)
+            case 2:
+                scoreBtnViews.append(eachView.scoreView1)
+                scoreBtnViews.append(eachView.scoreView2)
+            default:
+                break
+            }
+        }
         
+        // Set scoreViews In Order.
+        // Variations not contained, total count is 18
+        
+        scoreBtnViews = scoreBtnViews.sorted {
+            if $0.tag != $1.tag {
+                return $0.tag < $1.tag
+            } else {
+                return $0.direction.count < $1.direction.count
+            }
+        }
     }
 }
 
-
+// MARK: - ConnectionManager Delegate
 extension PositionController: ConnectionManagerDelegate {
-    
-//    func presentVideo() {
-        
-//    }
     
     func updateState(state: ConnectionState) {
         switch state {
         case .connected:
-        triggerTimer()
+            triggerDurationTimer()
         case .disconnected:
-            stopTimer()
-//        case .connecting: break
+            stopDurationTimer()
         }
-
+        
         DispatchQueue.main.async {
             self.connectionStateLabel.text = state.rawValue
         }
@@ -536,7 +531,7 @@ extension PositionController: ConnectionManagerDelegate {
     }
 }
 
-
+// MARK: - CameraController Delegate
 extension PositionController: CameraControllerDelegate {
     func dismissCamera() {
         guard let cameraVC = cameraVC else {
@@ -568,35 +563,4 @@ extension PositionController: SubjectControllerDelegate {
         updateScoreLabels()
         closure()
     }
-}
-
-extension PositionController {
-    
-    private func calculateAge(from birthday: Date) -> Int {
-        
-        let calendar = Calendar.current
-        let birthComponent = calendar.dateComponents([.year], from: birthday)
-        let currentComponent = calendar.dateComponents([.year], from: Date())
-        
-        guard let birthYear = birthComponent.year,
-              let currentYear = currentComponent.year else { return 0 }
-        
-        let age = currentYear - birthYear + 1
-        
-        return age
-    }
-}
-
-public func calculateAge(from birthday: Date) -> Int {
-    
-    let calendar = Calendar.current
-    let birthComponent = calendar.dateComponents([.year], from: birthday)
-    let currentComponent = calendar.dateComponents([.year], from: Date())
-    
-    guard let birthYear = birthComponent.year,
-          let currentYear = currentComponent.year else { return 0 }
-    
-    let age = currentYear - birthYear + 1
-    
-    return age
 }

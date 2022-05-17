@@ -36,6 +36,8 @@ class ScoreController: UIViewController {
     
     var positionTitle: String
     var direction: PositionDirection
+//    var trialCore: TrialCore?
+    
     var score: Int? {
         willSet {
             // if it has variation following, toggle Clearing Test depening on score value
@@ -129,7 +131,6 @@ class ScoreController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.preferredContentSize = CGSize(width: screenWidth, height: 400)
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.white.cgColor
         view.backgroundColor = .black
@@ -149,6 +150,7 @@ class ScoreController: UIViewController {
     }
     
     init(positionDirectionScoreInfo: PositionDirectionScoreInfo) {
+//        self.trialCore = trialCore
         self.positionTitle = positionDirectionScoreInfo.title
         self.direction = positionDirectionScoreInfo.direction
         self.scoreType = positionToScoreType[positionDirectionScoreInfo.title] ?? .zeroToThree

@@ -13,16 +13,28 @@ import SnapKit
 // title, direction, Score
 class ScoreBtnView: ButtonWithInfo {
     
+    var title: String
+    var direction: String
+    
     override init(title: String = "", direction: PositionDirection = .neutral, score: Int? = nil, frame: CGRect = .zero) {
+        
+        self.title = title
+        self.direction = direction.rawValue
+
         super.init(title: title, direction: direction, score: score, frame: frame)
         
-        self.addTarget(nil, action: #selector(PositionController.scoreTapped(_:)), for: .touchUpInside)
-        loadView()
+        if title != "" {
+            self.tag = PositionList(rawValue: title)!.index ?? 0
+        }
 
+//        self.addTarget(nil, action: #selector(PositionController.scoreTapped(_:)), for: .touchUpInside)
+
+        loadView()
     }
     
     private func loadView() {
         print("started load scoreView")
+        
         self.addSubview(scoreLabel)
         scoreLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
@@ -36,7 +48,7 @@ class ScoreBtnView: ButtonWithInfo {
             print("validScore : \(validScore)")
         } else {
             switch positionDirectionScoreInfo.direction {
-            case .right: scoreLabel.text = "R"
+            case .right: scoreLabel.text = "R" // 없어져도 될 코드 ?
             case .left: scoreLabel.text = "L"
             case .neutral: scoreLabel.text = "N"
             }
@@ -50,7 +62,7 @@ class ScoreBtnView: ButtonWithInfo {
         self.layer.cornerRadius = 10
     }
     
-    let scoreLabel: UILabel = {
+    public let scoreLabel: UILabel = {
         let label = UILabel()
         return label
     }()
@@ -59,6 +71,3 @@ class ScoreBtnView: ButtonWithInfo {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
-
-

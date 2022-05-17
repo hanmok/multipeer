@@ -13,6 +13,7 @@ import MultipeerConnectivity
 import AVFoundation
 import CoreData
 
+// need to create TrialDetail when .. new Trial needed.
 
 protocol CameraControllerDelegate: AnyObject {
     func dismissCamera()
@@ -24,10 +25,11 @@ class CameraController: UIViewController {
     // MARK: - Properties
     var positionTitle: String
     var direction: PositionDirection
-//    var score: Int?
+    var trialCore: TrialCore
     var systemSoundID: SystemSoundID = 1057
-    var subject: Subject
+    
     var screen: Screen
+    
     weak var delegate: CameraControllerDelegate?
     
     var connectionManager: ConnectionManager
@@ -46,20 +48,21 @@ class CameraController: UIViewController {
     var previewVC: PreviewController?
     
     private var scoreVC: ScoreController
-
+    
     var variationName: String?
     
     var sequentialPainPosition: String?
     
-    init(positionDirectionScoreInfo: PositionDirectionScoreInfo, connectionManager: ConnectionManager, subject: Subject, screen: Screen) {
-        self.subject = subject
+    init(positionDirectionScoreInfo: PositionDirectionScoreInfo, connectionManager: ConnectionManager, screen: Screen, trialCore: TrialCore) {
+//        self.subject = subject
         self.screen = screen
+        self.trialCore = trialCore
         self.positionTitle = positionDirectionScoreInfo.title
         self.direction = positionDirectionScoreInfo.direction
-//        self.score = positionDirectionScoreInfo.score // score ?? not necessary .. ;;
         self.connectionManager = connectionManager
+        
         self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
-        //        self.scoreNav = UINavigationController(rootViewController: scoreVC)
+        
         super.init(nibName: nil, bundle: nil)
         scoreVC.delegate = self
         connectionManager.delegate = self
@@ -76,7 +79,6 @@ class CameraController: UIViewController {
         updateInitialConnectionState()
         
         //        prepareScoreView()
-        
     }
     
     
@@ -249,7 +251,7 @@ class CameraController: UIViewController {
         if !isRecording {
             //            removePreview()
             // Send Start Msg
-//            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
+            //            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
             
             connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
             
@@ -260,7 +262,7 @@ class CameraController: UIViewController {
             
             stopRecording()
             // Send Stop Msg
-//            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
+            //            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
             
             connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
             
@@ -277,9 +279,9 @@ class CameraController: UIViewController {
         
         view.addSubview(scoreVC.view)
         
-//        UIView.animate(withDuration: 0.3) {
-            scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-//        }
+        //        UIView.animate(withDuration: 0.3) {
+        scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+        //        }
     }
     
     private func showScoreView() {
@@ -412,7 +414,7 @@ class CameraController: UIViewController {
             if self.decreasingCount > 0 {
                 
                 self.decreasingCount -= 1
-//                AudioServicesPlaySystemSound(self.systemSoundID)
+                //                AudioServicesPlaySystemSound(self.systemSoundID)
                 AudioServicesPlaySystemSound(1057)
                 DispatchQueue.main.async {
                     if self.decreasingCount == 0 {
@@ -483,7 +485,7 @@ class CameraController: UIViewController {
             for vc in viewcontrollers {
                 print("vc1: \(vc)")
                 if vc != scoreVC {
-                print("vc2: \(vc)")
+                    print("vc2: \(vc)")
                     vc.willMove(toParent: nil)
                     vc.view.removeFromSuperview()
                     vc.removeFromParent()
@@ -754,6 +756,11 @@ extension CameraController: ScoreControllerDelegate {
         resetTimer()
         removeChildrenVC()
         prepareScoreView()
+        makeTrialDetail()
+    }
+    
+    private func makeTrialDetail() {
+        TrialDetail.save(belongTo: trialCore)
     }
     
     func deleteAction() {
@@ -772,7 +779,7 @@ extension CameraController: ScoreControllerDelegate {
         prepareRecording()
     }
     
-
+    
     func saveAction(with info: PositionDirectionScoreInfo) {
         
         // TODO: Upload to Server, moving forward to next screen
@@ -801,9 +808,9 @@ extension CameraController: ScoreControllerDelegate {
             angle: .front // need to specify within positionController
         )
         
-//        connectionManager.send
+        //        connectionManager.send
     }
-
+    
     /// merge Position Title + Direction  into Unique Key
     private func mergeKeys(title: String, direction: String) -> String {
         return title + direction
@@ -819,7 +826,7 @@ extension CameraController: ScoreControllerDelegate {
         print("positition updated to \(self.positionTitle)") // 정상 .
         self.direction = positionDirectionScoreInfo.direction
         // 이게.. 필요한가... ??
-//        self.score = positionDirectionScoreInfo.score
+        //        self.score = positionDirectionScoreInfo.score
         self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
         // scoreVC 에 대한 delegate 가 필요 .. ??
     }
@@ -833,8 +840,6 @@ extension CameraController: ScoreControllerDelegate {
         setupNavigationBar()
         removeChildrenVC()
         resetTimer()
-        
-//        prepareScoreView()
         hideScoreView()
     }
     

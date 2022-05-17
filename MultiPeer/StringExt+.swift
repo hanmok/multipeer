@@ -41,19 +41,17 @@ extension String {
     }
     
     struct TrialCoreStr {
-        static let direction = "direction"
+        
+        static let title = "title_"
+        static let direction = "direction_"
         static let latestWasPainful = "latestWasPainful"
         static let latestScore = "latestScore"
         
-        static let parentPositionTitle = "parentPositionTitle"
-        static let trials = "trials"
-    }
+        static let trials = "trialD" // what the hell is this ? master 에 있는 것을 공유.
     
-    struct PositionTitleCoreStr {
-        static let title = "title"
-        static let directions = "directions"
-        
-        static let parentScreen = "parentScreen_" //
+        static let tag = "tag"
+        static let parentScreen = "parentScreen_"
+        static let trialDetails = "trialDetails_"
     }
     
     struct TrialDetailStr {

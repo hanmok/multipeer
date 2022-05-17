@@ -14,75 +14,128 @@ import CoreData
 extension TrialCore {
     public var trialDetails: Set<TrialDetail> {
         get {
-            return self.trialsDetails_ as! Set<TrialDetail>
+            return self.trialDetails_ as! Set<TrialDetail>
         }
         set {
-            self.trialsDetails_ = newValue as NSSet
-        }
-    }
-    
-    public var parentPositionTitle: PositionTitleCore {
-        get {
-            return parentPositionTitle_!
-        }
-        set {
-            self.parentPositionTitle_ = newValue
+            self.trialDetails_ = newValue as NSSet
         }
     }
     
     public var title: String {
         get {
-            return self.parentPositionTitle.title
+            return self.title_ ?? ""
+        }
+        set {
+            self.title_ = newValue
+        }
+    }
+    
+    public var parentScreen: Screen {
+        get {
+            return self.parentScreen_!
+        }
+        set {
+            self.parentScreen_ = newValue
+        }
+    }
+    
+    public var direction: String {
+        get {
+            return self.direction_ ?? "some"
+        }
+        set {
+            self.direction_ = newValue
+        }
+    }
+    
+    public var finalResult: String {
+        get {
+            return convertScoreToString(score: self.latestScore, pain: self.latestWasPainful) ?? shortenDirection(direction: direction)
         }
     }
 }
 
 extension TrialCore {
     
-    @discardableResult
-    static func save(belongTo parent: PositionTitleCore) -> [TrialCore] {
+    static func saveBundle(belongTo parent: Screen) {
         print("trialCore save has called")
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            fatalError("fail to cast to appDelegate")
+        
+        for (idx, each) in PositionList.allCases.enumerated() {
+            if each.rawValue.contains("Var") { continue }
+            TrialCore.save(title: each.rawValue, parent: parent, tag: Int64(idx))
+            print("parent id : \(parent.id)")
         }
-
-        let managedContext = appDelegate.persistentContainer.viewContext
-
-        guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else {fatalError()}
-        let managedObject = NSManagedObject(entity: entity, insertInto: managedContext)
-
-        var trialCores: [TrialCore] = []
-
-        guard let positionFromList = PositionList(rawValue: parent.title),
-              let numOfDirections = Dummy.numOfDirections[positionFromList],
-              let directions = Dummy.directionName[numOfDirections] else { fatalError("") }
-
-        for direction in directions {
+    }
     
-            guard let trialCore = managedObject as? TrialCore else {
-                fatalError("downcasting has failed! ")
-            }
-            trialCore.setValue(direction, forKey: .TrialCoreStr.direction)
-            trialCore.setValue(parent, forKey: .TrialCoreStr.parentPositionTitle)
+    
+    static func save(title: String, parent: Screen, tag: Int64) { // title 에 따른 direction 에 따라 1~2 개 return
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError()
+        }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else { fatalError() }
+        
+        
+        // for loop needed..
+        guard let positionName = PositionList(rawValue: title),
+              let numOfDirections = Dummy.numOfDirections[positionName],
+              let directionNames = Dummy.directionName[numOfDirections] else { fatalError() }
+        
+        for direction in directionNames {
             
-            trialCore.startWithInitialTrial()
+            guard let trialCore = NSManagedObject(entity: entity, insertInto: managedContext) as? TrialCore else { fatalError() }
+
+            trialCore.setValue(parent, forKey: .TrialCoreStr.parentScreen)
+            trialCore.setValue(title, forKey: .TrialCoreStr.title)
+            trialCore.setValue(direction, forKey: .TrialCoreStr.direction)
+            trialCore.setValue(tag, forKey: .TrialCoreStr.tag)
+            print("parent of TrialCore : \(trialCore.parentScreen)")
+            print("title of TrialCore : \(trialCore.title)")
+            print("direction of TrialCore : \(trialCore.direction)")
+            parent.trialCores.update(with: trialCore)
             
             do {
                 try managedContext.save()
-                print("successfully saved ! \(String(describing: trialCore.direction))")
-                trialCores.append(trialCore)
-            } catch let error as NSError {
-                print("Could not save, \(error), \(error.userInfo)")
-                fatalError("faield to save !")
+            } catch {
+                print("error : \(error.localizedDescription)")
+                fatalError()
             }
         }
-      
-        return trialCores
     }
 }
 
 
 extension TrialCore {
+    
+    func convertScoreToString(score: Int64, pain: Int64) -> String? {
+        
+        var result = ""
+        
+        // for Ankle Clearing, both score scales applied.
+        if score != -1 {
+            result += String(score)
+        }
+        
+        if pain != 0 {
+            result += pain > 0 ? "+" : "-"
+        }
+
+        return result != "" ? result : nil
+    }
+    
+    func shortenDirection(direction: String) -> String {
+//        switch direction {
+//        case "Neutral": return "N"
+//        case "Left": return "L"
+//        case "Right": return "R"
+//        }
+        
+        if direction != "" {
+            return String(direction.first!)
+        } else { return "N" }
+    }
+    
     
     func append(_ trialDetail: TrialDetail) {
         self.trialDetails.update(with: trialDetail)
@@ -97,6 +150,7 @@ extension TrialCore {
     func startWithInitialTrial() {
         self.append(TrialDetail.save(belongTo: self))
     }
+    
     // function to be called when score updated
     
     

@@ -22,19 +22,17 @@ class PositionBlockView: UIView {
     
     let imageView1 = UIImageView().then{
         $0.isUserInteractionEnabled = true
-//        $0.backgroundColor = .blue
     }
     
     let imageView2 = UIImageView().then {
         $0.isUserInteractionEnabled = true
-//        $0.backgroundColor = .orange
     }
     
     var imgBtnLeft = ImgBtnView(title: "", direction: .neutral)
     var imgBtnRight = ImgBtnView(title: "", direction: .neutral)
     
-    var scoreView1 = ScoreBtnView().then { $0.tag = 0}
-    var scoreView2 = ScoreBtnView().then { $0.tag = 1}
+    public var scoreView1 = ScoreBtnView()
+    public var scoreView2 = ScoreBtnView()
     
     let nameLabel = UILabel()
     
@@ -78,8 +76,8 @@ class PositionBlockView: UIView {
             imageView1.image = UIImage(imageLiteralResourceName: positionBlock.imageName[0])
             imageView2.image = UIImage(imageLiteralResourceName: positionBlock.imageName[1])
             
-            scoreView1 = ScoreBtnView(title: positionBlock.title,direction: .left, score: positionBlock.score[0]).then { $0.tag =  0}
-            scoreView2 = ScoreBtnView(title: positionBlock.title, direction: .right, score: positionBlock.score[1]).then { $0.tag = 1}
+            scoreView1 = ScoreBtnView(title: positionBlock.title, direction: .left, score: positionBlock.score[0]) // what does this tag do ?
+            scoreView2 = ScoreBtnView(title: positionBlock.title, direction: .right, score: positionBlock.score[1])
             
             let imageStackView = UIStackView(arrangedSubviews: [imageView1, imageView2])
             self.addSubview(imageStackView)
@@ -127,6 +125,7 @@ class PositionBlockView: UIView {
             allViews.forEach { view in
                 self.addSubview(view)
             }
+            
             print("imageName: \(positionBlock.imageName[0])")
             imageView1.image = UIImage(imageLiteralResourceName: positionBlock.imageName[0])
             imageView1.snp.makeConstraints { make in
@@ -141,14 +140,13 @@ class PositionBlockView: UIView {
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
             
-            scoreView1 = ScoreBtnView(title: positionBlock.title, direction: .neutral, score: positionBlock.score[0]).then { $0.tag = 0}
+            scoreView1 = ScoreBtnView(title: positionBlock.title, direction: .neutral, score: positionBlock.score[0])
             
             addSubview(scoreView1)
             scoreView1.snp.makeConstraints { make in
                 make.top.equalTo(imageView1.snp.bottom)
                 make.left.equalToSuperview().offset(10)
                 make.right.equalToSuperview().offset(-10)
-//                make.height.equalTo(50)
                 make.bottom.equalTo(nameLabel.snp.top)
             }
             

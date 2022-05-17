@@ -24,8 +24,16 @@ enum PositionList: String, CaseIterable {
     case rotaryStability = "Rotary Stability"
     case flexionClearing = "Flexion Clearing"
 }
+
+extension CaseIterable where Self: Equatable {
+    var index: Self.AllCases.Index? {
+        return Self.allCases.firstIndex { self == $0 }
+    }
+}
+
 struct Dummy {
     static let directionName: [Int: [String]] = [1: ["Neutral"], 2: ["Left", "Right"]]
+    
     static let numOfDirections: [PositionList: Int] = [
         .deepSquat : 1,
         .deepSquatVar : 1,
@@ -36,14 +44,11 @@ struct Dummy {
         .shoulderClearing:2,
         .activeStraightLegRaise:2,
         .trunkStabilityPushUp:1,
-        .trunkStabilityPushUpVar:2,
+        .trunkStabilityPushUpVar:1,
         .extensionClearing:1,
         .rotaryStability:2,
         .flexionClearing:1
     ]
-    
-//    static let 
-    
 }
 
 

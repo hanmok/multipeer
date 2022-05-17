@@ -41,6 +41,10 @@
 		227DA6C42829103D0097F8F1 /* SoundTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */; };
 		227DA6C628291D450097F8F1 /* Memos in Resources */ = {isa = PBXBuildFile; fileRef = 227DA6C528291D450097F8F1 /* Memos */; };
 		227DA6C8282B60180097F8F1 /* SubjectController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227DA6C7282B60180097F8F1 /* SubjectController.swift */; };
+		227E7C932833A5C800084BA2 /* CameraWithCoreData in Resources */ = {isa = PBXBuildFile; fileRef = 227E7C922833A5C800084BA2 /* CameraWithCoreData */; };
+		2280DCD6283253F80036632E /* TrialCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2280DCD5283253F70036632E /* TrialCell.swift */; };
+		2280DCD8283254100036632E /* TrialViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2280DCD7283254100036632E /* TrialViewModel.swift */; };
+		2280DCDB28334BEE0036632E /* TrialHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2280DCDA28334BEE0036632E /* TrialHeader.swift */; };
 		2282DD882816466A008928A4 /* SwiftyCamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD872816466A008928A4 /* SwiftyCamViewController.swift */; };
 		2282DD8A28164695008928A4 /* SwiftyCamViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD8928164695008928A4 /* SwiftyCamViewControllerDelegate.swift */; };
 		2282DD8D281646E0008928A4 /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DD8C281646E0008928A4 /* Orientation.swift */; };
@@ -99,6 +103,10 @@
 		227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundTestViewController.swift; sourceTree = "<group>"; };
 		227DA6C528291D450097F8F1 /* Memos */ = {isa = PBXFileReference; lastKnownFileType = text; path = Memos; sourceTree = "<group>"; };
 		227DA6C7282B60180097F8F1 /* SubjectController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectController.swift; sourceTree = "<group>"; };
+		227E7C922833A5C800084BA2 /* CameraWithCoreData */ = {isa = PBXFileReference; lastKnownFileType = text; path = CameraWithCoreData; sourceTree = "<group>"; };
+		2280DCD5283253F70036632E /* TrialCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialCell.swift; sourceTree = "<group>"; };
+		2280DCD7283254100036632E /* TrialViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialViewModel.swift; sourceTree = "<group>"; };
+		2280DCDA28334BEE0036632E /* TrialHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialHeader.swift; sourceTree = "<group>"; };
 		2282DD872816466A008928A4 /* SwiftyCamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyCamViewController.swift; sourceTree = "<group>"; };
 		2282DD8928164695008928A4 /* SwiftyCamViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyCamViewControllerDelegate.swift; sourceTree = "<group>"; };
 		2282DD8C281646E0008928A4 /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
@@ -154,7 +162,6 @@
 				2265AC012816918700E0FCCF /* PositionController.swift */,
 				22795067282B929A00B675A1 /* PositionModels.swift */,
 				22795071282B939B00B675A1 /* PositionLists.swift */,
-				22795073282B94AC00B675A1 /* Views */,
 			);
 			path = Position;
 			sourceTree = "<group>";
@@ -174,11 +181,11 @@
 			children = (
 				22795069282B92DA00B675A1 /* Subject.swift */,
 				227DA6C7282B60180097F8F1 /* SubjectController.swift */,
-				22795062282B8F8C00B675A1 /* AddingSubjectController.swift */,
-				22315E39282E1F750093079B /* SubjectDetail */,
 				2279505D282B87BC00B675A1 /* SubjectViewModel.swift */,
+				22795062282B8F8C00B675A1 /* AddingSubjectController.swift */,
 				22795060282B880800B675A1 /* SubjectCell.swift */,
-				227648D528321B9200214EBF /* TrialDetailController.swift */,
+				22315E39282E1F750093079B /* SubjectDetail */,
+				2280DCD92832541B0036632E /* TrialDetail */,
 			);
 			path = Subject;
 			sourceTree = "<group>";
@@ -202,22 +209,23 @@
 			path = Connection;
 			sourceTree = "<group>";
 		};
-		22795073282B94AC00B675A1 /* Views */ = {
+		22795073282B94AC00B675A1 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
 				2265AC0428169D6C00E0FCCF /* PositionBlockView.swift */,
 				2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */,
 				2283BEBD281A5F5E007D74FC /* ImgBtnView.swift */,
 				2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */,
+				2285C4A82822864F00666CEA /* ScoreButton.swift */,
+				22795077282BA51D00B675A1 /* SelectableButtons.swift */,
 			);
-			path = Views;
+			name = SubViews;
+			path = Position/SubViews;
 			sourceTree = "<group>";
 		};
 		22795076282BA4F100B675A1 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
-				2285C4A82822864F00666CEA /* ScoreButton.swift */,
-				22795077282BA51D00B675A1 /* SelectableButtons.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -234,6 +242,17 @@
 				22315E3E282E38D40093079B /* TrialCore+Helper.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		2280DCD92832541B0036632E /* TrialDetail */ = {
+			isa = PBXGroup;
+			children = (
+				227648D528321B9200214EBF /* TrialDetailController.swift */,
+				2280DCD5283253F70036632E /* TrialCell.swift */,
+				2280DCD7283254100036632E /* TrialViewModel.swift */,
+				2280DCDA28334BEE0036632E /* TrialHeader.swift */,
+			);
+			path = TrialDetail;
 			sourceTree = "<group>";
 		};
 		2282DD8B281646D7008928A4 /* Source */ = {
@@ -261,8 +280,9 @@
 			isa = PBXGroup;
 			children = (
 				227DA6C528291D450097F8F1 /* Memos */,
-				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
 				22315E40282E4CA30093079B /* MemoForCoreData */,
+				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
+				227E7C922833A5C800084BA2 /* CameraWithCoreData */,
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
 				6C823DBE391EE5CB5A4C0AA5 /* Pods */,
@@ -285,8 +305,8 @@
 				228B88382806577A007A6842 /* SceneDelegate.swift */,
 				22ADC439281A226700B1C639 /* Using */,
 				227950B3282BBDA500B675A1 /* Model */,
-				2283BEC3281B8732007D74FC /* Util+.swift */,
 				226D20DE282DE6C5001D6019 /* StringExt+.swift */,
+				2283BEC3281B8732007D74FC /* Util+.swift */,
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				228B883F28065784007A6842 /* Assets.xcassets */,
 				22ADC438281A200300B1C639 /* NotUsing */,
@@ -314,8 +334,9 @@
 			children = (
 				22795064282B922800B675A1 /* Position */,
 				22795065282B924100B675A1 /* Camera */,
-				2279506B282B92F300B675A1 /* API */,
 				22795066282B926600B675A1 /* Subject */,
+				22795073282B94AC00B675A1 /* SubViews */,
+				2279506B282B92F300B675A1 /* API */,
 				2279506E282B936500B675A1 /* Connection */,
 				22795076282BA4F100B675A1 /* SubViews */,
 			);
@@ -399,6 +420,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				227E7C932833A5C800084BA2 /* CameraWithCoreData in Resources */,
 				228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */,
 				228B884028065784007A6842 /* Assets.xcassets in Resources */,
 				22315E41282E4CA40093079B /* MemoForCoreData in Resources */,
@@ -489,6 +511,7 @@
 				2279506A282B92DA00B675A1 /* Subject.swift in Sources */,
 				2283BEC2281A884F007D74FC /* NotificationKeys.swift in Sources */,
 				2265AC072816A11E00E0FCCF /* ScoreBtnView.swift in Sources */,
+				2280DCDB28334BEE0036632E /* TrialHeader.swift in Sources */,
 				2282DD8F28164707008928A4 /* PreviewView.swift in Sources */,
 				22889EFD2820CA96002A9C4F /* PreviewController.swift in Sources */,
 				2282DD882816466A008928A4 /* SwiftyCamViewController.swift in Sources */,
@@ -498,9 +521,11 @@
 				228B88372806577A007A6842 /* AppDelegate.swift in Sources */,
 				2278625D2807EB5B00C9EB79 /* ChatManagerFromRay.swift in Sources */,
 				22315E3F282E38D40093079B /* TrialCore+Helper.swift in Sources */,
+				2280DCD6283253F80036632E /* TrialCell.swift in Sources */,
 				2283BEC7281FDFB6007D74FC /* ScoreController.swift in Sources */,
 				2283BEBE281A5F5E007D74FC /* ImgBtnView.swift in Sources */,
 				227DA6C42829103D0097F8F1 /* SoundTestViewController.swift in Sources */,
+				2280DCD8283254100036632E /* TrialViewModel.swift in Sources */,
 				22795061282B880800B675A1 /* SubjectCell.swift in Sources */,
 				22315E3D282E1FCB0093079B /* ScreenViewModel.swift in Sources */,
 				2285C4A92822865000666CEA /* ScoreButton.swift in Sources */,
