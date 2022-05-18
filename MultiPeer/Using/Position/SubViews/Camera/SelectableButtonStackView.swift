@@ -14,12 +14,13 @@ class SelectableButtonStackView: UIStackView {
     private var selectedColor: UIColor
     private var defaultColor: UIColor
     
-    private var prevPressedBtnId: UUID?
-    private var currentPressedBtnId: UUID?
+    private var prevSelectedBtnId: UUID?
+    private var currentSelectedBtnId: UUID?
     
     
     public var selectedBtnTitle: String = ""
     public var buttons: [SelectableButton] = []
+    
     public var selectedBtnIndex: Int? {
         willSet {
             print("selectedBtnIndex: \(newValue)")
@@ -34,13 +35,26 @@ class SelectableButtonStackView: UIStackView {
     }
     
     
-    public func selectedButtonIs(of id: UUID) {
-        prevPressedBtnId = currentPressedBtnId // both can be nil for the first selection
+    public func setSelectedButton(_ id: UUID?) {
+        guard let id = id else {
+
+            for button in buttons {
+                if button.id == currentSelectedBtnId {
+                    button.setBackgroundColor(to: defaultColor)
+                }
+            }
+            
+            currentSelectedBtnId = nil
+            
+            return }
+        
+        prevSelectedBtnId = currentSelectedBtnId // both can be nil for the first selection
 
         for (index, button) in buttons.enumerated() {
             
+            
             if button.id == id {
-                currentPressedBtnId = id
+                currentSelectedBtnId = id
                 selectedBtnIndex = index
                 
                 button.setBackgroundColor(to: selectedColor)
@@ -48,7 +62,7 @@ class SelectableButtonStackView: UIStackView {
                 
                 selectedBtnTitle = button.title
                 
-            } else if let validPrev = prevPressedBtnId,
+            } else if let validPrev = prevSelectedBtnId,
                       validPrev == button.id {
                 
                 button.setBackgroundColor(to: defaultColor)
@@ -85,9 +99,7 @@ class SelectableButtonStackView: UIStackView {
     }
     
 
-    
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
-

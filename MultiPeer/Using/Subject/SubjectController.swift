@@ -25,10 +25,9 @@ class SubjectController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         print("viewWillAppear called")
-        subjectCollectionView.reloadData()
     }
     
-    private func fetchSubjects() {
+    private func fetchAndReloadSubjects() {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
         let context = appDelegate.persistentContainer.viewContext
@@ -48,6 +47,11 @@ class SubjectController: UIViewController {
         } catch {
             fatalError("failed to fetch Subjects!")
         }
+        
+        DispatchQueue.main.async {
+            self.subjectCollectionView.reloadData()
+        }
+        
     }
     
     // MARK: - Properties
@@ -94,7 +98,7 @@ class SubjectController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("subjectcontroller viewdidload called")
-        fetchSubjects()
+        fetchAndReloadSubjects()
         registerCollectionView()
         setupLayout()
         // Do any additional setup after loading the view.
@@ -165,6 +169,17 @@ extension SubjectController: UICollectionViewDelegateFlowLayout, UICollectionVie
         subjectInfoVC.detailDelegate = self
         self.navigationController?.pushViewController(subjectInfoVC, animated: true)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
+//        subjects[indexPath.row].deleteSelf(<#T##target: NSManagedObject##NSManagedObject#>)
+        Subject.deleteSelf(subjects[indexPath.row])
+        
+        fetchAndReloadSubjects()
+        DispatchQueue.main.async {
+            self.subjectCollectionView.reloadData()
+        }
+
+    }
 }
 
 extension SubjectController: SubjectDetailDelegate {
@@ -188,7 +203,7 @@ extension SubjectController: AddingSubjectDelegate {
         print("updateAfterAdded called")
         self.navigationController?.popViewController(animated: true)
         DispatchQueue.main.async {
-            self.fetchSubjects()
+            self.fetchAndReloadSubjects()
 
             self.subjectCollectionView.reloadData()
         }

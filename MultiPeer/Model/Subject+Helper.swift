@@ -87,6 +87,7 @@ extension Subject {
 }
 
 
+extension Subject: RemovableProtocol {}
 
 extension Subject {
     func provideInitialScreen() {

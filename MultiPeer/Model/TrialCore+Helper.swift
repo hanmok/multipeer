@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-
+extension TrialCore: RemovableProtocol {}
 
 extension TrialCore {
     public var trialDetails: Set<TrialDetail> {

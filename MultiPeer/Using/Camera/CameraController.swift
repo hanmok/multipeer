@@ -271,31 +271,23 @@ class CameraController: UIViewController {
     
     @objc func prepareScoreView() {
         
-        //       scoreNav = UINavigationController(rootViewController: scoreVC)
-        //        guard let scoreNav = scoreNav else { return }
         addChild(scoreVC)
-        
-        //        addChild(scoreNav)
-        
         view.addSubview(scoreVC.view)
-        
-        //        UIView.animate(withDuration: 0.3) {
+        // prepare scoreVC to the bottom (to come up later)
         scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-        //        }
     }
     
     private func showScoreView() {
-        view.addSubview(testScoreView)
         UIView.animate(withDuration: 0.4) {
             self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
-            //            self.scoreNav.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
         }
     }
     
     private func showMore() {
         UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 500, width: screenWidth, height: screenHeight)
-            //            self.scoreNav.view.frame = CGRect(x: 0, y: screenHeight - 500, width: screenWidth, height: screenHeight)
+            self.scoreVC.view.frame = CGRect(
+                x: 0,               y: screenHeight - 500,
+                width: screenWidth, height: screenHeight)
         }
     }
     
@@ -591,7 +583,7 @@ class CameraController: UIViewController {
     
     // MARK: - UI Properties
     
-    private let testScoreView = UIButton(frame: CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)).then { $0.backgroundColor = .orange }
+//    private let testScoreView = UIButton(frame: CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)).then { $0.backgroundColor = .orange }
     
     private let bottomView = UIView().then { $0.backgroundColor = .black }
     private let topView = UIView().then { $0.backgroundColor = .black }
@@ -822,14 +814,17 @@ extension CameraController: ScoreControllerDelegate {
         // TODO: Move ScoreController up
     }
     
+    // triggered when 'Next' Tapped
     func updatePosition(with positionDirectionScoreInfo: PositionDirectionScoreInfo) {
         self.positionTitle = positionDirectionScoreInfo.title
-        print("positition updated to \(self.positionTitle)") // 정상 .
+        print("positition updated to \(self.positionTitle)")
+        
         self.direction = positionDirectionScoreInfo.direction
-        // 이게.. 필요한가... ??
-        //        self.score = positionDirectionScoreInfo.score
-        self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
-        // scoreVC 에 대한 delegate 가 필요 .. ??
+        
+        // 음.. 다시 첫단계로 돌아가야해 .. (화면 )
+        self.scoreVC.setupAgain(with: positionDirectionScoreInfo)
+        self.scoreVC.navigateBackToFirstView()
+  
     }
     
     func hideScoreController() {

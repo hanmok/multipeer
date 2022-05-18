@@ -8,6 +8,8 @@
 import CoreData
 import UIKit
 
+
+extension Screen: RemovableProtocol {}
 extension Screen {
     public var id: UUID {
         get {
@@ -78,7 +80,7 @@ extension Screen {
         validScreen.setValue(0, forKey: .ScreenStr.totalScore)
         
         TrialCore.saveBundle(belongTo: validScreen)
-        // dma ... ;; 저장이 정상적으로 되지 않는ㄷ ㅔ ??
+
         do {
             try managedContext.save()
             print("successfully saved screen  : \(validScreen.trialCores.count)")
@@ -89,13 +91,13 @@ extension Screen {
         }
     }
     
-    static func delete(_ screen: Screen) {
-        if let context = screen.managedObjectContext {
-            screen.parentSubject = nil
-            context.delete(screen)
-            context.saveCoreData()
-        }
-    }
+//    static func delete(_ screen: Screen) {
+//        if let context = screen.managedObjectContext {
+////            screen.parentSubject = nil
+//            context.delete(screen)
+//            context.saveCoreData()
+//        }
+//    }
     
     
     

@@ -15,7 +15,7 @@ import Then
 //    func cellPressed()
 //}
 
-class ScreenCell: UICollectionViewCell {
+class ScreenCell: RemovableCell {
     
 //    weak var delegate: ScreenCellDelegate?
     

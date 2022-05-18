@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import CoreData
 
+extension TrialDetail: RemovableProtocol {}
 
 extension TrialDetail {
     

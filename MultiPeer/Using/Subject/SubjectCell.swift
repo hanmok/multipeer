@@ -9,8 +9,8 @@ import UIKit
 import SnapKit
 import Then
 
-
-class SubjectCell: UICollectionViewCell {
+//RemovableCell
+class SubjectCell: RemovableCell {
     var viewModel: SubjectViewModel? {
         didSet {
             configureLayout()

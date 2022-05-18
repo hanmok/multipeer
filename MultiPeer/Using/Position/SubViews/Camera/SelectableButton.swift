@@ -9,6 +9,7 @@ import UIKit
 
 
 class SelectableButton: UIButton, Identifiable { // has id
+    
     public var id = UUID()
     public var title: String
     
@@ -31,6 +32,7 @@ class SelectableButton: UIButton, Identifiable { // has id
     public func setBackgroundColor(to color: UIColor) {
         self.backgroundColor = color
     }
+    
     // called from SelectableButtonStackView
     public func setupInitialColor(_ color: UIColor) {
         self.backgroundColor = color
@@ -49,4 +51,3 @@ class SelectableButton: UIButton, Identifiable { // has id
         fatalError("init(coder:) has not been implemented")
     }
 }
-

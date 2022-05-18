@@ -87,13 +87,13 @@ class SubjectDetailController: UIViewController {
         $0.addTarget(self, action: #selector(detailBtnTapped), for: .touchUpInside)
     }
     
-    private let deleteBtn = UIButton().then {
-        $0.setTitle("Delete", for: .normal)
-        $0.setTitleColor(.red, for: .normal)
-        $0.layer.borderColor = UIColor.red.cgColor
-        $0.layer.borderWidth = 1
-        $0.addTarget(self, action: #selector(deleteBtnTapped), for: .touchUpInside)
-    }
+//    private let deleteBtn = UIButton().then {
+//        $0.setTitle("Delete", for: .normal)
+//        $0.setTitleColor(.red, for: .normal)
+//        $0.layer.borderColor = UIColor.red.cgColor
+//        $0.layer.borderWidth = 1
+//        $0.addTarget(self, action: #selector(deleteBtnTapped), for: .touchUpInside)
+//    }
     
     @objc func makeBtnTapped(_ sender: UIButton) {
         print("makeBtnTapped!")
@@ -140,19 +140,20 @@ class SubjectDetailController: UIViewController {
         self.navigationController?.pushViewController(trialDetailController, animated: true)
     }
     
-    @objc func deleteBtnTapped(_ sender: UIButton) {
-        print("deleteBtn Tapped!")
-        guard let selectedScreen = selectedScreen else {
-            print("none is selected")
-            return
-        }
-        
-        Screen.delete(selectedScreen)
-        selectedIndex = IndexPath(row: -1, section: 0)
-        print("deleted !")
-        fetchAndReloadScreens()
-        print("fetched!")
-    }
+//    @objc func deleteBtnTapped(_ sender: UIButton) {
+//        print("deleteBtn Tapped!")
+//        guard let selectedScreen = selectedScreen else {
+//            print("none is selected")
+//            return
+//        }
+//
+////        Screen.delete(selectedScreen)
+//        Screen.deleteSelf(selectedScreen)
+//        selectedIndex = IndexPath(row: -1, section: 0)
+//        print("deleted !")
+//        fetchAndReloadScreens()
+//        print("fetched!")
+//    }
     
     
     
@@ -218,7 +219,9 @@ class SubjectDetailController: UIViewController {
 //        btnStackView.arrangedSubviews = [makeBtn, continueBtn, detailBtn, deleteBtn]
 //        [makeBtn, ]
         
-        [makeBtn, continueBtn, detailBtn, deleteBtn].forEach {
+        [makeBtn, continueBtn, detailBtn
+//         , deleteBtn
+        ].forEach {
             btnStackView.addArrangedSubview($0)
         }
         
@@ -325,4 +328,13 @@ extension SubjectDetailController: UICollectionViewDelegateFlowLayout, UICollect
         
         print("selected screen index: \(indexPath.row)")
     }
+    
+    func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
+// set selectedIndex none
+        selectedIndex = IndexPath(row: -1, section: 0)
+        Screen.deleteSelf(screens[indexPath.row])
+        
+        fetchAndReloadScreens()
+    }
+    
 }

@@ -56,7 +56,7 @@ class ScoreController: UIViewController {
     }
     
     var pain: Bool?
-    let scoreType: ScoreType
+    var scoreType: ScoreType
     
     
     var painTestName: String?
@@ -109,6 +109,7 @@ class ScoreController: UIViewController {
         $0.setTitleColor(.white, for: .normal)
         $0.layer.borderColor = UIColor.white.cgColor
         $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 10
     }
     
     private let nextBtn = UIButton().then {
@@ -119,25 +120,21 @@ class ScoreController: UIViewController {
         $0.layer.cornerRadius = 10
     }
     
-//    private let scoreStackView = UIStackView().then {
-//        $0.distribution = .fillEqually
-//        $0.spacing = 10
-//    }
-    
-//    let painStackView = UIStackView().then {
-//        $0.distribution = .fillEqually
-//        $0.spacing = 10
-//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupParentLayout()
+        
+        setupLayout()
+        setupAddtargets()
+    }
+    
+    private func setupParentLayout() {
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.white.cgColor
         view.backgroundColor = .black
-        setupLayout()
-        setupAddtargets()
-//        btnGroup =
     }
+    
     
     private let bottomBtnStackView = UIStackView().then {
         $0.distribution = .fillEqually
@@ -159,9 +156,33 @@ class ScoreController: UIViewController {
         
         self.painTestName = (positionWithPainTestTitle[positionDirectionScoreInfo.title])
         self.varTestName = (positionWithVariation[positionDirectionScoreInfo.title])
-        
-//        self.hasVariation
+//        print("positionDirectionScoreInfo.title: \(positio)")
+        print("painTestName: \(painTestName)")
+//        print("varTestName: \(varTestName)")
         super.init(nibName: nil, bundle: nil)
+    }
+    
+    public func setupAgain(with positionDirectionScoreInfo: PositionDirectionScoreInfo) {
+        self.positionTitle = positionDirectionScoreInfo.title
+        self.direction = positionDirectionScoreInfo.direction
+        self.scoreType = positionToScoreType[positionDirectionScoreInfo.title] ?? .zeroToThree
+        
+        
+        self.painTestName = (positionWithPainTestTitle[positionDirectionScoreInfo.title])
+        self.varTestName = (positionWithVariation[positionDirectionScoreInfo.title])
+        
+        print("painTestName: \(painTestName)")
+//        print("varTestName: \(varTestName)")
+        
+        viewDidLoad()
+        toggleAppearance(shouldHide: false)
+        
+        setupInitialValues()
+    }
+    
+    private func setupInitialValues() {
+        score = nil
+        pain = nil
     }
     
     required init?(coder: NSCoder) {
@@ -185,10 +206,8 @@ class ScoreController: UIViewController {
     
     
     @objc func scoreBtnTapped(_ sender: SelectableButton) {
-        scoreBtnGroup.selectedButtonIs(of: sender.id)
-//        switch
+        scoreBtnGroup.setSelectedButton(sender.id)
         
-//        guard let selectedScore = Int(scoreBtnGroup.selectedWrapper) else { return }
         if let selectedScore = Int(scoreBtnGroup.selectedBtnTitle) {
             score = selectedScore
         } else {
@@ -196,9 +215,7 @@ class ScoreController: UIViewController {
             case "Red": score = 0
             case "Yellow": score = 1
             case "Green": score = 2
-            case "Hold":
-                score = -1
-                
+            case "Hold": score = -1
             default: score = nil
             }
         }
@@ -209,7 +226,7 @@ class ScoreController: UIViewController {
     }
     
     @objc func painBtnTapped(_ sender: SelectableButton) {
-        painBtnGroup.selectedButtonIs(of: sender.id)
+        painBtnGroup.setSelectedButton(sender.id)
         switch painBtnGroup.selectedBtnTitle {
         case "+":
             pain = true
@@ -243,23 +260,49 @@ class ScoreController: UIViewController {
     
     @objc func deleteTapped() {
         print("delete tapped!")
-//        buttonstackview
-        scoreBtnGroup.selectedBtnIndex = nil
-        painBtnGroup.selectedBtnIndex = nil
-//        scorestack
+        
+        setSelectedButtonNone()
         delegate?.deleteAction()
+    }
+    
+    private func setSelectedButtonNone() {
+        scoreBtnGroup.setSelectedButton(nil)
+        painBtnGroup.setSelectedButton(nil)
     }
     
     @objc func retryTapped() {
         print("retry tapped!")
+        
+        setSelectedButtonNone()
         delegate?.retryAction()
     }
     
+
     @objc func saveTapped() {
+        if saveConditionSatisfied() {
+            print("save Condition satisfied.")
         delegate?.saveAction(with: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score, pain: pain))
         
         navigateToSecondView()
+        } else { print("save Condition not satisfied.")}
     }
+    
+    // what is required conditions ?
+    func saveConditionSatisfied() -> Bool {
+        guard let score = score else {
+            return false }
+        
+        if painTestName != nil { // if painTest exist,
+            if score == -1 {
+                return true
+            } else {
+                return pain != nil
+            }
+        } else {
+            return true // if score is selected -> true. or -> false
+        }
+    }
+    
     
     private let uploadStateLabel = UILabel().then {
         $0.font = UIFont.preferredFont(forTextStyle: .largeTitle)
@@ -279,6 +322,15 @@ class ScoreController: UIViewController {
             self.secondView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
         })
     }
+    // 이상함. 뭔가 잘못됐음. 원래 secondView 위치는 ?
+    public func navigateBackToFirstView() {
+        print("navigateBackToFirstView triggered!")
+//        UIView.animate(withDuration: 0.25, animations: {
+        DispatchQueue.main.async {
+            self.secondView.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
+        }
+
+    }
     
     private func toggleAppearance(shouldHide: Bool) {
         
@@ -292,6 +344,13 @@ class ScoreController: UIViewController {
     }
     
     private func setupLayout() {
+        if view.subviews.count != 0 {
+            view.subviews.forEach {
+                $0.removeFromSuperview()
+            }
+        }
+        
+        // 이걸.. 굳이 다시.... ??
         view.addSubview(scoreLabel)
         scoreLabel.snp.makeConstraints { make in
             make.trailing.leading.equalToSuperview().inset(10)
@@ -352,6 +411,7 @@ class ScoreController: UIViewController {
         painMinusBtn.wrappedString = "-"
         
         if painTestName != nil {
+            print("flag!!!! painTestName is Not Nil!!!")
             view.addSubview(painPositionLabel)
             painPositionLabel.snp.makeConstraints { make in
 //                make.top.equalTo(scoreStackView.snp.bottom).offset(20)
