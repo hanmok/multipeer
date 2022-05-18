@@ -89,6 +89,16 @@ extension Screen {
         }
     }
     
+    static func delete(_ screen: Screen) {
+        if let context = screen.managedObjectContext {
+            screen.parentSubject = nil
+            context.delete(screen)
+            context.saveCoreData()
+        }
+    }
+    
+    
+    
 //    static func save() -> Screen {
 //        print("screen save has called")
 //        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
@@ -122,4 +132,20 @@ extension Screen {
 //            fatalError("faield to save screen !")
 //        }
 //    }
+}
+
+
+
+
+
+extension NSManagedObjectContext {
+    func saveCoreData() { // save to coreData
+        DispatchQueue.main.async {
+            do {
+                try self.save()
+            } catch {
+                fatalError("fatal error during saving coreDate: \(error.localizedDescription)")
+            }
+        }
+    }
 }

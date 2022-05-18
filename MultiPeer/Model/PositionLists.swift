@@ -57,8 +57,7 @@ struct Dummy {
 
 
 enum PositionImgs {
-//    static let some = PositionInfoDetail(title: "some", imageNames: ["Hello"])
-//    static let another = PositionInfoDetail(
+    
     static let deepSquat = (title: PositionList.deepSquat.rawValue, imageNames: ["deepSquat"])
     static let hurdleStep = (title: PositionList.hurdleStep.rawValue, imageNames: ["hurdleStepLeft", "hurdleStepRight"])
     static let inlineLunge = (title: PositionList.inlineLunge.rawValue, imageNames: ["inlineLungeLeft","inlineLungeRight"])

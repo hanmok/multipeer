@@ -23,7 +23,7 @@ class AddingSubjectController: UIViewController {
     
     var appDelegate: AppDelegate?
     var context: NSManagedObjectContext?
-
+    
     private let nameLabel = UILabel().then { $0.text = "Name : "}
     private let nameTF = UITextField().then { $0.placeholder = "Enter Name"}
     
@@ -33,13 +33,12 @@ class AddingSubjectController: UIViewController {
         $0.distribution = .fillEqually
         $0.spacing = 10
         $0.axis = .horizontal
-//        $0.backgroundColor = .magenta
     }
     
     var name: String = ""
     var phoneNumber = ""
     var isMale = true
-    var birthday: Date?
+    var birthday = Date()
     
     private func setupContext() {
         appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -47,14 +46,12 @@ class AddingSubjectController: UIViewController {
         context = appDelegate.persistentContainer.viewContext
     }
     
-    
     private let birthDayLabel = UILabel().then { $0.text = "Birth Day"}
     private let birthDayPicker = UIDatePicker()
     
     private let emailTF = UITextField().then { $0.placeholder = "Enter Email Address"}
     private let phoneTF = UITextField().then {
         $0.placeholder = "Enter Phone Number"
-//        $0.keyboardType = .phonePad
         $0.keyboardType = .numberPad
     }
     
@@ -63,40 +60,53 @@ class AddingSubjectController: UIViewController {
         $0.setTitleColor(.blue, for: .normal)
         $0.layer.borderColor = .init(gray: 0.5, alpha: 1)
         $0.layer.borderWidth = 1
+        $0.backgroundColor = .gray
     }
     
-    @objc func completeTapped(_ sender: UIButton) {
-//        if name != "" && // valid condition
+    
+    private func toggleCompleteBtnState() {
+        // date not considered yet for simplicity
+        if name != "" && phoneNumber.count == 11 && genderStackView.selectedBtnIndex != nil {
+            DispatchQueue.main.async {
+                self.completeBtn.backgroundColor = .green
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.completeBtn.backgroundColor = .gray
+            }
+        }
+    }
+    
+    @objc func completeBtnTapped(_ sender: UIButton) {
+        //        if name != "" && // valid condition
+        
+        //        print("selectedIndex State: \(genderStackView.selectedBtnIndex)")
+        
         guard name != "",
               genderStackView.selectedBtnIndex != nil,
-              let birthday = birthday,
-              phoneNumber != nil, phoneNumber.count >= 11 else {
-                  return
-              }
+              phoneNumber.count >= 11 else {
+            return
+        }
         
-        guard let context = context else {
+        guard context != nil else {
             fatalError("context is nil")
-             }
+        }
         
         Subject.save(name: name, phoneNumber: phoneNumber, isMale: genderStackView.selectedBtnIndex! == 0, birthday: birthday)
         
-//        Subject.init(name: name, phoneNumber: phoneNumber, isMale: genderStackView.selectedBtnIndex! == 0, birthday: birthday!, context: context)
         delegate?.updateAfterAdded()
-//        self.navigationController?.popViewController(animated: true)
-        
     }
     
     func setupDelegate() {
         emailTF.delegate = self
         phoneTF.delegate = self
-//        birthDayPicker.de
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupContext()
         setupDelegate()
         setupLayout()
-//        view.backgroundColor = .black
         setupTargets()
     }
     
@@ -104,30 +114,30 @@ class AddingSubjectController: UIViewController {
         for btn in genderStackView.buttons {
             btn.addTarget(self, action: #selector(genderBtnTapped(_:)), for: .touchUpInside)
         }
-        completeBtn.addTarget(self, action: #selector(completeTapped), for: .touchUpInside)
+        completeBtn.addTarget(self, action: #selector(completeBtnTapped), for: .touchUpInside)
         
         nameTF.addTarget(self, action: #selector(textChanged), for: .editingChanged)
+        
         phoneTF.addTarget(self, action: #selector(textChanged), for: .editingChanged)
-
-//        nameTF.addTarget(self, action: #selector(textEditingEnd), for: .)
+        
         phoneTF.addTarget(self, action: #selector(textEditingEnd), for: .editingDidEnd)
         
         birthDayPicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
+        
     }
-    // not called
+    
     @objc func textEditingEnd(_ sender: UITextField) {
-        print("textEditingEnd")
-//        UIApplication().resignFirstResponder()
-//        sender.resignFirstResponder()
+        print("textEditingEnd called, sender: \(sender)")
         
         if sender == nameTF {
             name = nameTF.text!
             print("name: \(name)")
         } else if sender == phoneTF {
             phoneNumber = phoneTF.text!
+            
             print("phoneNumber: \(phoneNumber)")
         }
-        
+        toggleCompleteBtnState()
         view.endEditing(true)
         
     }
@@ -138,36 +148,36 @@ class AddingSubjectController: UIViewController {
     }
     
     @objc func textChanged(_ sender: UITextField) {
-//        print("sender.text: \(sender.text!)")
+        //        print("sender.text: \(sender.text!)")
         if sender == nameTF {
             name = nameTF.text!
             print("name: \(name)")
         } else if sender == phoneTF {
             phoneNumber = phoneTF.text!
+            
+            if phoneNumber.count == 11 {
+                view.endEditing(true)
+            }
+            
             print("phoneNumber: \(phoneNumber)")
         }
+        toggleCompleteBtnState()
     }
     
     @objc func genderBtnTapped(_ sender: SelectableButton) {
         genderStackView.buttonSelected(sender.id)
+        toggleCompleteBtnState()
     }
     
     @objc func dismissKeyboard() {
         print("dismissKeyboard triggered!!")
-//        completeAction()
-//        numberController.numberText = ""
+        
         view.endEditing(true)
-        
-//        hideNumberController()
-        
     }
     
     
     
     private func setupLayout() {
-//        view.backgroundColor = .cyan
-        
-
         
         [maleBtn, femaleBtn].forEach { self.genderStackView.addArrangedButton($0)}
         
@@ -252,31 +262,17 @@ extension AddingSubjectController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         print("textFieldShouldReturn called")
-        if textField == phoneTF {
-            phoneTF.text! = textField.text!
-            phoneNumber = phoneTF.text!
-            print("phoneNumber: \(phoneNumber)")
-//            UIApplication().resignFirstResponder()
-            dismissKeyboard()
-            return true
-        } else if textField == nameTF {
+        // there's no return btn on numberpad
+        
+        if textField == nameTF {
             nameTF.text! = textField.text!
             name = nameTF.text!
             print("name: \(name)")
-//            UIApplication().resignFirstResponder()
+            
             dismissKeyboard()
             return true
         }
+        
         return false
     }
-    
-//    func textFieldDidBeginEditing(_ textField: UITextField) {
-//        <#code#>
-//    }
-    
-    
 }
-
-
-//extension AddingSubjectController : adding
-

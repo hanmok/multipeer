@@ -174,7 +174,7 @@ extension SubjectController: SubjectDetailDelegate {
 //       update  명령, 그 후 pop
         
         basicDelegate?.updateCurrentScreen(from: subject, with: screen) {
-                // update -
+            
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
             }
