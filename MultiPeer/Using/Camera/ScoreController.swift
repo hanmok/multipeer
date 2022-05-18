@@ -185,14 +185,14 @@ class ScoreController: UIViewController {
     
     
     @objc func scoreBtnTapped(_ sender: SelectableButton) {
-        scoreBtnGroup.buttonSelected(sender.id)
+        scoreBtnGroup.selectedButtonIs(of: sender.id)
 //        switch
         
 //        guard let selectedScore = Int(scoreBtnGroup.selectedWrapper) else { return }
-        if let selectedScore = Int(scoreBtnGroup.selectedWrapper) {
+        if let selectedScore = Int(scoreBtnGroup.selectedBtnTitle) {
             score = selectedScore
         } else {
-            switch scoreBtnGroup.selectedWrapper {
+            switch scoreBtnGroup.selectedBtnTitle {
             case "Red": score = 0
             case "Yellow": score = 1
             case "Green": score = 2
@@ -209,8 +209,8 @@ class ScoreController: UIViewController {
     }
     
     @objc func painBtnTapped(_ sender: SelectableButton) {
-        painBtnGroup.buttonSelected(sender.id)
-        switch painBtnGroup.selectedWrapper {
+        painBtnGroup.selectedButtonIs(of: sender.id)
+        switch painBtnGroup.selectedBtnTitle {
         case "+":
             pain = true
         case "-":
@@ -243,6 +243,10 @@ class ScoreController: UIViewController {
     
     @objc func deleteTapped() {
         print("delete tapped!")
+//        buttonstackview
+        scoreBtnGroup.selectedBtnIndex = nil
+        painBtnGroup.selectedBtnIndex = nil
+//        scorestack
         delegate?.deleteAction()
     }
     

@@ -16,6 +16,7 @@
 		2265AC072816A11E00E0FCCF /* ScoreBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */; };
 		2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC4D2817F42300E0FCCF /* CameraController.swift */; };
 		226D20DF282DE6C6001D6019 /* StringExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D20DE282DE6C5001D6019 /* StringExt+.swift */; };
+		226D87632834B9D000E3F547 /* SelectableButtonStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D87622834B9D000E3F547 /* SelectableButtonStackView.swift */; };
 		226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226E0445280EBBE4004A8A28 /* RecordingViewController.swift */; };
 		227648CE2831E75900214EBF /* TrialDetail+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227648CD2831E75900214EBF /* TrialDetail+Helper.swift */; };
 		227648D628321B9200214EBF /* TrialDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227648D528321B9200214EBF /* TrialDetailController.swift */; };
@@ -31,7 +32,7 @@
 		22795070282B937C00B675A1 /* MsgModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2279506F282B937C00B675A1 /* MsgModels.swift */; };
 		22795072282B939B00B675A1 /* PositionLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22795071282B939B00B675A1 /* PositionLists.swift */; };
 		22795075282B965D00B675A1 /* SubjectDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22795074282B965D00B675A1 /* SubjectDetailController.swift */; };
-		22795078282BA51D00B675A1 /* SelectableButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22795077282BA51D00B675A1 /* SelectableButtons.swift */; };
+		22795078282BA51D00B675A1 /* SelectableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22795077282BA51D00B675A1 /* SelectableButton.swift */; };
 		2279507B282BA58600B675A1 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 22795079282BA58600B675A1 /* Model.xcdatamodeld */; };
 		227950B2282BB8F900B675A1 /* Subject+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227950B1282BB8F900B675A1 /* Subject+Helper.swift */; };
 		227950B5282BBE1600B675A1 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227950B4282BBE1600B675A1 /* PersistenceController.swift */; };
@@ -78,6 +79,7 @@
 		2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBtnView.swift; sourceTree = "<group>"; };
 		2265AC4D2817F42300E0FCCF /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		226D20DE282DE6C5001D6019 /* StringExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringExt+.swift"; sourceTree = "<group>"; };
+		226D87622834B9D000E3F547 /* SelectableButtonStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableButtonStackView.swift; sourceTree = "<group>"; };
 		226E0445280EBBE4004A8A28 /* RecordingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		227648CD2831E75900214EBF /* TrialDetail+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrialDetail+Helper.swift"; sourceTree = "<group>"; };
 		227648D528321B9200214EBF /* TrialDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialDetailController.swift; sourceTree = "<group>"; };
@@ -93,7 +95,7 @@
 		2279506F282B937C00B675A1 /* MsgModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgModels.swift; sourceTree = "<group>"; };
 		22795071282B939B00B675A1 /* PositionLists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionLists.swift; sourceTree = "<group>"; };
 		22795074282B965D00B675A1 /* SubjectDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectDetailController.swift; sourceTree = "<group>"; };
-		22795077282BA51D00B675A1 /* SelectableButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableButtons.swift; sourceTree = "<group>"; };
+		22795077282BA51D00B675A1 /* SelectableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableButton.swift; sourceTree = "<group>"; };
 		2279507A282BA58600B675A1 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		227950B1282BB8F900B675A1 /* Subject+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Subject+Helper.swift"; sourceTree = "<group>"; };
 		227950B4282BBE1600B675A1 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
@@ -156,6 +158,16 @@
 			path = SubjectDetail;
 			sourceTree = "<group>";
 		};
+		226D87612834B99D00E3F547 /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				2285C4A82822864F00666CEA /* ScoreButton.swift */,
+				22795077282BA51D00B675A1 /* SelectableButton.swift */,
+				226D87622834B9D000E3F547 /* SelectableButtonStackView.swift */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
 		22795064282B922800B675A1 /* Position */ = {
 			isa = PBXGroup;
 			children = (
@@ -214,8 +226,7 @@
 				2265AC062816A11E00E0FCCF /* ScoreBtnView.swift */,
 				2283BEBD281A5F5E007D74FC /* ImgBtnView.swift */,
 				2283BEBF281A5F78007D74FC /* ButtonWithInfo.swift */,
-				2285C4A82822864F00666CEA /* ScoreButton.swift */,
-				22795077282BA51D00B675A1 /* SelectableButtons.swift */,
+				226D87612834B99D00E3F547 /* Camera */,
 			);
 			name = SubViews;
 			path = Position/SubViews;
@@ -477,7 +488,8 @@
 				227950B2282BB8F900B675A1 /* Subject+Helper.swift in Sources */,
 				2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */,
 				22795072282B939B00B675A1 /* PositionLists.swift in Sources */,
-				22795078282BA51D00B675A1 /* SelectableButtons.swift in Sources */,
+				226D87632834B9D000E3F547 /* SelectableButtonStackView.swift in Sources */,
+				22795078282BA51D00B675A1 /* SelectableButton.swift in Sources */,
 				2282DD8A28164695008928A4 /* SwiftyCamViewControllerDelegate.swift in Sources */,
 				2282DD912816473C008928A4 /* SwiftyCamButton.swift in Sources */,
 				22795063282B8F8D00B675A1 /* AddingSubjectController.swift in Sources */,

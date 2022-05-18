@@ -54,7 +54,7 @@ class CameraController: UIViewController {
     var sequentialPainPosition: String?
     
     init(positionDirectionScoreInfo: PositionDirectionScoreInfo, connectionManager: ConnectionManager, screen: Screen, trialCore: TrialCore) {
-//        self.subject = subject
+        
         self.screen = screen
         self.trialCore = trialCore
         self.positionTitle = positionDirectionScoreInfo.title
@@ -775,6 +775,7 @@ extension CameraController: ScoreControllerDelegate {
             print("error: \(error.localizedDescription)")
             print("file exist ? 3 \(FileManager().fileExists(atPath: validVideoUrl.path))")
         }
+        // initialize selected score
         
         prepareRecording()
     }

@@ -25,6 +25,7 @@ enum PositionList: String, CaseIterable {
     case flexionClearing = "Flexion Clearing"
 }
 
+// Make positionList accessable using Index
 extension CaseIterable where Self: Equatable {
     var index: Self.AllCases.Index? {
         return Self.allCases.firstIndex { self == $0 }
@@ -115,6 +116,7 @@ enum PositionWithImageListEnum {
 
 
 // 위, 아래가 중복 데이터임. ;; 어.. 어떤 형태로 사용할 지 정해주는게 좋을 것 같은데 ??
+// 현재 안쓰는중
 public enum PositionWithPain {
     case ankleClearing
     case shoulderClearing
@@ -122,7 +124,8 @@ public enum PositionWithPain {
     case flexionClearing
 }
 
-
+// 둘중 하나는 없애는게 ..
+// 이것도 안쓰고있음.
 public let positionsHasPain = [
     PositionList.ankleClearing.rawValue,
     PositionList.shoulderClearing.rawValue,
@@ -142,6 +145,8 @@ public let positionWithVariation: [String: String] = [
     PositionList.deepSquat.rawValue : PositionList.deepSquatVar.rawValue,
     PositionList.trunkStabilityPushUp.rawValue: PositionList.trunkStabilityPushUpVar.rawValue
 ]
+
+
 
 // MARK: - Score
 

@@ -6,33 +6,34 @@
 //
 
 import UIKit
-import Then
+
 
 class ScoreButton: SelectableButton {
-    
+    /// title of Button
     public var wrappedString: String {
-        didSet {
-            setupLayout()
-        }
-        willSet {
+    willSet {
+        print("willSet triggered!")
             updateTitle(with: newValue)
         }
     }
     
     func updateTitle(with newValue: String) {
         self.title = newValue
+        self.setTitle(newValue, for: .normal)
     }
     
     init(_ score: String = "") {
-        self.wrappedString = score
+        self.wrappedString = score // is wrappedString triggered?
         super.init(title: score, frame: .zero)
+        setupInitialLayout()
+    }
+    
+    private func setupInitialLayout() {
+        self.setTitleColor(.white, for: .normal)
+        self.backgroundColor = .black
         self.layer.borderColor = UIColor.white.cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 10
-    }
-    
-    private func setupLayout() {
-        self.setTitle(wrappedString, for: .normal)
     }
     
     required init?(coder: NSCoder) {

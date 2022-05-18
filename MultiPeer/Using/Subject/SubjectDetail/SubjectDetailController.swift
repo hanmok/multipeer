@@ -98,6 +98,9 @@ class SubjectDetailController: UIViewController {
     @objc func makeBtnTapped(_ sender: UIButton) {
         print("makeBtnTapped!")
         Screen.save(belongTo: subject)
+        selectedIndex = IndexPath(row: -1, section: 0)
+        
+        
         fetchAndReloadScreens()
     }
     
@@ -105,12 +108,7 @@ class SubjectDetailController: UIViewController {
     @objc func continueBtnTapped(_ sender: UIButton) {
         print("continueBtnTapped!")
         print("numofScreens: \(subject.screens.count)")
-//        if screens.isEmpty {
-//            let myScreen = Screen.save(belongTo: subject)
-//             selectedScreen = myScreen
-//        }
-
-        // if none is selected before, select the latest one
+        
         if selectedScreen == nil {
             selectedScreen = screens.sorted { $0.date < $1.date}.last
         }
@@ -118,6 +116,9 @@ class SubjectDetailController: UIViewController {
         guard let selectedScreen = selectedScreen else {
             fatalError("selected screen is nil", file: #function)
         }
+        selectedIndex = IndexPath(row: -1, section: 0)
+        
+        
         
 
         detailDelegate?.sendback(subject, with: selectedScreen)
@@ -131,6 +132,9 @@ class SubjectDetailController: UIViewController {
         guard let selectedScreen = selectedScreen else {
             return
         }
+        selectedIndex = IndexPath(row: -1, section: 0)
+        
+        
         let trialDetailController = TrialDetailController(screen: selectedScreen)
         print("passing screen id: \(selectedScreen.id)")
         self.navigationController?.pushViewController(trialDetailController, animated: true)
@@ -142,7 +146,9 @@ class SubjectDetailController: UIViewController {
             print("none is selected")
             return
         }
+        
         Screen.delete(selectedScreen)
+        selectedIndex = IndexPath(row: -1, section: 0)
         print("deleted !")
         fetchAndReloadScreens()
         print("fetched!")

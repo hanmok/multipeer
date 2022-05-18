@@ -98,11 +98,9 @@ class ScreenCell: UICollectionViewCell {
         
         scoreLabel.snp.makeConstraints { make in
             make.leading.equalTo(dateLabel.snp.trailing).offset(20)
-//            make.top.equalToSuperview()
             make.trailing.equalToSuperview()
             make.top.bottom.equalToSuperview().inset(2)
         }
-        
     }
     
     private func configureLayout() {

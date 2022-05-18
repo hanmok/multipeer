@@ -165,7 +165,7 @@ class AddingSubjectController: UIViewController {
     }
     
     @objc func genderBtnTapped(_ sender: SelectableButton) {
-        genderStackView.buttonSelected(sender.id)
+        genderStackView.selectedButtonIs(of: sender.id)
         toggleCompleteBtnState()
     }
     
