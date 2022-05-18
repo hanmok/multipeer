@@ -111,7 +111,7 @@ extension TrialDetailController: UICollectionViewDelegateFlowLayout, UICollectio
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: screenWidth, height: 100)
+        return CGSize(width: screenWidth, height: 60)
     }
     
     

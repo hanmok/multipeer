@@ -50,7 +50,7 @@ class CameraController: UIViewController {
     private var scoreVC: ScoreController
     
     var variationName: String?
-    
+    var trialDetail: TrialDetail?
     var sequentialPainPosition: String?
     
     init(positionDirectionScoreInfo: PositionDirectionScoreInfo, connectionManager: ConnectionManager, screen: Screen, trialCore: TrialCore) {
@@ -66,6 +66,7 @@ class CameraController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         scoreVC.delegate = self
         connectionManager.delegate = self
+        self.trialDetail = TrialDetail.save(belongTo: trialCore)
     }
     
     
@@ -81,6 +82,29 @@ class CameraController: UIViewController {
         //        prepareScoreView()
     }
     
+    private func updateTrialDetail() {
+
+        
+        let prevTrialDetails = trialCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
+        
+        if prevTrialDetails.count != 0 {
+            guard let lastElement = prevTrialDetails.last else { fatalError("error:") }
+            if lastElement.score != -2 { // pain 에 대한 조건이 필요. 
+                trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
+            }
+            
+        } else {
+            trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
+        }
+        
+    }
+    
+    @discardableResult
+    private func createTrialDetail(with trialNo: Int64) -> TrialDetail {
+        let createdCoreDetail = TrialDetail.save(belongTo: trialCore)
+        createdCoreDetail.setValue(trialNo, forKey: .TrialDetailStr.trialNo)
+        return createdCoreDetail
+    }
     
     private func setupNavigationBar() {
         DispatchQueue.main.async {

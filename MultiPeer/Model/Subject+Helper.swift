@@ -65,9 +65,10 @@ extension Subject {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
-        let entity = NSEntityDescription.entity(forEntityName: "Subject", in: managedContext)!
+//        let entity = NSEntityDescription.entity(forEntityName: "Subject", in: managedContext)!
+        guard let entity = NSEntityDescription.entity(forEntityName: "Subject", in: managedContext) else { fatalError("failed to get entity from subject ")}
         guard let subject = NSManagedObject(entity: entity, insertInto: managedContext) as? Subject else {
-            fatalError()
+            fatalError("failed to case to Subject during saving ")
         }
         
         subject.setValue(name, forKey: "name_")

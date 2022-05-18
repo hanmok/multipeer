@@ -1,0 +1,9 @@
+
+
+
+create Trial Detail for specific conditions (score != nil, pain != nil for clearing Tests)
+
+
+make default value of coreData score and pain    as Static value
+send data using
+

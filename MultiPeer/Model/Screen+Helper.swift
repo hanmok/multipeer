@@ -78,9 +78,9 @@ extension Screen {
         validScreen.setValue(currentDate, forKey: .ScreenStr.date)
         validScreen.setValue(randomUUID, forKey: "id_")
         validScreen.setValue(0, forKey: .ScreenStr.totalScore)
-        
+        print("flaggg1")
         TrialCore.saveBundle(belongTo: validScreen)
-
+print("flaggg2")
         do {
             try managedContext.save()
             print("successfully saved screen  : \(validScreen.trialCores.count)")

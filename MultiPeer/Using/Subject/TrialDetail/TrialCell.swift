@@ -35,6 +35,7 @@ class TrialCell: UICollectionViewCell {
     private let shortTitleLabel = UILabel().then { $0.backgroundColor = .cyan
         $0.textAlignment = .center
         $0.lineBreakMode = .byWordWrapping
+        $0.font = UIFont.preferredFont(forTextStyle: .footnote)
         $0.textColor = .red
         $0.numberOfLines = 0
     }
@@ -67,8 +68,65 @@ class TrialCell: UICollectionViewCell {
         
         [positionImageView, shortTitleLabel, painScoreLabel, realScoreLabel, finalScoreLabel].forEach { addSubview($0)}
 
+//        positionImageView.snp.makeConstraints { make in
+//            make.leading.equalToSuperview()
+//            make.top.bottom.equalToSuperview()
+//            make.width.equalTo(40)
+//        }
+//
+//        shortTitleLabel.snp.makeConstraints { make in
+//            make.leading.equalTo(positionImageView.snp.trailing).offset(5)
+//            make.top.bottom.equalToSuperview()
+//            make.width.equalTo(160)
+//        }
+//
+//        painScoreLabel.snp.makeConstraints { make in
+//            make.leading.equalTo(shortTitleLabel.snp.trailing).offset(5)
+//            make.top.bottom.equalToSuperview()
+//            make.width.equalTo(60)
+//        }
+//
+//        realScoreLabel.snp.makeConstraints { make in
+//            make.leading.equalTo(painScoreLabel.snp.trailing).offset(5)
+//            make.top.bottom.equalToSuperview()
+//            make.width.equalTo(60)
+//        }
+//
+//        finalScoreLabel.snp.makeConstraints { make in
+//            make.leading.equalTo(realScoreLabel.snp.trailing).offset(5)
+//            make.top.bottom.equalToSuperview()
+//            make.width.equalTo(60)
+//        }
+        
+        
+        
         positionImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(40)
+        }
+        
+        finalScoreLabel.snp.makeConstraints { make in
+//            make.leading.equalTo(realScoreLabel.snp.trailing).offset(5)
+            make.width.equalTo(40)
+            make.top.bottom.equalToSuperview()
+//            make.width.equalTo(60)
+//            make.width.equalTo(40)
+            make.trailing.equalToSuperview().offset(-5)
+        }
+        
+        
+        realScoreLabel.snp.makeConstraints { make in
+//            make.leading.equalTo(painScoreLabel.snp.trailing).offset(5)
+            make.trailing.equalTo(finalScoreLabel.snp.leading).offset(-5)
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(40)
+        }
+
+        
+        painScoreLabel.snp.makeConstraints { make in
+//            make.leading.equalTo(shortTitleLabel.snp.trailing).offset(5)
+            make.trailing.equalTo(realScoreLabel.snp.leading).offset(-5)
             make.top.bottom.equalToSuperview()
             make.width.equalTo(40)
         }
@@ -76,25 +134,8 @@ class TrialCell: UICollectionViewCell {
         shortTitleLabel.snp.makeConstraints { make in
             make.leading.equalTo(positionImageView.snp.trailing).offset(5)
             make.top.bottom.equalToSuperview()
-            make.width.equalTo(160)
-        }
-        
-        painScoreLabel.snp.makeConstraints { make in
-            make.leading.equalTo(shortTitleLabel.snp.trailing).offset(5)
-            make.top.bottom.equalToSuperview()
-            make.width.equalTo(60)
-        }
-        
-        realScoreLabel.snp.makeConstraints { make in
-            make.leading.equalTo(painScoreLabel.snp.trailing).offset(5)
-            make.top.bottom.equalToSuperview()
-            make.width.equalTo(60)
-        }
-        
-        finalScoreLabel.snp.makeConstraints { make in
-            make.leading.equalTo(realScoreLabel.snp.trailing).offset(5)
-            make.top.bottom.equalToSuperview()
-            make.width.equalTo(60)
+//            make.width.equalTo(160)
+            make.trailing.equalTo(painScoreLabel.snp.leading).offset(-5)
         }
     }
     

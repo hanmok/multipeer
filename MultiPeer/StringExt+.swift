@@ -24,9 +24,8 @@ extension String {
         static let isFinished = "isFinished"
 
         static let totalScore = "totalScore"
-        
     }
-    
+
     struct SubjectStr {
         static let birthday = "birthday_"
         static let lastUpdateDate = "lastUpdateDate"
@@ -59,5 +58,7 @@ extension String {
         
         static let score = "score_"
         static let trialNo = "trialNo"
+        
+        static let parentTrialCore = "parentTrialCore_"
     }
 }

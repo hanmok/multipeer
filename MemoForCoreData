@@ -10,5 +10,9 @@ not painful:    -1 ,
 not determined: 0
 
 
-and, define Score default value as -1
+
+
+
+and, define Score default value as -2  로 설정. (-1 은 Hold 값이라 헷가릴 수 있음..)
 (applied to total Score too. )
+

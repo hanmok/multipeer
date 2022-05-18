@@ -14,7 +14,7 @@ extension TrialDetail: RemovableProtocol {}
 extension TrialDetail {
     
     @discardableResult
-    static func save(belongTo direction: TrialCore) -> TrialDetail {
+    static func save(belongTo trialCore: TrialCore) -> TrialDetail {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             fatalError("fail to cast to appDelegate")
         }
@@ -26,31 +26,30 @@ extension TrialDetail {
         let managedObject = NSManagedObject(entity: entity, insertInto: managedContext)
         
         guard let trialDetail = managedObject as? TrialDetail else { fatalError() }
-        trialDetail.setValue(1, forKey: .TrialDetailStr.score)
-        trialDetail.parentDirection = direction
+//        trialDetail.setValue(1, forKey: .TrialDetailStr.score)
+        trialDetail.parentTrialCore = trialCore
         
         do {
             try managedContext.save()
             print("successfully saved trial : \(trialDetail)")
             return trialDetail
         } catch {
-            print("error : \(error.localizedDescription)")
-            fatalError()
+            fatalError("\(error.localizedDescription)")
         }
     }
     
-    public var parentDirection: TrialCore {
+    public var parentTrialCore: TrialCore {
         get {
-            return self.parentDirection_!
+            return self.parentTrialCore_!
         }
         set {
-            self.parentDirection_ = newValue
+            self.parentTrialCore_ = newValue
         }
     }
     
     public var score: Int64 {
         get {
-            self.parentDirection.updateLatestScore()
+            self.parentTrialCore.updateLatestScore()
             return self.score_
         }
         set {
@@ -60,7 +59,7 @@ extension TrialDetail {
     
     public var isPainful: Int64 {
         get {
-            self.parentDirection.updateLatestPain()
+            self.parentTrialCore.updateLatestPain()
             return self.isPainful_
         }
         set {

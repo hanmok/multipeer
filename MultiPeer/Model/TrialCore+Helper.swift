@@ -58,33 +58,31 @@ extension TrialCore {
 extension TrialCore {
     
     static func saveBundle(belongTo parent: Screen) {
-        print("trialCore save has called")
-        
+        // 여기 어딘가에서 에러 발생
         for (idx, each) in PositionList.allCases.enumerated() {
+
             if each.rawValue.contains("Var") { continue }
+            // 여기에서 발생.
             TrialCore.save(title: each.rawValue, parent: parent, tag: Int64(idx))
-            print("parent id : \(parent.id)")
         }
     }
     
-    
+    // Error 발생지.. 여기 아님. 정상출력됨.
     static func save(title: String, parent: Screen, tag: Int64) { // title 에 따른 direction 에 따라 1~2 개 return
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            fatalError()
+            fatalError("error !! flag 2")
         }
+
         let managedContext = appDelegate.persistentContainer.viewContext
-        
-        guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else { fatalError() }
-        
+        guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else { fatalError("error !! flag 3") }
         
         // for loop needed..
         guard let positionName = PositionList(rawValue: title),
               let numOfDirections = Dummy.numOfDirections[positionName],
-              let directionNames = Dummy.directionName[numOfDirections] else { fatalError() }
+              let directionNames = Dummy.directionName[numOfDirections] else { fatalError("error !! flag 4") }
         
         for direction in directionNames {
-            
-            guard let trialCore = NSManagedObject(entity: entity, insertInto: managedContext) as? TrialCore else { fatalError() }
+            guard let trialCore = NSManagedObject(entity: entity, insertInto: managedContext) as? TrialCore else { fatalError("error !! flag 5") }
 
             trialCore.setValue(parent, forKey: .TrialCoreStr.parentScreen)
             trialCore.setValue(title, forKey: .TrialCoreStr.title)
@@ -94,12 +92,11 @@ extension TrialCore {
             print("title of TrialCore : \(trialCore.title)")
             print("direction of TrialCore : \(trialCore.direction)")
             parent.trialCores.update(with: trialCore)
-            
             do {
                 try managedContext.save()
             } catch {
                 print("error : \(error.localizedDescription)")
-                fatalError()
+                fatalError("error !! flag 6")
             }
         }
     }
@@ -156,7 +153,7 @@ extension TrialCore {
     
     /// update Score
     func updateLatestScore() {
-        var latestTrial: TrialDetail? = nil
+        var latestTrial: TrialDetail?
         if self.trialDetails.count >= 2 {
             
             let lastElement = self.trialDetails.sorted {
@@ -195,3 +192,4 @@ extension TrialCore {
         self.latestWasPainful = validLast.score == 0 ? 0 : validLast.score
     }
 }
+

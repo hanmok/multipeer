@@ -28,7 +28,8 @@ class SubjectController: UIViewController {
     }
     
     private func fetchAndReloadSubjects() {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        // 여기에서 에러 발생..
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate, ", file: #function)}
         
         let context = appDelegate.persistentContainer.viewContext
         
@@ -39,8 +40,12 @@ class SubjectController: UIViewController {
             let result = try context.fetch(request)
 //            subjects.removeAll() // initialize.
             subjects = []
-            guard let fetchedSubjects = result as? [Subject] else { return }
+            guard let fetchedSubjects = result as? [Subject] else {
+                fatalError("faled to case result to [Subject] ")
+                 }
+            
             for subject in fetchedSubjects {
+                print("fail flag 33")
                 print(subject.value(forKey: "name_") as! String)
                 subjects.append(subject)
             }
@@ -98,9 +103,13 @@ class SubjectController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("subjectcontroller viewdidload called")
-        fetchAndReloadSubjects()
+        print("flag 0")
+        fetchAndReloadSubjects() // 여기서 에러 발생.
+        print("flag 1 ")
         registerCollectionView()
+        print("flag 2")
         setupLayout()
+        print("flag 3")
         // Do any additional setup after loading the view.
     }
     
@@ -178,7 +187,6 @@ extension SubjectController: UICollectionViewDelegateFlowLayout, UICollectionVie
         DispatchQueue.main.async {
             self.subjectCollectionView.reloadData()
         }
-
     }
 }
 

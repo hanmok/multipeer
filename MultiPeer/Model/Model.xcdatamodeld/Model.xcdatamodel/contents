@@ -21,18 +21,18 @@
     </entity>
     <entity name="TrialCore" representedClassName="TrialCore" syncable="YES" codeGenerationType="class">
         <attribute name="direction_" optional="YES" attributeType="String"/>
-        <attribute name="latestScore" optional="YES" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="latestScore" optional="YES" attributeType="Integer 64" defaultValueString="-2" usesScalarValueType="YES"/>
         <attribute name="latestWasPainful" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tag" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title_" optional="YES" attributeType="String"/>
         <relationship name="parentScreen_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Screen" inverseName="trialCores_" inverseEntity="Screen"/>
-        <relationship name="trialDetails_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrialDetail" inverseName="parentDirection_" inverseEntity="TrialDetail"/>
+        <relationship name="trialDetails_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrialDetail" inverseName="parentTrialCore_" inverseEntity="TrialDetail"/>
     </entity>
     <entity name="TrialDetail" representedClassName="TrialDetail" syncable="YES" codeGenerationType="class">
         <attribute name="isPainful_" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="score_" optional="YES" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="score_" optional="YES" attributeType="Integer 64" defaultValueString="-2" usesScalarValueType="YES"/>
         <attribute name="trialNo" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="parentDirection_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrialCore" inverseName="trialDetails_" inverseEntity="TrialCore"/>
+        <relationship name="parentTrialCore_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrialCore" inverseName="trialDetails_" inverseEntity="TrialCore"/>
     </entity>
     <elements>
         <element name="Screen" positionX="-65.186279296875" positionY="261.2911987304688" width="128" height="119"/>
