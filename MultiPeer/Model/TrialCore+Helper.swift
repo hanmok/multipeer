@@ -1,3 +1,5 @@
+
+
 //
 //  DirectionCoreExt+.swift
 //  MultiPeer
@@ -14,7 +16,7 @@ extension TrialCore: RemovableProtocol {}
 extension TrialCore {
     public var trialDetails: Set<TrialDetail> {
         get {
-            return self.trialDetails_ as! Set<TrialDetail>
+            return self.trialDetails_ as? Set<TrialDetail> ?? [] // 왜 여기서... ??
         }
         set {
             self.trialDetails_ = newValue as NSSet
@@ -50,7 +52,10 @@ extension TrialCore {
     
     public var finalResult: String {
         get {
-            return convertScoreToString(score: self.latestScore, pain: self.latestWasPainful) ?? shortenDirection(direction: direction)
+            return self.finalResult_ ?? shortenDirection(direction: direction)
+        }
+        set {
+            self.finalResult_ = newValue
         }
     }
 }
@@ -67,6 +72,7 @@ extension TrialCore {
         }
     }
     
+    // Direction 은 ??
     // Error 발생지.. 여기 아님. 정상출력됨.
     static func save(title: String, parent: Screen, tag: Int64) { // title 에 따른 direction 에 따라 1~2 개 return
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
@@ -83,7 +89,7 @@ extension TrialCore {
         
         for direction in directionNames {
             guard let trialCore = NSManagedObject(entity: entity, insertInto: managedContext) as? TrialCore else { fatalError("error !! flag 5") }
-
+            
             trialCore.setValue(parent, forKey: .TrialCoreStr.parentScreen)
             trialCore.setValue(title, forKey: .TrialCoreStr.title)
             trialCore.setValue(direction, forKey: .TrialCoreStr.direction)
@@ -100,26 +106,114 @@ extension TrialCore {
             }
         }
     }
+    
+     func returnFreshTrialDetail() -> TrialDetail {
+         
+         let sortedDetails = self.trialDetails.sorted { $0.trialNo < $1.trialNo }
+         
+         if sortedDetails.count != 0 {
+             guard let lastDetailElement = sortedDetails.last else { fatalError() }
+             guard let positionTitle = PositionList(rawValue: self.title) else { fatalError() }
+             
+             switch positionTitle {
+             
+             case .ankleClearing:
+                 return returnAvailableDetail(
+                     condition: lastDetailElement.isPainful == .DefaultValue.trialPain || lastDetailElement.score == .DefaultValue.trialScore,
+                     lastElement: lastDetailElement, to: self)
+             
+             case .flexionClearing, .shoulderClearing, .extensionClearing :
+                 return returnAvailableDetail(condition: lastDetailElement.isPainful == .DefaultValue.trialPain,
+                              lastElement: lastDetailElement, to: self)
+             
+             default:
+                 return returnAvailableDetail(condition: lastDetailElement.score == .DefaultValue.trialScore, lastElement: lastDetailElement, to: self)
+             }
+         } else {
+             return createDetail(core: self)
+         }
+    }
+    
+    func returnAvailableDetail(condition:Bool, lastElement: TrialDetail, to trialCore: TrialCore) -> TrialDetail {
+        return condition ? lastElement : createDetail(core: trialCore)
+    }
+    
+    func createDetail(core: TrialCore) -> TrialDetail{
+        let numOfDetails = core.trialDetails.count
+        return TrialDetail.save(belongTo: core, trialNo: numOfDetails)
+    }
+    
+    func updateLatestScore() {
+        // inverse order
+        var toConsider: ToConsiderEnum = .score
+        
+        let details = self.trialDetails.sorted { $0.trialNo > $1.trialNo }
+        
+        for eachDetail in details {
+            guard let name = PositionList(rawValue: self.title) else { fatalError("")}
+            switch name {
+            case .ankleClearing:
+                if eachDetail.isPainful == .DefaultValue.trialPain || eachDetail.score == .DefaultValue.trialScore {
+                    continue
+                } else { toConsider = .both }
+                
+            case .flexionClearing, .shoulderClearing, .extensionClearing :
+                if eachDetail.isPainful == .DefaultValue.trialPain {
+                    continue
+                } else { toConsider = .pain }
+                
+            default:
+                if eachDetail.score == .DefaultValue.trialScore {
+                    continue
+                } else { toConsider = .score }
+            }
+            
+            switch toConsider {
+            case .score:
+                self.latestScore = eachDetail.score
+                self.finalResult = String(eachDetail.score)
+            case .pain:
+                self.latestWasPainful = eachDetail.isPainful
+                self.finalResult = eachDetail.isPainful == 1 ? "+" : "-"
+            case .both:
+                self.latestScore = eachDetail.score
+                self.latestWasPainful = eachDetail.isPainful
+                self.finalResult = String(eachDetail.score)
+                self.finalResult += eachDetail.isPainful == 1 ? "+" : "-"
+            }
+            
+            print("updated LatestScore: \(self.latestScore)")
+            print("updated pain : \(self.latestWasPainful)")
+            
+            break
+        }
+    }
+}
+
+enum ToConsiderEnum {
+    case score
+    case pain
+    case both
 }
 
 
 extension TrialCore {
     
-    func convertScoreToString(score: Int64, pain: Int64) -> String? {
-        
-        var result = ""
-        
-        // for Ankle Clearing, both score scales applied.
-        if score != -1 {
-            result += String(score)
-        }
-        
-        if pain != 0 {
-            result += pain > 0 ? "+" : "-"
-        }
-
-        return result != "" ? result : nil
-    }
+//    func convertScoreToString(score: Int64, pain: Int64) -> String? {
+//
+//        var result = ""
+//
+//        // for Ankle Clearing, both score scales applied.
+//        if score != -1 {
+//            result += String(score)
+//        }
+//
+//        if pain != 0 {
+//            result += pain > 0 ? "+" : "-"
+//        }
+//
+//        return result != "" ? result : nil
+//    }
     
     func shortenDirection(direction: String) -> String {
 //        switch direction {
@@ -152,44 +246,92 @@ extension TrialCore {
     
     
     /// update Score
-    func updateLatestScore() {
-        var latestTrial: TrialDetail?
-        if self.trialDetails.count >= 2 {
-            
-            let lastElement = self.trialDetails.sorted {
-                $0.trialNo < $1.trialNo
-            }.last
-            
-            if lastElement != nil {
-                latestTrial = lastElement!
-            }
-            
-        } else if self.trialDetails.count == 1 {
-            latestTrial = self.trialDetails.first!
-        }
-        
-        guard let validLast = latestTrial else { return }
-        self.latestScore = validLast.score == -1 ? -1 : validLast.score
-    }
+//    func updateLatestScore() {
+//        var latestTrial: TrialDetail?
+//        if self.trialDetails.count >= 2 {
+//
+//            let lastElement = self.trialDetails.sorted {
+//                $0.trialNo < $1.trialNo
+//            }.last
+//
+//            if lastElement != nil {
+//                latestTrial = lastElement!
+//            }
+//
+//        } else if self.trialDetails.count == 1 {
+//            latestTrial = self.trialDetails.first!
+//        }
+//
+//        guard let validLast = latestTrial else { return }
+//        self.latestScore = validLast.score == -1 ? -1 : validLast.score
+//    }
     
-    func updateLatestPain() {
-        var latestTrial: TrialDetail? = nil
-        if self.trialDetails.count >= 2 {
-            
-            let lastElement = self.trialDetails.sorted {
-                $0.trialNo < $1.trialNo
-            }.last
-            
-            if lastElement != nil {
-                latestTrial = lastElement!
-            }
-            
-        } else if self.trialDetails.count == 1 {
-            latestTrial = self.trialDetails.first!
-        }
-        
-        guard let validLast = latestTrial else { return }
-        self.latestWasPainful = validLast.score == 0 ? 0 : validLast.score
-    }
+//    func updateLatestPain() {
+//        var latestTrial: TrialDetail? = nil
+//        if self.trialDetails.count >= 2 {
+//
+//            let lastElement = self.trialDetails.sorted {
+//                $0.trialNo < $1.trialNo
+//            }.last
+//
+//            if lastElement != nil {
+//                latestTrial = lastElement!
+//            }
+//
+//        } else if self.trialDetails.count == 1 {
+//            latestTrial = self.trialDetails.first!
+//        }
+//
+//        guard let validLast = latestTrial else { return }
+//        self.latestWasPainful = validLast.score == 0 ? 0 : validLast.score
+//    }
 }
 
+
+
+
+
+
+
+
+
+// prev
+
+//extension TrialCore {
+//public var finalResult: String {
+//    get { // 이게 잘못된 것 같은데 ??
+//        return convertScoreToString(score: self.latestScore, pain: self.latestWasPainful) ?? shortenDirection(direction: direction)
+//    }
+//}
+//
+//
+//    func convertScoreToString(score: Int64, pain: Int64) -> String? {
+//
+//        var result = ""
+//
+//        // for Ankle Clearing, both score scales applied.
+//        if score != -1 {
+//            result += String(score)
+//        }
+//
+//        if pain != 0 {
+//            result += pain > 0 ? "+" : "-"
+//        }
+//
+//        return result != "" ? result : nil
+//    }
+//
+//
+//func shortenDirection(direction: String) -> String {
+////        switch direction {
+////        case "Neutral": return "N"
+////        case "Left": return "L"
+////        case "Right": return "R"
+////        }
+//
+//    if direction != "" {
+//        return String(direction.first!)
+//    } else { return "N" }
+//}
+//
+//}

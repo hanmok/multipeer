@@ -20,6 +20,8 @@
 		226D87652834D85400E3F547 /* RemovableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D87642834D85400E3F547 /* RemovableCell.swift */; };
 		226D87672834E07600E3F547 /* RemovableProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D87662834E07600E3F547 /* RemovableProtocol.swift */; };
 		226D87692834FE7B00E3F547 /* TODO in Resources */ = {isa = PBXBuildFile; fileRef = 226D87682834FE7B00E3F547 /* TODO */; };
+		226D876B2835D9F000E3F547 /* Int64Ext+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D876A2835D9F000E3F547 /* Int64Ext+.swift */; };
+		226D876D2835E16D00E3F547 /* Converter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D876C2835E16D00E3F547 /* Converter.swift */; };
 		226E0446280EBBE4004A8A28 /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226E0445280EBBE4004A8A28 /* RecordingViewController.swift */; };
 		227648CE2831E75900214EBF /* TrialDetail+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227648CD2831E75900214EBF /* TrialDetail+Helper.swift */; };
 		227648D628321B9200214EBF /* TrialDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227648D528321B9200214EBF /* TrialDetailController.swift */; };
@@ -68,6 +70,7 @@
 		228B883E2806577B007A6842 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B883C2806577B007A6842 /* Main.storyboard */; };
 		228B884028065784007A6842 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 228B883F28065784007A6842 /* Assets.xcassets */; };
 		228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B884128065784007A6842 /* LaunchScreen.storyboard */; };
+		228F7B2F283639CA0065895A /* TrialCoreCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228F7B2E283639CA0065895A /* TrialCoreCopy.swift */; };
 		22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACAF5428094ACF007277A7 /* DateExt+.swift */; };
 		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 /* End PBXBuildFile section */
@@ -86,6 +89,8 @@
 		226D87642834D85400E3F547 /* RemovableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovableCell.swift; sourceTree = "<group>"; };
 		226D87662834E07600E3F547 /* RemovableProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovableProtocol.swift; sourceTree = "<group>"; };
 		226D87682834FE7B00E3F547 /* TODO */ = {isa = PBXFileReference; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
+		226D876A2835D9F000E3F547 /* Int64Ext+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int64Ext+.swift"; sourceTree = "<group>"; };
+		226D876C2835E16D00E3F547 /* Converter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Converter.swift; sourceTree = "<group>"; };
 		226E0445280EBBE4004A8A28 /* RecordingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		227648CD2831E75900214EBF /* TrialDetail+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrialDetail+Helper.swift"; sourceTree = "<group>"; };
 		227648D528321B9200214EBF /* TrialDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialDetailController.swift; sourceTree = "<group>"; };
@@ -136,6 +141,7 @@
 		228B883F28065784007A6842 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		228B884228065784007A6842 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		228B884428065784007A6842 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		228F7B2E283639CA0065895A /* TrialCoreCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialCoreCopy.swift; sourceTree = "<group>"; };
 		22ACAF5428094ACF007277A7 /* DateExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateExt+.swift"; sourceTree = "<group>"; };
 		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA8C32117F417B1A5C42D8EC /* Pods-MultiPeer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MultiPeer.debug.xcconfig"; path = "Target Support Files/Pods-MultiPeer/Pods-MultiPeer.debug.xcconfig"; sourceTree = "<group>"; };
@@ -249,6 +255,7 @@
 				227950B8282BBF8F00B675A1 /* PositionTitleCore+Helper.swift */,
 				22315E3E282E38D40093079B /* TrialCore+Helper.swift */,
 				226D87662834E07600E3F547 /* RemovableProtocol.swift */,
+				228F7B2E283639CA0065895A /* TrialCoreCopy.swift */,
 				22795067282B929A00B675A1 /* PositionModels.swift */,
 				22795071282B939B00B675A1 /* PositionLists.swift */,
 				227950B4282BBE1600B675A1 /* PersistenceController.swift */,
@@ -319,6 +326,8 @@
 				22ADC439281A226700B1C639 /* Using */,
 				227950B3282BBDA500B675A1 /* Model */,
 				226D20DE282DE6C5001D6019 /* StringExt+.swift */,
+				226D876C2835E16D00E3F547 /* Converter.swift */,
+				226D876A2835D9F000E3F547 /* Int64Ext+.swift */,
 				2283BEC3281B8732007D74FC /* Util+.swift */,
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				228B883F28065784007A6842 /* Assets.xcassets */,
@@ -494,6 +503,7 @@
 				22795075282B965D00B675A1 /* SubjectDetailController.swift in Sources */,
 				227648D628321B9200214EBF /* TrialDetailController.swift in Sources */,
 				2279506D282B931A00B675A1 /* APIModels.swift in Sources */,
+				226D876B2835D9F000E3F547 /* Int64Ext+.swift in Sources */,
 				227DA6C8282B60180097F8F1 /* SubjectController.swift in Sources */,
 				227950B2282BB8F900B675A1 /* Subject+Helper.swift in Sources */,
 				226D87672834E07600E3F547 /* RemovableProtocol.swift in Sources */,
@@ -502,6 +512,7 @@
 				226D87632834B9D000E3F547 /* SelectableButtonStackView.swift in Sources */,
 				22795078282BA51D00B675A1 /* SelectableButton.swift in Sources */,
 				2282DD8A28164695008928A4 /* SwiftyCamViewControllerDelegate.swift in Sources */,
+				228F7B2F283639CA0065895A /* TrialCoreCopy.swift in Sources */,
 				2282DD912816473C008928A4 /* SwiftyCamButton.swift in Sources */,
 				22795063282B8F8D00B675A1 /* AddingSubjectController.swift in Sources */,
 				2282DD9328167944008928A4 /* SwiftyRecordButton.swift in Sources */,
@@ -509,6 +520,7 @@
 				22315E3B282E1F8F0093079B /* ScreenCell.swift in Sources */,
 				227648CE2831E75900214EBF /* TrialDetail+Helper.swift in Sources */,
 				227950B9282BBF8F00B675A1 /* PositionTitleCore+Helper.swift in Sources */,
+				226D876D2835E16D00E3F547 /* Converter.swift in Sources */,
 				2279507B282BA58600B675A1 /* Model.xcdatamodeld in Sources */,
 				2283BEC0281A5F78007D74FC /* ButtonWithInfo.swift in Sources */,
 				2283BEC4281B8732007D74FC /* Util+.swift in Sources */,

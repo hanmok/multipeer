@@ -8,25 +8,29 @@
 import UIKit
 import SnapKit
 import Then
+import CoreData
 
 
 
 protocol ScoreControllerDelegate: AnyObject {
     
-    func deleteAction()
-    func saveAction(with info: PositionDirectionScoreInfo)
+    func deleteAction() // don't need to update trials
+//    func saveAction(with info: PositionDirectionScoreInfo, trialNo: Int)
+    func saveAction(core: TrialCore, detail: TrialDetail) // 알아서 처리됨 ..;; 여기서 다 처리하면 ? 아닌가? 다른앤ㄱ ㅏ??
     
-    func nextAction()
-    func retryAction()
+    func nextAction() // update Trial Core (position could be changed depening on position)
+    func retryAction() // update Trial detail
     
 //    func updateScore(_ score: Int)
-    func moveUp()
+//    func moveUp()
     
     func updatePosition(with positionDirectionScoreInfo: PositionDirectionScoreInfo)
     func hideScoreController()
     func prepareRecording()
     
     func dismissCameraController()
+    
+    
 }
 
 
@@ -36,9 +40,14 @@ class ScoreController: UIViewController {
     
     var positionTitle: String
     var direction: PositionDirection
-//    var trialCore: TrialCore?
+
+    var trialCore: TrialCore? // 왜 comment 처리 해놧었지 ??
+    var trialDetail: TrialDetail?
+
+    var fClearingCore: TrialCore?
+    var fClearingDetail: TrialDetail?
     
-    var score: Int? {
+    var score: Int64? { // why int instead of Int64 ?? 모든 계산은 64 로 하고, 나중에 Int 로 반환하자.
         willSet {
             // if it has variation following, toggle Clearing Test depening on score value
             // -1 represent 'Hold'
@@ -146,6 +155,11 @@ class ScoreController: UIViewController {
         $0.spacing = 20
     }
     
+    public func setupTrialCore(with trialCore: TrialCore) {
+        // setup trialcore f
+        self.trialCore = trialCore
+    }
+    
     init(positionDirectionScoreInfo: PositionDirectionScoreInfo) {
 //        self.trialCore = trialCore
         self.positionTitle = positionDirectionScoreInfo.title
@@ -160,9 +174,15 @@ class ScoreController: UIViewController {
         print("painTestName: \(painTestName)")
 //        print("varTestName: \(varTestName)")
         super.init(nibName: nil, bundle: nil)
+        
+        
     }
     
+//    public func
     public func setupAgain(with positionDirectionScoreInfo: PositionDirectionScoreInfo) {
+        
+//        trialCore =
+        
         self.positionTitle = positionDirectionScoreInfo.title
         self.direction = positionDirectionScoreInfo.direction
         self.scoreType = positionToScoreType[positionDirectionScoreInfo.title] ?? .zeroToThree
@@ -180,14 +200,15 @@ class ScoreController: UIViewController {
         setupInitialValues()
     }
     
+    
+    
     private func setupInitialValues() {
         score = nil
         pain = nil
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    
+    
     
     private func setupAddtargets() {
         for btn in scoreBtnGroup.buttons {
@@ -209,13 +230,16 @@ class ScoreController: UIViewController {
         scoreBtnGroup.setSelectedButton(sender.id)
         
         if let selectedScore = Int(scoreBtnGroup.selectedBtnTitle) {
-            score = selectedScore
+            score = Int64(selectedScore)
         } else {
             switch scoreBtnGroup.selectedBtnTitle {
+            
+            case "Hold": score = -1
+                
             case "Red": score = 0
             case "Yellow": score = 1
             case "Green": score = 2
-            case "Hold": score = -1
+
             default: score = nil
             }
         }
@@ -239,10 +263,13 @@ class ScoreController: UIViewController {
     }
 
     @objc func nextTapped() {
-        print("next Tapped!")
-        delegate?.nextAction()
+        // TODO: Core, Detail 초기화 해주기 !!
+        
+//        delegate?.nextAction() // do nothing for now
+        
         print("scoreBtn3 Selected: \(scoreBtn3.isSelected)")
         print("scoreBtn3 wrappedScoreString :\(scoreBtn3.wrappedString)")
+        
         if scoreBtn3.isSelected && scoreBtn3.wrappedString == "Hold" {
             print("move to variation !")
             guard let varTestName = varTestName else {
@@ -254,6 +281,7 @@ class ScoreController: UIViewController {
             delegate?.hideScoreController()
             delegate?.prepareRecording()
         } else {
+
             delegate?.dismissCameraController()
         }
     }
@@ -272,20 +300,120 @@ class ScoreController: UIViewController {
     
     @objc func retryTapped() {
         print("retry tapped!")
+        // TODO: update detail
+        updateTrialDetail()
         
         setSelectedButtonNone()
         delegate?.retryAction()
     }
     
+    private func setScore(title: String, to trialDetail: TrialDetail, score: Int64 = .DefaultValue.trialScore, pain: Bool? = nil) {
+        print("ffff setScore triggered, pain: \(pain)")
+        var converted = Int64.DefaultValue.trialPain
+        
+        if positionWithPainNoAnkle.contains(title) && pain != nil {
+            print("ffff if if setscore called, title: \(title), pain : \(pain)")
+            converted = pain! ? .Value.painFul : .Value.notPainful
+        } else {
+            print("ffff else in setscore called, title: \(title), pain: \(pain) ")
+        }
+        
+        trialDetail.setValue(score, forKey: .TrialDetailStr.score)
+        trialDetail.setValue(converted, forKey: .TrialDetailStr.isPainful)
+        print("ffff score: \(score), pain: \(converted)")
+        trialDetail.saveChanges()
+    }
 
+    private func setupfTrialCoreIfNeeded() {
+
+        guard let trialCore = trialCore else { fatalError("trialCore is nil") }
+
+        
+//        if positionsHasPain.contains(trialCore.title) {
+        if positionWithPainTestTitle[trialCore.title] != nil {
+        print("positionHasPain contains trialCore.title, trialCore.title : \(trialCore.title)")
+            if trialCore.title != PositionList.ankleClearing.rawValue {
+                guard let followingTitle = positionWithPainTestTitle[trialCore.title] else { fatalError("failed to get followingTitle") }
+                print("followingTitle: \(followingTitle)")
+                
+                let screen = trialCore.parentScreen
+                for eachCore in screen.trialCores {
+                    print("eachCore's title: \(eachCore.title)")
+                    
+                    if eachCore.title == followingTitle {
+                        fClearingCore = eachCore
+                        break
+                    }
+                }
+            }
+        } else {
+            print("positionHasPain does not contains \(trialCore.title)")
+            for eachTitle in positionsHasPain {
+                print("name of position that has pain: \(eachTitle)")
+            }
+        }
+        print("setupfTrialCoreIfNeeded has ended!")
+        
+//        guard let fClearingCore = fClearingCore else {
+//            fatalError("fClearingCore is invalid") // ankle Clearing ->
+//        }
+
+        print("fClearingCore.title name0 :\(fClearingCore?.title)")
+    }
+    
+    // clearing Test 가 있는 것들은 어떻게 진행됨 ?
+    // 여기서 정해줘야함 !
     @objc func saveTapped() {
         if saveConditionSatisfied() {
+            
+            guard let score = score else { fatalError("score is nil")}
             print("save Condition satisfied.")
-        delegate?.saveAction(with: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score, pain: pain))
-        
-        navigateToSecondView()
-        } else { print("save Condition not satisfied.")}
+            
+            setupfTrialCoreIfNeeded()
+            
+            // setup Detail both trial and fclearing
+            // Ankle 에서 Nil 나옴..
+            setupTrialDetail()
+            
+            guard let trialCore = trialCore else { fatalError("trialCore is nil") }
+            guard let trialDetail = trialDetail else { fatalError("trialDetail is nil") }
+            
+            
+            setScore(title: trialCore.title, to: trialDetail, score: score, pain: pain)
+            
+            delegate?.saveAction(core: trialCore, detail: trialDetail)
+            trialCore.updateLatestScore()
+            
+            
+            
+            // for pain test only (ankle mobility not contained)
+//            guard let fClearingCore2 = fClearingCore else {
+//                fatalError("fClearingCore in invalid")
+//            }
+//
+//            guard let fClearingDetail2 = fClearingDetail else {
+//                fatalError("fClearingDetail in invalid")
+//            }
+
+            // 어떤게 invalid 일까 ?? 둘다일 수 있다.
+            if fClearingCore != nil && fClearingDetail != nil {
+                print("fClearingCore and fClearingDetail is valid ")
+                print("fClearingCore Name1: \(fClearingCore!.title)")
+                setScore(title: fClearingCore!.title , to: fClearingDetail!, score: .DefaultValue.trialScore, pain: pain)
+                print("fClearingCore Name2: \(fClearingCore!.title)") // 여기까진 정상..
+                delegate?.saveAction(core: fClearingCore!, detail: fClearingDetail!)
+                print("fClearingCore Name3: \(fClearingCore!.title)")
+                fClearingCore!.updateLatestScore()
+            } else {
+                print("fClearingCore or fClearingDetail is invalid ")
+            }
+            
+            navigateToSecondView()
+            
+        } else { print("save Condition not satisfied.") }
     }
+    
+    
     
     // what is required conditions ?
     func saveConditionSatisfied() -> Bool {
@@ -293,7 +421,7 @@ class ScoreController: UIViewController {
             return false }
         
         if painTestName != nil { // if painTest exist,
-            if score == -1 {
+            if score == .Value.hold {
                 return true
             } else {
                 return pain != nil
@@ -302,7 +430,90 @@ class ScoreController: UIViewController {
             return true // if score is selected -> true. or -> false
         }
     }
+    // 로직이.. 좀 꼬였네.. ;;;;
+    // 이거, 일부가 trialCore Helper 에 있어야함.
     
+    func setupTrialDetail() {
+        
+        guard let trialCore = trialCore else { fatalError("trialCOre is nil") }
+        trialDetail = trialCore.returnFreshTrialDetail()
+        
+        guard let fClearingCore = fClearingCore else { return }
+        fClearingDetail = fClearingCore.returnFreshTrialDetail()
+        
+        
+//        fClearingCore =
+//        trialDetail = trialcore
+        
+        print("setupTrialDetail called")
+        // Create New DetailIfNeeded
+        
+//        guard let trialCore = trialCore else { fatalError("trial Core is nil") }
+        
+//        let sortedDetails = trialCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
+//
+//        if sortedDetails.count != 0 {
+//            guard let lastDetailElement = sortedDetails.last else { return }
+//
+//            guard let positionTitle = PositionList(rawValue: trialCore.title) else { fatalError("failed to convert into positionTitle") }
+//
+//            switch positionTitle {
+//
+//            case .ankleClearing:
+//                updateDetail(
+//                    condition: lastDetailElement.isPainful == .DefaultValue.trialPain || lastDetailElement.score == .DefaultValue.trialScore,
+//                    lastElement: lastDetailElement, to: trialCore)
+//
+//
+//            case .flexionClearing, .shoulderClearing, .extensionClearing :
+//                updateDetail(condition: lastDetailElement.isPainful == .DefaultValue.trialPain,
+//                             lastElement: lastDetailElement, to: trialCore)
+//
+//            default:
+//                updateDetail(condition: lastDetailElement.score == .DefaultValue.trialScore, lastElement: lastDetailElement, to: trialCore)
+//            }
+//
+//        } else { // Create one
+//            updateDetail(condition: false, lastElement: nil, to: trialCore)
+//        }
+////        guard let trialCore = trialCore else { fatalError("trial core is nil")}
+//        guard let trialDetail = trialDetail else {
+//          fatalError("trial detail is nil")
+//        }
+//
+//
+//        guard let fClearingCore = fClearingCore else {
+//            return
+//        }
+//        // make fClearingDetail
+//        let sortedfDetails = fClearingCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
+//        if sortedfDetails.count != 0 {
+//            guard let lastfDetailElement = sortedfDetails.last else { return }
+//            if lastfDetailElement.isPainful == .DefaultValue.trialPain {
+//                fClearingDetail = lastfDetailElement
+//            } else {
+//                fClearingDetail = createDetail(core: fClearingCore)
+//            }
+//        } else {
+//            updateDetail(condition: false, lastElement: nil, to: fClearingCore)
+//        }
+//
+//        print("currentState: core: \(trialCore),\n detail: \(trialDetail)")
+    }
+    
+    // if condition is true, use existing one
+//    func updateDetail(condition:Bool, lastElement: TrialDetail?, to trialCore: TrialCore) {
+//        trialDetail = condition ? lastElement : createDetail(core: trialCore)
+//    }
+//
+////    @discardableResult
+//
+//    func createDetail(core: TrialCore) -> TrialDetail{
+//
+//        let numOfDetails = core.trialDetails.count
+//        print("numOfDetails: \(numOfDetails)")
+//        return TrialDetail.save(belongTo: core, trialNo: numOfDetails)
+//    }
     
     private let uploadStateLabel = UILabel().then {
         $0.font = UIFont.preferredFont(forTextStyle: .largeTitle)
@@ -325,11 +536,10 @@ class ScoreController: UIViewController {
     // 이상함. 뭔가 잘못됐음. 원래 secondView 위치는 ?
     public func navigateBackToFirstView() {
         print("navigateBackToFirstView triggered!")
-//        UIView.animate(withDuration: 0.25, animations: {
+
         DispatchQueue.main.async {
             self.secondView.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
         }
-
     }
     
     private func toggleAppearance(shouldHide: Bool) {
@@ -342,6 +552,33 @@ class ScoreController: UIViewController {
             painBtnGroup.isHidden = false
         }
     }
+    
+    
+    private func updateTrialDetail() {
+        guard let trialCore = trialCore else { fatalError("trial Core is nil") }// could be changed.
+        
+        let prevTrialDetails = trialCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
+        
+        if prevTrialDetails.count != 0 {
+            guard let lastDetailElement = prevTrialDetails.last else { fatalError("error:") }
+            
+            if lastDetailElement.score != .DefaultValue.trialScore { // pain 에 대한 조건이 필요.
+                trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
+            }
+            
+        } else {
+            trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
+        }
+    }
+    
+    @discardableResult
+    private func createTrialDetail(with trialNo: Int64) -> TrialDetail {
+        guard let trialCore = trialCore else { fatalError("trialCore is nil") } // could be changed
+        let createdCoreDetail = TrialDetail.save(belongTo: trialCore)
+        createdCoreDetail.setValue(trialNo, forKey: .TrialDetailStr.trialNo)
+        return createdCoreDetail
+    }
+    
     
     private func setupLayout() {
         if view.subviews.count != 0 {
@@ -442,7 +679,6 @@ class ScoreController: UIViewController {
         bottomBtnStackView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
             make.height.equalTo(60)
-//            make.top.equalTo(scoreStackView.snp.bottom).offset(200)
             make.top.equalTo(scoreBtnGroup.snp.bottom).offset(200)
         }
         
@@ -467,6 +703,14 @@ class ScoreController: UIViewController {
             make.top.equalToSuperview().offset(350)
         }
     }
+    
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }
 
 

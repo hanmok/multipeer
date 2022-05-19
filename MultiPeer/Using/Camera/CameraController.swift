@@ -53,7 +53,12 @@ class CameraController: UIViewController {
     var trialDetail: TrialDetail?
     var sequentialPainPosition: String?
     
-    init(positionDirectionScoreInfo: PositionDirectionScoreInfo, connectionManager: ConnectionManager, screen: Screen, trialCore: TrialCore) {
+    // PositionDirectionScoreInfo: title, direction, score, pain
+    
+    init(
+        positionDirectionScoreInfo: PositionDirectionScoreInfo,
+        connectionManager: ConnectionManager,
+        screen: Screen, trialCore: TrialCore) {
         
         self.screen = screen
         self.trialCore = trialCore
@@ -66,9 +71,13 @@ class CameraController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         scoreVC.delegate = self
         connectionManager.delegate = self
-        self.trialDetail = TrialDetail.save(belongTo: trialCore)
+
+        setupTrialDetail(with: trialCore)
     }
     
+    private func setupTrialDetail(with core: TrialCore) {
+        trialDetail = trialCore.returnFreshTrialDetail()
+    }
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -82,28 +91,7 @@ class CameraController: UIViewController {
     
     
     
-    private func updateTrialDetail() {
-
-        let prevTrialDetails = trialCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
-        
-        if prevTrialDetails.count != 0 {
-            guard let lastDetailElement = prevTrialDetails.last else { fatalError("error:") }
-            
-            if lastDetailElement.score != .DefaultValue.trialScore { // pain 에 대한 조건이 필요.
-                trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
-            }
-            
-        } else {
-            trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
-        }
-    }
     
-    @discardableResult
-    private func createTrialDetail(with trialNo: Int64) -> TrialDetail {
-        let createdCoreDetail = TrialDetail.save(belongTo: trialCore)
-        createdCoreDetail.setValue(trialNo, forKey: .TrialDetailStr.trialNo)
-        return createdCoreDetail
-    }
     
     private func setupNavigationBar() {
         DispatchQueue.main.async {
@@ -300,7 +288,11 @@ class CameraController: UIViewController {
         scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
     }
     
+    // TODO: need to change trialCore of scoreVC here
     private func showScoreView() {
+        scoreVC.setupTrialCore(with: trialCore )
+//        scoreVC.trialCore = trialCore
+        
         UIView.animate(withDuration: 0.4) {
             self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
         }
@@ -715,6 +707,14 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
         self.present(actionSheet, animated: true, completion: nil)
     }
+    
+    private func updateTrialCore() {
+        
+    }
+    
+    private func updateTrialDetail() {
+        
+    }
 }
 
 // MARK: - Connection Manager Delegate
@@ -772,6 +772,10 @@ extension CameraController: ScoreControllerDelegate {
         removeChildrenVC()
         prepareScoreView()
         makeTrialDetail()
+        self.scoreVC.navigateBackToFirstView()
+        
+//        self.updateTrialCore()
+        self.updateTrialDetail()
     }
     
     private func makeTrialDetail() {
@@ -796,36 +800,27 @@ extension CameraController: ScoreControllerDelegate {
     }
     
     
-    func saveAction(with info: PositionDirectionScoreInfo) {
+    func saveAction(core: TrialCore, detail: TrialDetail) {
         
-        // TODO: Upload to Server, moving forward to next screen
-        guard let validVideoUrl = videoUrl else {return }
+        guard let validVideoUrl = videoUrl else { return }
         
         let trialId = UUID()
+        guard let direction = PositionDirection(rawValue: core.direction) else { return }
         
-        let key = mergeKeys(title: info.title, direction: info.direction.rawValue)
+        let optionalScore = detail.score.scoreToInt()
+        let optionalPain = detail.isPainful .painToBool()
         
-        // trial Starts From zero ?? or 1 ?
-        if trialDictionary[key] != nil {
-            trialDictionary[key]! += 1
-        } else {
-            trialDictionary[key] = 1
-        }
+        print("Data to post \n title: \(core.title),\n direction: \(direction.rawValue), \n score: \(String(describing: optionalScore)), \n pain: \(optionalPain), \n trialCount: trialCount: \(detail.trialNo),\n trialId: trialId: \(trialId)")
         
         APIManager.shared.postRequest(
             positionDirectionScoreInfo: PositionDirectionScoreInfo(
-                title: info.title,
-                direction: info.direction,
-                score: info.score,
-                pain: info.pain),
-            videoUrl: validVideoUrl,
-            trialCount: trialDictionary[key]!,
-            trialId: trialId,
-            angle: .front // need to specify within positionController
-        )
+                title: trialCore.title, direction: direction, score: optionalScore, pain: optionalPain),
+            trialCount: Int(detail.trialNo), trialId: trialId,
+            videoUrl: validVideoUrl, angle: .front)
         
-        //        connectionManager.send
+        
     }
+    
     
     /// merge Position Title + Direction  into Unique Key
     private func mergeKeys(title: String, direction: String) -> String {
@@ -833,9 +828,9 @@ extension CameraController: ScoreControllerDelegate {
     }
     
     
-    func moveUp() {
-        // TODO: Move ScoreController up
-    }
+//    func moveUp() {
+//        // TODO: Move ScoreController up
+//    }
     
     // triggered when 'Next' Tapped
     func updatePosition(with positionDirectionScoreInfo: PositionDirectionScoreInfo) {
@@ -844,11 +839,13 @@ extension CameraController: ScoreControllerDelegate {
         
         self.direction = positionDirectionScoreInfo.direction
         
-        // 음.. 다시 첫단계로 돌아가야해 .. (화면 )
         self.scoreVC.setupAgain(with: positionDirectionScoreInfo)
         self.scoreVC.navigateBackToFirstView()
   
     }
+    
+    
+    
     
     func hideScoreController() {
         hideScoreView()
@@ -864,16 +861,5 @@ extension CameraController: ScoreControllerDelegate {
     
     func dismissCameraController() {
         delegate?.dismissCamera() // CameraController Delegate
-    }
-}
-
-
-
-extension Int64 {
-    
-    struct DefaultValue {
-        static let trialScore = Int64(-100)
-        
-        static let trialPain = Int64(-200)
     }
 }

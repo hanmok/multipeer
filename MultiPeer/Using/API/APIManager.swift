@@ -12,19 +12,19 @@ class APIManager {
     
     static let shared = APIManager()
     
-    func postRequest(positionDirectionScoreInfo: PositionDirectionScoreInfo, videoUrl: URL, trialCount: Int, trialId: UUID, angle: CapturingAngle) {
+    func postRequest(positionDirectionScoreInfo: PositionDirectionScoreInfo,  trialCount: Int, trialId: UUID, videoUrl: URL, angle: CapturingAngle) {
         let detailInfo = positionDirectionScoreInfo
-        print("post request!! ")
-        print("title : \(detailInfo.title)")
-        print("direction: \(detailInfo.direction)")
-        print("score: \(String(describing: detailInfo.score))")
-        print("pain: \(String(describing: detailInfo.pain))")
-        print("video: \(videoUrl)")
+//        print("post request!! ")
+//        print("title : \(detailInfo.title)")
+//        print("direction: \(detailInfo.direction)")
+//        print("score: \(String(describing: detailInfo.score))")
+//        print("pain: \(String(describing: detailInfo.pain))")
+//        print("video: \(videoUrl)")
     }
 }
 
-// 이거.. 지금은 딱히 손 안봐도 되나..? 봐야할걸 ??
-public var trialDictionary: [String: Int] = [:]
+// 이거.. 지금은 딱히 손 안봐도 되나..? 봐야할걸 ?? 글쎄..
+//public var trialDictionary: [String: Int] = [:]
 
 
 /*

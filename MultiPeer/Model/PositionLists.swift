@@ -124,6 +124,12 @@ public enum PositionWithPain {
     case flexionClearing
 }
 
+public let positionWithPainNoAnkle = [
+    PositionList.shoulderClearing.rawValue,
+    PositionList.flexionClearing.rawValue,
+    PositionList.extensionClearing.rawValue
+]
+
 // 둘중 하나는 없애는게 ..
 // 이것도 안쓰고있음.
 public let positionsHasPain = [
@@ -133,7 +139,7 @@ public let positionsHasPain = [
     PositionList.extensionClearing.rawValue
 ]
 
-public let positionWithPainTestTitle: [String: String ] = [
+public let positionWithPainTestTitle: [String: String] = [
     PositionList.ankleClearing.rawValue : PositionList.ankleClearing.rawValue,
     PositionList.shoulderMobility.rawValue: PositionList.shoulderClearing.rawValue,
     PositionList.trunkStabilityPushUp.rawValue: PositionList.extensionClearing.rawValue,

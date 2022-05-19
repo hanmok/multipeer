@@ -14,7 +14,9 @@ extension TrialDetail: RemovableProtocol {}
 extension TrialDetail {
     
     @discardableResult
-    static func save(belongTo trialCore: TrialCore) -> TrialDetail {
+    static func save(belongTo trialCore: TrialCore, trialNo: Int = 0) -> TrialDetail {
+        print("creating trialdetail with trialNo: \(trialNo)")
+        
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             fatalError("fail to cast to appDelegate")
         }
@@ -28,7 +30,7 @@ extension TrialDetail {
         guard let trialDetail = managedObject as? TrialDetail else { fatalError() }
 //        trialDetail.setValue(1, forKey: .TrialDetailStr.score)
         trialDetail.parentTrialCore = trialCore
-        
+        trialDetail.setValue(trialNo, forKey: .TrialDetailStr.trialNo)
         do {
             try managedContext.save()
             print("successfully saved trial : \(trialDetail)")
@@ -49,7 +51,7 @@ extension TrialDetail {
     
     public var score: Int64 {
         get {
-            self.parentTrialCore.updateLatestScore()
+//            self.parentTrialCore.updateLatestScore()
             return self.score_
         }
         set {
@@ -59,11 +61,24 @@ extension TrialDetail {
     
     public var isPainful: Int64 {
         get {
-            self.parentTrialCore.updateLatestPain()
+//            self.parentTrialCore.updateLatestPain()
             return self.isPainful_
         }
         set {
             self.isPainful_ = newValue
         }
     }
+    
+    public func saveChanges() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError("fail to cast to appDelegate")
+        }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+
+        managedContext.saveCoreData()
+    }
+    
 }
+
+//extension NSManagedObject

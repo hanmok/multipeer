@@ -105,7 +105,7 @@ class PositionController: UIViewController {
         addNotificationObservers()
         
         updateScoreLabels()
-        testCode()
+//        testCode()
     }
     
     private func testCode() { // replacement for Playground ..
@@ -138,6 +138,7 @@ class PositionController: UIViewController {
             if index == 5 { eachTrial.latestScore = 2 } // For test
             DispatchQueue.main.async {
                 self.scoreBtnViews[index].scoreLabel.text = eachTrial.finalResult
+                print("updateScoreLabels score: \(eachTrial.finalResult)")
             }
         }
     }
@@ -160,9 +161,9 @@ class PositionController: UIViewController {
     
     
     @objc func subjectBtnTapped(_ sender: UIButton) {
-moveToSubjectController()
-
+        moveToSubjectController()
     }
+    
     private func moveToSubjectController() {
         let subjectSettingVC = SubjectController()
         subjectSettingVC.basicDelegate = self
@@ -172,6 +173,7 @@ moveToSubjectController()
     
     
     @objc func showConnectivityAction(_ sender: UIButton) {
+        print("connect btn tapped!!")
         let actionSheet = UIAlertController(title: "Connect Camera", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
         
         actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
@@ -195,7 +197,8 @@ moveToSubjectController()
         let direction = positionDirectionScoreInfo.direction
         let score = positionDirectionScoreInfo.score
         
-        selectedTrialCore = trialCores.filter { $0.title == title }.first
+        selectedTrialCore = trialCores.filter { $0.title == title && $0.direction == direction.rawValue}.first
+        // direction !!!
         
         guard let selectedTrialCore = selectedTrialCore else {
             self.moveToSubjectController()
@@ -257,12 +260,13 @@ moveToSubjectController()
             self.moveToSubjectController()
             return
         }
-        
-        DispatchQueue.main.async {
+            
+            print("trialCore passed to cameracontroller : \(selectedTrial.title) \(selectedTrial.direction)")
+        // direction 설정이 잘못됨 ;;;
+            DispatchQueue.main.async {
             self.cameraVC = CameraController(
                 positionDirectionScoreInfo: positionDirectionScoreInfo,
                 connectionManager: self.connectionManager,
-//                subject:subject,
                 screen: screen,
                 trialCore: selectedTrial
             )
@@ -285,12 +289,12 @@ moveToSubjectController()
     private func addNotificationObservers() {
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(presentCamera(_:)),
+            selector: #selector(notifiedPresentCamera(_:)),
             name: .presentCameraKey, object: nil)
     }
     
     /// triggered by Notification
-    @objc func presentCamera(_ notification: Notification) {
+    @objc func notifiedPresentCamera(_ notification: Notification) {
         print("presentCamera triggered by observing notification")
         
         guard let subject = subject,
@@ -309,7 +313,9 @@ moveToSubjectController()
         guard let selectedTrialCore = selectedTrialCore else {
             return
         }
-
+        
+        print("trialCore passed to cameracontroller : \(selectedTrialCore.title) \(selectedTrialCore.direction)")
+        
         DispatchQueue.main.async {
             let cameraVC = CameraController(
                 positionDirectionScoreInfo: positionWithDirectionInfo,
@@ -560,6 +566,7 @@ extension PositionController: CameraControllerDelegate {
                 }
             }
         }
+        updateScoreLabels()
     }
 }
 

@@ -14,6 +14,23 @@ send data using
 -100 : TrialDetail, TrialCore
 
 
+ScoreController 에서, Clearing Test 가 있는 경우에는 request 를 각 경우에 대해 보내야함 (두번)
+
+
+
+
+
+
+
+Clearing,
+Variation,
+Ankle Mobility
+
+
+
+
+
+
 
 folder Name: 보관함
 folder Name: 삭제된 메모
