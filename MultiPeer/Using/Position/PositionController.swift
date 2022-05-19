@@ -105,6 +105,14 @@ class PositionController: UIViewController {
         addNotificationObservers()
         
         updateScoreLabels()
+        testCode()
+    }
+    
+    private func testCode() { // replacement for Playground ..
+        var ints = [1,5,6,3,4,4,0]
+
+        ints = ints.sorted { $0 < $1 }
+        print("ints: \(ints)")
     }
     
     private func updateSubjectWithScreen(subject: Subject, screen: Screen) {

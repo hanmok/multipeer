@@ -3,7 +3,34 @@
 
 create Trial Detail for specific conditions (score != nil, pain != nil for clearing Tests)
 
-
+일단 둘다 -100 으로 세팅..
 make default value of coreData score and pain    as Static value
+
 send data using
+
+
+
+
+-100 : TrialDetail, TrialCore
+
+
+
+folder Name: 보관함
+folder Name: 삭제된 메모
+
+        folder Name: Some subfolder
+        folder Name: Another subfolder
+
+        folder Name: Skansksk
+        folder Name: Ummm
+        folder Name: Ummm
+        folder Name: Hello
+        folder Name: Aaaaa
+            folder Name: Bbbbb
+        folder Name: Aaaaa
+        folder Name: Some folder inside
+        folder Name: Not working?!!
+        folder Name: Hello
+folder Name: 폴더
+
 

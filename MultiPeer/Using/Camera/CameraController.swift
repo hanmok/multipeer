@@ -78,25 +78,24 @@ class CameraController: UIViewController {
         setupLayout()
         addNotificationObservers()
         updateInitialConnectionState()
-        
-        //        prepareScoreView()
     }
+    
+    
     
     private func updateTrialDetail() {
 
-        
         let prevTrialDetails = trialCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
         
         if prevTrialDetails.count != 0 {
-            guard let lastElement = prevTrialDetails.last else { fatalError("error:") }
-            if lastElement.score != -2 { // pain 에 대한 조건이 필요. 
+            guard let lastDetailElement = prevTrialDetails.last else { fatalError("error:") }
+            
+            if lastDetailElement.score != .DefaultValue.trialScore { // pain 에 대한 조건이 필요.
                 trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
             }
             
         } else {
             trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
         }
-        
     }
     
     @discardableResult
@@ -865,5 +864,16 @@ extension CameraController: ScoreControllerDelegate {
     
     func dismissCameraController() {
         delegate?.dismissCamera() // CameraController Delegate
+    }
+}
+
+
+
+extension Int64 {
+    
+    struct DefaultValue {
+        static let trialScore = Int64(-100)
+        
+        static let trialPain = Int64(-200)
     }
 }
