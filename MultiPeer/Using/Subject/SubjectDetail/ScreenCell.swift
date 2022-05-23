@@ -16,6 +16,7 @@ import Then
 //}
 
 class ScreenCell: RemovableCell {
+//class ScreenCell: UICollectionViewCell {
     
 //    weak var delegate: ScreenCellDelegate?
     
@@ -116,4 +117,90 @@ class ScreenCell: RemovableCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+
+
+
+class ScreenTableCell: UITableViewCell {
+    
+    
+    var viewModel: ScreenViewModel? {
+            didSet {
+                configureLayout()
+            }
+        }
+    
+    
+    private let sequenceIndexLabel = UILabel().then {
+        $0.textAlignment = .center
+        $0.textColor = .cyan
+        $0.backgroundColor = .gray
+    }
+    private let dateLabel = UILabel().then {
+        $0.textAlignment = .center
+        $0.textColor = .cyan
+        $0.backgroundColor = .gray
+    }
+    private let scoreLabel = UILabel().then {
+        $0.textColor = .red
+        $0.textAlignment = .center
+        $0.backgroundColor = .darkGray
+    }
+    
+    static let identifier = "screenTableCell"
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupLayout()
+        makeSelfClickable()
+        
+    }
+    
+    private func setupLayout() {
+        [sequenceIndexLabel, dateLabel, scoreLabel].forEach { addSubview($0)}
+        
+        sequenceIndexLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview()
+//            make.top.equalToSuperview()
+            make.width.equalTo(50)
+            make.top.bottom.equalToSuperview().inset(2)
+        }
+        
+        dateLabel.snp.makeConstraints { make in
+            make.leading.equalTo(sequenceIndexLabel.snp.trailing).offset(20)
+//            make.top.equalToSuperview()
+            make.width.equalToSuperview().dividedBy(2)
+            make.top.bottom.equalToSuperview().inset(2)
+        }
+        
+        
+        scoreLabel.snp.makeConstraints { make in
+            make.leading.equalTo(dateLabel.snp.trailing).offset(20)
+            make.trailing.equalToSuperview()
+            make.top.bottom.equalToSuperview().inset(2)
+        }
+    }
+    
+    private func makeSelfClickable() {
+        isUserInteractionEnabled = true
+    }
+    
+    private func configureLayout() {
+        guard let vm = viewModel else { return }
+        
+        sequenceIndexLabel.text = vm.sequenceIndex
+        print("sequenceIndex: \(vm.sequenceIndex)")
+        dateLabel.text = vm.date
+        scoreLabel.text = vm.score
+        print("vm.score: \(vm.score)")
+    }
+    
+    
+    
+    
 }

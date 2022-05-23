@@ -13,8 +13,20 @@ import Then
 class RemovableCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     var cellLabel: UILabel!
     var pan: UIPanGestureRecognizer!
-    var deleteLabel1: UILabel!
-    var deleteLabel2: UILabel!
+//    var deleteLabel1: UILabel!
+    
+    private var deleteLabel1 = UILabel().then {
+        $0.backgroundColor = .magenta
+        $0.text = "delete"
+        $0.textColor = UIColor.white
+    }
+    
+//    var deleteLabel2: UILabel!
+    var deleteLabel2 = UILabel().then {
+        $0.text = "delete"
+        $0.textColor = UIColor.white
+        $0.backgroundColor = .cyan
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,12 +35,15 @@ class RemovableCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-        commonInit()
+//        commonInit()
     }
     
     private func commonInit() {
-        self.contentView.backgroundColor = UIColor.gray
-        self.backgroundColor = UIColor.red
+//        self.contentView.backgroundColor = UIColor.gray
+//        self.backgroundColor = UIColor.red
+        // basic color
+//        self.backgroundColor = .blue
+
 
         cellLabel = UILabel()
         cellLabel.textColor = UIColor.white
@@ -39,14 +54,14 @@ class RemovableCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             make.leading.top.trailing.bottom.equalToSuperview()
         }
         
-        deleteLabel1 = UILabel()
-        deleteLabel1.text = "delete"
-        deleteLabel1.textColor = UIColor.white
+//        deleteLabel1 = UILabel()
+//        deleteLabel1.text = "delete"
+//        deleteLabel1.textColor = UIColor.white
         self.insertSubview(deleteLabel1, belowSubview: self.contentView)
 
-        deleteLabel2 = UILabel()
-        deleteLabel2.text = "delete"
-        deleteLabel2.textColor = UIColor.white
+//        deleteLabel2 = UILabel()
+//        deleteLabel2.text = "delete"
+//        deleteLabel2.textColor = UIColor.white
         self.insertSubview(deleteLabel2, belowSubview: self.contentView)
 
         pan = UIPanGestureRecognizer(target: self, action: #selector(onPan(_:)))
@@ -61,8 +76,11 @@ class RemovableCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             let p: CGPoint = pan.translation(in: self)
             let width = self.contentView.frame.width
             let height = self.contentView.frame.height
+            
             self.contentView.frame = CGRect(x: p.x, y: 0, width: width, height: height)
+            
             self.deleteLabel1.frame = CGRect(x: p.x - deleteLabel1.frame.size.width - 10, y: 0, width: 100, height: height)
+            
             self.deleteLabel2.frame = CGRect(x: p.x + width + deleteLabel2.frame.size.width, y: 0, width: 100, height: height)
         }
     }
@@ -86,6 +104,4 @@ class RemovableCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             }
         }
     }
-    
-    
 }

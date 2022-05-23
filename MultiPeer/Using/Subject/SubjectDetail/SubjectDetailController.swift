@@ -44,6 +44,15 @@ class SubjectDetailController: UIViewController {
         return collectionView
     }()
     
+    private let screenTableView = UITableView()
+    
+    
+    private func registerTableView() {
+        screenTableView.register(ScreenTableCell.self, forCellReuseIdentifier: ScreenTableCell.identifier)
+        screenTableView.delegate = self
+        screenTableView.dataSource = self
+        screenTableView.rowHeight = 60
+    }
     
     private func registerCollectionView(customCollectionView: UICollectionView) {
         customCollectionView.register(ScreenCell.self, forCellWithReuseIdentifier: reuseId)
@@ -184,7 +193,8 @@ class SubjectDetailController: UIViewController {
             })
         }
         
-        reloadCollectionView()
+//        reloadCollectionView()
+        reloadTableView()
         
         print("after fetch and reload, fetched screen count: \(screens.count)")
     }
@@ -194,17 +204,24 @@ class SubjectDetailController: UIViewController {
             self.screenCollectionView.reloadData()
         }
     }
+    private func reloadTableView() {
+        DispatchQueue.main.async {
+            self.screenTableView.reloadData()
+        }
+    }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         fetchAndReloadScreens()
         registerCollectionView(customCollectionView: screenCollectionView)
+        registerTableView()
         screenCollectionView.reloadData()
         setupLayout()
         configureLayout()
 
     }
+    
     private let btnStackView = UIStackView().then {
             $0.distribution = .fillEqually
             $0.spacing = 10
@@ -228,7 +245,8 @@ class SubjectDetailController: UIViewController {
         [imageView, nameLabel, detailInfoLabel, phoneLabel,
 //         makeBtn, continueBtn, detailBtn, deleteBtn,
          btnStackView,
-         screenCollectionView
+//         screenCollectionView
+         screenTableView
         ].forEach { self.view.addSubview($0)
         }
         
@@ -274,12 +292,21 @@ class SubjectDetailController: UIViewController {
             make.height.equalTo(50)
         }
         
-        screenCollectionView.snp.makeConstraints { make in
+        screenTableView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(20)
             make.top.equalTo(imageView.snp.bottom).offset(30)
             make.trailing.equalToSuperview().offset(-20)
             make.bottom.equalTo(continueBtn.snp.top).offset(-20)
         }
+        
+//        screenCollectionView.snp.makeConstraints { make in
+//            make.leading.equalToSuperview().offset(20)
+//            make.top.equalTo(imageView.snp.bottom).offset(30)
+//            make.trailing.equalToSuperview().offset(-20)
+//            make.bottom.equalTo(continueBtn.snp.top).offset(-20)
+//        }
+        
+        
     }
     
     
@@ -330,11 +357,55 @@ extension SubjectDetailController: UICollectionViewDelegateFlowLayout, UICollect
     }
     
     func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-// set selectedIndex none
+
+//         set selectedIndex none
         selectedIndex = IndexPath(row: -1, section: 0)
         Screen.deleteSelf(screens[indexPath.row])
-        
+
         fetchAndReloadScreens()
+
     }
     
+}
+
+extension SubjectDetailController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return screens.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: ScreenTableCell.identifier, for: indexPath) as! ScreenTableCell
+        
+        cell.viewModel = ScreenViewModel(screen: screens[indexPath.row], index: indexPath.row)
+        
+        if selectedIndex == indexPath { cell.backgroundColor = .red } else { cell.backgroundColor = .clear }
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let delete = UIContextualAction(style: .normal, title: "") { action, view, completionhandler in
+            
+
+            
+//            tableView.deleteRows(at: [indexPath], with: .fade)
+            let screenToDelete = self.screens[indexPath.row]
+//            Screen.deleteSelf(self.screens[indexPath.row])
+            Screen.deleteSelf(screenToDelete)
+//            self.screens.remove(at: indexPath.row)
+            self.subject.screens.remove(screenToDelete)
+            self.fetchAndReloadScreens()
+//            tableView.reloadData()
+            completionhandler(true)
+        }
+        
+        delete.image = UIImage(systemName: "trash.fill")
+        delete.backgroundColor = .red
+        
+        
+        let rightSwipe = UISwipeActionsConfiguration(actions: [delete])
+        return rightSwipe
+    }
+    
+
 }

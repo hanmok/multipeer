@@ -17,6 +17,7 @@ import CoreData
 
 protocol CameraControllerDelegate: AnyObject {
     func dismissCamera()
+    func makeSound()
 }
 
 // CameraController don't need to know 'score'
@@ -26,12 +27,13 @@ class CameraController: UIViewController {
     var positionTitle: String
     var direction: PositionDirection
     var trialCore: TrialCore
-    var systemSoundID: SystemSoundID = 1057
+//    var systemSoundID: SystemSoundID = 1057
+    var systemSoundID: SystemSoundID = 1016
     
     var screen: Screen
     
     weak var delegate: CameraControllerDelegate?
-    
+//    let soundService = SoundService()
     var connectionManager: ConnectionManager
     
     var updatingDurationTimer = Timer()
@@ -87,6 +89,8 @@ class CameraController: UIViewController {
         setupLayout()
         addNotificationObservers()
         updateInitialConnectionState()
+        
+//        SoundService.shard.someFunc()
     }
     
     
@@ -411,32 +415,50 @@ class CameraController: UIViewController {
     }
     
     @objc private func triggerCountDownTimer() {
+        print("triggerCoundDownTimerFlag 0 called")
         DispatchQueue.main.async {
             self.durationLabel.text = "00:00"
             self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
         }
         
         decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+            self?.delegate?.makeSound()
+//            print("triggerCoundDownTimerFlag 1 called")
             guard let `self` = self else { return }
+            print("triggerCoundDownTimerFlag 2 called")
+            
             if self.decreasingCount > 0 {
-                
+                print("triggerCoundDownTimerFlag 3 called")
                 self.decreasingCount -= 1
-                //                AudioServicesPlaySystemSound(self.systemSoundID)
-                AudioServicesPlaySystemSound(1057)
-                DispatchQueue.main.async {
-                    if self.decreasingCount == 0 {
-                        // make sound
-                        AudioServicesPlaySystemSound(self.systemSoundID)
-                        AudioServicesPlaySystemSound(1000)
+//                SoundService.shard.someFunc()
+                AudioServicesPlaySystemSound(self.systemSoundID)
+                
+                
+                print("triggerCoundDownTimerFlag 4 called")
+                
+                if self.decreasingCount == 0 { // ????
+                    print("triggerCoundDownTimerFlag 5 called")
+                    AudioServicesPlaySystemSound(self.systemSoundID)
+                    DispatchQueue.main.async {
                         self.recordingTimerBtn.setTitle("Recording!", for: .normal)
-                    } else {
-                        // make sound
-                        AudioServicesPlaySystemSound(self.systemSoundID)
-                        AudioServicesPlaySystemSound(1052)
-                        self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
                     }
-                }
-            } else {
+                } else {
+                    // 세번 호출되어야함
+                        // 왜 두번밖에 호출되지 않았지 ?
+                        print("triggerCoundDownTimerFlag 6 called, decreasingCount : \(self.decreasingCount)")
+                        // make sound
+                        
+                        AudioServicesPlaySystemSound(self.systemSoundID)
+//                        AudioServicesPlaySystemSound(1104)
+                        
+//                        AudioServicesPlaySystemSound(1052)
+                        DispatchQueue.main.async {
+                        self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
+                        }
+                    }
+//                }
+            } else { // self.decreasingCount <= 0
+                print("triggerCoundDownTimerFlag 7 called")
                 self.decreasingTimer.invalidate()
                 //                DispatchQueue.main.async {
                 //                    self.timerRecordingBtn.setTitle("Recording!", for: .normal)
