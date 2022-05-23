@@ -151,7 +151,7 @@ class SubjectController: UIViewController {
         view.addSubview(addSubjectBtn)
         addSubjectBtn.snp.makeConstraints { make in
             make.trailing.bottom.equalTo(view.safeAreaLayoutGuide).offset(-30)
-            make.width.height.equalTo(50)
+            make.width.height.equalTo(60)
         }
     }
 }

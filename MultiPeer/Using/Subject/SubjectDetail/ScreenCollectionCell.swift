@@ -15,7 +15,7 @@ import Then
 //    func cellPressed()
 //}
 
-class ScreenCell: RemovableCell {
+class ScreenCollectionCell: RemovableCell {
 //class ScreenCell: UICollectionViewCell {
     
 //    weak var delegate: ScreenCellDelegate?
@@ -130,6 +130,15 @@ class ScreenTableCell: UITableViewCell {
                 configureLayout()
             }
         }
+    
+    public var isSelected_: Bool {
+        get {
+            self.isSelected
+        }
+        set {
+            self.isSelected = newValue
+        }
+    }
     
     
     private let sequenceIndexLabel = UILabel().then {
