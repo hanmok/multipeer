@@ -1,24 +1,18 @@
 //
-//  ScreenCell.swift
+//  ScreenTableCell.swift
 //  MultiPeer
 //
-//  Created by 핏투비 iOS on 2022/05/13.
+//  Created by 이한목 on 2022/05/23.
 //
-
 
 import UIKit
 import SnapKit
 import Then
 
 
-//protocol ScreenCellDelegate: AnyObject {
-//    func cellPressed()
-//}
 
-class ScreenCollectionCell: RemovableCell {
-//class ScreenCell: UICollectionViewCell {
+class ScreenTableCell: UITableViewCell {
     
-//    weak var delegate: ScreenCellDelegate?
     
     var viewModel: ScreenViewModel? {
             didSet {
@@ -35,21 +29,6 @@ class ScreenCollectionCell: RemovableCell {
         }
     }
     
-//    override func setSelected(_ selected: Bool, animated: Bool) {
-//        super.setSelected(selected, animated: animated)
-//
-//        if selected {
-//            contentView. backgroundColor = UIColor. green.
-//        } else {
-//            contentView. backgroundColor = UIColor. blue.
-//        }
-//    }
-        
-        
-    
-    public func paintSelf() {
-//        backgroundColor = .magenta
-    }
     
     private let sequenceIndexLabel = UILabel().then {
         $0.textAlignment = .center
@@ -67,16 +46,17 @@ class ScreenCollectionCell: RemovableCell {
         $0.backgroundColor = .darkGray
     }
     
+    static let identifier = "screenTableCell"
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupLayout()
-        makeSelfClickable()
-
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    private func makeSelfClickable() {
-       isUserInteractionEnabled = true
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupLayout()
+        makeSelfClickable()
+        
     }
     
     private func setupLayout() {
@@ -86,22 +66,29 @@ class ScreenCollectionCell: RemovableCell {
             make.leading.equalToSuperview()
 //            make.top.equalToSuperview()
             make.width.equalTo(50)
-            make.top.bottom.equalToSuperview().inset(2)
+//            make.top.bottom.equalToSuperview().inset(2)
+            make.top.bottom.equalToSuperview()
         }
         
         dateLabel.snp.makeConstraints { make in
             make.leading.equalTo(sequenceIndexLabel.snp.trailing).offset(20)
 //            make.top.equalToSuperview()
             make.width.equalToSuperview().dividedBy(2)
-            make.top.bottom.equalToSuperview().inset(2)
+//            make.top.bottom.equalToSuperview().inset(2)
+            make.top.bottom.equalToSuperview()
         }
         
         
         scoreLabel.snp.makeConstraints { make in
             make.leading.equalTo(dateLabel.snp.trailing).offset(20)
             make.trailing.equalToSuperview()
-            make.top.bottom.equalToSuperview().inset(2)
+//            make.top.bottom.equalToSuperview().inset(2)
+            make.top.bottom.equalToSuperview()
         }
+    }
+    
+    private func makeSelfClickable() {
+        isUserInteractionEnabled = true
     }
     
     private func configureLayout() {
@@ -113,10 +100,4 @@ class ScreenCollectionCell: RemovableCell {
         scoreLabel.text = vm.score
         print("vm.score: \(vm.score)")
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
-
-
