@@ -57,6 +57,15 @@ class CameraController: UIViewController {
     
     // PositionDirectionScoreInfo: title, direction, score, pain
     
+    
+    
+    
+    // MARK: - LifeCycle
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     init(
         positionDirectionScoreInfo: PositionDirectionScoreInfo,
         connectionManager: ConnectionManager,
@@ -77,11 +86,7 @@ class CameraController: UIViewController {
         setupTrialDetail(with: trialCore)
     }
     
-    private func setupTrialDetail(with core: TrialCore) {
-        trialDetail = trialCore.returnFreshTrialDetail()
-    }
     
-    // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
@@ -93,10 +98,22 @@ class CameraController: UIViewController {
 //        SoundService.shard.someFunc()
     }
     
+    deinit {
+        print("cameraController deinit triggered!")
+        if self.children.count > 0 {
+            let viewControllers: [UIViewController] = self.children
+            for vc in viewControllers {
+                vc.willMove(toParent: nil)
+                vc.view.removeFromSuperview()
+                vc.removeFromParent()
+            }
+        }
+    }
     
     
     
     
+
     private func setupNavigationBar() {
         DispatchQueue.main.async {
             if self.direction == .neutral {
@@ -107,11 +124,16 @@ class CameraController: UIViewController {
         }
     }
     
+    private func setupTrialDetail(with core: TrialCore) {
+        trialDetail = trialCore.returnFreshTrialDetail()
+    }
+    
+    // MARK: - TIMER
     private func resetTimer() {
         durationLabel.text = "00:00"
     }
     
-    
+    // MARK: - Connection
     func updateInitialConnectionState() {
         print(#file, #line)
         switch connectionManager.connectionState {
@@ -125,6 +147,8 @@ class CameraController: UIViewController {
             }
         }
     }
+    
+    // MARK: - ScoreController
     
     // MARK: - Notification
     private func addNotificationObservers() {
@@ -158,7 +182,6 @@ class CameraController: UIViewController {
     
     
     @objc func stopRecordingNotificationTriggered(_ notification: Notification) {
-        //        print("flag2")
         print("stopRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? PositionDirection,
@@ -230,17 +253,6 @@ class CameraController: UIViewController {
         }
     }
     
-    deinit {
-        print("cameraController deinit triggered!")
-        if self.children.count > 0 {
-            let viewControllers: [UIViewController] = self.children
-            for vc in viewControllers {
-                vc.willMove(toParent: nil)
-                vc.view.removeFromSuperview()
-                vc.removeFromParent()
-            }
-        }
-    }
     
     // MARK: - Button Actions
     private func setupAddTargets() {
@@ -502,6 +514,71 @@ class CameraController: UIViewController {
         removeChildrenVC()
     }
     
+    
+    
+    //MARK: Reconnect! when it ends.
+    func showConnectivityAction() {
+        let actionSheet = UIAlertController(title: "Connect Camera", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
+            self.connectionManager.host()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
+            self.connectionManager.join()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(actionSheet, animated: true, completion: nil)
+    }
+    
+    
+    // MARK: - UI Properties
+    
+//    private let testScoreView = UIButton(frame: CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)).then { $0.backgroundColor = .orange }
+    
+    private let bottomView = UIView().then { $0.backgroundColor = .black }
+    private let topView = UIView().then { $0.backgroundColor = .black }
+    private let positionNameLabel = UILabel().then {
+        $0.textColor = .white
+        //        $0.textAlignment = .center
+        $0.textAlignment = .left
+        $0.font = UIFont.systemFont(ofSize: 20)
+    }
+    
+    private let imageView = UIImageView()
+    
+    private var videoUrl: URL?
+    
+    private let connectionStateLabel = UILabel().then {
+        
+        $0.textColor = .white
+    }
+    
+    private let recordingBtn = UIButton().then {
+        $0.setTitle("Record", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+    }
+    
+    private let durationLabel = UILabel().then {
+        $0.textColor = .white
+        $0.text = "00:00"
+        $0.textAlignment = .center
+        $0.backgroundColor = .magenta
+    }
+    
+    private let dismissBtn = UIButton().then {
+        $0.setTitle("Dismiss!", for: .normal)
+    }
+    
+    private let recordingTimerBtn = UIButton().then {
+        $0.setTitle("Record in 3s", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+    }
+    
+    
+    
+    
     private func removeChildrenVC() {
         
         guard let previewVC = previewVC else {
@@ -600,74 +677,9 @@ class CameraController: UIViewController {
             make.height.equalTo(50)
         }
     }
-    
-    //MARK: Reconnect! when it ends.
-    func showConnectivityAction() {
-        let actionSheet = UIAlertController(title: "Connect Camera", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
-        
-        actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
-            self.connectionManager.host()
-        }))
-        
-        actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
-            self.connectionManager.join()
-        }))
-        
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        self.present(actionSheet, animated: true, completion: nil)
-    }
-    
-    
-    // MARK: - UI Properties
-    
-//    private let testScoreView = UIButton(frame: CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)).then { $0.backgroundColor = .orange }
-    
-    private let bottomView = UIView().then { $0.backgroundColor = .black }
-    private let topView = UIView().then { $0.backgroundColor = .black }
-    private let positionNameLabel = UILabel().then {
-        $0.textColor = .white
-        //        $0.textAlignment = .center
-        $0.textAlignment = .left
-        $0.font = UIFont.systemFont(ofSize: 20)
-    }
-    
-    private let imageView = UIImageView()
-    
-    private var videoUrl: URL?
-    
-    private let connectionStateLabel = UILabel().then {
-        
-        $0.textColor = .white
-    }
-    
-    private let recordingBtn = UIButton().then {
-        $0.setTitle("Record", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
-    }
-    
-    private let durationLabel = UILabel().then {
-        $0.textColor = .white
-        $0.text = "00:00"
-        $0.textAlignment = .center
-        $0.backgroundColor = .magenta
-    }
-    
-    private let dismissBtn = UIButton().then {
-        $0.setTitle("Dismiss!", for: .normal)
-    }
-    
-    private let recordingTimerBtn = UIButton().then {
-        $0.setTitle("Record in 3s", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
-    }
-    
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
-// MARK: - UIImagePickerController Delegate
+// MARK: - PICKER Delegate
 extension CameraController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         //        picker.dismiss(animated: true)
@@ -694,16 +706,9 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         // Save Video To Photos Album
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
         videoUrl = url
-        //        removeItem(at: <#T##URL#>)
+
         print("url: \(url.path)")
         
-        //        do {
-        //            try FileManager().removeItem(at: url)
-        //            print("success to remove URL!! ")
-        //        } catch {
-        //            print("failed to remove URL !!")
-        //            print(error.localizedDescription)
-        //        }
         
         // TODO: Present Preview In a second
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -730,33 +735,16 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         self.present(actionSheet, animated: true, completion: nil)
     }
     
-    private func updateTrialCore() {
-        
-    }
+//    private func updateTrialCore() {
+//
+//    }
     
-    private func updateTrialDetail() {
-        
-    }
+//    private func updateTrialDetail() {
+//
+//    }
 }
 
 // MARK: - Connection Manager Delegate
-
-
-
-
-
-//    @objc func video(_ videoPath: String, didFinishSavingWithError error: Error?, contextInfo info: AnyObject) {
-//      let title = (error == nil) ? "Success" : "Error"
-//      let message = ( error == nil) ? "Video was saved" : "Video failed to save"
-//
-//      let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-//
-//      alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
-//      present(alert, animated: true)
-//
-//    }
-
-
 extension CameraController: ConnectionManagerDelegate {
     func updateState(state: ConnectionState) {
         switch state {
@@ -782,7 +770,12 @@ extension CameraController: ConnectionManagerDelegate {
 }
 
 
+
+
+// MARK: - Score Delegate
 extension CameraController: ScoreControllerDelegate {
+    
+    
     func nextAction() {
         // TODO: Dismiss Camera
     }
@@ -797,7 +790,7 @@ extension CameraController: ScoreControllerDelegate {
         self.scoreVC.navigateBackToFirstView()
         
 //        self.updateTrialCore()
-        self.updateTrialDetail()
+//        self.updateTrialDetail()
     }
     
     private func makeTrialDetail() {
