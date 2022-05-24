@@ -82,6 +82,7 @@ enum PositionWithImageListEnum {
     static let hurdleStep = PositionInfo(title: PositionImgs.hurdleStep.0,
                                           imageName: [PositionImgs.hurdleStep.imageNames[0],
                                                       PositionImgs.hurdleStep.imageNames[1]])
+    
     static let inlineLunge = PositionInfo(title: PositionImgs.inlineLunge.0,
                                            imageName: [PositionImgs.inlineLunge.imageNames[0],
                                                        PositionImgs.inlineLunge.imageNames[1]])

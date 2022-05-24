@@ -73,8 +73,11 @@ class PositionBlockView: UIView {
             print("imageName[0]: \(positionBlock.imageName[0])")
             print("imageName[1]: \(positionBlock.imageName[1])")
             
+            if positionBlock.imageName[0] != PositionWithImageListEnum.ankleClearing.imageName[0] {
+                
             imageView1.image = UIImage(imageLiteralResourceName: positionBlock.imageName[0])
             imageView2.image = UIImage(imageLiteralResourceName: positionBlock.imageName[1])
+            }
             
             scoreView1 = ScoreBtnView(title: positionBlock.title, direction: .left, score: positionBlock.score[0]) // what does this tag do ?
             scoreView2 = ScoreBtnView(title: positionBlock.title, direction: .right, score: positionBlock.score[1])

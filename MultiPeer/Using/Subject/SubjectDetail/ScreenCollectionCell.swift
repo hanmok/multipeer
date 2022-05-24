@@ -15,7 +15,8 @@ import Then
 //    func cellPressed()
 //}
 
-class ScreenCell: RemovableCell {
+class ScreenCollectionCell: RemovableCell {
+//class ScreenCell: UICollectionViewCell {
     
 //    weak var delegate: ScreenCellDelegate?
     
@@ -117,3 +118,5 @@ class ScreenCell: RemovableCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+

@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 import Then
 import CoreData
+import MobileCoreServices
+import AVFoundation
 
 class PositionController: UIViewController {
     
@@ -29,13 +31,18 @@ class PositionController: UIViewController {
         }
     }
     
+
+    
     var scoreBtnViews: [ScoreBtnView] = []
     
     var trialCores: [TrialCore] = []
     
     var selectedTrialCore: TrialCore?
     
-   
+    // Test
+    var decreasingTimer = Timer()
+    var systemSoundID: SystemSoundID = 1016
+    var decreasingCount = 3
     private let subjectNameLabel = UILabel().then { $0.textColor = .cyan
         $0.textAlignment = .right
     }
@@ -86,6 +93,12 @@ class PositionController: UIViewController {
         someImage.snp.makeConstraints { make in
             make.leading.top.trailing.bottom.equalToSuperview()
         }
+    }
+    
+    private let testBtn = UIButton().then {
+        $0.setTitle("test", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+        $0.backgroundColor = .magenta
     }
     
     
@@ -157,6 +170,63 @@ class PositionController: UIViewController {
         subjectSettingBtn.addTarget(self, action: #selector(subjectBtnTapped), for: .touchUpInside)
         
         sessionButton.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
+        
+        testBtn.addTarget(self, action: #selector(testBtnTapped), for: .touchUpInside)
+    }
+    
+    @objc func testBtnTapped(_ sender: UIButton) {
+        print("testBtnTapped")
+        
+        SoundService.shard.someFunc()
+        
+//        AudioServicesPlaySystemSound(1104)
+//        AudioServicesPlaySystemSound(systemSoundId)
+        
+        
+//        decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+////            print("triggerCoundDownTimerFlag 1 called")
+//            guard let `self` = self else { return }
+//            print("triggerCoundDownTimerFlag 2 called")
+//
+//            if self.decreasingCount > 0 {
+//                print("triggerCoundDownTimerFlag 3 called")
+//                self.decreasingCount -= 1
+//                SoundService.shard.someFunc()
+//                AudioServicesPlaySystemSound(self.systemSoundID)
+//
+//
+//                print("triggerCoundDownTimerFlag 4 called")
+//
+//                if self.decreasingCount == 0 { // ????
+//                    print("triggerCoundDownTimerFlag 5 called")
+//                    AudioServicesPlaySystemSound(self.systemSoundID)
+////                    DispatchQueue.main.async {
+////                        self.recordingTimerBtn.setTitle("Recording!", for: .normal)
+////                    }
+//                } else {
+//                    // 세번 호출되어야함
+//                        // 왜 두번밖에 호출되지 않았지 ?
+//                        print("triggerCoundDownTimerFlag 6 called, decreasingCount : \(self.decreasingCount)")
+//                        // make sound
+//
+//                        AudioServicesPlaySystemSound(self.systemSoundID)
+////                        AudioServicesPlaySystemSound(1104)
+//
+////                        AudioServicesPlaySystemSound(1052)
+////                        DispatchQueue.main.async {
+////                        self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
+////                        }
+//                    }
+////                }
+//            } else { // self.decreasingCount <= 0
+//                print("triggerCoundDownTimerFlag 7 called")
+//                self.decreasingTimer.invalidate()
+//                //                DispatchQueue.main.async {
+//                //                    self.timerRecordingBtn.setTitle("Recording!", for: .normal)
+//                //                }
+//                self.decreasingCount = 3
+//            }
+//        }
     }
     
     
@@ -331,26 +401,22 @@ class PositionController: UIViewController {
     // MARK: - UI SETUP
     private func setupLayout() {
         
-        let allViews = [deepSquat, hurdleStep, inlineLunge, ankleClearing,
+        let positionViews = [deepSquat, hurdleStep, inlineLunge, ankleClearing,
                         shoulderMobility, shoulderClearing, straightLegRaise,
                         stabilityPushup, extensionClearing, rotaryStability, flexionClearing]
         
         
-        allViews.forEach { eachPosition in
+        positionViews.forEach { eachPosition in
             self.view.addSubview(eachPosition)
-            eachPosition.isUserInteractionEnabled = true // do we need it ?
+            eachPosition.isUserInteractionEnabled = true
         }
-        
-        
-        allViews.forEach { each in
-            each.isUserInteractionEnabled = true
-        }
-        
         
         view.addSubview(topView)
         topView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
-            make.top.equalToSuperview().offset(40)
+//            make.top.equalToSuperview().offset(40)
+//            make.top.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(40)
         }
         
@@ -457,16 +523,18 @@ class PositionController: UIViewController {
             make.width.equalToSuperview().dividedBy(4)
         }
         
+        let subjectViews = [subjectSettingBtn, subjectNameLabel, subjectDetailLabel]
         
         
-        view.addSubview(subjectSettingBtn)
+    subjectViews.forEach { self.view.addSubview($0) }
+//        view.addSubview(subjectSettingBtn)
         subjectSettingBtn.snp.makeConstraints { make in
             make.top.equalTo(rotaryStability.snp.bottom).offset(20)
             make.trailing.equalToSuperview().offset(-30)
             make.height.width.equalTo(60)
         }
         
-        view.addSubview(subjectNameLabel)
+//        view.addSubview(subjectNameLabel)
         subjectNameLabel.snp.makeConstraints { make in
             make.top.equalTo(subjectSettingBtn.snp.top)
             make.trailing.equalTo(subjectSettingBtn.snp.leading).offset(-30)
@@ -475,7 +543,7 @@ class PositionController: UIViewController {
         }
         
         
-        view.addSubview(subjectDetailLabel)
+//        view.addSubview(subjectDetailLabel)
         subjectDetailLabel.snp.makeConstraints { make in
             make.top.equalTo(subjectNameLabel.snp.bottom).offset(5)
             make.trailing.equalTo(subjectSettingBtn.snp.leading).offset(-30)
@@ -483,11 +551,19 @@ class PositionController: UIViewController {
             make.height.equalTo(25)
         }
         
+        
         // direction 이 1개 -> scoreView1 만 추가
         // direction 이 2개 -> scoreView2 도 추가.
 //        setupScoreBtnViews(using allViews: [PositionBlockView])
         
-        setupScoreBtnViews(using: allViews)
+        view.addSubview(testBtn)
+        testBtn.snp.makeConstraints { make in
+            make.top.equalTo(rotaryStability.snp.bottom).offset(20)
+            make.leading.bottom.equalToSuperview()
+            make.trailing.equalTo(subjectNameLabel.snp.leading)
+        }
+        
+        setupScoreBtnViews(using: positionViews)
 
     }
     
@@ -547,6 +623,11 @@ extension PositionController: ConnectionManagerDelegate {
 
 // MARK: - CameraController Delegate
 extension PositionController: CameraControllerDelegate {
+    func makeSound() {
+        print("makeSound triggered !!!")
+        SoundService.shard.someFunc()
+    }
+    
     func dismissCamera() {
         guard let cameraVC = cameraVC else {
             print("cameraVC is nil!", #file, #function, #line)

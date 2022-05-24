@@ -25,29 +25,3 @@ ScoreController 에서, Clearing Test 가 있는 경우에는 request 를 각 �
 Clearing,
 Variation,
 Ankle Mobility
-
-
-
-
-
-
-
-folder Name: 보관함
-folder Name: 삭제된 메모
-
-        folder Name: Some subfolder
-        folder Name: Another subfolder
-
-        folder Name: Skansksk
-        folder Name: Ummm
-        folder Name: Ummm
-        folder Name: Hello
-        folder Name: Aaaaa
-            folder Name: Bbbbb
-        folder Name: Aaaaa
-        folder Name: Some folder inside
-        folder Name: Not working?!!
-        folder Name: Hello
-folder Name: 폴더
-
-
