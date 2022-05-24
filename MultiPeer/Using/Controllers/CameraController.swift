@@ -44,7 +44,7 @@ class CameraController: UIViewController {
     
     var previewVC: PreviewController?
     
-    private var scoreVC: ScoreController
+//    private var scoreVC: ScoreController
 
     var variationName: String?
     
@@ -55,10 +55,10 @@ class CameraController: UIViewController {
         self.direction = positionDirectionScoreInfo.direction
 //        self.score = positionDirectionScoreInfo.score // score ?? not necessary .. ;;
         self.connectionManager = connectionManager
-        self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
+//        self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
         //        self.scoreNav = UINavigationController(rootViewController: scoreVC)
         super.init(nibName: nil, bundle: nil)
-        scoreVC.delegate = self
+//        scoreVC.delegate = self
         connectionManager.delegate = self
     }
     
@@ -108,25 +108,26 @@ class CameraController: UIViewController {
     
     // MARK: - Notification
     private func addNotificationObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingTriggered(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingFromNoti(_:)),
                                                name: .startRecordingKey, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(stopRecordingNotificationTriggered(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(stopRecordingFromNoti(_:)),
                                                name: .stopRecordingKey, object: nil)
         
         
-        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAfter(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAfterSecsFromNoti(_:)),
                                                name: .startRecordingAfterKey, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(startCountdownAfter(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(startCountdownAfterSecsFromNoti(_:)),
                                                name: .startCountdownAfterKey, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(updateConnectionState(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(updateConnectionStateFromNoti(_:)),
                                                name: .updateConnectionStateKey, object: nil)
     }
     
-    @objc func startRecordingTriggered(_ notification: Notification) {
-        //        print("flag1")
+    // MARK: - Triggered by Notification
+    @objc func startRecordingFromNoti(_ notification: Notification) {
+        
         print("startRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? PositionDirection,
@@ -137,9 +138,10 @@ class CameraController: UIViewController {
     }
     
     
-    @objc func stopRecordingNotificationTriggered(_ notification: Notification) {
+    @objc func stopRecordingFromNoti(_ notification: Notification) {
         //        print("flag2")
         print("stopRecording has been triggered by observer. ")
+        // 뭐여 이거 세개는 왜있는거여 ..
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? PositionDirection,
               let score = notification.userInfo?["score"] as? Int? else { return }
@@ -147,16 +149,13 @@ class CameraController: UIViewController {
         stopRecording()
     }
     
-    @objc func startRecordingAfter(_ notification: Notification) {
+    @objc func startRecordingAfterSecsFromNoti(_ notification: Notification) {
         //        print("flag3")
         print(#function, #line)
         guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
-              //              let msg = notification.userInfo?["msg"] as? RecordingType
               let msg = notification.userInfo?["msg"] as? MessageType
         else {
             print("fail to convert receivedTime to Int", #line)
-            // millisec since 1970
-            //            print(error?.localizedDescription)
             return
         }
         print(#function, #line)
@@ -174,12 +173,13 @@ class CameraController: UIViewController {
         print("startRecordingAfter has ended", #line)
     }
     
-    
-    @objc func startCountdownAfter(_ notification: Notification) {
+
+    @objc func startCountdownAfterSecsFromNoti(_ notification: Notification) {
         //        print("flag4")
-        guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
+        guard let milliTime = notification.userInfo?["receivedTime"] as? Int
+                
               //              let msg = notification.userInfo?["msg"] as? RecordingType
-              let msg = notification.userInfo?["msg"] as? MessageType
+//              , let msg = notification.userInfo?["msg"] as? MessageType
         else {
             print("success to convert receivedTime to Int", #line)
             // millisec since 1970
@@ -187,11 +187,11 @@ class CameraController: UIViewController {
         }
         
         let countdownTimer = Timer(fireAt: Date(milliseconds: milliTime), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
+        
         print("startCountdownAfter has triggered", #line)
     }
     
-    // this one called!!
-    @objc func updateConnectionState(_ notification: Notification) {
+    @objc func updateConnectionStateFromNoti(_ notification: Notification) {
         //        print("flag5")
         print(#file, #line)
         guard let state = notification.userInfo?["connectionState"] as? ConnectionState else {
@@ -268,35 +268,35 @@ class CameraController: UIViewController {
         
         //       scoreNav = UINavigationController(rootViewController: scoreVC)
         //        guard let scoreNav = scoreNav else { return }
-        addChild(scoreVC)
+//        addChild(scoreVC)
         
         //        addChild(scoreNav)
         
-        view.addSubview(scoreVC.view)
+//        view.addSubview(scoreVC.view)
         
 //        UIView.animate(withDuration: 0.3) {
-            scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+//            scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
 //        }
     }
     
     private func showScoreView() {
         view.addSubview(testScoreView)
         UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
+//            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
             //            self.scoreNav.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
         }
     }
     
     private func showMore() {
         UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 500, width: screenWidth, height: screenHeight)
+//            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 500, width: screenWidth, height: screenHeight)
             //            self.scoreNav.view.frame = CGRect(x: 0, y: screenHeight - 500, width: screenWidth, height: screenHeight)
         }
     }
     
     private func hideScoreView() {
         UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+//            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
             //            self.scoreNav.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
         }
     }
@@ -479,12 +479,12 @@ class CameraController: UIViewController {
             let viewcontrollers: [UIViewController] = self.children
             for vc in viewcontrollers {
                 print("vc1: \(vc)")
-                if vc != scoreVC {
+//                if vc != scoreVC {
                 print("vc2: \(vc)")
                     vc.willMove(toParent: nil)
                     vc.view.removeFromSuperview()
                     vc.removeFromParent()
-                }
+//                }
             }
         }
     }
@@ -817,7 +817,7 @@ extension CameraController: ScoreControllerDelegate {
         self.direction = positionDirectionScoreInfo.direction
         // 이게.. 필요한가... ??
 //        self.score = positionDirectionScoreInfo.score
-        self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
+//        self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
         // scoreVC 에 대한 delegate 가 필요 .. ??
     }
     
