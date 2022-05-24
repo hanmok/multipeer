@@ -431,14 +431,14 @@ class CameraController: UIViewController {
                 print("triggerCoundDownTimerFlag 3 called")
                 self.decreasingCount -= 1
 //                SoundService.shard.someFunc()
-                AudioServicesPlaySystemSound(self.systemSoundID)
+//                AudioServicesPlaySystemSound(self.systemSoundID)
                 
                 
                 print("triggerCoundDownTimerFlag 4 called")
                 
                 if self.decreasingCount == 0 { // ????
                     print("triggerCoundDownTimerFlag 5 called")
-                    AudioServicesPlaySystemSound(self.systemSoundID)
+//                    AudioServicesPlaySystemSound(self.systemSoundID)
                     DispatchQueue.main.async {
                         self.recordingTimerBtn.setTitle("Recording!", for: .normal)
                     }
@@ -448,7 +448,7 @@ class CameraController: UIViewController {
                         print("triggerCoundDownTimerFlag 6 called, decreasingCount : \(self.decreasingCount)")
                         // make sound
                         
-                        AudioServicesPlaySystemSound(self.systemSoundID)
+//                        AudioServicesPlaySystemSound(self.systemSoundID)
 //                        AudioServicesPlaySystemSound(1104)
                         
 //                        AudioServicesPlaySystemSound(1052)

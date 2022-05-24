@@ -24,17 +24,17 @@ class SoundService {
             
             if self.decreasingCount > 0 {
                 self.decreasingCount -= 1
-                SoundService.shard.someFunc()
-                AudioServicesPlaySystemSound(self.systemSoundID)
+//                SoundService.shard.someFunc()
+//                AudioServicesPlaySystemSound(self.systemSoundID)
                 
                 
                 if self.decreasingCount == 0 { // ????
-                    AudioServicesPlaySystemSound(self.systemSoundID)
+//                    AudioServicesPlaySystemSound(self.systemSoundID)
                 } else {
                     
                     // make sound
                     
-                    AudioServicesPlaySystemSound(self.systemSoundID)
+//                    AudioServicesPlaySystemSound(self.systemSoundID)
                 }
                 //                }
             } else { // self.decreasingCount <= 0

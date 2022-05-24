@@ -625,7 +625,7 @@ extension PositionController: ConnectionManagerDelegate {
 extension PositionController: CameraControllerDelegate {
     func makeSound() {
         print("makeSound triggered !!!")
-        SoundService.shard.someFunc()
+//        SoundService.shard.someFunc()
     }
     
     func dismissCamera() {
