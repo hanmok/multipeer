@@ -28,7 +28,7 @@ class SubjectController: UIViewController {
     }
     
     private func fetchAndReloadSubjects() {
-        // 여기에서 에러 발생..
+
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate, ", file: #function)}
         
         let context = appDelegate.persistentContainer.viewContext
@@ -38,10 +38,10 @@ class SubjectController: UIViewController {
         
         do {
             let result = try context.fetch(request)
-//            subjects.removeAll() // initialize.
+
             subjects = []
             guard let fetchedSubjects = result as? [Subject] else {
-                fatalError("faled to case result to [Subject] ")
+                fatalError("failed to cast result to [Subject] ")
                  }
             
             for subject in fetchedSubjects {
@@ -54,10 +54,8 @@ class SubjectController: UIViewController {
         }
         
         DispatchQueue.main.async {
-//            self.subjectCollectionView.reloadData()
             self.subjectTableView.reloadData()
         }
-        
     }
     
     // MARK: - Properties
