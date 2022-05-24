@@ -17,3 +17,5 @@ Clearing 이것들 다 없애버리기 Ankle Clearing
 촬영 도중 Connection 이 끊기면, 
 다시 연결할까요 ? -> 네
 영상 다 버리고 시작. 
+
+Some text
