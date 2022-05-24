@@ -77,6 +77,7 @@ class PositionBlockView: UIView {
                 
             imageView1.image = UIImage(imageLiteralResourceName: positionBlock.imageName[0])
             imageView2.image = UIImage(imageLiteralResourceName: positionBlock.imageName[1])
+            
 //            }
             
             scoreView1 = ScoreBtnView(title: positionBlock.title, direction: .left, score: positionBlock.score[0]) // what does this tag do ?

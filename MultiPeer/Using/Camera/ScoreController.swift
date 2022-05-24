@@ -166,23 +166,19 @@ class ScoreController: UIViewController {
         self.direction = positionDirectionScoreInfo.direction
         self.scoreType = positionToScoreType[positionDirectionScoreInfo.title] ?? .zeroToThree
         
-//        self.hasPainTest = (positionWithPainTestTitle[positionDirectionScoreInfo.title] != nil)
-        
+
+        // what about direction ??
         self.painTestName = (positionWithPainTestTitle[positionDirectionScoreInfo.title])
         self.varTestName = (positionWithVariation[positionDirectionScoreInfo.title])
-//        print("positionDirectionScoreInfo.title: \(positio)")
-        print("painTestName: \(painTestName)")
-//        print("varTestName: \(varTestName)")
+
+
+        
         super.init(nibName: nil, bundle: nil)
-        
-        
     }
     
-//    public func
+
     public func setupAgain(with positionDirectionScoreInfo: PositionDirectionScoreInfo) {
-        
-//        trialCore =
-        
+                
         self.positionTitle = positionDirectionScoreInfo.title
         self.direction = positionDirectionScoreInfo.direction
         self.scoreType = positionToScoreType[positionDirectionScoreInfo.title] ?? .zeroToThree
@@ -201,7 +197,7 @@ class ScoreController: UIViewController {
     }
     
     
-    
+    /// setup both score and pain nil
     private func setupInitialValues() {
         score = nil
         pain = nil
@@ -328,18 +324,16 @@ class ScoreController: UIViewController {
 
         guard let trialCore = trialCore else { fatalError("trialCore is nil") }
 
-        
-//        if positionsHasPain.contains(trialCore.title) {
+
         if positionWithPainTestTitle[trialCore.title] != nil {
-        print("positionHasPain contains trialCore.title, trialCore.title : \(trialCore.title)")
             if trialCore.title != PositionList.ankleClearing.rawValue {
                 guard let followingTitle = positionWithPainTestTitle[trialCore.title] else { fatalError("failed to get followingTitle") }
-                print("followingTitle: \(followingTitle)")
                 
                 let screen = trialCore.parentScreen
                 for eachCore in screen.trialCores {
-                    print("eachCore's title: \(eachCore.title)")
-                    
+
+                    // MARK: - 맞는 방향의 Core 로 설정하기.
+
                     if eachCore.title == followingTitle {
                         fClearingCore = eachCore
                         break
@@ -587,7 +581,7 @@ class ScoreController: UIViewController {
             }
         }
         
-        // 이걸.. 굳이 다시.... ??
+
         view.addSubview(scoreLabel)
         scoreLabel.snp.makeConstraints { make in
             make.trailing.leading.equalToSuperview().inset(10)
@@ -710,7 +704,6 @@ class ScoreController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
 
 

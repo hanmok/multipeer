@@ -37,7 +37,6 @@ class SelectableButtonStackView: UIStackView {
     
     public func setSelectedButton(_ id: UUID?) {
         guard let id = id else {
-
             for button in buttons {
                 if button.id == currentSelectedBtnId {
                     button.setBackgroundColor(to: defaultColor)
@@ -45,11 +44,11 @@ class SelectableButtonStackView: UIStackView {
             }
             
             currentSelectedBtnId = nil
-            
-            return }
+            return
+        }
         
         prevSelectedBtnId = currentSelectedBtnId // both can be nil for the first selection
-
+        
         for (index, button) in buttons.enumerated() {
             
             
@@ -71,21 +70,21 @@ class SelectableButtonStackView: UIStackView {
         }
     }
     
-
+    
     
     init(
         selectedColor: UIColor = .gray,
         defaultColor: UIColor = .black,
         spacing: CGFloat = 10, frame: CGRect = .zero) {
-        
-        self.selectedColor = selectedColor
-        self.defaultColor = defaultColor
-        
-        super.init(frame: frame)
-        
-        setupSubBtnColor()
-        setupInitialLayout()
-    }
+            
+            self.selectedColor = selectedColor
+            self.defaultColor = defaultColor
+            
+            super.init(frame: frame)
+            
+            setupSubBtnColor()
+            setupInitialLayout()
+        }
     
     private func setupSubBtnColor(){
         for eachBtn in buttons {
@@ -98,7 +97,7 @@ class SelectableButtonStackView: UIStackView {
         self.spacing = spacing
     }
     
-
+    
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

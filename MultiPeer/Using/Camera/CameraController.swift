@@ -510,11 +510,11 @@ class CameraController: UIViewController {
         
         if self.children.count > 0 {
             // 이거.. 하면 ScoreView 도 없어지는거 아님? 맞음. 이거로 방지가 되려나.. ??
+            
             let viewcontrollers: [UIViewController] = self.children
             for vc in viewcontrollers {
-                print("vc1: \(vc)")
+
                 if vc != scoreVC {
-                    print("vc2: \(vc)")
                     vc.willMove(toParent: nil)
                     vc.view.removeFromSuperview()
                     vc.removeFromParent()

@@ -150,6 +150,7 @@ class PositionController: UIViewController {
         for (index, eachTrial) in trialCores.enumerated() {
             if index == 5 { eachTrial.latestScore = 2 } // For test
             DispatchQueue.main.async {
+                print("numOfScoreBtnViews: \(self.scoreBtnViews.count)")
                 self.scoreBtnViews[index].scoreLabel.text = eachTrial.finalResult
                 print("updateScoreLabels score: \(eachTrial.finalResult)")
             }
