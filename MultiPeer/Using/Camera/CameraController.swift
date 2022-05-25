@@ -12,6 +12,7 @@ import Photos
 import MultipeerConnectivity
 import AVFoundation
 import CoreData
+import Foundation
 
 // need to create TrialDetail when .. new Trial needed.
 
@@ -23,21 +24,28 @@ protocol CameraControllerDelegate: AnyObject {
 // CameraController don't need to know 'score'
 class CameraController: UIViewController {
     
+    var editorClass = EditorClass()
+    
     // MARK: - Properties
     var positionTitle: String
     var direction: PositionDirection
     var trialCore: TrialCore
-//    var systemSoundID: SystemSoundID = 1057
+    //    var systemSoundID: SystemSoundID = 1057
     var systemSoundID: SystemSoundID = 1016
     
     var screen: Screen
     
     weak var delegate: CameraControllerDelegate?
-//    let soundService = SoundService()
+    //    let soundService = SoundService()
     var connectionManager: ConnectionManager
     
     var updatingDurationTimer = Timer()
     var decreasingTimer = Timer()
+    var testTimer = Timer()
+    var runningTestTimer = false
+//    var prevRunningModulo = 0
+//    var currentRunningModulo = 0
+    
     var count = 0
     var decreasingCount = 3
     
@@ -55,6 +63,8 @@ class CameraController: UIViewController {
     var trialDetail: TrialDetail?
     var sequentialPainPosition: String?
     
+    private var videoUrl: URL?
+    
     // PositionDirectionScoreInfo: title, direction, score, pain
     
     
@@ -70,21 +80,21 @@ class CameraController: UIViewController {
         positionDirectionScoreInfo: PositionDirectionScoreInfo,
         connectionManager: ConnectionManager,
         screen: Screen, trialCore: TrialCore) {
-        
-        self.screen = screen
-        self.trialCore = trialCore
-        self.positionTitle = positionDirectionScoreInfo.title
-        self.direction = positionDirectionScoreInfo.direction
-        self.connectionManager = connectionManager
-        
-        self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
-        
-        super.init(nibName: nil, bundle: nil)
-        scoreVC.delegate = self
-        connectionManager.delegate = self
-
-        setupTrialDetail(with: trialCore)
-    }
+            
+            self.screen = screen
+            self.trialCore = trialCore
+            self.positionTitle = positionDirectionScoreInfo.title
+            self.direction = positionDirectionScoreInfo.direction
+            self.connectionManager = connectionManager
+            
+            self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
+            
+            super.init(nibName: nil, bundle: nil)
+            scoreVC.delegate = self
+            connectionManager.delegate = self
+            
+            setupTrialDetail(with: trialCore)
+        }
     
     
     override func viewDidLoad() {
@@ -95,7 +105,9 @@ class CameraController: UIViewController {
         addNotificationObservers()
         updateInitialConnectionState()
         
-//        SoundService.shard.someFunc()
+        
+        //        SoundService.shard.someFunc()
+        SoundService.shard.makeSoundOne()
     }
     
     deinit {
@@ -110,292 +122,54 @@ class CameraController: UIViewController {
         }
     }
     
-    
-    
-    
-
-    private func setupNavigationBar() {
-        DispatchQueue.main.async {
-            if self.direction == .neutral {
-                self.positionNameLabel.text = self.positionTitle
-            } else {
-                self.positionNameLabel.text = self.positionTitle + " " + self.direction.rawValue
-            }
-        }
+    override func viewWillDisappear(_ animated: Bool) {
+        removeChildrenVC()
     }
     
-    private func setupTrialDetail(with core: TrialCore) {
-        trialDetail = trialCore.returnFreshTrialDetail()
-    }
+    
+    
     
     // MARK: - TIMER
     private func resetTimer() {
         durationLabel.text = "00:00"
     }
     
-    // MARK: - Connection
-    func updateInitialConnectionState() {
-        print(#file, #line)
-        switch connectionManager.connectionState {
-        case .connected:
-            DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Connected!"
-            }
-        case .disconnected:
-            DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Disconnected!"
-            }
-        }
+    private func stopTimer() {
+        updatingDurationTimer.invalidate()
     }
     
-    // MARK: - ScoreController
-    
-    // MARK: - Notification
-    private func addNotificationObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingTriggered(_:)),
-                                               name: .startRecordingKey, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(stopRecordingNotificationTriggered(_:)),
-                                               name: .stopRecordingKey, object: nil)
-        
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAfter(_:)),
-                                               name: .startRecordingAfterKey, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(startCountdownAfter(_:)),
-                                               name: .startCountdownAfterKey, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(updateConnectionState(_:)),
-                                               name: .updateConnectionStateKey, object: nil)
-    }
-    
-    @objc func startRecordingTriggered(_ notification: Notification) {
-        //        print("flag1")
-        print("startRecording has been triggered by observer. ")
-        guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? PositionDirection,
-              let score = notification.userInfo?["score"] as? Int? else { return }
-        
-        startRecording()
-        // duration update needed
-    }
-    
-    
-    @objc func stopRecordingNotificationTriggered(_ notification: Notification) {
-        print("stopRecording has been triggered by observer. ")
-        guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? PositionDirection,
-              let score = notification.userInfo?["score"] as? Int? else { return }
-        
-        stopRecording()
-    }
-    
-    @objc func startRecordingAfter(_ notification: Notification) {
-        //        print("flag3")
-        print(#function, #line)
-        guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
-              //              let msg = notification.userInfo?["msg"] as? RecordingType
-              let msg = notification.userInfo?["msg"] as? MessageType
-        else {
-            print("fail to convert receivedTime to Int", #line)
-            // millisec since 1970
-            //            print(error?.localizedDescription)
-            return
-        }
-        print(#function, #line)
-        print("receivedMillisecData: \(milliTime)")
-        print("currentMillisecData: \(Date().millisecondsSince1970)")
-        
-        let recordingTimer = Timer(fireAt: Date(milliseconds: milliTime), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+    @objc private func triggerCountDownTimer() {
+        print("triggerCoundDownTimerFlag 0 called")
         
         DispatchQueue.main.async {
-            self.recordingTimerBtn.setTitle("\(milliTime)", for: .normal)
+            self.durationLabel.text = "00:00"
+            self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
+        }
+        
+        decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
             
-        }
-        
-        RunLoop.main.add(recordingTimer, forMode: .common)
-        print("startRecordingAfter has ended", #line)
-    }
-    
-    
-    @objc func startCountdownAfter(_ notification: Notification) {
-        //        print("flag4")
-        guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
-              //              let msg = notification.userInfo?["msg"] as? RecordingType
-              let msg = notification.userInfo?["msg"] as? MessageType
-        else {
-            print("success to convert receivedTime to Int", #line)
-            // millisec since 1970
-            return
-        }
-        
-        let countdownTimer = Timer(fireAt: Date(milliseconds: milliTime), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
-        print("startCountdownAfter has triggered", #line)
-    }
-    
-    // this one called!!
-    @objc func updateConnectionState(_ notification: Notification) {
-        //        print("flag5")
-        print(#file, #line)
-        guard let state = notification.userInfo?["connectionState"] as? ConnectionState else {
-            print("failed to get connectionState normally")
-            return }
-        switch state {
-        case .disconnected:
+            //            self?.delegate?.makeSound()
+            
+            guard let `self` = self else { return }
+            
             DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Disconnected!"
-                self.showReconnectionGuideAction()
+                self.recordingTimerBtn.setTitle("\(self.decreasingCount)", for: .normal)
             }
-        case .connected:
-            DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Connected!"
+            
+            if self.decreasingCount > 0 {
+                self.decreasingCount -= 1
+                SoundService.shard.makeSoundOne()
+            } else {
+                
+                DispatchQueue.main.async {
+                    self.recordingTimerBtn.setTitle("Recording!", for: .normal)
+                }
+                
+                self.decreasingCount = 3
+                self.decreasingTimer.invalidate()
             }
         }
     }
-    
-    
-    // MARK: - Button Actions
-    private func setupAddTargets() {
-        recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
-        dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
-        recordingTimerBtn.addTarget(self, action: #selector(timerRecordingBtnTapped(_:)), for: .touchUpInside)
-        //        testScoreView.addTarget(self, action: #selector(showMore(_:)), for: .touchUpInside)
-    }
-    
-    
-    
-    
-    @objc func recordingBtnTapped(_ sender: UIButton) {
-        print("recordingBtn Tapped!!")
-        
-        recordingBtnAction()
-        
-    }
-    
-    func recordingBtnAction() {
-        // Start Recording!!
-        removeChildrenVC()
-        if !isRecording {
-            //            removePreview()
-            // Send Start Msg
-            //            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
-            
-            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
-            
-            
-            startRecording()
-            // STOP Recording !!
-        } else {
-            
-            stopRecording()
-            // Send Stop Msg
-            //            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
-            
-            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
-            
-        }
-    }
-    
-    @objc func prepareScoreView() {
-        
-        addChild(scoreVC)
-        view.addSubview(scoreVC.view)
-        // prepare scoreVC to the bottom (to come up later)
-        scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-    }
-    
-    // TODO: need to change trialCore of scoreVC here
-    private func showScoreView() {
-        scoreVC.setupTrialCore(with: trialCore )
-//        scoreVC.trialCore = trialCore
-        
-        UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
-        }
-    }
-    
-    private func showMore() {
-        UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(
-                x: 0,               y: screenHeight - 500,
-                width: screenWidth, height: screenHeight)
-        }
-    }
-    
-    private func hideScoreView() {
-        UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-            //            self.scoreNav.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-        }
-    }
-    
-    @objc func dismissBtnTapped(_ sender: UIButton) {
-        delegate?.dismissCamera()
-    }
-    
-    @objc func timerRecordingBtnTapped(_ sender: UIButton) {
-        
-        print(#function, #line)
-        let dateIn1500ms = Date().millisecondsSince1970 + 1500 // give 1.5s to sync better
-        //        let dateIn1500ms = Date().millisecondsSince1970 + 3000 // give 1.5s to sync better
-        let dateIn4500ms = Date().millisecondsSince1970 + 4500
-        
-        connectionManager.send(MsgWithTime(msg: .startCountDownMsg, timeInMilliSec: Int(dateIn1500ms)))
-        
-        connectionManager.send(MsgWithTime(msg: .startRecordingAfterMsg, timeInMilliSec: Int(dateIn4500ms)))
-        
-        // Make in sync with receiver
-        
-        let countdownTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
-        // give it 0.2s delay
-        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn4500ms) + 200), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
-        //        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
-        
-        
-        DispatchQueue.main.async {
-            //            self.recordingTimerBtn.setTitle(String(Int(dateIn1500ms)), for: .normal)
-        }
-        
-        RunLoop.main.add(countdownTimer, forMode: .common)
-        RunLoop.main.add(recordingTimer, forMode: .common)
-        //        RunLoop.main.minimumTolerance = 0.01
-        //        print("tolerarnce: \(RunLoop.main.minimumTolerance)")
-        
-        //        RunLoop.main.add(recordingTimer, forMode: .)
-        
-        
-    }
-    
-    
-    // MARK: - Basic Functions
-    @objc private func startRecording() {
-        print("startRecording triggered!! ")
-        if !isRecording {
-            DispatchQueue.main.async {
-                self.picker.startVideoCapture()
-                self.recordingBtn.setTitle("Stop", for: .normal)
-            }
-            
-            self.isRecording = true
-            
-            triggerDurationTimer()
-            // 이것부터 해결하자..
-        }
-    }
-    
-    private func stopRecording() {
-        if isRecording {
-            DispatchQueue.main.async {
-                self.picker.stopVideoCapture()
-                self.recordingBtn.setTitle("Record", for: .normal)
-                self.recordingTimerBtn.setTitle("Record in 3s", for: .normal)
-            }
-            
-            self.isRecording = false
-            stopTimer()
-        }
-    }
-    
     
     /// updating durationLabel contained
     private func triggerDurationTimer() {
@@ -426,97 +200,23 @@ class CameraController: UIViewController {
         }
     }
     
-    @objc private func triggerCountDownTimer() {
-        print("triggerCoundDownTimerFlag 0 called")
-        DispatchQueue.main.async {
-            self.durationLabel.text = "00:00"
-            self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
-        }
-        
-        decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-            self?.delegate?.makeSound()
-//            print("triggerCoundDownTimerFlag 1 called")
-            guard let `self` = self else { return }
-            print("triggerCoundDownTimerFlag 2 called")
-            
-            if self.decreasingCount > 0 {
-                print("triggerCoundDownTimerFlag 3 called")
-                self.decreasingCount -= 1
-//                SoundService.shard.someFunc()
-//                AudioServicesPlaySystemSound(self.systemSoundID)
-                
-                
-                print("triggerCoundDownTimerFlag 4 called")
-                
-                if self.decreasingCount == 0 { // ????
-                    print("triggerCoundDownTimerFlag 5 called")
-//                    AudioServicesPlaySystemSound(self.systemSoundID)
-                    DispatchQueue.main.async {
-                        self.recordingTimerBtn.setTitle("Recording!", for: .normal)
-                    }
-                } else {
-                    // 세번 호출되어야함
-                        // 왜 두번밖에 호출되지 않았지 ?
-                        print("triggerCoundDownTimerFlag 6 called, decreasingCount : \(self.decreasingCount)")
-                        // make sound
-                        
-//                        AudioServicesPlaySystemSound(self.systemSoundID)
-//                        AudioServicesPlaySystemSound(1104)
-                        
-//                        AudioServicesPlaySystemSound(1052)
-                        DispatchQueue.main.async {
-                        self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
-                        }
-                    }
-//                }
-            } else { // self.decreasingCount <= 0
-                print("triggerCoundDownTimerFlag 7 called")
-                self.decreasingTimer.invalidate()
-                //                DispatchQueue.main.async {
-                //                    self.timerRecordingBtn.setTitle("Recording!", for: .normal)
-                //                }
-                self.decreasingCount = 3
+    
+    // MARK: - Connection
+    func updateInitialConnectionState() {
+        print(#file, #line)
+        switch connectionManager.connectionState {
+        case .connected:
+            DispatchQueue.main.async {
+                self.connectionStateLabel.text = "Connected!"
+            }
+        case .disconnected:
+            DispatchQueue.main.async {
+                self.connectionStateLabel.text = "Disconnected!"
             }
         }
     }
     
-    private func stopTimer() {
-        updatingDurationTimer.invalidate()
-    }
-    
-    // TODO: For now, it's ratio not accurate, so it looks weird.
-    // TODO: Don't need to change for now.
-    
-    
-    //    private func preparePreview() {
-    //
-    //    }
-    
-    private func presentPreview(with videoURL: URL) {
-        
-        previewVC = PreviewController(videoURL: videoURL)
-        guard let previewVC = previewVC else {
-            return
-        }
-        
-        addChild(previewVC)
-        view.addSubview(previewVC.view)
-        previewVC.view.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(bottomView.snp.top)
-            make.width.height.equalTo(view.snp.width)
-        }
-        //        view.addSubview(testScoreView)
-        //        showScoreView()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        removeChildrenVC()
-    }
-    
-    
-    
-    //MARK: Reconnect! when it ends.
+    /// Reconnect if needed .
     func showConnectivityAction() {
         let actionSheet = UIAlertController(title: "Connect Camera", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
         
@@ -533,25 +233,335 @@ class CameraController: UIViewController {
     }
     
     
-    // MARK: - UI Properties
     
-//    private let testScoreView = UIButton(frame: CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)).then { $0.backgroundColor = .orange }
+    // MARK: - Notification
+    private func addNotificationObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingNowNoti(_:)),
+                                               name: .startRecordingKey, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(stopRecordingNoti(_:)),
+                                               name: .stopRecordingKey, object: nil)
+        
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAtNoti(_:)),
+                                               name: .startRecordingAfterKey, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(startCountdownAtNoti(_:)),
+                                               name: .startCountdownAfterKey, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateConnectionStateNoti(_:)),
+                                               name: .updateConnectionStateKey, object: nil)
+    }
+    
+    @objc func startRecordingNowNoti(_ notification: Notification) {
+        //        print("flag1")
+        print("startRecording has been triggered by observer. ")
+        guard let title = notification.userInfo?["title"] as? String,
+              let direction = notification.userInfo?["direction"] as? PositionDirection,
+              let score = notification.userInfo?["score"] as? Int? else { return }
+        
+        startRecording()
+        // duration update needed
+    }
+    
+    
+    @objc func stopRecordingNoti(_ notification: Notification) {
+        print("stopRecording has been triggered by observer. ")
+        guard let title = notification.userInfo?["title"] as? String,
+              let direction = notification.userInfo?["direction"] as? PositionDirection,
+              let score = notification.userInfo?["score"] as? Int? else { return }
+        
+        stopRecording()
+    }
+    
+    /// NotUsing
+    @objc func startRecordingAtNoti(_ notification: Notification) {
+        //        print("flag3")
+        print(#function, #line)
+        guard let dateToStartRecordingInMilliSec = notification.userInfo?["receivedTime"] as? Int
+              //              let msg = notification.userInfo?["msg"] as? RecordingType
+              , let msg = notification.userInfo?["msg"] as? MessageType
+        else {
+            fatalError("failed to convert received Time to Int")
+        }
+
+        print("receivedMillisecData: \(dateToStartRecordingInMilliSec)")
+        print("currentMillisecData: \(Date().millisecondsSince1970)")
+        
+
+        startRecordingAt(dateToStartRecordingInMilliSec)
+        
+//        DispatchQueue.main.async {
+//            self.recordingTimerBtn.setTitle("\(dateToStartRecordingInMilliSec)", for: .normal)
+//        }
+        
+        print("startRecordingAfter has ended", #line)
+    }
+    
+    // triggered by noti
+    @objc func startCountdownAtNoti(_ notification: Notification) {
+        
+        guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
+                let msg = notification.userInfo?["msg"] as? MessageType
+        else {
+            fatalError("failed to convert receivedTime to Int")
+        }
+        
+        startCountdownAt(milliTime)
+        
+    }
+        
+
+    @objc func updateConnectionStateNoti(_ notification: Notification) {
+        //        print("flag5")
+        print(#file, #line)
+        guard let state = notification.userInfo?["connectionState"] as? ConnectionState else {
+            print("failed to get connectionState normally")
+            return }
+        switch state {
+        case .disconnected:
+            DispatchQueue.main.async {
+                self.connectionStateLabel.text = "Disconnected!"
+                self.showReconnectionGuideAction()
+            }
+        case .connected:
+            DispatchQueue.main.async {
+                self.connectionStateLabel.text = "Connected!"
+            }
+        }
+    }
+    
+    
+    // MARK: - Button Actions
+    private func setupAddTargets() {
+        recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
+        dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
+        recordingTimerBtn.addTarget(self, action: #selector(timerRecordingBtnTapped(_:)), for: .touchUpInside)
+    }
+    
+    
+    
+    
+    @objc func recordingBtnTapped(_ sender: UIButton) {
+        print("recordingBtn Tapped!!")
+        
+        recordingBtnAction()
+        
+    }
+    
+    @objc func recordingBtnAction() {
+        // Start Recording!!
+        removeChildrenVC()
+        if !isRecording {
+            //            removePreview()
+            // Send Start Msg
+            //            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
+            
+            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
+            
+            
+            startRecording()
+            // STOP Recording !!
+        } else {
+            
+            stopRecording()
+            // Send Stop Msg
+            //            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
+            
+            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
+            
+        }
+    }
+    
+    @objc func dismissBtnTapped(_ sender: UIButton) {
+        delegate?.dismissCamera()
+    }
+
+    // sender
+    @objc func timerRecordingBtnTapped(_ sender: UIButton) {
+        timerRecordingBtnAction()
+    }
+    
+    private func timerRecordingBtnAction() {
+        let dateIn1500ms = Date().millisecondsSince1970 + 1500
+//        let dateIn1500ms = Date().millisecondsSince1970
+
+//        let dateIn4500ms = Date().millisecondsSince1970 + 4500
+        let dateIn4500ms = Date().millisecondsSince1970 + 4500
+
+//        connectionManager.send(MsgWithTime(msg: .startCountDownMsg, timeInMilliSec: Int(dateIn1500ms)))
+//
+//        connectionManager.send(MsgWithTime(msg: .startRecordingAfterMsg, timeInMilliSec: Int(dateIn4500ms)))
+//
+        startCountdownAt(Int(dateIn1500ms))
+//        startRecordingAt(Int(dateIn4500ms))
+        
+        
+        // Test Code it's much better ...
+        let someTimer = Timer(fireAt: Date(milliseconds: Int(dateIn4500ms)), interval: 0, target: self, selector: #selector(recordingBtnAction), userInfo: nil, repeats: false)
+        
+        RunLoop.main.add(someTimer, forMode: .common)
+        
+    }
+    
+    private func startCountdownAt(_ dateInTime: Int) {
+        
+        
+        let countdownTimer = Timer(fireAt: Date(milliseconds: dateInTime), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
+        
+        RunLoop.main.add(countdownTimer, forMode: .common)
+        
+        
+    }
+    
+    private func startRecordingAt(_ dateInTime: Int) {
+        print("startRecordingAt triggered!!!!, current Date: \(Date().millisecondsSince1970)")
+        //        let recordingTimer = Timer(fireAt: Date(milliseconds: dateInTime + 200), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+        
+        DispatchQueue.main.async {
+//            self.recordingTimerBtn.setTitle("\(dateInTime)", for: .normal)
+            
+            self.timeTestLabel.text = "\(dateInTime)"
+            self.startTimeTestLabel.text = "\(Date().millisecondsSince1970)"
+        }
+        
+        let recordingTimer = Timer(fireAt: Date(milliseconds: dateInTime), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+        
+        // 왜 이럴까 ??
+
+        RunLoop.main.add(recordingTimer, forMode: .common)
+        
+        
+        testTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] timer in
+        print("test timer called !!")
+            guard let `self` = self else { return }
+            
+            if Date().millisecondsSince1970 < dateInTime + 50 {
+                DispatchQueue.main.async {
+                    self.realtimeTestLabel.text = String(Date().millisecondsSince1970)
+                }
+            }
+        }
+    }
+    
+    @objc func prepareScoreView() {
+        
+        addChild(scoreVC)
+        view.addSubview(scoreVC.view)
+        // prepare scoreVC to the bottom (to come up later)
+        scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+    }
+    
+    // TODO: need to change trialCore of scoreVC here
+    private func showScoreView() {
+        scoreVC.setupTrialCore(with: trialCore )
+        //        scoreVC.trialCore = trialCore
+        
+        // TODO: Enable Animate (prevented for testing)
+        /*
+        UIView.animate(withDuration: 0.4) {
+            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
+        }
+         */
+    }
+    
+    private func setupTrialDetail(with core: TrialCore) {
+        trialDetail = trialCore.returnFreshTrialDetail()
+    }
+    
+    private func showMore() {
+        UIView.animate(withDuration: 0.4) {
+            // TODO: Enable After sync test
+//            self.scoreVC.view.frame = CGRect(
+//                x: 0,               y: screenHeight - 500,
+//                width: screenWidth, height: screenHeight)
+        }
+    }
+    
+    
+    // MARK: - Basic Functions
+    @objc private func startRecording() {
+        count = 0
+        updateDurationLabel()
+        
+        print("startRecording triggered!! ")
+        if !isRecording {
+            
+            DispatchQueue.main.async {
+                self.picker.startVideoCapture()
+                self.recordingBtn.setTitle("Stop", for: .normal)
+            }
+            
+            self.isRecording = true
+            
+            triggerDurationTimer()
+        }
+        
+        guard let previewVC = previewVC else { return }
+
+        DispatchQueue.main.async {
+            previewVC.view.isHidden = true
+        
+        }
+        
+    }
+    
+    
+    private func stopRecording() {
+        if isRecording {
+            DispatchQueue.main.async {
+                self.picker.stopVideoCapture()
+                self.recordingBtn.setTitle("Record", for: .normal)
+                self.recordingTimerBtn.setTitle("Record in 3s", for: .normal)
+            }
+            
+            self.isRecording = false
+            stopTimer()
+        }
+        guard let previewVC = previewVC else {
+            return
+        }
+        DispatchQueue.main.async {
+            previewVC.view.isHidden = false
+        }
+        
+    }
+    
+    
+    // MARK: - UI Properties
     
     private let bottomView = UIView().then { $0.backgroundColor = .black }
     private let topView = UIView().then { $0.backgroundColor = .black }
     private let positionNameLabel = UILabel().then {
         $0.textColor = .white
-        //        $0.textAlignment = .center
         $0.textAlignment = .left
         $0.font = UIFont.systemFont(ofSize: 20)
     }
     
+    private let timeTestLabel = UILabel().then {
+        $0.textColor = .white
+        $0.textAlignment = .right
+//        $0.font = UIFont.systemFont(ofSize: 20)
+        $0.font = UIFont.monospacedSystemFont(ofSize: 15, weight: .regular)
+    }
+    
+    private let realtimeTestLabel = UILabel().then {
+        $0.textColor = .green
+        $0.textAlignment = .right
+//        $0.font = UIFont.systemFont(ofSize: 20)
+        $0.font = UIFont.monospacedSystemFont(ofSize: 15, weight: .regular)
+    }
+    
+    private let startTimeTestLabel = UILabel().then {
+        $0.textColor = .green
+        $0.textAlignment = .right
+//        $0.font = UIFont.systemFont(ofSize: 20)
+        $0.font = UIFont.monospacedSystemFont(ofSize: 15, weight: .regular)
+    }
+    
     private let imageView = UIImageView()
     
-    private var videoUrl: URL?
-    
     private let connectionStateLabel = UILabel().then {
-        
         $0.textColor = .white
     }
     
@@ -577,7 +587,42 @@ class CameraController: UIViewController {
     }
     
     
+    // MARK: - UI func
     
+    private func setupNavigationBar() {
+        DispatchQueue.main.async {
+            if self.direction == .neutral {
+                self.positionNameLabel.text = self.positionTitle
+            } else {
+                self.positionNameLabel.text = self.positionTitle + " " + self.direction.rawValue
+            }
+        }
+    }
+    
+    private func hideScoreView() {
+        UIView.animate(withDuration: 0.4) {
+            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+            //            self.scoreNav.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+        }
+    }
+    
+    private func presentPreview(with videoURL: URL) {
+        
+        previewVC = PreviewController(videoURL: videoURL)
+        guard let previewVC = previewVC else {
+            return
+        }
+        
+        addChild(previewVC)
+        view.addSubview(previewVC.view)
+        previewVC.view.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(bottomView.snp.top)
+            make.width.height.equalTo(view.snp.width)
+        }
+        //        view.addSubview(testScoreView)
+        //        showScoreView()
+    }
     
     private func removeChildrenVC() {
         
@@ -590,7 +635,7 @@ class CameraController: UIViewController {
             
             let viewcontrollers: [UIViewController] = self.children
             for vc in viewcontrollers {
-
+                
                 if vc != scoreVC {
                     vc.willMove(toParent: nil)
                     vc.view.removeFromSuperview()
@@ -672,9 +717,35 @@ class CameraController: UIViewController {
         topView.addSubview(positionNameLabel)
         positionNameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(60)
-            make.centerX.equalToSuperview()
-            make.leading.trailing.equalToSuperview().inset(30)
+//            make.centerX.equalToSuperview()
+//            make.leading.trailing.equalToSuperview().inset(30)
+            make.leading.equalToSuperview().inset(30)
+            make.width.equalToSuperview().dividedBy(2)
             make.height.equalTo(50)
+        }
+        
+        topView.addSubview(timeTestLabel)
+        timeTestLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(30)
+            make.trailing.equalToSuperview().inset(30)
+            make.width.equalToSuperview().dividedBy(2)
+            make.height.equalTo(20)
+        }
+        
+        topView.addSubview(realtimeTestLabel)
+        realtimeTestLabel.snp.makeConstraints { make in
+            make.top.equalTo(timeTestLabel.snp.bottom)
+            make.trailing.equalToSuperview().inset(30)
+            make.width.equalToSuperview().dividedBy(2)
+            make.height.equalTo(20)
+        }
+        
+        topView.addSubview(startTimeTestLabel)
+        startTimeTestLabel.snp.makeConstraints { make in
+            make.top.equalTo(realtimeTestLabel.snp.bottom)
+            make.trailing.equalToSuperview().inset(30)
+            make.width.equalToSuperview().dividedBy(2)
+            make.height.equalTo(20)
         }
     }
 }
@@ -683,7 +754,10 @@ class CameraController: UIViewController {
 extension CameraController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         //        picker.dismiss(animated: true)
-        self.dismiss(animated: true)
+        DispatchQueue.main.async {
+            self.dismiss(animated: true)
+        }
+        
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -706,7 +780,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         // Save Video To Photos Album
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
         videoUrl = url
-
+        
         print("url: \(url.path)")
         
         
@@ -735,13 +809,13 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         self.present(actionSheet, animated: true, completion: nil)
     }
     
-//    private func updateTrialCore() {
-//
-//    }
+    //    private func updateTrialCore() {
+    //
+    //    }
     
-//    private func updateTrialDetail() {
-//
-//    }
+    //    private func updateTrialDetail() {
+    //
+    //    }
 }
 
 // MARK: - Connection Manager Delegate
@@ -789,8 +863,8 @@ extension CameraController: ScoreControllerDelegate {
         makeTrialDetail()
         self.scoreVC.navigateBackToFirstView()
         
-//        self.updateTrialCore()
-//        self.updateTrialDetail()
+        //        self.updateTrialCore()
+        //        self.updateTrialDetail()
     }
     
     private func makeTrialDetail() {
@@ -843,9 +917,9 @@ extension CameraController: ScoreControllerDelegate {
     }
     
     
-//    func moveUp() {
-//        // TODO: Move ScoreController up
-//    }
+    //    func moveUp() {
+    //        // TODO: Move ScoreController up
+    //    }
     
     // triggered when 'Next' Tapped
     func updatePosition(with positionDirectionScoreInfo: PositionDirectionScoreInfo) {
@@ -856,7 +930,7 @@ extension CameraController: ScoreControllerDelegate {
         
         self.scoreVC.setupAgain(with: positionDirectionScoreInfo)
         self.scoreVC.navigateBackToFirstView()
-  
+        
     }
     
     

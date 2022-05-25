@@ -266,6 +266,7 @@ extension ConnectionManager: MCSessionDelegate {
                 break
             }
         } catch {
+            // 굳이 케이스 나누어야하나.. ??
                 print("Error Occurred during Decoding DetailPositionWithMsgInfo!!!")
                 do {
                     let testInfoMsg = try jsonDecoder.decode(MsgWithTime.self, from: data)
@@ -279,6 +280,7 @@ extension ConnectionManager: MCSessionDelegate {
                         
                     case .startRecordingAfterMsg:
                         NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
+                        
                     print("successfully post startRecordingAfterKey")
                     case .startCountDownMsg:
                         NotificationCenter.default.post(name: .startCountdownAfterKey, object: nil, userInfo: timeInfo)

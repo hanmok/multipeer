@@ -18,6 +18,16 @@ public var screenHeight: CGFloat {
 }
 
 
+//extension UIScreen {
+//    static var screenHeight: CGFloat {
+//        return self.main.bounds.height
+//    }
+//
+//    static var screenWidth: CGFloat {
+//        return self.main.bounds.width
+//    }
+//}
+
 public func convertIntoRecordingTimeFormat(_ seconds: Int) -> String {
     
     let minutes = Int(seconds) / 60 % 60

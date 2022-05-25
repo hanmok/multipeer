@@ -14,7 +14,8 @@ class SoundService {
     var decreasingCount = 3
     var decreasingTimer = Timer()
     
-    var systemSoundID : SystemSoundID = 1016
+//    var systemSoundID : SystemSoundID = 1016
+    var systemSoundID : SystemSoundID = 1057
     
     func someFunc() {
         
@@ -43,5 +44,9 @@ class SoundService {
                 self.decreasingCount = 3
             }
         }
+    }
+    
+    func makeSoundOne() {
+        AudioServicesPlaySystemSound(self.systemSoundID)
     }
 }

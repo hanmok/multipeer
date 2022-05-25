@@ -31,9 +31,9 @@ public enum MessageType: String, Codable {
     // Timer ?
     case startRecordingMsg
     case stopRecordingMsg
-    case none
     case startRecordingAfterMsg
     case startCountDownMsg
+    case none
 }
 
 

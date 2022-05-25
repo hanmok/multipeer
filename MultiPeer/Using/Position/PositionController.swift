@@ -16,6 +16,7 @@ class PositionController: UIViewController {
     
     // MARK: - Properties
     
+
     var connectionManager = ConnectionManager()
     
     var screen: Screen?
