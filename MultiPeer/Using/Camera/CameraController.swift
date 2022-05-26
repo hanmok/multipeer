@@ -702,9 +702,10 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
         videoUrl = url
 //        guard url != nil else {return }
-        CropperController.cropVideo(from: url, presentOn: self)
         
-        TestController.cropVideoWithGivenSize(asset: <#T##AVAsset#>, baseSize: <#T##CGSize#>, completionHandler: <#T##TestController.CropTaskCompletion##TestController.CropTaskCompletion##(Result<URL, Error>) -> Void#>)
+//        CropperController.cropVideo(from: url, presentOn: self)
+        
+//        TestController.cropVideoWithGivenSize(asset: <#T##AVAsset#>, baseSize: <#T##CGSize#>, completionHandler: <#T##TestController.CropTaskCompletion##TestController.CropTaskCompletion##(Result<URL, Error>) -> Void#>)
 //        guard let
 //        CropperController.cropVideo(from: videoUrl)
         
