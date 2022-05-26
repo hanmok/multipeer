@@ -692,8 +692,6 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             return
         }
 
-
-
         print("save success !")
         // Save Video To Photos Album
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
@@ -705,7 +703,11 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
 //        guard url != nil else {return }
 
 //        CropperController.cropVideo(from: url, presentOn: self)
-
+        guard let validUrl = videoUrl else { fatalError() }
+        let testController2 = TestController2(url: validUrl, vc: self)
+        testController2.exportVideo()
+//        test
+        
 //        TestController.cropVideoWithGivenSize(asset: <#T##AVAsset#>, baseSize: <#T##CGSize#>, completionHandler: <#T##TestController.CropTaskCompletion##TestController.CropTaskCompletion##(Result<URL, Error>) -> Void#>)
 //        guard let
 //        CropperController.cropVideo(from: videoUrl)

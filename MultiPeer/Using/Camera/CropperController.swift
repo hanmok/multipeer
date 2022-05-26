@@ -267,37 +267,37 @@ class CropperController: UIViewController {
 //        print("composition")
         
         // 왜 안될까 ?? ?? ?? ?
-        exporter?.exportAsynchronously {
-            UISaveVideoAtPathToSavedPhotosAlbum(testURL.path, self, nil, nil)
-        }
+//        exporter?.exportAsynchronously {
+//            UISaveVideoAtPathToSavedPhotosAlbum(testURL.path, self, nil, nil)
+//        }
         
         //export!
-//        exporter?.exportAsynchronously(completionHandler: { [weak exporter] in
-//            DispatchQueue.main.async {
-//
-//                if let error = exporter?.error {
-//                    // failed The operation could not be complete. ??? 이게 이유냐?
-//                    print("failed \(error.localizedDescription)")
-//                    fatalError()
-//                } else {
-//                    //            self.shareVideoFile(outputMovieURL)
-//                    // TODO: Save to local library
-//                    var filesToShare = [Any]()
-//
-//                    // Add the path of the file to the Array
-////                    filesToShare.append(outputMovieURL)
-//                    filesToShare.append(testURL)
-//
-//                    // Make the activityViewContoller which shows the share-view
-//                    let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
-//
-//                    // Show the share-view
-//                    vc.present(activityViewController, animated: true, completion: nil)
-//
-//                    UISaveVideoAtPathToSavedPhotosAlbum(testURL.path, self, nil, nil)
-//                }
-//            }
-//        })
+        exporter?.exportAsynchronously(completionHandler: { [weak exporter] in
+            DispatchQueue.main.async {
+
+                if let error = exporter?.error {
+                    // failed The operation could not be complete. ??? 이게 이유냐?
+                    print("failed \(error.localizedDescription)")
+                    fatalError()
+                } else {
+                    //            self.shareVideoFile(outputMovieURL)
+                    // TODO: Save to local library
+                    var filesToShare = [Any]()
+
+                    // Add the path of the file to the Array
+//                    filesToShare.append(outputMovieURL)
+                    filesToShare.append(testURL)
+
+                    // Make the activityViewContoller which shows the share-view
+                    let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
+
+                    // Show the share-view
+                    vc.present(activityViewController, animated: true, completion: nil)
+
+                    UISaveVideoAtPathToSavedPhotosAlbum(testURL.path, self, nil, nil)
+                }
+            }
+        })
         // end of original export
         
    }
