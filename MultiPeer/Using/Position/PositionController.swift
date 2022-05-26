@@ -31,6 +31,51 @@ class PositionController: UIViewController {
         }
     }
     
+    var testMode = true
+    
+    func fetchDefaultScreen() {
+        print("fetchDefaultScreen called")
+        if testMode {
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate")}
+            
+            let subjectContext = appDelegate.persistentContainer.viewContext
+            
+            let subjectReq = NSFetchRequest<NSFetchRequestResult>(entityName: "Subject")
+            subjectReq.returnsObjectsAsFaults = false
+            
+            do {
+                let result = try subjectContext.fetch(subjectReq)
+                guard let fetchedSubjects = result as? [Subject] else { fatalError("failed to cast result to [Subject]")}
+                
+                if !fetchedSubjects.isEmpty {
+                    subject = fetchedSubjects.first!
+                }
+                guard let subject = subject else {
+                    return
+                }
+
+                if !subject.screens.isEmpty {
+                    screen = subject.screens.sorted{$0.date < $1.date}.first
+                    updateTrialCores(subject: subject, screen: screen!)
+                    print("updateTrialCores called")
+                } else {
+                    print("subject has no screen")
+                }
+                print("current Screen : \(screen)")
+            } catch {
+                fatalError("failed to fetch subjects!")
+            }
+            
+//            let screenReq = NSFetchRequest<NSFetchRequestResult>(entityName: "Screen")
+//            screenReq.returnsObjectsAsFaults = false
+//
+//            do {
+//                let
+//            }
+//            let screen = subject
+            
+        }
+    }
 
     
     var scoreBtnViews: [ScoreBtnView] = []
@@ -119,6 +164,7 @@ class PositionController: UIViewController {
         
         updateScoreLabels()
 //        testCode()
+        fetchDefaultScreen()
     }
     
     private func testCode() { // replacement for Playground ..
@@ -128,10 +174,16 @@ class PositionController: UIViewController {
         print("ints: \(ints)")
     }
     
-    private func updateSubjectWithScreen(subject: Subject, screen: Screen) {
+    private func updateTrialCores(subject: Subject, screen: Screen) {
         print("updateSubjectWithScreen")
         self.subject = subject
         self.screen = screen
+        
+        
+        guard subject != nil && screen != nil else { fatalError("either is nil")}
+        // 0 개 . why ?
+        print("total number of trialCores flag1: \(screen.trialCores.count)")
+        
         
         self.trialCores = screen.trialCores.sorted {
             if $0.tag != $1.tag {
@@ -655,7 +707,7 @@ extension PositionController: CameraControllerDelegate {
 
 extension PositionController: SubjectControllerDelegate {
     func updateCurrentScreen(from subject: Subject, with screen: Screen, closure: () -> Void) {
-        updateSubjectWithScreen(subject: subject, screen: screen)
+        updateTrialCores(subject: subject, screen: screen)
         // when currentSubject set, it calls setupSubjectInfo()
         updateScoreLabels()
         closure()
