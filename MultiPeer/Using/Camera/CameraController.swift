@@ -676,12 +676,13 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
+//        var videoUrl: URL?
         guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
               mediaType == (kUTTypeMovie as String),
               //            let crop = info[UIImagePickerController.InfoKey.cropRect], // makes fail.. TT..
               // the delegate method gives a URL pointing to the video
                 let url = info[UIImagePickerController.InfoKey.mediaURL] as? URL,
-              
+//              videoUrl = url
                 // Verify that the app can save the file to the device's photo album
               
                 UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(url.path)
@@ -690,10 +691,25 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             return
         }
         
+        
+        
         print("save success !")
         // Save Video To Photos Album
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
+        
+        
+        
+        
         videoUrl = url
+//        guard url != nil else {return }
+        CropperController.cropVideo(from: url, presentOn: self)
+        
+        TestController.cropVideoWithGivenSize(asset: <#T##AVAsset#>, baseSize: <#T##CGSize#>, completionHandler: <#T##TestController.CropTaskCompletion##TestController.CropTaskCompletion##(Result<URL, Error>) -> Void#>)
+//        guard let
+//        CropperController.cropVideo(from: videoUrl)
+        
+        
+        
         //        removeItem(at: <#T##URL#>)
         print("url: \(url.path)")
         
