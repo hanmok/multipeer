@@ -72,6 +72,7 @@
 		228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B884128065784007A6842 /* LaunchScreen.storyboard */; };
 		228F7B2F283639CA0065895A /* TrialCoreCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228F7B2E283639CA0065895A /* TrialCoreCopy.swift */; };
 		22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACAF5428094ACF007277A7 /* DateExt+.swift */; };
+		22F65DF2283E2DFB00646FCD /* CropperController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* CropperController.swift */; };
 		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 		9A7545B9283B257400558CA7 /* Homework in Resources */ = {isa = PBXBuildFile; fileRef = 9A7545B8283B257400558CA7 /* Homework */; };
 		9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7545BA283B596F00558CA7 /* SoundService.swift */; };
@@ -147,6 +148,7 @@
 		228B884428065784007A6842 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		228F7B2E283639CA0065895A /* TrialCoreCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialCoreCopy.swift; sourceTree = "<group>"; };
 		22ACAF5428094ACF007277A7 /* DateExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateExt+.swift"; sourceTree = "<group>"; };
+		22F65DF1283E2DFB00646FCD /* CropperController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropperController.swift; sourceTree = "<group>"; };
 		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A7545B8283B257400558CA7 /* Homework */ = {isa = PBXFileReference; lastKnownFileType = text; path = Homework; sourceTree = "<group>"; };
 		9A7545BA283B596F00558CA7 /* SoundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 			children = (
 				2265AC4D2817F42300E0FCCF /* CameraController.swift */,
 				22889EFC2820CA96002A9C4F /* PreviewController.swift */,
+				22F65DF1283E2DFB00646FCD /* CropperController.swift */,
 				2283BEC6281FDFB5007D74FC /* ScoreController.swift */,
 			);
 			path = Camera;
@@ -520,6 +523,7 @@
 				227DA6C8282B60180097F8F1 /* SubjectController.swift in Sources */,
 				227950B2282BB8F900B675A1 /* Subject+Helper.swift in Sources */,
 				226D87672834E07600E3F547 /* RemovableProtocol.swift in Sources */,
+				22F65DF2283E2DFB00646FCD /* CropperController.swift in Sources */,
 				2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */,
 				22795072282B939B00B675A1 /* PositionLists.swift in Sources */,
 				226D87632834B9D000E3F547 /* SelectableButtonStackView.swift in Sources */,
