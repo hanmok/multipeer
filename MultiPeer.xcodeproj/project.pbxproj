@@ -73,8 +73,6 @@
 		228F7B2F283639CA0065895A /* TrialCoreCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228F7B2E283639CA0065895A /* TrialCoreCopy.swift */; };
 		22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACAF5428094ACF007277A7 /* DateExt+.swift */; };
 		22F65DF2283E2DFB00646FCD /* CropperController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* CropperController.swift */; };
-		22F65DF4283F567D00646FCD /* PositionController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF3283F567D00646FCD /* PositionController2.swift */; };
-		22F65DF6283F578600646FCD /* CameraController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF5283F578600646FCD /* CameraController2.swift */; };
 		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 		9A7545B9283B257400558CA7 /* Homework in Resources */ = {isa = PBXBuildFile; fileRef = 9A7545B8283B257400558CA7 /* Homework */; };
 		9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7545BA283B596F00558CA7 /* SoundService.swift */; };
@@ -151,8 +149,6 @@
 		228F7B2E283639CA0065895A /* TrialCoreCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialCoreCopy.swift; sourceTree = "<group>"; };
 		22ACAF5428094ACF007277A7 /* DateExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateExt+.swift"; sourceTree = "<group>"; };
 		22F65DF1283E2DFB00646FCD /* CropperController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropperController.swift; sourceTree = "<group>"; };
-		22F65DF3283F567D00646FCD /* PositionController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionController2.swift; sourceTree = "<group>"; };
-		22F65DF5283F578600646FCD /* CameraController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController2.swift; sourceTree = "<group>"; };
 		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A7545B8283B257400558CA7 /* Homework */ = {isa = PBXFileReference; lastKnownFileType = text; path = Homework; sourceTree = "<group>"; };
 		9A7545BA283B596F00558CA7 /* SoundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
@@ -349,9 +345,7 @@
 				226D876A2835D9F000E3F547 /* Int64Ext+.swift */,
 				2283BEC3281B8732007D74FC /* Util+.swift */,
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
-				22F65DF5283F578600646FCD /* CameraController2.swift */,
 				228B883F28065784007A6842 /* Assets.xcassets */,
-				22F65DF3283F567D00646FCD /* PositionController2.swift */,
 				22ADC438281A200300B1C639 /* NotUsing */,
 				228B884128065784007A6842 /* LaunchScreen.storyboard */,
 				228B884428065784007A6842 /* Info.plist */,
@@ -538,8 +532,6 @@
 				228F7B2F283639CA0065895A /* TrialCoreCopy.swift in Sources */,
 				2282DD912816473C008928A4 /* SwiftyCamButton.swift in Sources */,
 				22795063282B8F8D00B675A1 /* AddingSubjectController.swift in Sources */,
-				22F65DF4283F567D00646FCD /* PositionController2.swift in Sources */,
-				22F65DF6283F578600646FCD /* CameraController2.swift in Sources */,
 				2282DD9328167944008928A4 /* SwiftyRecordButton.swift in Sources */,
 				227862632808024900C9EB79 /* VideoHelper.swift in Sources */,
 				22315E3B282E1F8F0093079B /* ScreenCollectionCell.swift in Sources */,
