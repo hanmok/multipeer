@@ -288,6 +288,8 @@ class CameraController: UIViewController {
 
         addChild(scoreVC)
         view.addSubview(scoreVC.view)
+        scoreVC.view.layer.cornerRadius = 10
+        scoreVC.view.layer.borderWidth = 2
         // prepare scoreVC to the bottom (to come up later)
         scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
     }
@@ -298,17 +300,20 @@ class CameraController: UIViewController {
 //        scoreVC.trialCore = trialCore
 
         UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
+//            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
+            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 250, width: screenWidth, height: screenHeight)
         }
     }
 
-    private func showMore() {
-        UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(
-                x: 0,               y: screenHeight - 500,
-                width: screenWidth, height: screenHeight)
-        }
-    }
+//    private func showMore() {
+//        UIView.animate(withDuration: 0.4) {
+//
+//            self.scoreVC.view.frame = CGRect(
+////                x: 0,               y: screenHeight - 500,
+//                x: 0,               y: screenHeight - 250,
+//                width: screenWidth, height: screenHeight)
+//        }
+//    }
 
     private func hideScoreView() {
         UIView.animate(withDuration: 0.4) {
@@ -578,8 +583,10 @@ class CameraController: UIViewController {
         self.picker.mediaTypes = [kUTTypeMovie as String]
         self.picker.cameraOverlayView = self.bottomView
         self.picker.showsCameraControls = false
-        self.picker.preferredContentSize = CGSize(width: self.view.frame.width,
-                                                  height: self.view.frame.width)
+//        self.picker.preferredContentSize = CGSize(
+//            width: self.view.frame.width,
+//            height: self.view.frame.width
+//        )
 
         self.view.addSubview(self.picker.view)
         self.picker.view.snp.makeConstraints { make in
@@ -733,9 +740,9 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             self.showScoreView()
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.showMore()
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+//            self.showMore()
+//        }
     }
 
     private func showReconnectionGuideAction() {

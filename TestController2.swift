@@ -65,9 +65,12 @@ class TestController2 {
 
         print("screenWidth: \(screenWidth), screenHeight: \(screenHeight)")
         
-        let yCoordinate: CGFloat = (screenHeight - screenWidth) / 2
-// 이게.. 센터냐 ?
+//        let yCoordinate: CGFloat = (screenHeight - screenWidth) / 2
+        let yCoordinate: CGFloat = 57
+
+        // 이게.. 센터냐 ?
 //        아니,
+        
         var cropRect = CGRect(x: 0, y: yCoordinate, width: size, height: size)
         
 //        let originFlipTransform = CGAffineTransform(scaleX: 1, y: -1)

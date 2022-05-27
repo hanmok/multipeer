@@ -586,7 +586,7 @@ class ScoreController: UIViewController {
         scoreLabel.snp.makeConstraints { make in
             make.trailing.leading.equalToSuperview().inset(10)
             make.height.equalTo(50)
-            make.top.equalToSuperview().offset(50)
+            make.top.equalToSuperview().offset(20)
         }
         
 
@@ -646,9 +646,9 @@ class ScoreController: UIViewController {
             view.addSubview(painPositionLabel)
             painPositionLabel.snp.makeConstraints { make in
 //                make.top.equalTo(scoreStackView.snp.bottom).offset(20)
-                make.top.equalTo(scoreBtnGroup.snp.bottom).offset(20)
+                make.top.equalTo(scoreBtnGroup.snp.bottom).offset(10)
                 make.leading.trailing.equalToSuperview().inset(10)
-                make.height.equalTo(50) // same as that of scoreLabel
+                make.height.equalTo(40) // same as that of scoreLabel
             }
             painPositionLabel.text = painTestName ?? "Pain Test Name !"
             painPositionLabel.numberOfLines = 2
@@ -672,8 +672,8 @@ class ScoreController: UIViewController {
         view.addSubview(bottomBtnStackView)
         bottomBtnStackView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
-            make.height.equalTo(60)
-            make.top.equalTo(scoreBtnGroup.snp.bottom).offset(200)
+            make.height.equalTo(50)
+            make.top.equalTo(scoreBtnGroup.snp.bottom).offset(30)
         }
         
         view.addSubview(secondView)
