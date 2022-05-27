@@ -71,7 +71,7 @@ class TestController2 {
         // 이게.. 센터냐 ?
 //        아니,
         
-        var cropRect = CGRect(x: 0, y: yCoordinate, width: size, height: size)
+        var cropRect = CGRect(x: 0, y: 0, width: size, height: size)
         
 //        let originFlipTransform = CGAffineTransform(scaleX: 1, y: -1)
 //        let frameTranslateTransform = CGAffineTransform(translationX: 0, y: renderingSize.height)
@@ -102,11 +102,19 @@ class TestController2 {
         cropFilter.setValue(CIVector(cgRect: cropRect), forKey: "inputRectangle")
 
 
-        let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: -cropRect.origin.x, y: -cropRect.origin.y))
+//        let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: -cropRect.origin.x, y: -cropRect.origin.y))
+          
+          let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: 0, y: 0 ))
           
         request.finish(with: imageAtOrigin, context: nil)
       })
-      cropScaleComposition.renderSize = cropRect.size
+        
+//        cropScaleComposition.renderSize = cropRect.size
+//        cropScaleComposition.renderScale = 1.5
+        // modified
+        
+        cropScaleComposition.renderSize = CGSize(width: cropRect.width * 0.8, height: cropRect.height * 0.8)
+        
       item.videoComposition = cropScaleComposition
       self.cropScaleComposition = cropScaleComposition
     }
