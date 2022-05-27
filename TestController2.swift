@@ -88,14 +88,17 @@ class TestController2 {
 
 //        guard let self = self else { return }
 
-        let sepiaToneFilter = CIFilter.sepiaTone()
+//        let sepiaToneFilter = CIFilter.sepiaTone()
+          
 //        let currentTime = request.compositionTime
 //        sepiaToneFilter.intensity = self.calculateFilterIntensity(self.endTime, currentTime)
-          sepiaToneFilter.intensity = 0.5
-        sepiaToneFilter.inputImage = request.sourceImage
+          
+//          sepiaToneFilter.intensity = 0.5
+//        sepiaToneFilter.inputImage = request.sourceImage
 
         let cropFilter = CIFilter(name: "CICrop")!
-        cropFilter.setValue(sepiaToneFilter.outputImage!, forKey: kCIInputImageKey)
+//        cropFilter.setValue(sepiaToneFilter.outputImage!, forKey: kCIInputImageKey)
+          cropFilter.setValue(request.sourceImage, forKey: kCIInputImageKey)
         cropFilter.setValue(CIVector(cgRect: cropRect), forKey: "inputRectangle")
 
 

@@ -685,7 +685,7 @@ class ScoreController: UIViewController {
         view.addSubview(secondView)
         secondView.addSubview(bottomBtnStackView2)
         secondView.addSubview(uploadStateLabel)
-d
+
         uploadStateLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.top.equalToSuperview().offset(50)

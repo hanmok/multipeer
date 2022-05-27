@@ -583,10 +583,8 @@ class CameraController: UIViewController {
         self.picker.mediaTypes = [kUTTypeMovie as String]
         self.picker.cameraOverlayView = self.bottomView
         self.picker.showsCameraControls = false
-//        self.picker.preferredContentSize = CGSize(
-//            width: self.view.frame.width,
-//            height: self.view.frame.width
-//        )
+        
+        
 
         self.view.addSubview(self.picker.view)
         self.picker.view.snp.makeConstraints { make in
