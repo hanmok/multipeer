@@ -72,8 +72,10 @@
 		228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B884128065784007A6842 /* LaunchScreen.storyboard */; };
 		228F7B2F283639CA0065895A /* TrialCoreCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228F7B2E283639CA0065895A /* TrialCoreCopy.swift */; };
 		22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACAF5428094ACF007277A7 /* DateExt+.swift */; };
-		22F65DF2283E2DFB00646FCD /* CropperController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* CropperController.swift */; };
+		22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* EditorService.swift */; };
 		22F65DFE283F75A100646FCD /* TestController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* TestController2.swift */; };
+		22F65E632840B4F000646FCD /* countDown.json in Resources */ = {isa = PBXBuildFile; fileRef = 22F65E622840B4F000646FCD /* countDown.json */; };
+		22F65E672840C72500646FCD /* TrimmerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E662840C72500646FCD /* TrimmerController.swift */; };
 		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 		9A7545B9283B257400558CA7 /* Homework in Resources */ = {isa = PBXBuildFile; fileRef = 9A7545B8283B257400558CA7 /* Homework */; };
 		9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7545BA283B596F00558CA7 /* SoundService.swift */; };
@@ -149,8 +151,10 @@
 		228B884428065784007A6842 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		228F7B2E283639CA0065895A /* TrialCoreCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialCoreCopy.swift; sourceTree = "<group>"; };
 		22ACAF5428094ACF007277A7 /* DateExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateExt+.swift"; sourceTree = "<group>"; };
-		22F65DF1283E2DFB00646FCD /* CropperController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropperController.swift; sourceTree = "<group>"; };
+		22F65DF1283E2DFB00646FCD /* EditorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorService.swift; sourceTree = "<group>"; };
 		22F65DFD283F75A100646FCD /* TestController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestController2.swift; sourceTree = "<group>"; };
+		22F65E622840B4F000646FCD /* countDown.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = countDown.json; path = ../../../../Downloads/countDown.json; sourceTree = "<group>"; };
+		22F65E662840C72500646FCD /* TrimmerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerController.swift; sourceTree = "<group>"; };
 		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A7545B8283B257400558CA7 /* Homework */ = {isa = PBXFileReference; lastKnownFileType = text; path = Homework; sourceTree = "<group>"; };
 		9A7545BA283B596F00558CA7 /* SoundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
@@ -206,8 +210,9 @@
 			children = (
 				2265AC4D2817F42300E0FCCF /* CameraController.swift */,
 				22889EFC2820CA96002A9C4F /* PreviewController.swift */,
-				22F65DF1283E2DFB00646FCD /* CropperController.swift */,
+				22F65DF1283E2DFB00646FCD /* EditorService.swift */,
 				2283BEC6281FDFB5007D74FC /* ScoreController.swift */,
+				22F65E662840C72500646FCD /* TrimmerController.swift */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -348,6 +353,7 @@
 				226D876A2835D9F000E3F547 /* Int64Ext+.swift */,
 				2283BEC3281B8732007D74FC /* Util+.swift */,
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
+				22F65E612840B4E300646FCD /* Lottie */,
 				228B883F28065784007A6842 /* Assets.xcassets */,
 				22ADC438281A200300B1C639 /* NotUsing */,
 				228B884128065784007A6842 /* LaunchScreen.storyboard */,
@@ -380,6 +386,14 @@
 				2279506E282B936500B675A1 /* Connection */,
 			);
 			path = Using;
+			sourceTree = "<group>";
+		};
+		22F65E612840B4E300646FCD /* Lottie */ = {
+			isa = PBXGroup;
+			children = (
+				22F65E622840B4F000646FCD /* countDown.json */,
+			);
+			path = Lottie;
 			sourceTree = "<group>";
 		};
 		6C823DBE391EE5CB5A4C0AA5 /* Pods */ = {
@@ -462,6 +476,7 @@
 				227E7C932833A5C800084BA2 /* CameraWithCoreData in Resources */,
 				228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */,
 				228B884028065784007A6842 /* Assets.xcassets in Resources */,
+				22F65E632840B4F000646FCD /* countDown.json in Resources */,
 				22315E41282E4CA40093079B /* MemoForCoreData in Resources */,
 				9A7545B9283B257400558CA7 /* Homework in Resources */,
 				226D87692834FE7B00E3F547 /* TODO in Resources */,
@@ -526,7 +541,7 @@
 				227DA6C8282B60180097F8F1 /* SubjectController.swift in Sources */,
 				227950B2282BB8F900B675A1 /* Subject+Helper.swift in Sources */,
 				226D87672834E07600E3F547 /* RemovableProtocol.swift in Sources */,
-				22F65DF2283E2DFB00646FCD /* CropperController.swift in Sources */,
+				22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */,
 				2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */,
 				22795072282B939B00B675A1 /* PositionLists.swift in Sources */,
 				226D87632834B9D000E3F547 /* SelectableButtonStackView.swift in Sources */,
@@ -573,6 +588,7 @@
 				22315E3F282E38D40093079B /* TrialCore+Helper.swift in Sources */,
 				2280DCD6283253F80036632E /* TrialCell.swift in Sources */,
 				2283BEC7281FDFB6007D74FC /* ScoreController.swift in Sources */,
+				22F65E672840C72500646FCD /* TrimmerController.swift in Sources */,
 				2283BEBE281A5F5E007D74FC /* ImgBtnView.swift in Sources */,
 				227DA6C42829103D0097F8F1 /* SoundTestViewController.swift in Sources */,
 				2280DCD8283254100036632E /* TrialViewModel.swift in Sources */,

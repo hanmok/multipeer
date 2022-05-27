@@ -68,6 +68,17 @@ struct DetailPositionWIthMsgInfo: Codable {
     var detailInfo: PositionDirectionScoreInfo
 }
 
+struct LottieMsgInfo: Codable {
+    var lottieType: LottieType
+}
+
+enum LottieType: String, Codable {
+//    typealias RawValue = <#type#>
+    case countDown
+    
+    
+}
+
 
 
 public struct PositionWithPainTestName {

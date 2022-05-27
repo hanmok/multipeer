@@ -12,7 +12,7 @@ import Photos
 import MultipeerConnectivity
 import AVFoundation
 import CoreData
-
+import Lottie
 // need to create TrialDetail when .. new Trial needed.
 
 protocol CameraControllerDelegate: AnyObject {
@@ -186,7 +186,7 @@ class CameraController: UIViewController {
         let recordingTimer = Timer(fireAt: Date(milliseconds: dateToStartRecordingInMilliSec), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
 
         DispatchQueue.main.async {
-            self.recordingTimerBtn.setTitle("\(dateToStartRecordingInMilliSec)", for: .normal)
+//            self.recordingTimerBtn.setTitle("\(dateToStartRecordingInMilliSec)", for: .normal)
 
         }
 
@@ -328,30 +328,41 @@ class CameraController: UIViewController {
 
     @objc func timerRecordingBtnTapped(_ sender: UIButton) {
 
-        print(#function, #line)
-        let dateIn1500ms = Date().millisecondsSince1970 + 1500 // give 1.5s to sync better
-        //        let dateIn1500ms = Date().millisecondsSince1970 + 3000 // give 1.5s to sync better
-        let dateIn4500ms = Date().millisecondsSince1970 + 4500
 
-        connectionManager.send(MsgWithTime(msg: .startCountDownMsg, timeInMilliSec: Int(dateIn1500ms)))
+        _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {  [weak self] _ in
+            self?.recordingBtnAction()
+        }
+        playCountDownLottie()
+        
+//        let dateIn500ms = Date().millisecondsSince1970 + 500 // give 1.5s to sync better
+        //        let dateIn1500ms = Date().millisecondsSince1970 + 3000 // give 1.5s to sync better
+//        let dateIn3500ms = Date().millisecondsSince1970 + 3500
+
+//        connectionManager.send(MsgWithTime(msg: .startCountDownMsg, timeInMilliSec: Int(dateIn500ms)))
 
 //        connectionManager.send(MsgWithTime(msg: .startRecordingAfterMsg, timeInMilliSec: Int(dateIn4500ms)))
 
         // Make in sync with receiver
 
-        let countdownTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
+//        let someTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
+//            print("some Timer Triggered")
+//        }
+        
+
+        
+//        let countdownTimer = Timer(fireAt: Date(milliseconds: Int(dateIn500ms)), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
         // give it 0.2s delay
 //        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn4500ms) + 200), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
-        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn4500ms)), interval: 0, target: self, selector: #selector(recordingBtnAction), userInfo: nil, repeats: false)
+//        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn3500ms)), interval: 0, target: self, selector: #selector(recordingBtnAction), userInfo: nil, repeats: false)
         //        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
 
 
-        DispatchQueue.main.async {
-            //            self.recordingTimerBtn.setTitle(String(Int(dateIn1500ms)), for: .normal)
-        }
+//        DispatchQueue.main.async {
+//            //            self.recordingTimerBtn.setTitle(String(Int(dateIn1500ms)), for: .normal)
+//        }
 
-        RunLoop.main.add(countdownTimer, forMode: .common)
-        RunLoop.main.add(recordingTimer, forMode: .common)
+//        RunLoop.main.add(countdownTimer, forMode: .common)
+//        RunLoop.main.add(recordingTimer, forMode: .common)
         //        RunLoop.main.minimumTolerance = 0.01
         //        print("tolerarnce: \(RunLoop.main.minimumTolerance)")
 
@@ -382,7 +393,7 @@ class CameraController: UIViewController {
             DispatchQueue.main.async {
                 self.picker.stopVideoCapture()
                 self.recordingBtn.setTitle("Record", for: .normal)
-                self.recordingTimerBtn.setTitle("Record in 3s", for: .normal)
+//                self.recordingTimerBtn.setTitle("Record in 3s", for: .normal)
             }
 
             self.isRecording = false
@@ -419,59 +430,79 @@ class CameraController: UIViewController {
             //            print(#function, #line, "updating Duration Label!")
         }
     }
+    
+    private func playLottie(type: LottieType) {
+        switch type {
+            
+        case .countDown:
+            countDownLottieView.play()
+        }
+    }
 
+    private func playCountDownLottie() {
+        countDownLottieView.play()
+    }
+    
     @objc private func triggerCountDownTimer() {
         print("triggerCoundDownTimerFlag 0 called")
+        
+        
+        
         DispatchQueue.main.async {
             self.durationLabel.text = "00:00"
-            self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
+//            self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
         }
 
-        decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-            self?.delegate?.makeSound()
-//            print("triggerCoundDownTimerFlag 1 called")
-            guard let `self` = self else { return }
-            print("triggerCoundDownTimerFlag 2 called")
 
-            if self.decreasingCount > 0 {
-                print("triggerCoundDownTimerFlag 3 called")
-                self.decreasingCount -= 1
-//                SoundService.shard.someFunc()
-//                AudioServicesPlaySystemSound(self.systemSoundID)
-
-
-                print("triggerCoundDownTimerFlag 4 called")
-
-                if self.decreasingCount == 0 { // ????
-                    print("triggerCoundDownTimerFlag 5 called")
-//                    AudioServicesPlaySystemSound(self.systemSoundID)
-                    DispatchQueue.main.async {
-                        self.recordingTimerBtn.setTitle("Recording!", for: .normal)
-                    }
-                } else {
-                    // 세번 호출되어야함
-                        // 왜 두번밖에 호출되지 않았지 ?
-                        print("triggerCoundDownTimerFlag 6 called, decreasingCount : \(self.decreasingCount)")
-                        // make sound
-
-//                        AudioServicesPlaySystemSound(self.systemSoundID)
-//                        AudioServicesPlaySystemSound(1104)
-
-//                        AudioServicesPlaySystemSound(1052)
-                        DispatchQueue.main.async {
-                        self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
-                        }
-                    }
-//                }
-            } else { // self.decreasingCount <= 0
-                print("triggerCoundDownTimerFlag 7 called")
-                self.decreasingTimer.invalidate()
-                //                DispatchQueue.main.async {
-                //                    self.timerRecordingBtn.setTitle("Recording!", for: .normal)
-                //                }
-                self.decreasingCount = 3
-            }
-        }
+        
+        
+//        decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+//            self?.delegate?.makeSound()
+////            print("triggerCoundDownTimerFlag 1 called")
+//            guard let `self` = self else { return }
+//            print("triggerCoundDownTimerFlag 2 called")
+//
+//            if self.decreasingCount > 0 {
+//                print("triggerCoundDownTimerFlag 3 called")
+//                self.decreasingCount -= 1
+////                SoundService.shard.someFunc()
+////                AudioServicesPlaySystemSound(self.systemSoundID)
+//
+//
+//                print("triggerCoundDownTimerFlag 4 called")
+//
+//                if self.decreasingCount == 0 { // ????
+//                    print("triggerCoundDownTimerFlag 5 called")
+////                    AudioServicesPlaySystemSound(self.systemSoundID)
+//                    DispatchQueue.main.async {
+//                        self.recordingTimerBtn.setTitle("Recording!", for: .normal)
+//                    }
+//                } else {
+//                    // 세번 호출되어야함
+//                        // 왜 두번밖에 호출되지 않았지 ?
+//                        print("triggerCoundDownTimerFlag 6 called, decreasingCount : \(self.decreasingCount)")
+//                        // make sound
+//
+////                        AudioServicesPlaySystemSound(self.systemSoundID)
+////                        AudioServicesPlaySystemSound(1104)
+//
+////                        AudioServicesPlaySystemSound(1052)
+//                        DispatchQueue.main.async {
+//                        self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
+//                        }
+//                    }
+////                }
+//            } else { // self.decreasingCount <= 0
+//                print("triggerCoundDownTimerFlag 7 called")
+//                self.decreasingTimer.invalidate()
+//                //                DispatchQueue.main.async {
+//                //                    self.timerRecordingBtn.setTitle("Recording!", for: .normal)
+//                //                }
+//                self.decreasingCount = 3
+//            }
+//        }
+        
+        
     }
 
     private func stopTimer() {
@@ -540,6 +571,7 @@ class CameraController: UIViewController {
                                        width: screenWidth, height: (screenHeight - screenWidth) / 2)
 
         self.bottomView.addSubview(self.recordingBtn)
+        
         self.recordingBtn.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.height.equalTo(50)
@@ -561,13 +593,29 @@ class CameraController: UIViewController {
             make.width.equalTo(100)
         }
 
-        self.bottomView.addSubview(self.recordingTimerBtn)
-        self.recordingTimerBtn.snp.makeConstraints { make in
+
+        
+//        self.bottomView.addSubview(self.recordingTimerBtn)
+//        self.recordingTimerBtn.snp.makeConstraints { make in
+//            make.centerX.equalToSuperview()
+//            make.bottom.equalTo(self.recordingBtn.snp.top).offset(-10)
+//            make.width.equalTo(150)
+//            make.height.equalTo(50)
+//        }
+        
+        self.bottomView.addSubview(countDownLottieView)
+        self.countDownLottieView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalTo(self.recordingBtn.snp.top).offset(-10)
             make.width.equalTo(150)
             make.height.equalTo(50)
         }
+        
+        countDownLottieView.addSubview(recordingTimerBtn)
+        recordingTimerBtn.snp.makeConstraints { make in
+            make.leading.top.trailing.bottom.equalToSuperview()
+        }
+        
 
         self.bottomView.addSubview(self.durationLabel)
         self.durationLabel.snp.makeConstraints { make in
@@ -655,19 +703,25 @@ class CameraController: UIViewController {
         $0.textColor = .white
         $0.text = "00:00"
         $0.textAlignment = .center
-        $0.backgroundColor = .magenta
     }
 
     private let dismissBtn = UIButton().then {
         $0.setTitle("Dismiss!", for: .normal)
     }
 
-    private let recordingTimerBtn = UIButton().then {
-        $0.setTitle("Record in 3s", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
+//    private let recordingTimerBtn = UIButton().then {
+////        $0.setTitle("Record in 3s", for: .normal)
+////        $0.setTitleColor(.white, for: .normal)
+//    }
+    
+    private let recordingTimerBtn = UIButton()
+
+    /// animation from Vikky
+    private let countDownLottieView = AnimationView(name: "countDown").then {
+        $0.contentMode = .scaleAspectFit
+        $0.loopMode = .playOnce
     }
-
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

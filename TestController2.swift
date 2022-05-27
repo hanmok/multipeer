@@ -16,10 +16,12 @@ class TestController2 {
     var player: AVPlayer? {
         didSet {
             guard let duration = player?.currentItem?.duration else { return }
+//            let asset = AVURLAsset(url: <#T##NSURL#>)
             endTime = duration
         }
     }
     
+    var testDuration: Double = 0.0 // millisec 까지 표현
     var cropScaleComposition: AVVideoComposition?
     
     var startTime: CMTime = .zero
@@ -29,6 +31,10 @@ class TestController2 {
     init(url: URL, vc: UIViewController) {
         self.player = AVPlayer(url: url)
         self.parentVC = vc
+//        testDuration
+        let asset = AVURLAsset(url: url)
+        testDuration = asset.duration.seconds
+        
     }
     
     func exportVideo() {
@@ -186,6 +192,7 @@ class TestController2 {
     func saveVideoToLocal(with url: URL) {
         //        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         //        let documentsDirectoryURL = paths[0]
+        print("duration: \(self.testDuration)")
         PHPhotoLibrary.shared().performChanges {
             PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
         }

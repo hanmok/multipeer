@@ -17,12 +17,13 @@ import AVKit
 import CoreImage
 import CoreImage.CIFilterBuiltins
 
-class CropperController: UIViewController {
+//class EditorService: UIViewController {
+class EditorService {
     
     var videoURL: URL?
     
     init(videoURL: URL) {
-        super.init(nibName: nil, bundle: nil)
+//        super.init(nibName: nil, bundle: nil)
         self.videoURL = videoURL
     }
     
