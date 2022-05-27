@@ -301,7 +301,7 @@ class CameraController: UIViewController {
 
         UIView.animate(withDuration: 0.4) {
 //            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 200, width: screenWidth, height: screenHeight)
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 250, width: screenWidth, height: screenHeight)
+            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 330, width: screenWidth, height: screenHeight)
         }
     }
 

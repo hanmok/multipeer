@@ -586,7 +586,7 @@ class ScoreController: UIViewController {
         scoreLabel.snp.makeConstraints { make in
             make.trailing.leading.equalToSuperview().inset(10)
             make.height.equalTo(50)
-            make.top.equalToSuperview().offset(20)
+            make.top.equalToSuperview().offset(10)
         }
         
 
@@ -641,7 +641,7 @@ class ScoreController: UIViewController {
         painPlusBtn.wrappedString = "+"
         painMinusBtn.wrappedString = "-"
         
-        if painTestName != nil {
+//        if painTestName != nil {
             print("flag!!!! painTestName is Not Nil!!!")
             view.addSubview(painPositionLabel)
             painPositionLabel.snp.makeConstraints { make in
@@ -663,6 +663,11 @@ class ScoreController: UIViewController {
                 make.leading.trailing.equalToSuperview().inset(50)
                 make.height.equalTo(40)
             }
+//        }
+        
+        if painTestName == nil {
+            painBtnGroup.isHidden = true
+            painPositionLabel.isHidden = true
         }
         
         [deleteBtn, saveBtn].forEach {
@@ -673,16 +678,17 @@ class ScoreController: UIViewController {
         bottomBtnStackView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
             make.height.equalTo(50)
-            make.top.equalTo(scoreBtnGroup.snp.bottom).offset(30)
+//            make.top.equalTo(scoreBtnGroup.snp.bottom).offset(30)
+            make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
         }
         
         view.addSubview(secondView)
         secondView.addSubview(bottomBtnStackView2)
         secondView.addSubview(uploadStateLabel)
-
+d
         uploadStateLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.top.equalToSuperview().offset(150)
+            make.top.equalToSuperview().offset(50)
             make.height.equalTo(120)
         }
         
@@ -691,10 +697,12 @@ class ScoreController: UIViewController {
         }
         
         secondView.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
+        
         bottomBtnStackView2.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
-            make.height.equalTo(60)
-            make.top.equalToSuperview().offset(350)
+            make.height.equalTo(50)
+//            make.top.equalToSuperview().offset(350)
+            make.top.equalTo(uploadStateLabel.snp.bottom).offset(65)
         }
     }
     
