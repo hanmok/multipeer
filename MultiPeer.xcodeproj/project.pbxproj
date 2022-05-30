@@ -76,6 +76,7 @@
 		22F65DFE283F75A100646FCD /* TestController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* TestController2.swift */; };
 		22F65E632840B4F000646FCD /* countDown.json in Resources */ = {isa = PBXBuildFile; fileRef = 22F65E622840B4F000646FCD /* countDown.json */; };
 		22F65E672840C72500646FCD /* TrimmerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E662840C72500646FCD /* TrimmerController.swift */; };
+		22F65E692840D29700646FCD /* NewMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E682840D29700646FCD /* NewMainViewController.swift */; };
 		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 		9A7545B9283B257400558CA7 /* Homework in Resources */ = {isa = PBXBuildFile; fileRef = 9A7545B8283B257400558CA7 /* Homework */; };
 		9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7545BA283B596F00558CA7 /* SoundService.swift */; };
@@ -155,6 +156,7 @@
 		22F65DFD283F75A100646FCD /* TestController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestController2.swift; sourceTree = "<group>"; };
 		22F65E622840B4F000646FCD /* countDown.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = countDown.json; path = ../../../../Downloads/countDown.json; sourceTree = "<group>"; };
 		22F65E662840C72500646FCD /* TrimmerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerController.swift; sourceTree = "<group>"; };
+		22F65E682840D29700646FCD /* NewMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMainViewController.swift; sourceTree = "<group>"; };
 		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A7545B8283B257400558CA7 /* Homework */ = {isa = PBXFileReference; lastKnownFileType = text; path = Homework; sourceTree = "<group>"; };
 		9A7545BA283B596F00558CA7 /* SoundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
@@ -352,6 +354,7 @@
 				226D876C2835E16D00E3F547 /* Converter.swift */,
 				226D876A2835D9F000E3F547 /* Int64Ext+.swift */,
 				2283BEC3281B8732007D74FC /* Util+.swift */,
+				22F65E682840D29700646FCD /* NewMainViewController.swift */,
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				22F65E612840B4E300646FCD /* Lottie */,
 				228B883F28065784007A6842 /* Assets.xcassets */,
@@ -555,6 +558,7 @@
 				22315E3B282E1F8F0093079B /* ScreenCollectionCell.swift in Sources */,
 				227648CE2831E75900214EBF /* TrialDetail+Helper.swift in Sources */,
 				9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */,
+				22F65E692840D29700646FCD /* NewMainViewController.swift in Sources */,
 				227950B9282BBF8F00B675A1 /* PositionTitleCore+Helper.swift in Sources */,
 				E54927E5283B878A0049D00A /* SubjectTableCell.swift in Sources */,
 				226D876D2835E16D00E3F547 /* Converter.swift in Sources */,

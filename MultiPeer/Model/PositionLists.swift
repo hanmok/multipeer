@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 // MARK: - Position
 enum PositionList: String, CaseIterable {
     case deepSquat = "Deep Squat"
@@ -24,6 +23,8 @@ enum PositionList: String, CaseIterable {
     case rotaryStability = "Rotary Stability"
     case flexionClearing = "Flexion Clearing"
 }
+
+
 
 // Make positionList accessable using Index
 extension CaseIterable where Self: Equatable {
@@ -49,6 +50,17 @@ struct Dummy {
         .extensionClearing:1,
         .rotaryStability:2,
         .flexionClearing:1
+    ]
+    
+    static let shortName: [String: String] = [
+        PositionList.deepSquat.rawValue: "DS",
+        PositionList.hurdleStep.rawValue: "HS",
+        PositionList.inlineLunge.rawValue: "IL",
+        PositionList.ankleClearing.rawValue: "AC",
+        PositionList.shoulderMobility.rawValue: "Shoulder",
+        PositionList.activeStraightLegRaise.rawValue: "ASLR",
+        PositionList.trunkStabilityPushUp.rawValue: "TSPU",
+        PositionList.rotaryStability.rawValue: "RS"
     ]
 }
 

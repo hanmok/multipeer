@@ -29,6 +29,7 @@ class CameraController: UIViewController {
     var trialCore: TrialCore
     var systemSoundID: SystemSoundID = 1057
 //    var systemSoundID: SystemSoundID = 1016
+    var timeDifference: CGFloat = 0 // Could be CMTime
 
     var screen: Screen
 
@@ -167,6 +168,7 @@ class CameraController: UIViewController {
         stopRecording()
     }
 
+    // not recommended
     @objc func startRecordingAtNoti(_ notification: Notification) {
         //        print("flag3")
         print(#function, #line)
@@ -182,9 +184,9 @@ class CameraController: UIViewController {
         print(#function, #line)
         print("receivedMillisecData: \(dateToStartRecordingInMilliSec)")
         print("currentMillisecData: \(Date().millisecondsSince1970)")
-
+// 이거 뭐지 ?
         let recordingTimer = Timer(fireAt: Date(milliseconds: dateToStartRecordingInMilliSec), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
-
+//TimeInterval(
         DispatchQueue.main.async {
 //            self.recordingTimerBtn.setTitle("\(dateToStartRecordingInMilliSec)", for: .normal)
 
@@ -194,7 +196,7 @@ class CameraController: UIViewController {
         print("startRecordingAfter has ended", #line)
     }
 
-
+    // not recommended
     @objc func startCountdownAtNoti(_ notification: Notification) {
         //        print("flag4")
         guard let milliTime = notification.userInfo?["receivedTime"] as? Int,

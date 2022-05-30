@@ -161,6 +161,7 @@ class SubjectController: UIViewController {
 //            make.bottom.equalToSuperview()
 //        }
         
+// akadp dksemfa... =.=
         
         view.addSubview(subjectTableView)
         subjectTableView.snp.makeConstraints { make in
