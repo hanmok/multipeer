@@ -80,7 +80,7 @@ extension Screen {
         validScreen.setValue(0, forKey: .ScreenStr.totalScore)
         print("flaggg1")
         TrialCore.saveBundle(belongTo: validScreen)
-print("flaggg2")
+        print("flaggg2")
         do {
             try managedContext.save()
             print("successfully saved screen  : \(validScreen.trialCores.count)")
@@ -91,49 +91,42 @@ print("flaggg2")
         }
     }
     
-//    static func delete(_ screen: Screen) {
-//        if let context = screen.managedObjectContext {
-////            screen.parentSubject = nil
-//            context.delete(screen)
-//            context.saveCoreData()
-//        }
-//    }
+    @discardableResult
+    static func save() -> Screen {
+        print("screen save has called")
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError("fail to case to appDelegate")
+        }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let entity = NSEntityDescription.entity(forEntityName: "Screen", in: managedContext)!
+        let screen = NSManagedObject(entity: entity, insertInto: managedContext)
+        
+        guard let validScreen = screen as? Screen else {
+            fatalError("screen downcasting has failed!")
+        }
+        
+//        validScreen.parentSubject = subject // 이거 빼고 모두 같음 .
+        let currentDate = Date()
+        let randomUUID = UUID()
+        
+        validScreen.setValue(currentDate, forKey: .ScreenStr.date)
+        validScreen.setValue(randomUUID, forKey: "id_")
+        validScreen.setValue(0, forKey: .ScreenStr.totalScore)
+        
+        TrialCore.saveBundle(belongTo: validScreen)
+        
+        do {
+            try managedContext.save()
+            print("successfully saved screen  : \(validScreen.trialCores.count)")
+            print("validScreen id : \(validScreen.id)")
+            return validScreen
+        } catch let error as NSError {
+            fatalError("failed to save screen ! error : \(error.localizedDescription)")
+        }
+    }
     
-    
-    
-//    static func save() -> Screen {
-//        print("screen save has called")
-//        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-//            fatalError("fail to case to appDelegate")
-//        }
-//
-//        let managedContext = appDelegate.persistentContainer.viewContext
-//
-//        let entity = NSEntityDescription.entity(forEntityName: "Screen", in: managedContext)!
-//        let screen = NSManagedObject(entity: entity, insertInto: managedContext)
-//
-//        guard let validScreen = screen as? Screen else {
-//            fatalError("screen downcasting has failed!")
-//        }
-//
-//        let currentDate = Date()
-//        let randomUUID = UUID()
-//
-//        validScreen.setValue(currentDate, forKey: .ScreenStr.date)
-//        validScreen.setValue(randomUUID, forKey: "id_")
-//        validScreen.setValue(0, forKey: .ScreenStr.totalScore)
-//
-//        do {
-//            try managedContext.save()
-//            print("successfully saved screen  : \(screen)")
-//
-//            return validScreen
-//        } catch let error as NSError {
-////            print("Could not save, \(error), \(error.userInfo)")
-//            print("could not save, \(error.localizedDescription)")
-//            fatalError("faield to save screen !")
-//        }
-//    }
 }
 
 

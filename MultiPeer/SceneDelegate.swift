@@ -21,7 +21,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
 
-        let positionVC = PositionController()
+//        let positionVC = PositionController()
+        let positionVC = NewMainViewController()
 //        let positionVC = SoundTestViewController()
 //        window?.rootViewController = PositionController()
 //        window?.rootViewController = UIViewController(nibName: nil, bundle: nil)

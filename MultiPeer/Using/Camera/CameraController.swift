@@ -155,6 +155,7 @@ class CameraController: UIViewController {
 
         startRecording()
         // duration update needed
+        // start
     }
 
 
@@ -246,7 +247,7 @@ class CameraController: UIViewController {
 
     // MARK: - Button Actions
     private func setupAddTargets() {
-        recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
+//        recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
         dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
         recordingTimerBtn.addTarget(self, action: #selector(timerRecordingBtnTapped(_:)), for: .touchUpInside)
         //        testScoreView.addTarget(self, action: #selector(showMore(_:)), for: .touchUpInside)
@@ -274,10 +275,34 @@ class CameraController: UIViewController {
 
 
             startRecording()
+//            DispatchQueue.main.async {
+            UIView.animate(withDuration: 0.4) {
+                self.outerRecCircle.backgroundColor = UIColor(red: 71/255, green: 69/255, blue: 78/255, alpha: 1)
+                self.innerShape.layer.cornerRadius = 6
+//                self.recordingTimerBtn.setTitleColor(.black, for: .normal)
+                self.recordingTimerBtn.setTitleColor(UIColor(red: 21/255, green: 21/255, blue: 21/255, alpha: 1), for: .normal)
+                
+                self.leftShape.layer.cornerRadius = 2
+                self.leftShape.backgroundColor = UIColor(red: 181/255, green: 179/255, blue: 192/255, alpha: 1)
+            }
+//            }
+
             // STOP Recording !!
         } else {
 
             stopRecording()
+            
+            
+//            DispatchQueue.main.async {
+            UIView.animate(withDuration: 0.4) {
+                self.outerRecCircle.backgroundColor = .red
+                self.innerShape.layer.cornerRadius = 18
+                self.recordingTimerBtn.setTitleColor(.red, for: .normal)
+                
+                self.leftShape.layer.cornerRadius = 10
+                self.leftShape.backgroundColor = .red
+            }
+            
             // Send Stop Msg
             //            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
 
@@ -325,51 +350,22 @@ class CameraController: UIViewController {
     }
 
     @objc func dismissBtnTapped(_ sender: UIButton) {
+        print("dismiss btn tapped!")
         delegate?.dismissCamera()
     }
 
     @objc func timerRecordingBtnTapped(_ sender: UIButton) {
-
-
-        _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {  [weak self] _ in
-            self?.recordingBtnAction()
+        
+        if isRecording {
+            //            startRecording()
+            recordingBtnAction()
+        } else {
+            _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {  [weak self] _ in
+                self?.recordingBtnAction()
+            }
+            
+            playCountDownLottie()
         }
-        playCountDownLottie()
-        
-//        let dateIn500ms = Date().millisecondsSince1970 + 500 // give 1.5s to sync better
-        //        let dateIn1500ms = Date().millisecondsSince1970 + 3000 // give 1.5s to sync better
-//        let dateIn3500ms = Date().millisecondsSince1970 + 3500
-
-//        connectionManager.send(MsgWithTime(msg: .startCountDownMsg, timeInMilliSec: Int(dateIn500ms)))
-
-//        connectionManager.send(MsgWithTime(msg: .startRecordingAfterMsg, timeInMilliSec: Int(dateIn4500ms)))
-
-        // Make in sync with receiver
-
-//        let someTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
-//            print("some Timer Triggered")
-//        }
-        
-
-        
-//        let countdownTimer = Timer(fireAt: Date(milliseconds: Int(dateIn500ms)), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
-        // give it 0.2s delay
-//        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn4500ms) + 200), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
-//        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn3500ms)), interval: 0, target: self, selector: #selector(recordingBtnAction), userInfo: nil, repeats: false)
-        //        let recordingTimer = Timer(fireAt: Date(milliseconds: Int(dateIn1500ms)), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
-
-
-//        DispatchQueue.main.async {
-//            //            self.recordingTimerBtn.setTitle(String(Int(dateIn1500ms)), for: .normal)
-//        }
-
-//        RunLoop.main.add(countdownTimer, forMode: .common)
-//        RunLoop.main.add(recordingTimer, forMode: .common)
-        //        RunLoop.main.minimumTolerance = 0.01
-        //        print("tolerarnce: \(RunLoop.main.minimumTolerance)")
-
-        //        RunLoop.main.add(recordingTimer, forMode: .)
-
 
     }
 
@@ -380,7 +376,12 @@ class CameraController: UIViewController {
         if !isRecording {
             DispatchQueue.main.async {
                 self.picker.startVideoCapture()
-                self.recordingBtn.setTitle("Stop", for: .normal)
+//                self.recordingBtn.setTitle("Stop", for: .normal)
+//                self.recordingTimerBtn.setTitle("Stop", for: .normal)
+                
+                let attributedTitle = NSMutableAttributedString(string: "STOP", attributes: [.font: UIFont.systemFont(ofSize: 12)])
+                self.recordingTimerBtn.setAttributedTitle(attributedTitle, for: .normal)
+                
             }
 
             self.isRecording = true
@@ -394,8 +395,10 @@ class CameraController: UIViewController {
         if isRecording {
             DispatchQueue.main.async {
                 self.picker.stopVideoCapture()
-                self.recordingBtn.setTitle("Record", for: .normal)
-//                self.recordingTimerBtn.setTitle("Record in 3s", for: .normal)
+//                self.recordingTimerBtn.setTitle("REC", for: .normal)
+                let attributedTitle = NSMutableAttributedString(string: "REC", attributes: [.font: UIFont.systemFont(ofSize: 12)])
+                self.recordingTimerBtn.setAttributedTitle(attributedTitle, for: .normal)
+//                $0.setTitleColor(.red, for: .normal)
             }
 
             self.isRecording = false
@@ -421,7 +424,8 @@ class CameraController: UIViewController {
             self.updateDurationLabel()
         }
     }
-
+    
+    // only func changes DurationLabel
     private func updateDurationLabel() {
         //        print("updateDuration Triggered!")
 
@@ -566,66 +570,11 @@ class CameraController: UIViewController {
     func setupLayout() {
         print("present Picker!!")
 
-        self.topView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: (screenHeight - screenWidth) / 2)
+//        self.topView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: (screenHeight - screenWidth) / 2)
 
 
         self.bottomView.frame = CGRect(x:0, y: screenHeight - (screenHeight - screenWidth) / 2,
                                        width: screenWidth, height: (screenHeight - screenWidth) / 2)
-
-        self.bottomView.addSubview(self.recordingBtn)
-        
-        self.recordingBtn.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.height.equalTo(50)
-            make.width.equalTo(150)
-        }
-
-        self.bottomView.addSubview(self.connectionStateLabel)
-        self.connectionStateLabel.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview()
-            make.leading.equalToSuperview()
-            make.trailing.equalTo(self.recordingBtn.snp.leading)
-        }
-
-        self.bottomView.addSubview(self.dismissBtn)
-        self.dismissBtn.snp.makeConstraints { make in
-            make.right.equalToSuperview()
-            make.centerY.equalToSuperview()
-            make.height.equalTo(50)
-            make.width.equalTo(100)
-        }
-
-
-        
-//        self.bottomView.addSubview(self.recordingTimerBtn)
-//        self.recordingTimerBtn.snp.makeConstraints { make in
-//            make.centerX.equalToSuperview()
-//            make.bottom.equalTo(self.recordingBtn.snp.top).offset(-10)
-//            make.width.equalTo(150)
-//            make.height.equalTo(50)
-//        }
-        
-        self.bottomView.addSubview(countDownLottieView)
-        self.countDownLottieView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(self.recordingBtn.snp.top).offset(-10)
-            make.width.equalTo(150)
-            make.height.equalTo(50)
-        }
-        
-        countDownLottieView.addSubview(recordingTimerBtn)
-        recordingTimerBtn.snp.makeConstraints { make in
-            make.leading.top.trailing.bottom.equalToSuperview()
-        }
-        
-
-        self.bottomView.addSubview(self.durationLabel)
-        self.durationLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(self.recordingTimerBtn.snp.centerY)
-            make.height.equalTo(50)
-            make.leading.equalTo(self.recordingTimerBtn.snp.trailing)
-            make.trailing.equalToSuperview()
-        }
 
         self.picker.allowsEditing = true
         self.picker.sourceType = .camera
@@ -633,8 +582,6 @@ class CameraController: UIViewController {
         self.picker.mediaTypes = [kUTTypeMovie as String]
         self.picker.cameraOverlayView = self.bottomView
         self.picker.showsCameraControls = false
-        
-        
 
         self.view.addSubview(self.picker.view)
         self.picker.view.snp.makeConstraints { make in
@@ -647,14 +594,80 @@ class CameraController: UIViewController {
             make.height.equalTo((screenHeight - screenWidth) / 2)
         }
 
-
+        topView.addSubview(dismissBtn)
+        dismissBtn.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(90)
+            make.leading.equalToSuperview().inset(16)
+            make.height.width.equalTo(20)
+        }
+        
+        
         topView.addSubview(positionNameLabel)
         positionNameLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(60)
+            make.top.equalToSuperview().offset(90)
             make.centerX.equalToSuperview()
-            make.leading.trailing.equalToSuperview().inset(30)
+            make.width.equalTo(250)
+            make.height.equalTo(25)
+        }
+        
+        
+        topView.addSubview(durationLabel)
+        durationLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview().inset(30)
+            make.height.equalTo(40)
+            make.width.equalTo(200)
+        }
+        
+        view.addSubview(bottomView)
+        
+        
+        self.bottomView.addSubview(countDownLottieView)
+        self.countDownLottieView.snp.makeConstraints { make in
+            make.leading.top.equalToSuperview().offset(30)
+            make.width.equalTo(50)
             make.height.equalTo(50)
         }
+        
+        bottomView.addSubview(neighborLongBar)
+        neighborLongBar.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.equalToSuperview().dividedBy(2)
+            make.height.equalTo(48)
+        }
+        
+        [leftShape, rightShape].forEach { neighborLongBar.addSubview($0) }
+        leftShape.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.centerX.equalTo(neighborLongBar.snp.leading).inset(24)
+            make.width.height.equalTo(20)
+        }
+        
+        rightShape.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.centerX.equalTo(neighborLongBar.snp.trailing).inset(24)
+            make.width.height.equalTo(20)
+        }
+        
+        bottomView.addSubview(outerRecCircle)
+        outerRecCircle.addSubview(innerShape)
+        outerRecCircle.addSubview(recordingTimerBtn)
+        
+        self.outerRecCircle.snp.makeConstraints { make in
+            make.center.equalTo(self.bottomView.snp.center)
+            make.height.width.equalTo(72)
+        }
+        
+        self.innerShape.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(36)
+        }
+        
+        self.recordingTimerBtn.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(36)
+        }
+        
     }
 
     //MARK: Reconnect! when it ends.
@@ -678,13 +691,16 @@ class CameraController: UIViewController {
 
 //    private let testScoreView = UIButton(frame: CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)).then { $0.backgroundColor = .orange }
 
-    private let bottomView = UIView().then { $0.backgroundColor = .black }
-    private let topView = UIView().then { $0.backgroundColor = .black }
+    private let bottomView = UIView().then { $0.backgroundColor = .white }
+    private let topView = UIView().then { $0.backgroundColor = .white }
+    
     private let positionNameLabel = UILabel().then {
-        $0.textColor = .white
+//        $0.textColor = .white
+        $0.textColor = .black
         //        $0.textAlignment = .center
-        $0.textAlignment = .left
+        $0.textAlignment = .center
         $0.font = UIFont.systemFont(ofSize: 20)
+//        $0.backgroundColor = .green
     }
 
     private let imageView = UIImageView()
@@ -696,27 +712,74 @@ class CameraController: UIViewController {
         $0.textColor = .white
     }
 
-    private let recordingBtn = UIButton().then {
-        $0.setTitle("Record", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
-    }
 
     private let durationLabel = UILabel().then {
         $0.textColor = .white
         $0.text = "00:00"
         $0.textAlignment = .center
+        $0.layer.cornerRadius = 24
+        $0.backgroundColor = UIColor(red: 109 / 255, green: 107 / 255, blue: 115 / 255, alpha: 1)
+        $0.clipsToBounds = true
     }
 
-    private let dismissBtn = UIButton().then {
-        $0.setTitle("Dismiss!", for: .normal)
-    }
-
-//    private let recordingTimerBtn = UIButton().then {
-////        $0.setTitle("Record in 3s", for: .normal)
-////        $0.setTitleColor(.white, for: .normal)
+//    private let dismissBtn = UIButton().then {
+////        $0.setTitle("<", for: .normal)
+//        $0.setTitleColor(.black, for: .normal)
+//        $0.setImage(UIImage(systemName: "chevron.left"), for: .normal)
 //    }
     
-    private let recordingTimerBtn = UIButton()
+    private let dismissBtn: UIButton = {
+        let btn = UIButton()
+        let innerImage = UIImageView(image: UIImage(systemName: "chevron.left"))
+        innerImage.tintColor = .black
+        btn.addSubview(innerImage)
+        innerImage.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalToSuperview()
+            make.center.equalToSuperview()
+            make.width.equalToSuperview().dividedBy(2)
+            make.height.equalToSuperview()
+        }
+//        let image = UIImage(systemName: "chevron.left")!.withTintColor(.black)
+//        image?.withTintColor(<#T##color: UIColor##UIColor#>)
+        
+//        btn.setBackgroundImage(UIImage(systemName: "chevron.left"), for: .normal)
+//        btn.setBackgroundImage(image, for: .normal)
+        btn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
+//        btn.backgroundColor = .magenta
+        return btn
+    }()
+
+    private let outerRecCircle = UIView().then {
+        $0.backgroundColor = .red
+        $0.layer.cornerRadius = 36
+    }
+    
+    private let innerShape = UIView().then {
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 18
+    }
+
+    private let neighborLongBar = UIView().then {
+        $0.backgroundColor = UIColor(red: 237 / 255, green: 236/255, blue: 239/255, alpha: 1)
+        $0.layer.cornerRadius = 24
+    }
+    
+    private let leftShape = UIView().then {
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = .red
+    }
+    
+    private let rightShape = UIView().then {
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = UIColor(red: 203/255, green: 202/255, blue: 211/255, alpha: 1)
+    }
+    
+    private let recordingTimerBtn = UIButton().then {
+//        $0.setTitle("REC", for: .normal)
+        let attributedTitle = NSMutableAttributedString(string: "REC", attributes: [.font: UIFont.systemFont(ofSize: 12)])
+        $0.setAttributedTitle(attributedTitle, for: .normal)
+        $0.setTitleColor(.red, for: .normal)
+    }
 
     /// animation from Vikky
     private let countDownLottieView = AnimationView(name: "countDown").then {

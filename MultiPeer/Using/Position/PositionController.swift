@@ -65,15 +65,6 @@ class PositionController: UIViewController {
             } catch {
                 fatalError("failed to fetch subjects!")
             }
-            
-//            let screenReq = NSFetchRequest<NSFetchRequestResult>(entityName: "Screen")
-//            screenReq.returnsObjectsAsFaults = false
-//
-//            do {
-//                let
-//            }
-//            let screen = subject
-            
         }
     }
 
@@ -163,15 +154,18 @@ class PositionController: UIViewController {
         addNotificationObservers()
         
         updateScoreLabels()
-//        testCode()
+        testCode()
         fetchDefaultScreen()
     }
     
     private func testCode() { // replacement for Playground ..
-        var ints = [1,5,6,3,4,4,0]
-
-        ints = ints.sorted { $0 < $1 }
-        print("ints: \(ints)")
+//        var ints = [1,5,6,3,4,4,0]
+//
+//        ints = ints.sorted { $0 < $1 }
+//        print("ints: \(ints)")
+        for positionName in Dummy.PositionSequence.allCases {
+            print("case  : \(positionName)")
+        }
     }
     
     private func updateTrialCores(subject: Subject, screen: Screen) {

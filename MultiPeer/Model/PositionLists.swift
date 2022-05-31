@@ -24,6 +24,22 @@ enum PositionList: String, CaseIterable {
     case flexionClearing = "Flexion Clearing"
 }
 
+enum PositionListWithoutVars: String, CaseIterable {
+    case deepSquat = "Deep Squat"
+//    case deepSquatVar = "Deep Squat Var"
+    case hurdleStep = "Hurdle Step"
+    case inlineLunge = "Inline Lunge"
+    case ankleClearing = "Ankle Clearing"
+    case shoulderMobility = "Shoulder Mobility"
+    case shoulderClearing = "Shoulder Clearing"
+    case activeStraightLegRaise = "Active Straight-LegRaise"
+    case trunkStabilityPushUp = "Trunk Stability Push-up"
+//    case trunkStabilityPushUpVar = "Trunk Stability Push-up Var"
+    case extensionClearing = "Extension Clearing"
+    case rotaryStability = "Rotary Stability"
+    case flexionClearing = "Flexion Clearing"
+}
+
 
 
 // Make positionList accessable using Index
@@ -57,14 +73,31 @@ struct Dummy {
         PositionList.hurdleStep.rawValue: "HS",
         PositionList.inlineLunge.rawValue: "IL",
         PositionList.ankleClearing.rawValue: "AC",
-        PositionList.shoulderMobility.rawValue: "Shoulder",
+        PositionList.shoulderMobility.rawValue: "SM",
         PositionList.activeStraightLegRaise.rawValue: "ASLR",
         PositionList.trunkStabilityPushUp.rawValue: "TSPU",
         PositionList.rotaryStability.rawValue: "RS"
     ]
+    
+    enum PositionSequence: String, CaseIterable {
+        case deepSquat = "DS"
+        case hurdleStep = "HS"
+        case inlineLunge = "IL"
+        case ankleClearing = "AC"
+        case shoulderMobility = "SM"
+        case activeStraightLegRaise = "ASLR"
+        case trunkStabilityPushUp = "TSPU"
+        case rotaryStability = "RS"
+    }
 }
 
-
+let PositionsHasPain: [String: String] = [
+    PositionList.ankleClearing.rawValue: PositionList.ankleClearing.rawValue,
+    PositionList.shoulderMobility.rawValue: PositionList.shoulderClearing.rawValue,
+    PositionList.trunkStabilityPushUp.rawValue: PositionList.extensionClearing.rawValue,
+    PositionList.trunkStabilityPushUpVar.rawValue: PositionList.extensionClearing.rawValue,
+    PositionList.rotaryStability.rawValue: PositionList.flexionClearing.rawValue
+]
 
 
 
@@ -125,6 +158,18 @@ enum PositionWithImageListEnum {
     static let flexionClearing = PositionInfo(title: PositionImgs.flexionClearing.0, imageName:
                                         [PositionImgs.flexionClearing.imageNames[0]])
 }
+
+// Clearing 제외한 상태. 변수 이름 변경 필요.
+let  PositionImgsDictionary: [String: [String]] = [
+    PositionList.deepSquat.rawValue: ["deepSquat"],
+    PositionList.hurdleStep.rawValue: ["hurdleStepLeft", "hurdleStepRight"],
+    PositionList.inlineLunge.rawValue: ["inlineLungeLeft","inlineLungeRight"],
+    PositionList.ankleClearing.rawValue: ["ankleClearingLeft","ankleClearingRight"],
+    PositionList.shoulderMobility.rawValue: ["shoulderMobilityLeft", "shoulderMobilityRight"],
+    PositionList.activeStraightLegRaise.rawValue: ["activeStraightLegRaiseLeft", "activeStraightLegRaiseRight"],
+    PositionList.trunkStabilityPushUp.rawValue: ["trunkStabilityPushup"],
+    PositionList.rotaryStability.rawValue: ["rotaryStabilityLeft","rotaryStabilityRight"]
+                                     ]
 
 
 

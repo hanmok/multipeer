@@ -107,6 +107,38 @@ extension TrialCore {
         }
     }
     
+    static func save(title: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError("error !! flag 2")
+        }
+
+        let managedContext = appDelegate.persistentContainer.viewContext
+        guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else { fatalError("error !! flag 3") }
+        
+        // for loop needed..
+        guard let positionName = PositionList(rawValue: title),
+              let numOfDirections = Dummy.numOfDirections[positionName],
+              let directionNames = Dummy.directionName[numOfDirections] else { fatalError("error !! flag 4") }
+        
+        for direction in directionNames {
+            guard let trialCore = NSManagedObject(entity: entity, insertInto: managedContext) as? TrialCore else { fatalError("error !! flag 5") }
+            
+//            trialCore.setValue(parent, forKey: .TrialCoreStr.parentScreen)
+            trialCore.setValue(title, forKey: .TrialCoreStr.title)
+            trialCore.setValue(direction, forKey: .TrialCoreStr.direction)
+            print("parent of TrialCore : \(trialCore.parentScreen)")
+            print("title of TrialCore : \(trialCore.title)")
+            print("direction of TrialCore : \(trialCore.direction)")
+//            parent.trialCores.update(with: trialCore)
+            do {
+                try managedContext.save()
+            } catch {
+                print("error : \(error.localizedDescription)")
+                fatalError("error !! flag 6")
+            }
+        }
+    }
+    
      func returnFreshTrialDetail() -> TrialDetail {
          
          let sortedDetails = self.trialDetails.sorted { $0.trialNo < $1.trialNo }
