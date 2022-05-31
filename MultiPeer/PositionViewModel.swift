@@ -30,33 +30,42 @@ struct PositionViewModel {
     
     var scoreLabel: [String] { return convertScoreToString() }
     
-    // TODO: convert score var into scoreLabel
+    // TODO: convert score var into scoreLabel, Not Complete yet
     func convertScoreToString() -> [String] {
+        
         var temp: [String] = []
+        
+        // Neutral
         if trialCore.count == 1 {
-            if trialCore.first!.latestScore == .DefaultValue.trialScore {
+//            if trialCore.first!.latestScore == .DefaultValue.trialScore || trialCore.first!.latestScore < 0 {
+            if trialCore.first!.latestScore < 0 {
                 return ["N"]
             } else {
                 return [String(trialCore.first!.latestScore)]
             }
+            // Has Left & Right
         } else if trialCore.count == 2 {
             // first element
             
-            if trialCore.first!.latestScore == .DefaultValue.trialScore {
+//            if trialCore.first!.latestScore == .DefaultValue.trialScore {
+            if trialCore.first!.latestScore < 0 {
                 temp.append("L")
             } else {
                 temp.append( String(trialCore.first!.latestScore))
             }
             
             // second element
-            if trialCore.last!.latestScore == .DefaultValue.trialScore {
+//            if trialCore.last!.latestScore == .DefaultValue.trialScore {
+            if trialCore.last!.latestScore < 0 {
                 temp.append("R")
             } else {
                 temp.append(String(trialCore.first!.latestScore))
             }
             
             return temp
-        } else {
+        }
+        
+        else {
             fatalError("numOfTrialCore: \(trialCore.count)")
         }
     }

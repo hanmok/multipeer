@@ -79,6 +79,7 @@ class PositionController: UIViewController {
     var decreasingTimer = Timer()
     var systemSoundID: SystemSoundID = 1016
     var decreasingCount = 3
+    
     private let subjectNameLabel = UILabel().then { $0.textColor = .cyan
         $0.textAlignment = .right
     }
@@ -111,6 +112,7 @@ class PositionController: UIViewController {
         $0.setTitle("Connect", for: .normal)
         $0.setTitleColor(.green, for: .normal)
     }
+
     
     private let connectionStateLabel = UILabel().then {
         $0.textColor = .black
@@ -220,6 +222,7 @@ class PositionController: UIViewController {
         
         testBtn.addTarget(self, action: #selector(testBtnTapped), for: .touchUpInside)
     }
+    // till here
     
     @objc func testBtnTapped(_ sender: UIButton) {
         print("testBtnTapped")
@@ -382,7 +385,7 @@ class PositionController: UIViewController {
         // direction 설정이 잘못됨 ;;;
             DispatchQueue.main.async {
             self.cameraVC = CameraController(
-                positionDirectionScoreInfo: positionDirectionScoreInfo,
+//                positionDirectionScoreInfo: positionDirectionScoreInfo,
                 connectionManager: self.connectionManager,
                 screen: screen,
                 trialCore: selectedTrial
@@ -399,7 +402,7 @@ class PositionController: UIViewController {
             }
         }
     }
-    
+    // till here
     
     // observer, add observer
     // MARK: - NOTIFICATIONS
@@ -435,7 +438,7 @@ class PositionController: UIViewController {
         
         DispatchQueue.main.async {
             let cameraVC = CameraController(
-                positionDirectionScoreInfo: positionWithDirectionInfo,
+//                positionDirectionScoreInfo: positionWithDirectionInfo,
                 connectionManager: self.connectionManager,
                 screen: screen,
                 trialCore: selectedTrialCore
@@ -672,7 +675,6 @@ extension PositionController: ConnectionManagerDelegate {
 extension PositionController: CameraControllerDelegate {
     func makeSound() {
         print("makeSound triggered !!!")
-//        SoundService.shard.someFunc()
     }
     
     func dismissCamera() {

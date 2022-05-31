@@ -10,14 +10,80 @@ import UIKit
 import SnapKit
 import Then
 
-class PositionCollectionCell: UICollectionViewCell {
+protocol PositionCellDelegate: AnyObject {
+    func cell(navToCameraWith trialCore: TrialCore)
+}
+
+class PositionCell: UICollectionViewCell {
     static let cellId = "cellId"
     
-    var viewModel: PositionViewModel? {
+    var viewModel: PositionViewModel? { // viewmodel get trialCores (one or two)
         didSet {
             loadView()
-            
+            assignTrialCore()
+            addTargets()
         }
+    }
+    
+    weak var delegate: PositionCellDelegate?
+    
+    private func assignTrialCore() {
+        guard let viewModel = viewModel else {
+            return
+        }
+        let trialCores = viewModel.trialCore
+
+        if trialCores.count == 1 {
+            imgBtnLeft.trialCore = trialCores.first!
+        } else if trialCores.count == 2 {
+            imgBtnLeft.trialCore = trialCores.first!
+            imgBtnRight.trialCore = trialCores.last!
+        }
+    }
+    
+    private func addTargets() {
+        guard let viewModel = viewModel else {
+            fatalError()
+        }
+        
+        imgBtnLeft.addTarget(self, action: #selector(imgBtnTapped(_:))  , for: .touchUpInside)
+        imgBtnRight.addTarget(self, action: #selector(imgBtnTapped(_:))  , for: .touchUpInside)
+    }
+    
+//    private func changeColor(when condition: Bool, closure: () -> Void ) {
+//        if condition {
+//            closure()
+////            targetView.backgroundColor = UIColor.purple500
+//        }
+//    }
+    
+    @objc func imgBtnTapped(_ sender: ButtonWIthTrialCore) {
+//        sender.blink()
+        
+        guard let vm = viewModel else { return }
+        
+//        if vm.trialCore.count == 2 {
+//            UIView.animate(withDuration: 0.4) {
+//                self.scoreView1.backgroundColor = .white
+//                self.scoreView2.backgroundColor = .white
+//                self.nameLabel.textColor = .white
+//                self.backgroundColor = UIColor.lavenderGray900
+//            } completion: { done in
+//                if done {
+//                    UIView.animate(withDuration: 0.4) {
+//
+//                        self.nameLabel.textColor = .black
+//                        self.backgroundColor = UIColor.clear
+//                    }
+//                }
+//            }
+//        } else {
+//
+//        }
+        
+        print("triggerBtnTapped!")
+        guard let sentTrialCore = sender.trialCore else {fatalError()}
+        delegate?.cell(navToCameraWith: sentTrialCore)
     }
     
     let imageView1 = UIImageView().then{
@@ -28,20 +94,25 @@ class PositionCollectionCell: UICollectionViewCell {
         $0.isUserInteractionEnabled = true
     }
     
-    var imgBtnLeft = ImgBtnView(title: "", direction: .neutral)
-    var imgBtnRight = ImgBtnView(title: "", direction: .neutral)
+//    var imgBtnLeft = ImgBtnView(title: "", direction: .neutral)
+    var imgBtnLeft = ButtonWIthTrialCore()
+//    var imgBtnRight = ImgBtnView(title: "", direction: .neutral)
+    var imgBtnRight = ButtonWIthTrialCore()
     
+    var scoreViewDefaultColor = UIColor.white
     
     public var scoreView1 = UILabel().then { $0.textAlignment = .center
         $0.backgroundColor = UIColor(red: 71 / 255,  green: 69 / 255, blue: 78 / 255, alpha: 1)
         $0.textColor = .white
         $0.layer.cornerRadius = 4
+        $0.clipsToBounds = true
     }
     
     public var scoreView2 = UILabel().then { $0.textAlignment = .center
         $0.backgroundColor = UIColor(red: 71 / 255,  green: 69 / 255, blue: 78 / 255, alpha: 1)
         $0.textColor = .white
         $0.layer.cornerRadius = 4
+        $0.clipsToBounds = true
     }
     
     private let bottomLineView = UIView().then {
@@ -55,9 +126,18 @@ class PositionCollectionCell: UICollectionViewCell {
     private let scoreContainerView2 = UIView()
 //        .then { $0.backgroundColor = .cyan }
     
+//    private let triggerBtn1 = UIButton()
+//    private let triggerBtn1 = ButtonWIthTrialCore()
+//    private let triggerBtn2 = ButtonWIthTrialCore()
     
     private func trueIfDone(_ str: String) -> Bool {
-        if Character(str).asciiValue! > 90 || Character(str).asciiValue! < 65 {
+        // ??? ????
+//        print("in trueIfDone func, ")
+        print("passed str1 : \(str)")
+        if str.count != 1 { return false }
+        guard let asciiOfChar = Character(str).asciiValue else { fatalError("passed str2: \(str)") }
+//        if Character(str).asciiValue! > 90 || Character(str).asciiValue! < 65 {
+        if asciiOfChar > 90 || asciiOfChar < 65 {
             return true
         }
         return false
@@ -87,24 +167,28 @@ class PositionCollectionCell: UICollectionViewCell {
         
         // Has Left and Right
         if vm.imageName.count == 2 {
-            
+//            UIColor(red)
             imageView1.image = UIImage(imageLiteralResourceName: vm.imageName[0])
             imageView2.image = UIImage(imageLiteralResourceName: vm.imageName[1])
             
             scoreView1.text = vm.scoreLabel[0]
             scoreView2.text = vm.scoreLabel[1]
 
-
+            
             if trueIfDone(vm.scoreLabel[0]) {
-                scoreView1.backgroundColor = UIColor(red: 201 / 255, green: 196 / 255, blue: 229 / 255, alpha: 1)
+                scoreView1.backgroundColor = UIColor.purple500
             }
+//            changeColor(of: scoreView1, when: trueIfDone(vm.scoreLabel[0]))
             
             if trueIfDone(vm.scoreLabel[1]) {
-                scoreView2.backgroundColor = UIColor(red: 201 / 255, green: 196 / 255, blue: 229 / 255, alpha: 1)
+                scoreView2.backgroundColor = UIColor.purple500
             }
             
+//            changeColor(of: scoreView2, when: trueIfDone(vm.scoreLabel[1]))
+            
             if trueIfDone(vm.scoreLabel[0]) && trueIfDone(vm.scoreLabel[1]) {
-                layer.borderColor = UIColor(red: 201 / 255, green: 196 / 255, blue: 229 / 255, alpha: 1).cgColor
+                layer.borderColor = UIColor.purple300.cgColor
+                layer.borderWidth = 1
             }
             
             let imageStackView = UIStackView(arrangedSubviews: [imageView1, imageView2])
@@ -119,13 +203,14 @@ class PositionCollectionCell: UICollectionViewCell {
                 make.height.equalToSuperview().dividedBy(2)
             }
 
-            imgBtnLeft = ImgBtnView(title: vm.title, direction: .left)
+
+//            imgBtnLeft = ImgBtnView(title: vm.title, direction: .left)
             imageView1.addSubview(imgBtnLeft)
             imgBtnLeft.snp.makeConstraints { make in
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
             
-            imgBtnRight = ImgBtnView(title: vm.title, direction: .right)
+//            imgBtnRight = ImgBtnView(title: vm.title, direction: .right)
             imageView2.addSubview(imgBtnRight)
             imgBtnRight.snp.makeConstraints { make in
                 make.leading.top.trailing.bottom.equalToSuperview()
@@ -157,9 +242,8 @@ class PositionCollectionCell: UICollectionViewCell {
                 make.center.equalToSuperview()
                 make.width.height.equalTo(20)
             }
-            
 
-            
+        
             // one Image
         } else {
             let allViews = [imageView1,
@@ -171,20 +255,18 @@ class PositionCollectionCell: UICollectionViewCell {
             
             print("imageName: \(vm.imageName[0])")
             imageView1.image = UIImage(imageLiteralResourceName: vm.imageName[0])
+            
+            if trueIfDone(vm.scoreLabel[0]) {
+                scoreView1.backgroundColor = UIColor.purple500
+                layer.borderColor = UIColor.purple300.cgColor
+                layer.borderWidth = 1
+            }
+            
             imageView1.snp.makeConstraints { make in
-//                make.left.top.equalToSuperview().offset(10)
-//                make.right.equalToSuperview().offset(-10)
-//                make.height.equalToSuperview().dividedBy(2)
-//                make.left.top.equalToSuperview().offset(10)
-//                make.right.equalToSuperview().offset(-10)
-////                make.height.equalToSuperview().dividedBy(2)
-//                make.height.equalTo(60)
                 make.left.top.equalToSuperview().offset(10)
                 make.right.equalToSuperview().offset(-10)
                 make.height.equalToSuperview().dividedBy(2)
             }
-
-            imgBtnLeft = ImgBtnView(title: vm.title, direction: .neutral)
             
             imageView1.addSubview(imgBtnLeft)
             imgBtnLeft.snp.makeConstraints { make in
@@ -280,16 +362,52 @@ class PositionCollectionCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: .zero)
         setupLayout()
-//        backgroundColor = .green
+
         backgroundColor = .white
         
-//        layer.borderWidth = 1
         layer.cornerRadius = 16
-        
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+
+class ButtonWIthTrialCore: UIButton {
+    var trialCore: TrialCore?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+
+extension UIView{
+    
+     func blink() {
+    print("blink triggered")
+//         self.alpha = 0.2
+//         self.backgroundColor = UIColor.lavenderGray900
+         
+         UIView.animate(withDuration: 0.4) {
+             self.backgroundColor = UIColor.lavenderGray900
+         } completion: { done in
+             if done {
+                 UIView.animate(withDuration: 0.4) {
+                     self.backgroundColor = UIColor.clear
+                 }
+             }
+         }
+
+         
+//         UIView.animate(withDuration: 1, delay: 0.0, options: [.curveLinear, .repeat, .autoreverse], animations: {
+////             self.alpha = 1.0
+//             self.backgroundColor = .white
+//         }, completion: nil)
+     }
 }

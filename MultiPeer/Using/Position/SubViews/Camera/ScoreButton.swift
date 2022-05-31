@@ -29,8 +29,10 @@ class ScoreButton: SelectableButton {
     }
     
     private func setupInitialLayout() {
-        self.setTitleColor(.white, for: .normal)
-        self.backgroundColor = .black
+//        self.setTitleColor(.white, for: .normal)
+        self.setTitleColor(.lavenderGray300, for: .normal)
+//        self.backgroundColor = .black
+        self.backgroundColor = UIColor.cyan
         self.layer.borderColor = UIColor.white.cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 10

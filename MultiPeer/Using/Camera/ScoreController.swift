@@ -15,22 +15,14 @@ import CoreData
 protocol ScoreControllerDelegate: AnyObject {
     
     func deleteAction() // don't need to update trials
-//    func saveAction(with info: PositionDirectionScoreInfo, trialNo: Int)
+
     func saveAction(core: TrialCore, detail: TrialDetail) // 알아서 처리됨 ..;; 여기서 다 처리하면 ? 아닌가? 다른앤ㄱ ㅏ??
     
-    func nextAction() // update Trial Core (position could be changed depening on position)
-    func retryAction() // update Trial detail
-    
-//    func updateScore(_ score: Int)
-//    func moveUp()
-    
     func updatePosition(with positionDirectionScoreInfo: PositionDirectionScoreInfo)
-    func hideScoreController()
-    func prepareRecording()
     
-    func dismissCameraController()
+    func updatePressedBtnTitle(with btnTitle: String)
     
-    
+    func navigateToSecondView()
 }
 
 
@@ -41,9 +33,10 @@ class ScoreController: UIViewController {
     var positionTitle: String
     var direction: PositionDirection
 
-    var trialCore: TrialCore? // 왜 comment 처리 해놧었지 ??
+    var trialCore: TrialCore?
     var trialDetail: TrialDetail?
-
+    
+    /// follwing Clearing Test
     var fClearingCore: TrialCore?
     var fClearingDetail: TrialDetail?
     
@@ -67,39 +60,66 @@ class ScoreController: UIViewController {
     var pain: Bool?
     var scoreType: ScoreType
     
-    
     var painTestName: String?
     var varTestName: String?
     
     weak var delegate: ScoreControllerDelegate?
     
-    private let scoreBtn1 = ScoreButton()
-    private let scoreBtn2 = ScoreButton()
-    private let scoreBtn3 = ScoreButton()
-    private let scoreBtn4 = ScoreButton()
+    private var selectedBtnTitle = ""
+    
+    
+    private let scoreBtn1 = ScoreButton().then {
+        $0.backgroundColor = UIColor.lavenderGray300
+        $0.setTitleColor(.gray900, for: .normal)
+    }
+    
+    private let scoreBtn2 = ScoreButton().then {
+        $0.backgroundColor = UIColor.lavenderGray300
+        $0.setTitleColor(.gray900, for: .normal)
+    }
+    
+    private let scoreBtn3 = ScoreButton().then {
+        $0.backgroundColor = UIColor.lavenderGray300
+        $0.setTitleColor(.gray900, for: .normal)
+    }
+    
+    private let scoreBtn4 = ScoreButton().then {
+        $0.backgroundColor = UIColor.lavenderGray300
+        $0.setTitleColor(.gray900, for: .normal)
+    }
+    
+    public var scoreBtnGroup = SelectableButtonStackView().then {
+        $0.spacing = 16
+    }
     
     private let painPlusBtn = ScoreButton("+")
     private let painMinusBtn = ScoreButton("-")
     
-    public var scoreBtnGroup = SelectableButtonStackView()
-    public var painBtnGroup = SelectableButtonStackView()
+
+    public var painBtnGroup = SelectableButtonStackView(defaultColor: .lavenderGray300).then {
+        $0.spacing = 16
+    }
     
+
     
     private let scoreLabel = UILabel().then {
         $0.text = "Score"
-        $0.textColor = .white
-        $0.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        $0.textColor = .lavenderGray700
+        $0.font = UIFont.systemFont(ofSize: 17)
+        $0.textAlignment = .center
     }
     
     private let painPositionLabel = UILabel().then {
-        $0.text = "Pain Score"
-        $0.textColor = .white
-        $0.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        $0.text = "pain"
+        $0.textColor = .lavenderGray700
+        $0.font = UIFont.systemFont(ofSize: 17)
+        $0.textAlignment = .center
     }
     
     private let deleteBtn = UIButton().then {
         $0.setTitle("Delete", for: .normal)
-        $0.setTitleColor(.red, for: .normal)
+        $0.setTitleColor(.red500, for: .normal)
+        $0.backgroundColor = .white
         $0.layer.borderColor = UIColor.white.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
@@ -111,39 +131,8 @@ class ScoreController: UIViewController {
         $0.layer.borderColor = UIColor.white.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
+        $0.backgroundColor = .red500
     }
-    
-    private let retryBtn = UIButton().then {
-        $0.setTitle("Retry", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
-        $0.layer.borderColor = UIColor.white.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 10
-    }
-    
-    private let nextBtn = UIButton().then {
-        $0.setTitle("Next", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
-        $0.layer.borderColor = UIColor.white.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 10
-    }
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupParentLayout()
-        
-        setupLayout()
-        setupAddtargets()
-    }
-    
-    private func setupParentLayout() {
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.white.cgColor
-        view.backgroundColor = .black
-    }
-    
     
     private let bottomBtnStackView = UIStackView().then {
         $0.distribution = .fillEqually
@@ -155,28 +144,35 @@ class ScoreController: UIViewController {
         $0.spacing = 20
     }
     
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        
+        setupLayout()
+        setupAddtargets()
+    }
+    
+   
+    
     public func setupTrialCore(with trialCore: TrialCore) {
         // setup trialcore f
         self.trialCore = trialCore
     }
     
-    init(positionDirectionScoreInfo: PositionDirectionScoreInfo) {
-//        self.trialCore = trialCore
-        self.positionTitle = positionDirectionScoreInfo.title
-        self.direction = positionDirectionScoreInfo.direction
-        self.scoreType = positionToScoreType[positionDirectionScoreInfo.title] ?? .zeroToThree
+    init(positionTitle: String, direction: String) {
+        self.positionTitle = positionTitle
+        guard let direction = PositionDirection(rawValue: direction) else {fatalError()}
+        self.direction = direction
+        self.scoreType = positionToScoreType[positionTitle] ?? .zeroToThree
         
+        self.painTestName = (positionWithPainTestTitle[positionTitle])
+        self.varTestName = (positionWithVariation[positionTitle])
 
-        // what about direction ??
-        self.painTestName = (positionWithPainTestTitle[positionDirectionScoreInfo.title])
-        self.varTestName = (positionWithVariation[positionDirectionScoreInfo.title])
-
-
-        
         super.init(nibName: nil, bundle: nil)
     }
     
-
+    /// called from CameraController
     public func setupAgain(with positionDirectionScoreInfo: PositionDirectionScoreInfo) {
                 
         self.positionTitle = positionDirectionScoreInfo.title
@@ -204,8 +200,6 @@ class ScoreController: UIViewController {
     }
     
     
-    
-    
     private func setupAddtargets() {
         for btn in scoreBtnGroup.buttons {
             btn.addTarget(self, action: #selector(scoreBtnTapped(_:)), for: .touchUpInside)
@@ -213,18 +207,17 @@ class ScoreController: UIViewController {
         for btn in painBtnGroup.buttons {
             btn.addTarget(self, action: #selector(painBtnTapped(_:)), for: .touchUpInside)
         }
-
+        
         deleteBtn.addTarget(self, action: #selector(deleteTapped), for: .touchUpInside)
         saveBtn.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
-
-        retryBtn.addTarget(self, action: #selector(retryTapped), for: .touchUpInside)
-        nextBtn.addTarget(self, action: #selector(nextTapped), for: .touchUpInside)
-            }
+    }
     
-    
+    // TODO:
     @objc func scoreBtnTapped(_ sender: SelectableButton) {
         scoreBtnGroup.setSelectedButton(sender.id)
-        
+        selectedBtnTitle = scoreBtnGroup.selectedBtnTitle
+        delegate?.updatePressedBtnTitle(with: selectedBtnTitle)
+        print("selected BtnTitle from scoreController: \(selectedBtnTitle)")
         if let selectedScore = Int(scoreBtnGroup.selectedBtnTitle) {
             score = Int64(selectedScore)
         } else {
@@ -239,10 +232,8 @@ class ScoreController: UIViewController {
             default: score = nil
             }
         }
+
         print("selectedBtn flag: \(score)")
-        
-        
-//        score = selectedScore
     }
     
     @objc func painBtnTapped(_ sender: SelectableButton) {
@@ -258,29 +249,6 @@ class ScoreController: UIViewController {
         }
     }
 
-    @objc func nextTapped() {
-        // TODO: Core, Detail 초기화 해주기 !!
-        
-//        delegate?.nextAction() // do nothing for now
-        
-        print("scoreBtn3 Selected: \(scoreBtn3.isSelected)")
-        print("scoreBtn3 wrappedScoreString :\(scoreBtn3.wrappedString)")
-        
-        if scoreBtn3.isSelected && scoreBtn3.wrappedString == "Hold" {
-            print("move to variation !")
-            guard let varTestName = varTestName else {
-                return
-            }
-
-            delegate?.updatePosition(with: PositionDirectionScoreInfo(title: varTestName, direction: .neutral, score: nil, pain: nil))
-            
-            delegate?.hideScoreController()
-            delegate?.prepareRecording()
-        } else {
-
-            delegate?.dismissCameraController()
-        }
-    }
     
     @objc func deleteTapped() {
         print("delete tapped!")
@@ -294,14 +262,6 @@ class ScoreController: UIViewController {
         painBtnGroup.setSelectedButton(nil)
     }
     
-    @objc func retryTapped() {
-        print("retry tapped!")
-        // TODO: update detail
-        updateTrialDetail()
-        
-        setSelectedButtonNone()
-        delegate?.retryAction()
-    }
     
     private func setScore(title: String, to trialDetail: TrialDetail, score: Int64 = .DefaultValue.trialScore, pain: Bool? = nil) {
         print("ffff setScore triggered, pain: \(pain)")
@@ -358,6 +318,8 @@ class ScoreController: UIViewController {
     // clearing Test 가 있는 것들은 어떻게 진행됨 ?
     // 여기서 정해줘야함 !
     @objc func saveTapped() {
+        // if tapped Button is "Hold" then send it back to CameraController
+        
         if saveConditionSatisfied() {
             
             guard let score = score else { fatalError("score is nil")}
@@ -378,16 +340,6 @@ class ScoreController: UIViewController {
             delegate?.saveAction(core: trialCore, detail: trialDetail)
             trialCore.updateLatestScore()
             
-            
-            
-            // for pain test only (ankle mobility not contained)
-//            guard let fClearingCore2 = fClearingCore else {
-//                fatalError("fClearingCore in invalid")
-//            }
-//
-//            guard let fClearingDetail2 = fClearingDetail else {
-//                fatalError("fClearingDetail in invalid")
-//            }
 
             // 어떤게 invalid 일까 ?? 둘다일 수 있다.
             if fClearingCore != nil && fClearingDetail != nil {
@@ -402,9 +354,9 @@ class ScoreController: UIViewController {
                 print("fClearingCore or fClearingDetail is invalid ")
             }
             
-            navigateToSecondView()
-            
         } else { print("save Condition not satisfied.") }
+        
+        delegate?.navigateToSecondView()
     }
     
     
@@ -424,8 +376,6 @@ class ScoreController: UIViewController {
             return true // if score is selected -> true. or -> false
         }
     }
-    // 로직이.. 좀 꼬였네.. ;;;;
-    // 이거, 일부가 trialCore Helper 에 있어야함.
     
     func setupTrialDetail() {
         
@@ -436,105 +386,9 @@ class ScoreController: UIViewController {
         fClearingDetail = fClearingCore.returnFreshTrialDetail()
         
         
-//        fClearingCore =
-//        trialDetail = trialcore
-        
         print("setupTrialDetail called")
-        // Create New DetailIfNeeded
-        
-//        guard let trialCore = trialCore else { fatalError("trial Core is nil") }
-        
-//        let sortedDetails = trialCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
-//
-//        if sortedDetails.count != 0 {
-//            guard let lastDetailElement = sortedDetails.last else { return }
-//
-//            guard let positionTitle = PositionList(rawValue: trialCore.title) else { fatalError("failed to convert into positionTitle") }
-//
-//            switch positionTitle {
-//
-//            case .ankleClearing:
-//                updateDetail(
-//                    condition: lastDetailElement.isPainful == .DefaultValue.trialPain || lastDetailElement.score == .DefaultValue.trialScore,
-//                    lastElement: lastDetailElement, to: trialCore)
-//
-//
-//            case .flexionClearing, .shoulderClearing, .extensionClearing :
-//                updateDetail(condition: lastDetailElement.isPainful == .DefaultValue.trialPain,
-//                             lastElement: lastDetailElement, to: trialCore)
-//
-//            default:
-//                updateDetail(condition: lastDetailElement.score == .DefaultValue.trialScore, lastElement: lastDetailElement, to: trialCore)
-//            }
-//
-//        } else { // Create one
-//            updateDetail(condition: false, lastElement: nil, to: trialCore)
-//        }
-////        guard let trialCore = trialCore else { fatalError("trial core is nil")}
-//        guard let trialDetail = trialDetail else {
-//          fatalError("trial detail is nil")
-//        }
-//
-//
-//        guard let fClearingCore = fClearingCore else {
-//            return
-//        }
-//        // make fClearingDetail
-//        let sortedfDetails = fClearingCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
-//        if sortedfDetails.count != 0 {
-//            guard let lastfDetailElement = sortedfDetails.last else { return }
-//            if lastfDetailElement.isPainful == .DefaultValue.trialPain {
-//                fClearingDetail = lastfDetailElement
-//            } else {
-//                fClearingDetail = createDetail(core: fClearingCore)
-//            }
-//        } else {
-//            updateDetail(condition: false, lastElement: nil, to: fClearingCore)
-//        }
-//
-//        print("currentState: core: \(trialCore),\n detail: \(trialDetail)")
     }
     
-    // if condition is true, use existing one
-//    func updateDetail(condition:Bool, lastElement: TrialDetail?, to trialCore: TrialCore) {
-//        trialDetail = condition ? lastElement : createDetail(core: trialCore)
-//    }
-//
-////    @discardableResult
-//
-//    func createDetail(core: TrialCore) -> TrialDetail{
-//
-//        let numOfDetails = core.trialDetails.count
-//        print("numOfDetails: \(numOfDetails)")
-//        return TrialDetail.save(belongTo: core, trialNo: numOfDetails)
-//    }
-    
-    private let uploadStateLabel = UILabel().then {
-        $0.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        $0.textColor = .white
-        $0.text = "Upload Completed !"
-        $0.textAlignment = .center
-    }
-    
-
-    private let secondView = UIView().then {
-        $0.backgroundColor = .black
-    }
-    
-    private func navigateToSecondView() {
-        print("navigateToSecondView triggered!")
-        UIView.animate(withDuration: 0.25, animations: {
-            self.secondView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
-        })
-    }
-    // 이상함. 뭔가 잘못됐음. 원래 secondView 위치는 ?
-    public func navigateBackToFirstView() {
-        print("navigateBackToFirstView triggered!")
-
-        DispatchQueue.main.async {
-            self.secondView.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
-        }
-    }
     
     private func toggleAppearance(shouldHide: Bool) {
         
@@ -548,22 +402,22 @@ class ScoreController: UIViewController {
     }
     
     
-    private func updateTrialDetail() {
-        guard let trialCore = trialCore else { fatalError("trial Core is nil") }// could be changed.
-        
-        let prevTrialDetails = trialCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
-        
-        if prevTrialDetails.count != 0 {
-            guard let lastDetailElement = prevTrialDetails.last else { fatalError("error:") }
-            
-            if lastDetailElement.score != .DefaultValue.trialScore { // pain 에 대한 조건이 필요.
-                trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
-            }
-            
-        } else {
-            trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
-        }
-    }
+//    private func updateTrialDetail() {
+//        guard let trialCore = trialCore else { fatalError("trial Core is nil") }// could be changed.
+//
+//        let prevTrialDetails = trialCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
+//
+//        if prevTrialDetails.count != 0 {
+//            guard let lastDetailElement = prevTrialDetails.last else { fatalError("error:") }
+//
+//            if lastDetailElement.score != .DefaultValue.trialScore { // pain 에 대한 조건이 필요.
+//                trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
+//            }
+//
+//        } else {
+//            trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
+//        }
+//    }
     
     @discardableResult
     private func createTrialDetail(with trialNo: Int64) -> TrialDetail {
@@ -634,7 +488,7 @@ class ScoreController: UIViewController {
         view.addSubview(scoreBtnGroup)
         scoreBtnGroup.snp.makeConstraints { make in
             make.top.equalTo(scoreLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(10)
+            make.leading.trailing.equalToSuperview().inset(35)
             make.height.equalTo(40)
         }
         
@@ -650,8 +504,9 @@ class ScoreController: UIViewController {
                 make.leading.trailing.equalToSuperview().inset(10)
                 make.height.equalTo(40) // same as that of scoreLabel
             }
-            painPositionLabel.text = painTestName ?? "Pain Test Name !"
-            painPositionLabel.numberOfLines = 2
+        // TODO: setup painPositionLabel
+//            painPositionLabel.text = painTestName ?? "Pain Test Name !"
+//            painPositionLabel.numberOfLines = 2
             
             [painPlusBtn, painMinusBtn].forEach {
                 painBtnGroup.addArrangedButton($0)
@@ -660,7 +515,9 @@ class ScoreController: UIViewController {
             view.addSubview(painBtnGroup)
             painBtnGroup.snp.makeConstraints { make in
                 make.top.equalTo(painPositionLabel.snp.bottom).offset(10)
-                make.leading.trailing.equalToSuperview().inset(50)
+//                make.leading.trailing.equalToSuperview().inset(50)
+                make.centerX.equalToSuperview()
+                make.width.equalToSuperview().dividedBy(2.5)
                 make.height.equalTo(40)
             }
 //        }
@@ -678,44 +535,13 @@ class ScoreController: UIViewController {
         bottomBtnStackView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
             make.height.equalTo(50)
-//            make.top.equalTo(scoreBtnGroup.snp.bottom).offset(30)
             make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
-        }
-        
-        view.addSubview(secondView)
-        secondView.addSubview(bottomBtnStackView2)
-        secondView.addSubview(uploadStateLabel)
-
-        uploadStateLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
-            make.top.equalToSuperview().offset(50)
-            make.height.equalTo(120)
-        }
-        
-        [retryBtn, nextBtn].forEach {
-            bottomBtnStackView2.addArrangedSubview($0)
-        }
-        
-        secondView.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
-        
-        bottomBtnStackView2.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(50)
-            make.height.equalTo(50)
-//            make.top.equalToSuperview().offset(350)
-            make.top.equalTo(uploadStateLabel.snp.bottom).offset(65)
         }
     }
     
     
-    
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-
-
-class SecondScoreController: UIViewController {
-    
 }

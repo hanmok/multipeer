@@ -76,8 +76,9 @@
 		22F65E632840B4F000646FCD /* countDown.json in Resources */ = {isa = PBXBuildFile; fileRef = 22F65E622840B4F000646FCD /* countDown.json */; };
 		22F65E672840C72500646FCD /* TrimmerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E662840C72500646FCD /* TrimmerController.swift */; };
 		22F65E692840D29700646FCD /* NewMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E682840D29700646FCD /* NewMainViewController.swift */; };
-		22F65E6E2844770100646FCD /* PositionCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E6D2844770100646FCD /* PositionCollectionCell.swift */; };
+		22F65E6E2844770100646FCD /* PositionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E6D2844770100646FCD /* PositionCell.swift */; };
 		22F65E702844772300646FCD /* PositionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E6F2844772300646FCD /* PositionViewModel.swift */; };
+		22F65E7C2845F47900646FCD /* ColorExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E7B2845F47900646FCD /* ColorExt.swift */; };
 		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 		9A7545B9283B257400558CA7 /* Homework in Resources */ = {isa = PBXBuildFile; fileRef = 9A7545B8283B257400558CA7 /* Homework */; };
 		9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7545BA283B596F00558CA7 /* SoundService.swift */; };
@@ -157,8 +158,9 @@
 		22F65E622840B4F000646FCD /* countDown.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = countDown.json; path = ../../../../Downloads/countDown.json; sourceTree = "<group>"; };
 		22F65E662840C72500646FCD /* TrimmerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerController.swift; sourceTree = "<group>"; };
 		22F65E682840D29700646FCD /* NewMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMainViewController.swift; sourceTree = "<group>"; };
-		22F65E6D2844770100646FCD /* PositionCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionCollectionCell.swift; sourceTree = "<group>"; };
+		22F65E6D2844770100646FCD /* PositionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionCell.swift; sourceTree = "<group>"; };
 		22F65E6F2844772300646FCD /* PositionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionViewModel.swift; sourceTree = "<group>"; };
+		22F65E7B2845F47900646FCD /* ColorExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExt.swift; sourceTree = "<group>"; };
 		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A7545B8283B257400558CA7 /* Homework */ = {isa = PBXFileReference; lastKnownFileType = text; path = Homework; sourceTree = "<group>"; };
 		9A7545BA283B596F00558CA7 /* SoundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
@@ -349,7 +351,7 @@
 			isa = PBXGroup;
 			children = (
 				22F65E682840D29700646FCD /* NewMainViewController.swift */,
-				22F65E6D2844770100646FCD /* PositionCollectionCell.swift */,
+				22F65E6D2844770100646FCD /* PositionCell.swift */,
 				22F65E6F2844772300646FCD /* PositionViewModel.swift */,
 				228B88362806577A007A6842 /* AppDelegate.swift */,
 				228B88382806577A007A6842 /* SceneDelegate.swift */,
@@ -406,6 +408,7 @@
 				226D876A2835D9F000E3F547 /* Int64Ext+.swift */,
 				2283BEC3281B8732007D74FC /* Util+.swift */,
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
+				22F65E7B2845F47900646FCD /* ColorExt.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -548,7 +551,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22F65E6E2844770100646FCD /* PositionCollectionCell.swift in Sources */,
+				22F65E6E2844770100646FCD /* PositionCell.swift in Sources */,
 				22795075282B965D00B675A1 /* SubjectDetailController.swift in Sources */,
 				227648D628321B9200214EBF /* TrialDetailController.swift in Sources */,
 				2279506D282B931A00B675A1 /* APIModels.swift in Sources */,
@@ -580,6 +583,7 @@
 				2279505E282B87BC00B675A1 /* SubjectViewModel.swift in Sources */,
 				227950B7282BBF8500B675A1 /* Screen+Helper.swift in Sources */,
 				228A32EA2812A5F000AC3447 /* ZoomRelated.swift in Sources */,
+				22F65E7C2845F47900646FCD /* ColorExt.swift in Sources */,
 				22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */,
 				22F65E702844772300646FCD /* PositionViewModel.swift in Sources */,
 				227950B5282BBE1600B675A1 /* PersistenceController.swift in Sources */,

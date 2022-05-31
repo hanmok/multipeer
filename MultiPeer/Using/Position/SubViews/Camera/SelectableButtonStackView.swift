@@ -74,7 +74,8 @@ class SelectableButtonStackView: UIStackView {
     
     init(
         selectedColor: UIColor = .gray,
-        defaultColor: UIColor = .black,
+//        defaultColor: UIColor = .black,
+        defaultColor: UIColor = .lavenderGray300,
         spacing: CGFloat = 10, frame: CGRect = .zero) {
             
             self.selectedColor = selectedColor
