@@ -80,7 +80,9 @@ class NewMainViewController: UIViewController {
     }
     
     private let connectBtn = UIButton().then {
-        $0.setTitle("Connect", for: .normal)
+//        $0.setTitle("Connect", for: .normal)
+        let attributedTitle = NSMutableAttributedString(string: "Connect", attributes: [.font: UIFont.systemFont(ofSize: 20)])
+        $0.setAttributedTitle(attributedTitle, for: .normal)
         $0.setTitleColor(.black, for: .normal)
     }
     
@@ -117,7 +119,7 @@ class NewMainViewController: UIViewController {
         connectBtn.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
             make.top.equalTo(view.safeAreaLayoutGuide).offset(-15)
-            make.width.equalTo(70)
+            make.width.equalTo(100)
             make.height.equalTo(30)
         }
         
@@ -185,8 +187,7 @@ extension NewMainViewController: UICollectionViewDelegateFlowLayout, UICollectio
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = screenWidth / 2 - 28
-        //        let height = width
-        //        return CGSize(width: (screenWidth - 100) / 2, height: <#T##CGFloat#>)
+
         return CGSize(width: width, height: width)
     }
 }

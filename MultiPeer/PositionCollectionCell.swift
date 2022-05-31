@@ -33,18 +33,15 @@ class PositionCollectionCell: UICollectionViewCell {
     
     
     public var scoreView1 = UILabel().then { $0.textAlignment = .center
-        $0.backgroundColor = UIColor(red: 71 / 255,  green: 69 / 255, blue: 78 / 22, alpha: 1)
+        $0.backgroundColor = UIColor(red: 71 / 255,  green: 69 / 255, blue: 78 / 255, alpha: 1)
         $0.textColor = .white
         $0.layer.cornerRadius = 4
-        $0.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-        
     }
     
     public var scoreView2 = UILabel().then { $0.textAlignment = .center
-        $0.backgroundColor = UIColor(red: 71 / 255,  green: 69 / 255, blue: 78 / 22, alpha: 1)
+        $0.backgroundColor = UIColor(red: 71 / 255,  green: 69 / 255, blue: 78 / 255, alpha: 1)
         $0.textColor = .white
         $0.layer.cornerRadius = 4
-        $0.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
     }
     
     private let bottomLineView = UIView().then {
@@ -52,6 +49,12 @@ class PositionCollectionCell: UICollectionViewCell {
     }
     
     let nameLabel = UILabel()
+    
+    private let scoreContainerView1 = UIView()
+//        .then { $0.backgroundColor = .magenta }
+    private let scoreContainerView2 = UIView()
+//        .then { $0.backgroundColor = .cyan }
+    
     
     private func trueIfDone(_ str: String) -> Bool {
         if Character(str).asciiValue! > 90 || Character(str).asciiValue! < 65 {
@@ -82,7 +85,7 @@ class PositionCollectionCell: UICollectionViewCell {
             make.bottom.equalTo(self.snp.bottom).inset(10)
         }
         
-//        if vm.leftRight {
+        // Has Left and Right
         if vm.imageName.count == 2 {
             
             imageView1.image = UIImage(imageLiteralResourceName: vm.imageName[0])
@@ -98,7 +101,6 @@ class PositionCollectionCell: UICollectionViewCell {
             
             if trueIfDone(vm.scoreLabel[1]) {
                 scoreView2.backgroundColor = UIColor(red: 201 / 255, green: 196 / 255, blue: 229 / 255, alpha: 1)
-                
             }
             
             if trueIfDone(vm.scoreLabel[0]) && trueIfDone(vm.scoreLabel[1]) {
@@ -129,7 +131,8 @@ class PositionCollectionCell: UICollectionViewCell {
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
             
-            let scoreStackView = UIStackView(arrangedSubviews: [scoreView1, scoreView2])
+//            let scoreStackView = UIStackView(arrangedSubviews: [scoreView1, scoreView2])
+            let scoreStackView = UIStackView(arrangedSubviews: [scoreContainerView1, scoreContainerView2])
             
             scoreStackView.distribution = .fillEqually
             scoreStackView.spacing = 10
@@ -143,23 +146,24 @@ class PositionCollectionCell: UICollectionViewCell {
                 make.bottom.equalTo(nameLabel.snp.top)
             }
             
-//            scoreStackView.arrangedSubviews.forEach {
-//                $0.snp.makeConstraints { make in
-//                    make.width.equalTo(20)
-//                    make.height.equalTo(20)
-//                }
-//            }
-            
-            // not working
+            scoreContainerView1.addSubview(scoreView1)
             scoreView1.snp.makeConstraints { make in
-//                make.center.equalToSuperview()
+                make.center.equalToSuperview()
                 make.width.height.equalTo(20)
             }
+            
+            scoreContainerView2.addSubview(scoreView2)
+            scoreView2.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+                make.width.height.equalTo(20)
+            }
+            
+
             
             // one Image
         } else {
             let allViews = [imageView1,
-                            scoreView1]
+                            scoreContainerView1]
             
             allViews.forEach { view in
                 self.addSubview(view)
@@ -171,13 +175,17 @@ class PositionCollectionCell: UICollectionViewCell {
 //                make.left.top.equalToSuperview().offset(10)
 //                make.right.equalToSuperview().offset(-10)
 //                make.height.equalToSuperview().dividedBy(2)
+//                make.left.top.equalToSuperview().offset(10)
+//                make.right.equalToSuperview().offset(-10)
+////                make.height.equalToSuperview().dividedBy(2)
+//                make.height.equalTo(60)
                 make.left.top.equalToSuperview().offset(10)
                 make.right.equalToSuperview().offset(-10)
-//                make.height.equalToSuperview().dividedBy(2)
-                make.height.equalTo(60)
+                make.height.equalToSuperview().dividedBy(2)
             }
 
             imgBtnLeft = ImgBtnView(title: vm.title, direction: .neutral)
+            
             imageView1.addSubview(imgBtnLeft)
             imgBtnLeft.snp.makeConstraints { make in
                 make.leading.top.trailing.bottom.equalToSuperview()
@@ -185,24 +193,42 @@ class PositionCollectionCell: UICollectionViewCell {
             
             scoreView1.text = vm.scoreLabel[0]
             
-            addSubview(scoreView1)
-            scoreView1.snp.makeConstraints { make in
-                make.top.equalTo(imageView1.snp.bottom)
-                make.centerX.equalToSuperview()
-                make.width.equalTo(20)
+            
+            addSubview(scoreContainerView1)
+            scoreContainerView1.snp.makeConstraints { make in
+                make.top.equalTo(imageView1.snp.bottom).offset(10)
+                make.leading.trailing.equalToSuperview().inset(10)
                 make.bottom.equalTo(nameLabel.snp.top)
             }
             
-            self.addSubview(scoreView2)
+            scoreContainerView1.addSubview(scoreView1)
+            scoreView1.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+                make.width.height.equalTo(20)
+            }
+            
+//            self.addSubview(scoreStackView)
+//            scoreStackView.snp.makeConstraints { make in
+//                make.top.equalTo(imageStackView.snp.bottom).offset(10)
+//                make.left.equalToSuperview().offset(10)
+//                make.right.equalToSuperview().offset(-10)
+////                make.height.equalTo(50)
+//                make.bottom.equalTo(nameLabel.snp.top)
+//            }
+            
+//            self.addSubview(scoreView2)
+//            self.addSubview(scoreContainerView2)
             self.addSubview(imageView2)
-            scoreView2.isHidden = true
+//            scoreView2.isHidden = true
+            scoreContainerView2.isHidden = true
             imageView2.isHidden = true
             
             // 이것들 반드시 필요함..?
-            scoreView2.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-                make.height.width.equalToSuperview()
-            }
+//            scoreView2.snp.makeConstraints { make in
+//            scoreContainerView2.snp.makeConstraints { make in
+//                make.center.equalToSuperview()
+//                make.height.width.equalToSuperview()
+//            }
             
             imageView2.snp.makeConstraints { make in
                 make.center.equalToSuperview()
@@ -217,6 +243,19 @@ class PositionCollectionCell: UICollectionViewCell {
             make.width.equalToSuperview().dividedBy(2.5)
             make.height.equalTo(2)
         }
+        
+
+//        scoreContainerView1.addSubview(scoreView1)
+//        scoreContainerView1.snp.makeConstraints { make in
+//            make.center.equalToSuperview()
+//            make.height.width.equalTo(20)
+//        }
+        
+//        scoreContainerView2.addSubview(scoreView2)
+//        scoreContainerView2.snp.makeConstraints { make in
+//            make.center.equalToSuperview()
+//            make.height.width.equalTo(20)
+//        }
         
         switch vm.title {
         case PositionList.flexionClearing.rawValue,
