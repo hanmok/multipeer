@@ -25,7 +25,8 @@ struct MovementViewModel {
     var imageName: [String] { return MovementImgsDictionary[trialCore.first!.title]! }
     
     var shortTitleLabel: String { return Dummy.shortName[title]! + addSuffix(title: title) }
-    // 여기서는 제대로 나옴.. 아니..선생님... 구분을 어떻게 시켜요,,,,,,
+    
+    // 여기서는 제대로 나옴..
     var scoreLabel: [String] { return convertScoreToString() }
     
     // TODO: convert score var into scoreLabel, Not Complete yet
@@ -39,7 +40,6 @@ struct MovementViewModel {
             if trialCore.first!.latestScore < 0 {
                 temp.append("N")
             } else {
-
                 temp.append(String(trialCore.first!.latestScore))
             }
             // Has Left & Right

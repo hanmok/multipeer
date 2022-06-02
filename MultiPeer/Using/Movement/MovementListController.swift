@@ -85,12 +85,14 @@ class MovementListController: UIViewController {
     }
     
     private let leftConnectionStateView = UIView().then {
-        $0.backgroundColor = UIColor(red: 203/255, green: 202/255, blue: 211/255, alpha: 1)
+//        $0.backgroundColor = UIColor(red: 203/255, green: 202/255, blue: 211/255, alpha: 1)
+        $0.backgroundColor = .lavenderGray300
         $0.layer.cornerRadius = 5
     }
 
     private let rightConnectionStateView = UIView().then {
-        $0.backgroundColor = UIColor(red: 203/255, green: 202/255, blue: 211/255, alpha: 1)
+//        $0.backgroundColor = UIColor(red: 203/255, green: 202/255, blue: 211/255, alpha: 1)
+        $0.backgroundColor = .lavenderGray300
         $0.layer.cornerRadius = 5
     }
 
@@ -504,17 +506,30 @@ extension MovementListController: CameraControllerDelegate {
 extension MovementListController: ConnectionManagerDelegate {
     
     // TODO: Update Connection Indicator on the right top (next to connect btn)
-    func updateState(state: ConnectionState) {
+    func updateState(state: ConnectionState, connectedNum: Int) {
         switch state {
-        case .connected: break
+        case .connected:
+            switch connectedNum {
+            case 1:
+                DispatchQueue.main.async {
+                    self.leftConnectionStateView.backgroundColor = .red
+                }
+                
+            case 2:
+                DispatchQueue.main.async {
+                    self.rightConnectionStateView.backgroundColor = .red
+                }
+            default: break
+            }
 //            triggerDurationTimer()
-        case .disconnected: break
-//            stopDurationTimer()
+        case .disconnected:
+            
+            DispatchQueue.main.async {
+                self.leftConnectionStateView.backgroundColor = .lavenderGray300
+                self.rightConnectionStateView.backgroundColor = .lavenderGray300
+            }
         }
-        
-        DispatchQueue.main.async {
-//            self.connectionStateLabel.text = state.rawValue
-        }
+    
     }
     
     func updateDuration(in seconds: Int) {

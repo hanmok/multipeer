@@ -79,6 +79,7 @@
 		22F65EA828484B1700646FCD /* SelectableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EA728484B1700646FCD /* SelectableButton.swift */; };
 		22F65EAA28484B3200646FCD /* SelectableButtonStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EA928484B3200646FCD /* SelectableButtonStackView.swift */; };
 		22F65EAC28484B6400646FCD /* PositionBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EAB28484B6400646FCD /* PositionBlockView.swift */; };
+		22F65EB02848BD8400646FCD /* checkmark.json in Resources */ = {isa = PBXBuildFile; fileRef = 22F65EAF2848BD8400646FCD /* checkmark.json */; };
 		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 		9A7545B9283B257400558CA7 /* Homework in Resources */ = {isa = PBXBuildFile; fileRef = 9A7545B8283B257400558CA7 /* Homework */; };
 		9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7545BA283B596F00558CA7 /* SoundService.swift */; };
@@ -161,6 +162,7 @@
 		22F65EA728484B1700646FCD /* SelectableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SelectableButton.swift; path = MultiPeer/Using/Position/SubViews/SelectableButton.swift; sourceTree = SOURCE_ROOT; };
 		22F65EA928484B3200646FCD /* SelectableButtonStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SelectableButtonStackView.swift; path = MultiPeer/Using/Position/SubViews/SelectableButtonStackView.swift; sourceTree = SOURCE_ROOT; };
 		22F65EAB28484B6400646FCD /* PositionBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionBlockView.swift; sourceTree = "<group>"; };
+		22F65EAF2848BD8400646FCD /* checkmark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = checkmark.json; path = ../../../../Downloads/checkmark.json; sourceTree = "<group>"; };
 		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A7545B8283B257400558CA7 /* Homework */ = {isa = PBXFileReference; lastKnownFileType = text; path = Homework; sourceTree = "<group>"; };
 		9A7545BA283B596F00558CA7 /* SoundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
@@ -397,6 +399,7 @@
 			isa = PBXGroup;
 			children = (
 				22F65E622840B4F000646FCD /* countDown.json */,
+				22F65EAF2848BD8400646FCD /* checkmark.json */,
 			);
 			path = Lottie;
 			sourceTree = "<group>";
@@ -491,6 +494,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				227E7C932833A5C800084BA2 /* CameraWithCoreData in Resources */,
+				22F65EB02848BD8400646FCD /* checkmark.json in Resources */,
 				228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */,
 				228B884028065784007A6842 /* Assets.xcassets in Resources */,
 				22F65E632840B4F000646FCD /* countDown.json in Resources */,

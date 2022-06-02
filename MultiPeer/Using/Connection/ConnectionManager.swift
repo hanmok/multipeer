@@ -55,7 +55,7 @@ extension ConnectionManager: MCNearbyServiceAdvertiserDelegate {
 
 protocol ConnectionManagerDelegate: NSObject {
 //    func presentVideo()
-    func updateState(state: ConnectionState)
+    func updateState(state: ConnectionState, connectedNum: Int)
     func updateDuration(in seconds: Int)
 }
 
@@ -301,11 +301,15 @@ extension ConnectionManager: MCSessionDelegate {
             if !ConnectionManager.peers.contains(peerID) {
                 ConnectionManager.peers.insert(peerID, at: 0)
             }
+//            connectionman
+            let connectedNum = ConnectionManager.peers.count
             self.connectionState = .connected
             print("state: connected !")
             startTime = Date()
             
-            delegate?.updateState(state: .connected)
+            delegate?.updateState(state: .connected, connectedNum: connectedNum)
+            
+            
 //            self.connectionState =
 //            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.connectedKey), object: nil)
             
@@ -322,7 +326,7 @@ extension ConnectionManager: MCSessionDelegate {
             self.connectionState = .disconnected
             endTime = Date()
             
-            delegate?.updateState(state: .disconnected)
+            delegate?.updateState(state: .disconnected, connectedNum: 0)
             
             print("disconnected!!")
         case .connecting:

@@ -354,24 +354,33 @@ hideCompleteMsgView()
         
 
         
-        [completeMsgLabel, retryBtn, nextBtn].forEach { completeMsgView.addSubview($0)}
+        [checkmarkLottieView,completeMsgLabel, retryBtn, nextBtn].forEach { completeMsgView.addSubview($0)}
+        
+        checkmarkLottieView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(50)
+            make.height.equalToSuperview().dividedBy(10)
+            make.centerY.equalToSuperview().offset(-70)
+        }
         
         completeMsgLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
-            make.height.equalToSuperview().dividedBy(2)
-            make.centerY.equalToSuperview()
+//            make.height.equalToSuperview().dividedBy(2)
+            make.height.equalTo(40)
+//            make.centerY.equalToSuperview()
+            make.top.equalTo(checkmarkLottieView.snp.bottom).offset(15)
         }
         
         retryBtn.snp.makeConstraints { make in
             make.leading.bottom.equalToSuperview()
-            make.height.equalTo(48)
+            make.height.equalTo(60)
             make.width.equalToSuperview().dividedBy(3)
         }
         
         nextBtn.snp.makeConstraints { make in
             make.leading.equalTo(retryBtn.snp.trailing)
             make.trailing.bottom.equalToSuperview()
-            make.height.equalTo(48)
+//            make.height.equalTo(48)
+            make.height.equalTo(60)
         }
     }
     
@@ -842,15 +851,40 @@ hideCompleteMsgView()
     private let completeMsgView = UIView().then { $0.backgroundColor = .white }
     private let retryBtn = UIButton().then { $0.setTitle("Retry", for: .normal)
         $0.setTitleColor(.gray900, for: .normal)
-    }
-    private let nextBtn = UIButton().then { $0.setTitle("Next", for: .normal)
-        $0.backgroundColor = .lavenderGray300
+        $0.layer.borderColor = UIColor.lavenderGray100.cgColor
+        $0.layer.borderWidth = 1
     }
     
-    private let completeMsgLabel = UILabel().then { $0.text = "Completed!"
-        $0.textColor = .gray900
+    private let nextBtn = UIButton().then { $0.setTitle("Next", for: .normal)
+        $0.backgroundColor = .lavenderGray300
+        $0.layer.borderColor = UIColor.lavenderGray100.cgColor
+        $0.layer.borderWidth = 1
+    }
+    
+    private let checkmarkLottieView = AnimationView(name: "checkmark").then {
+        $0.contentMode = .scaleAspectFit
+        $0.loopMode = .playOnce
+    }
+    
+    private let completeMsgLabel = UILabel().then {
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
         
-        $0.textAlignment = .center
+        var attrText = NSMutableAttributedString(string: "Upload Completed!", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
+        
+        attrText.append(NSAttributedString(string: "Contrats!\nYour video has been successfully uploaded.", attributes: [
+            .font: UIFont.systemFont(ofSize: 17),
+            .foregroundColor: UIColor.gray600,
+            .paragraphStyle: paragraph]))
+        
+        $0.attributedText = attrText
+        $0.numberOfLines = 5
+        
+        
+//        $0.text = "Completed!"
+//        $0.textColor = .gray900
+        
+//        $0.textAlignment = .center
     }
     
     
@@ -971,7 +1005,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
 
 
 extension CameraController: ConnectionManagerDelegate {
-    func updateState(state: ConnectionState) {
+    func updateState(state: ConnectionState, connectedNum: Int) {
         switch state {
         case .disconnected:
             DispatchQueue.main.async {
@@ -996,7 +1030,12 @@ extension CameraController: ConnectionManagerDelegate {
     private func showCompleteMsgView() {
         UIView.animate(withDuration: 0.4) {
             self.completeMsgView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+        } completion: { done in
+            if done {
+            self.checkmarkLottieView.play()
+            }
         }
+
     }
     
     
