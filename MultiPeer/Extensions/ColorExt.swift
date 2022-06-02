@@ -33,5 +33,6 @@ extension UIColor {
     static let red500 = UIColor(redInt: 227, greenInt: 42, blueInt: 47)
     static let lavenderGray700 = UIColor(redInt: 109, greenInt: 107, blueInt: 115)
     
+    static let lavenderGray100 = UIColor(redInt: 237, greenInt: 236, blueInt: 239)
 
 }

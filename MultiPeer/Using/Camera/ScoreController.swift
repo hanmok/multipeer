@@ -117,7 +117,7 @@ class ScoreController: UIViewController {
     }
     
     private let painPositionLabel = UILabel().then {
-        $0.text = "pain"
+        $0.text = "Pain"
         $0.textColor = .lavenderGray700
         $0.font = UIFont.systemFont(ofSize: 17)
         $0.textAlignment = .center
@@ -127,29 +127,23 @@ class ScoreController: UIViewController {
         $0.setTitle("Delete", for: .normal)
         $0.setTitleColor(.red500, for: .normal)
         $0.backgroundColor = .white
-        $0.layer.borderColor = UIColor.white.cgColor
+        $0.layer.borderColor = UIColor.lavenderGray100.cgColor
         $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 10
     }
     
     private let saveBtn = UIButton().then {
         $0.setTitle("Save", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.layer.borderColor = UIColor.white.cgColor
+        $0.layer.borderColor = UIColor.lavenderGray100.cgColor
         $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 10
+
         $0.backgroundColor = .red500
     }
     
-    private let bottomBtnStackView = UIStackView().then {
-        $0.distribution = .fillEqually
-        $0.spacing = 20
-    }
-    
-    private let bottomBtnStackView2 = UIStackView().then {
-        $0.distribution = .fillEqually
-        $0.spacing = 20
-    }
+//    private let bottomBtnStackView = UIStackView().then {
+//        $0.distribution = .fillEqually
+//        $0.spacing = 20
+//    }
     
     
     override func viewDidLoad() {
@@ -232,9 +226,9 @@ class ScoreController: UIViewController {
     
     private func convertScoreToColor(score: Int) -> String {
         switch score {
-        case -50: return "R"
-        case -51: return "Y"
-        case -52: return "G"
+        case -50: return "Red"
+        case -51: return "Yellow"
+        case -52: return "Green"
         default: return String(score)
         }
     }
@@ -245,6 +239,7 @@ class ScoreController: UIViewController {
         selectedBtnTitle = scoreBtnGroup.selectedBtnTitle
         delegate?.updatePressedBtnTitle(with: selectedBtnTitle)
         print("selected BtnTitle from scoreController: \(selectedBtnTitle)")
+        
         if let selectedScore = Int(scoreBtnGroup.selectedBtnTitle) {
             score = Int64(selectedScore)
         } else {
@@ -261,9 +256,9 @@ class ScoreController: UIViewController {
             case "Green": score = -52
 
             default: score = nil
+            
             }
         }
-
     }
     
     @objc func painBtnTapped(_ sender: SelectableButton) {
@@ -574,15 +569,31 @@ class ScoreController: UIViewController {
             painPositionLabel.isHidden = true
         }
         
-        [deleteBtn, saveBtn].forEach {
-            bottomBtnStackView.addArrangedSubview($0)
-        }
+//        [deleteBtn, saveBtn].forEach {
+//            bottomBtnStackView.addArrangedSubview($0)
+//        }
 
-        view.addSubview(bottomBtnStackView)
-        bottomBtnStackView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(50)
-            make.height.equalTo(50)
+//        view.addSubview(bottomBtnStackView)
+//        bottomBtnStackView.snp.makeConstraints { make in
+//            make.leading.trailing.equalToSuperview().inset(50)
+//            make.height.equalTo(50)
+//            make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
+//        }
+        view.addSubview(deleteBtn)
+        view.addSubview(saveBtn)
+        
+        deleteBtn.snp.makeConstraints { make in
+            make.leading.equalToSuperview()
             make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
+            make.height.equalTo(50)
+            make.width.equalToSuperview().dividedBy(3)
+        }
+        
+        saveBtn.snp.makeConstraints { make in
+            make.leading.equalTo(deleteBtn.snp.trailing)
+            make.trailing.equalToSuperview()
+            make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
+            make.height.equalTo(50)
         }
         
 //        if setupFTrialCoreIfNeeded() {

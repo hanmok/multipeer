@@ -114,13 +114,27 @@ Should Clearing 은 되는데 ..
 
 거의 다 된 것 같은데....
 
-AnkleClearing 의 경우 Green, Yellow, Red 로 대신 출력시키기.
-각 값은 0~2 가 아닌, -100, -99, -98 등으로 설정하기.
-근데 얘네 이미 다른 값에서 쓰고있을텐데.. ?
 
 
-Ankle Clearing 이 ...
 
 
 색상이 왜 다 처리된 색상이죠 ??
 해결됨.
+
+
+
+AnkleClearing 의 경우 Green, Yellow, Red 로 대신 출력시키기.
+각 값은 0~2 가 아닌, -100, -99, -98 등으로 설정하기.
+근데 얘네 이미 다른 값에서 쓰고있을텐데.. ?
+
+Ankle Clearing 점수를 영어로 바꿔야함.
+이거, 먼저 합시다.
+거의 다 했다..
+
+그거...
+좌우 구분해줘야해
+왜 구분을 얘가 못하는거지 ?
+Clearing 처리 어떻게 하지 ....이이이이이이이ㅣ ViewModel 가서 first, last 잘 처리해주면 됨!
+Perfect~
+
+

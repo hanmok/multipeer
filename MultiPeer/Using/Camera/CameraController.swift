@@ -381,7 +381,7 @@ hideCompleteMsgView()
         addChild(scoreVC)
         view.addSubview(scoreVC.view)
         scoreVC.view.layer.cornerRadius = 10
-        scoreVC.view.layer.borderWidth = 2
+//        scoreVC.view.layer.borderWidth = 2
         // prepare scoreVC to the bottom (to come up later)
         self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
     }

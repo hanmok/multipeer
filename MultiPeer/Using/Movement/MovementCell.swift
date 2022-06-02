@@ -132,7 +132,12 @@ class MovementCell: UICollectionViewCell {
 
     
     private func trueIfDone(_ str: String) -> Bool {
-
+        print("ankle Clearing Test bug fetching received str from trueIfDone: \(str)")
+        
+        if str == "Yellow" || str == "Green" || str == "Red" {
+            return true
+        }
+        
         if str.count != 1 { return false }
         guard let asciiOfChar = Character(str).asciiValue else { fatalError("passed str2: \(str)") }
 
@@ -140,7 +145,7 @@ class MovementCell: UICollectionViewCell {
         if asciiOfChar > 90 || asciiOfChar < 65 {
             return true
         }
-        
+
         return false
     }
     
@@ -167,15 +172,20 @@ class MovementCell: UICollectionViewCell {
             make.bottom.equalTo(self.snp.bottom).inset(10)
         }
         
+        print("ankle Clearing Test bug fetching title: \(vm.title)")
         // Has Left and Right
         if vm.imageName.count == 2 {
             print("two images are rendered for title: \(vm.title)")
             
             imageView1.image = UIImage(imageLiteralResourceName: vm.imageName[0])
             imageView2.image = UIImage(imageLiteralResourceName: vm.imageName[1])
+            
             print("imageNames: \(vm.imageName[0]), \(vm.imageName[1])")
-            scoreView1.text = vm.scoreLabel[0]
-            scoreView2.text = vm.scoreLabel[1]
+            
+
+            scoreView1.text = String(vm.scoreLabel[0].first!)
+            scoreView2.text = String(vm.scoreLabel[1].first!)
+            
             print("movement title: \(vm.title)")
             
             print("left scoreLabel: \(vm.scoreLabel[0])")
@@ -191,13 +201,16 @@ class MovementCell: UICollectionViewCell {
             
             if trueIfDone(vm.scoreLabel[1]) {
                 scoreView2.backgroundColor = UIColor.purple500
-            } else{
+            } else {
                 scoreView2.backgroundColor = UIColor.lavenderGray900
             }
 
             if trueIfDone(vm.scoreLabel[0]) && trueIfDone(vm.scoreLabel[1]) {
                 layer.borderColor = UIColor.purple300.cgColor
                 layer.borderWidth = 1
+            } else {
+                layer.borderColor = UIColor.clear.cgColor
+                layer.borderWidth = 0
             }
 
 
@@ -273,6 +286,7 @@ class MovementCell: UICollectionViewCell {
             } else {
                 scoreView1.backgroundColor = UIColor.lavenderGray900
                 layer.borderColor = UIColor.clear.cgColor
+                layer.borderWidth = 0
             }
             
             imageView1.snp.makeConstraints { make in
@@ -359,6 +373,7 @@ class MovementCell: UICollectionViewCell {
         guard let viewModel = viewModel else { fatalError() } // 왜 이 점수가 아니지 ?
         print("numOfTrialCore: \(viewModel.trialCore.count)") // 점수 안나옴 . 어디서 나오는거지.. ?
         print("trial title: \(viewModel.trialCore.first!.title)")
+        
         for eachTrial in viewModel.trialCore {
             print("directions: \(eachTrial.direction)")
             print("score: \(eachTrial.latestScore)")

@@ -25,7 +25,7 @@ struct MovementViewModel {
     var imageName: [String] { return MovementImgsDictionary[trialCore.first!.title]! }
     
     var shortTitleLabel: String { return Dummy.shortName[title]! + addSuffix(title: title) }
-    // 여기서는 제대로 나옴..
+    // 여기서는 제대로 나옴.. 아니..선생님... 구분을 어떻게 시켜요,,,,,,
     var scoreLabel: [String] { return convertScoreToString() }
     
     // TODO: convert score var into scoreLabel, Not Complete yet
@@ -45,7 +45,12 @@ struct MovementViewModel {
             // Has Left & Right
         } else if trialCore.count == 2 {
 
-            if trialCore.first!.latestScore < 0 {
+            if -52 ... -50 ~= trialCore.first!.latestScore {
+//                temp.append(trialCore.last!.latestScore)
+                temp.append(convertScoreToColor(score: trialCore.first!.latestScore))
+            }
+            
+            else if trialCore.first!.latestScore < 0 {
                 temp.append("L")
             } else {
                 temp.append( String(trialCore.first!.latestScore))
@@ -53,13 +58,19 @@ struct MovementViewModel {
             
             // second element
 //            if trialCore.last!.latestScore == .DefaultValue.trialScore {
-            if trialCore.last!.latestScore < 0 {
+            if -52 ... -50 ~= trialCore.last!.latestScore {
+//                temp.append(trialCore.last!.latestScore)
+                temp.append(convertScoreToColor(score: trialCore.last!.latestScore))
+            }
+            
+            else if trialCore.last!.latestScore < 0 {
                 temp.append("R")
             } else {
                 temp.append(String(trialCore.last!.latestScore))
             }
-            print("my test title: \(title)")
-            print("temp: \(temp)")
+            
+            print("viewmodel title: \(title)")
+            print("viewmodel temp: \(temp)")
             return temp
         }
         
@@ -78,5 +89,15 @@ struct MovementViewModel {
             }
         }
         return ""
+    }
+    
+    private func convertScoreToColor(score: Int64) -> String {
+        print("convertScoreToColor triggered!!")
+        switch score {
+        case -50: return "Red"
+        case -51: return "Yellow"
+        case -52: return "Green"
+        default: return String(score)
+        }
     }
 }
