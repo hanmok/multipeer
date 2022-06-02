@@ -40,6 +40,12 @@ enum MovementListWithoutVars: String, CaseIterable {
     case flexionClearing = "Flexion Clearing"
 }
 
+//let ClearingTitleHasNoDirection: [MovementList: Int] = [
+//    MovementList.ankleClearing: 2,
+//    MovementList.shoulderClearing: 2,
+//    movement
+//]
+let clearingTitleWithOneDirection: [MovementList] = [.extensionClearing, .flexionClearing]
 
 
 // Make positionList accessable using Index
@@ -47,6 +53,12 @@ extension CaseIterable where Self: Equatable {
     var index: Self.AllCases.Index? {
         return Self.allCases.firstIndex { self == $0 }
     }
+}
+
+enum DirectionList: String {
+    case left
+    case right
+    case neutral
 }
 
 struct Dummy {
@@ -182,7 +194,14 @@ public enum MovementWithPain {
     case flexionClearing
 }
 
-public let movementWithPainNoAnkle = [
+//public let movementWithPainNoAnkle = [
+//    MovementList.shoulderClearing.rawValue,
+//    MovementList.flexionClearing.rawValue,
+//    MovementList.extensionClearing.rawValue
+//]
+
+public let movementWithPain = [
+    MovementList.ankleClearing.rawValue,
     MovementList.shoulderClearing.rawValue,
     MovementList.flexionClearing.rawValue,
     MovementList.extensionClearing.rawValue

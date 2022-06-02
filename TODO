@@ -78,8 +78,49 @@ Left, Right 구분 못함
 이거.. Cell 에는 Data 가 없음.
 고침. ViewModel 의 Convert func 에서 출력함.
 
+
 AnkleClearing 업데이트 아예 안됨.
 IL 은 됨 ;;
 
+
 RS + Clearing
-Clearing Check 하는 거는 Right 에서 해주기. 
+Clearing Check 하는 거는 Right 에서 해주기.
+
+Clearing Test 가 문제가 좀 있는 듯 보임.
+
+특히 AC, RS
+
+Clearing Test 방향에 맞는 점수가 잘 들어가는지 확인 필요.
+
+방향이 안맞음. Shoulder Clearing
+
+AC -> AC
+SM + Clearing -> SM + CLearing
+
+TSPU + Clearing -> TSPU + Clearing ( Extension Clearing )
+
+RS right -> Flexion
+
+
+ Clearing Tests 의 Title 과 Direction 을 미리 고정할 수는 없나 ?? 있지.
+[ Clearing Test 이름 : 방향 갯수 ]
+방향은 잡혔는데, 점수가 제대로 안들어갔음.
+해결됨.
+
+Ankle Clearing Update 아직도 안됨.
+Should Clearing 은 되는데 ..
+해결됨.
+
+
+거의 다 된 것 같은데....
+
+AnkleClearing 의 경우 Green, Yellow, Red 로 대신 출력시키기.
+각 값은 0~2 가 아닌, -100, -99, -98 등으로 설정하기.
+근데 얘네 이미 다른 값에서 쓰고있을텐데.. ?
+
+
+Ankle Clearing 이 ...
+
+
+색상이 왜 다 처리된 색상이죠 ??
+해결됨.

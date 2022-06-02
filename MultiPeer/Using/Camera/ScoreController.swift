@@ -16,9 +16,9 @@ protocol ScoreControllerDelegate: AnyObject {
     
     func deleteAction() // don't need to update trials
 
-    func saveAction(core: TrialCore, detail: TrialDetail) // 알아서 처리됨 ..;; 여기서 다 처리하면 ? 아닌가? 다른앤ㄱ ㅏ??
+    func saveAction(core: TrialCore, detail: TrialDetail)
     
-    func updatePosition(with positionDirectionScoreInfo: MovementDirectionScoreInfo)
+    func updateMovement(with movementDirectionScoreInfo: MovementDirectionScoreInfo)
     
     func updatePressedBtnTitle(with btnTitle: String)
     
@@ -92,8 +92,15 @@ class ScoreController: UIViewController {
         $0.spacing = 16
     }
     
-    private let painPlusBtn = ScoreButton("+")
-    private let painMinusBtn = ScoreButton("-")
+    private let painPlusBtn = ScoreButton("+").then {
+        $0.backgroundColor = UIColor.lavenderGray300
+        $0.setTitleColor(.gray900, for: .normal)
+    }
+    
+    private let painMinusBtn = ScoreButton("-").then {
+        $0.backgroundColor = UIColor.lavenderGray300
+        $0.setTitleColor(.gray900, for: .normal)
+    }
     
 
     public var painBtnGroup = SelectableButtonStackView(defaultColor: .lavenderGray300).then {
@@ -158,6 +165,17 @@ class ScoreController: UIViewController {
     public func setupTrialCore(with trialCore: TrialCore) {
         // setup trialcore f
         self.trialCore = trialCore
+        if setupFTrialCoreIfNeeded() {
+            UIView.animate(withDuration: 0.3) {
+                self.painBtnGroup.isHidden = false
+                self.painPositionLabel.isHidden = false
+            }
+        } else {
+            UIView.animate(withDuration: 0.3) {
+                self.painBtnGroup.isHidden = true
+                self.painPositionLabel.isHidden = true
+            }
+        }
     }
     
     init(positionTitle: String, direction: String) {
@@ -173,15 +191,15 @@ class ScoreController: UIViewController {
     }
     
     /// called from CameraController
-    public func setupAgain(with positionDirectionScoreInfo: MovementDirectionScoreInfo) {
+    public func setupAgain(with movementDirectionScoreInfo: MovementDirectionScoreInfo) {
                 
-        self.positionTitle = positionDirectionScoreInfo.title
-        self.direction = positionDirectionScoreInfo.direction
-        self.scoreType = movementToScoreType[positionDirectionScoreInfo.title] ?? .zeroToThree
+        self.positionTitle = movementDirectionScoreInfo.title
+        self.direction = movementDirectionScoreInfo.direction
+        self.scoreType = movementToScoreType[movementDirectionScoreInfo.title] ?? .zeroToThree
         
         
-        self.painTestName = (movementWithPainTestTitle[positionDirectionScoreInfo.title])
-        self.varTestName = (movementWithVariation[positionDirectionScoreInfo.title])
+        self.painTestName = (movementWithPainTestTitle[movementDirectionScoreInfo.title])
+        self.varTestName = (movementWithVariation[movementDirectionScoreInfo.title])
         
         print("painTestName: \(painTestName)")
 //        print("varTestName: \(varTestName)")
@@ -212,6 +230,15 @@ class ScoreController: UIViewController {
         saveBtn.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
     }
     
+    private func convertScoreToColor(score: Int) -> String {
+        switch score {
+        case -50: return "R"
+        case -51: return "Y"
+        case -52: return "G"
+        default: return String(score)
+        }
+    }
+    
     // TODO:
     @objc func scoreBtnTapped(_ sender: SelectableButton) {
         scoreBtnGroup.setSelectedButton(sender.id)
@@ -225,9 +252,13 @@ class ScoreController: UIViewController {
             
             case "Hold": score = -1
                 
-            case "Red": score = 0
-            case "Yellow": score = 1
-            case "Green": score = 2
+//            case "Red": score = 0
+//            case "Yellow": score = 1
+//            case "Green": score = 2
+                
+            case "Red": score = -50
+            case "Yellow": score = -51
+            case "Green": score = -52
 
             default: score = nil
             }
@@ -266,50 +297,59 @@ class ScoreController: UIViewController {
         print("ffff setScore triggered, pain: \(pain)")
         var converted = Int64.DefaultValue.trialPain
         
-        if movementWithPainNoAnkle.contains(title) && pain != nil {
+//        if movementWithPainNoAnkle.contains(title) && pain != nil {
+        if movementWithPain.contains(title) && pain != nil {
             print("ffff if if setscore called, title: \(title), pain : \(pain)")
             converted = pain! ? .Value.painFul : .Value.notPainful
         } else {
             print("ffff else in setscore called, title: \(title), pain: \(pain) ")
         }
+        //TODO: AnkleClearing 의 경우에 대해 PAIN 값 정해주기 .
         
         trialDetail.setValue(score, forKey: .TrialDetailStr.score)
         trialDetail.setValue(converted, forKey: .TrialDetailStr.isPainful)
         print("ffff score: \(score), pain: \(converted)")
         trialDetail.saveChanges()
     }
-
-    private func setupfTrialCoreIfNeeded() {
+// 여기서 뭘 설정하지 않는데.. ?
+    
+    // 이거, 조금 더 일찍 호출하자. Score 를 띄우기 전에. 그리고, fClearingCore 가 존재하지 않으면 Pain 을 띄우지 않기.!!
+   
+    @discardableResult
+    private func setupFTrialCoreIfNeeded() -> Bool {
 
         guard let trialCore = trialCore else { fatalError("trialCore is nil") }
+//        trialCore.direction
+        
+        let screen = trialCore.parentScreen
 
+        let currentDirection = trialCore.direction
 
         if movementWithPainTestTitle[trialCore.title] != nil {
-            if trialCore.title != MovementList.ankleClearing.rawValue {
-                guard let followingTitle = movementWithPainTestTitle[trialCore.title] else { fatalError("failed to get followingTitle") }
-                
-                let screen = trialCore.parentScreen
-                for eachCore in screen.trialCores {
-
-                    // MARK: - 맞는 방향의 Core 로 설정하기.
-
-                    if eachCore.title == followingTitle {
-                        fClearingCore = eachCore
-                        break
-                    }
+            let followingTestTitle = movementWithPainTestTitle[trialCore.title]!
+            guard let currentMovementName = MovementList(rawValue: trialCore.title) else { fatalError() }
+            
+            
+//            if currentMovementName == .ankleClearing || currentMovementName == .shoulderMobility {
+            if currentMovementName == .shoulderMobility {
+                fClearingCore = screen.trialCores.filter { $0.title == followingTestTitle && $0.direction == currentDirection}.first!
+                return true
+            } else if currentMovementName == .trunkStabilityPushUp || currentMovementName == .trunkStabilityPushUpVar {
+                fClearingCore = screen.trialCores.filter { $0.title == followingTestTitle }.first!
+                return true
+            } else if currentMovementName == .rotaryStability {
+                if currentDirection == "Right" {
+                    fClearingCore = screen.trialCores.filter { $0.title == followingTestTitle }.first!
+                    return true
                 }
-            }
-        } else {
-            print("positionHasPain does not contains \(trialCore.title)")
-            for eachTitle in movementsHasPain {
-                print("name of position that has pain: \(eachTitle)")
+            } else if currentMovementName == .ankleClearing {
+                return true
             }
         }
-        print("setupfTrialCoreIfNeeded has ended!")
         
-//        guard let fClearingCore = fClearingCore else {
-//            fatalError("fClearingCore is invalid") // ankle Clearing ->
-//        }
+        return false
+        
+        
 
         print("fClearingCore.title name0 :\(fClearingCore?.title)")
     }
@@ -324,7 +364,7 @@ class ScoreController: UIViewController {
             guard let score = score else { fatalError("score is nil")}
             print("save Condition satisfied.")
             
-            setupfTrialCoreIfNeeded()
+            setupFTrialCoreIfNeeded()
             
             // setup Detail both trial and fclearing
             // Ankle 에서 Nil 나옴..
@@ -346,8 +386,11 @@ class ScoreController: UIViewController {
                 print("fClearingCore Name1: \(fClearingCore!.title)")
                 setScore(title: fClearingCore!.title , to: fClearingDetail!, score: .DefaultValue.trialScore, pain: pain)
                 print("fClearingCore Name2: \(fClearingCore!.title)") // 여기까진 정상..
+                // TODO: 경우에 맞게 Clearing Test Direction 설정
+                // 버튼 선택에 따라 Clearing 값이 업데이트 되지 않음.
+                print("fClearingDetail Pain: \(fClearingDetail?.isPainful)")
                 delegate?.saveAction(core: fClearingCore!, detail: fClearingDetail!)
-                print("fClearingCore Name3: \(fClearingCore!.title)")
+
                 fClearingCore!.updateLatestScore()
             } else {
                 print("fClearingCore or fClearingDetail is invalid ")
@@ -378,7 +421,7 @@ class ScoreController: UIViewController {
     
     func setupTrialDetail() {
         
-        guard let trialCore = trialCore else { fatalError("trialCOre is nil") }
+        guard let trialCore = trialCore else { fatalError("trialCore is nil") }
         trialDetail = trialCore.returnFreshTrialDetail()
         
         guard let fClearingCore = fClearingCore else { return }
@@ -392,11 +435,16 @@ class ScoreController: UIViewController {
     private func toggleAppearance(shouldHide: Bool) {
         
         if shouldHide {
-            painPositionLabel.isHidden = true
-            painBtnGroup.isHidden = true
+            UIView.animate(withDuration: 0.3) {
+                self.painPositionLabel.isHidden = true
+                self.painBtnGroup.isHidden = true
+            }
+            
         } else {
-            painPositionLabel.isHidden = false
-            painBtnGroup.isHidden = false
+            UIView.animate(withDuration: 0.3) {
+                self.painPositionLabel.isHidden = false
+                self.painBtnGroup.isHidden = false
+            }
         }
     }
     
@@ -506,6 +554,7 @@ class ScoreController: UIViewController {
 //            painPositionLabel.text = painTestName ?? "Pain Test Name !"
 //            painPositionLabel.numberOfLines = 2
             
+
             [painPlusBtn, painMinusBtn].forEach {
                 painBtnGroup.addArrangedButton($0)
             }
@@ -535,6 +584,10 @@ class ScoreController: UIViewController {
             make.height.equalTo(50)
             make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
         }
+        
+//        if setupFTrialCoreIfNeeded() {
+//            painBtnGroup.isHidden = true
+//        } else { painBtnGroup.isHidden = false }
     }
     
     

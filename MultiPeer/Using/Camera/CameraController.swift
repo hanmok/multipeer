@@ -1064,20 +1064,18 @@ extension CameraController: ScoreControllerDelegate {
         guard let validVideoUrl = videoUrl else { return }
         
         let trialId = UUID()
-        guard let direction = MovementDirection(rawValue: core.direction) else { return }
+        guard let coreDirection = MovementDirection(rawValue: core.direction) else { return }
         
         let optionalScore = detail.score.scoreToInt()
         let optionalPain = detail.isPainful .painToBool()
         
-        print("Data to post \n title: \(core.title),\n direction: \(direction.rawValue), \n score: \(String(describing: optionalScore)), \n pain: \(optionalPain), \n trialCount: trialCount: \(detail.trialNo),\n trialId: trialId: \(trialId)")
+        print("Data to post \n title: \(core.title),\n direction: \(coreDirection.rawValue), \n score: \(String(describing: optionalScore)), \n pain: \(optionalPain), \n trialCount: trialCount: \(detail.trialNo),\n trialId: trialId: \(trialId)")
         
         APIManager.shared.postRequest(
-            positionDirectionScoreInfo: MovementDirectionScoreInfo(
-                title: trialCore.title, direction: direction, score: optionalScore, pain: optionalPain),
+            movementDirectionScoreInfo: MovementDirectionScoreInfo(
+                title: core.title, direction: coreDirection, score: optionalScore, pain: optionalPain),
             trialCount: Int(detail.trialNo), trialId: trialId,
             videoUrl: validVideoUrl, angle: .front)
-        
-        
     }
     
     
@@ -1092,14 +1090,14 @@ extension CameraController: ScoreControllerDelegate {
     //    }
     
     // triggered when 'Next' Tapped
-    func updatePosition(with positionDirectionScoreInfo: MovementDirectionScoreInfo) {
+    func updateMovement(with movementDirectionScoreInfo: MovementDirectionScoreInfo) {
 
         self.positionTitle = trialCore.title
 
         guard let validDirection = MovementDirection(rawValue: trialCore.direction) else {fatalError() }
 
         self.direction = validDirection
-        scoreVC.setupAgain(with: positionDirectionScoreInfo)
+        scoreVC.setupAgain(with: movementDirectionScoreInfo)
     }
     
 

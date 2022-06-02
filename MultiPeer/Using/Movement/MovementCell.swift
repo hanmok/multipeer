@@ -136,9 +136,11 @@ class MovementCell: UICollectionViewCell {
         if str.count != 1 { return false }
         guard let asciiOfChar = Character(str).asciiValue else { fatalError("passed str2: \(str)") }
 
+        // if not alphabet -> true
         if asciiOfChar > 90 || asciiOfChar < 65 {
             return true
         }
+        
         return false
     }
     
@@ -183,17 +185,21 @@ class MovementCell: UICollectionViewCell {
             
             if trueIfDone(vm.scoreLabel[0]) {
                 scoreView1.backgroundColor = UIColor.purple500
+            } else {
+                scoreView1.backgroundColor = UIColor.lavenderGray900
             }
             
             if trueIfDone(vm.scoreLabel[1]) {
                 scoreView2.backgroundColor = UIColor.purple500
+            } else{
+                scoreView2.backgroundColor = UIColor.lavenderGray900
             }
 
             if trueIfDone(vm.scoreLabel[0]) && trueIfDone(vm.scoreLabel[1]) {
                 layer.borderColor = UIColor.purple300.cgColor
                 layer.borderWidth = 1
             }
-            
+
 
             let imageStackView = UIStackView(arrangedSubviews: [imageView1, imageView2])
             self.addSubview(imageStackView)
@@ -264,6 +270,9 @@ class MovementCell: UICollectionViewCell {
                 scoreView1.backgroundColor = UIColor.purple500
                 layer.borderColor = UIColor.purple300.cgColor
                 layer.borderWidth = 1
+            } else {
+                scoreView1.backgroundColor = UIColor.lavenderGray900
+                layer.borderColor = UIColor.clear.cgColor
             }
             
             imageView1.snp.makeConstraints { make in

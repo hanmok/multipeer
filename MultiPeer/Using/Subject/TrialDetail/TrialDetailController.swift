@@ -99,7 +99,7 @@ class TrialDetailController: UIViewController {
 extension TrialDetailController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        print("numOfTrialCores: \(trialCores.count)")
+        print("numOfTrialCoresFromCollectionView: \(trialCores.count)")
         return trialCores.count
     }
     

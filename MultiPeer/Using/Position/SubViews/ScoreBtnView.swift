@@ -43,16 +43,16 @@ class ScoreBtnView: ButtonWithInfo {
         }
         
         
-        if let validScore = positionDirectionScoreInfo.score {
+        if let validScore = movementDirectionScoreInfo.score {
             scoreLabel.text = String(validScore)
             print("validScore : \(validScore)")
         } else {
-            switch positionDirectionScoreInfo.direction {
+            switch movementDirectionScoreInfo.direction {
             case .right: scoreLabel.text = "R" // 없어져도 될 코드 ?
             case .left: scoreLabel.text = "L"
             case .neutral: scoreLabel.text = "N"
             }
-            print("direction: \(positionDirectionScoreInfo.direction)")
+            print("direction: \(movementDirectionScoreInfo.direction)")
         }
         scoreLabel.textAlignment = .center
         scoreLabel.textColor = .magenta

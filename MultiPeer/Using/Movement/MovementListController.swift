@@ -100,7 +100,7 @@ class MovementListController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("viewDidLoad in MovementListController called")
-        updateTrialCores()
+        updateTrialCores(screen: screen)
         registerCollectionView()
         
         connectionManager.delegate = self
@@ -228,11 +228,12 @@ class MovementListController: UIViewController {
     private func updateScoreLabels() {
         // TODO: Update if score has changed using MovementCollectionCell
         print("updateScoreLabels Called ")
-        if let validScreen = screen {
-            updateTrialCores(screen: validScreen)
-        } else {
-        updateTrialCores()
-        }
+//        if let validScreen = screen {
+//            updateTrialCores(screen: validScreen)
+//        } else {
+//        updateTrialCores()
+//        }
+        updateTrialCores(screen: screen)
     }
     
     
@@ -271,6 +272,7 @@ class MovementListController: UIViewController {
         }
         
         self.trialCores.removeFirst()
+        
         // TODO: Filter ! using MovementImgsDictionary
         trialCoresToShow = [[]]
         for eachCore in trialCores {

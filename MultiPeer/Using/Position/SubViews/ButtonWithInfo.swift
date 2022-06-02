@@ -12,13 +12,13 @@ class ButtonWithInfo: UIButton {
 //    var direction: PositionDirection
 //    var score: Int? // could be nil if not proceed yet.
     
-    var positionDirectionScoreInfo: MovementDirectionScoreInfo
+    var movementDirectionScoreInfo: MovementDirectionScoreInfo
     
     init( title: String, direction: MovementDirection, score: Int? = nil, frame: CGRect = .zero) {
 //        self.title = title
 //        self.direction = direction
 //        self.score = score
-        positionDirectionScoreInfo = MovementDirectionScoreInfo(title: title, direction: direction, score: score)
+        movementDirectionScoreInfo = MovementDirectionScoreInfo(title: title, direction: direction, score: score)
         super.init(frame: frame)
         
     }
