@@ -8,7 +8,7 @@
 import Foundation
 
 
-enum PositionDirection: String, Codable  {
+enum MovementDirection: String, Codable  {
     case left = "Left"
     case right = "Right"
     case neutral = "Neutral"
@@ -42,9 +42,9 @@ struct PositionInfo: Codable {
 //    }
 //}
 
-struct PositionDirectionScoreInfo: Codable {
+struct MovementDirectionScoreInfo: Codable {
     var title: String
-    var direction: PositionDirection
+    var direction: MovementDirection
     var score: Int?
     var pain: Bool?
 }
@@ -53,10 +53,10 @@ struct PositionDirectionScoreInfo: Codable {
 
 
 struct PositionWithVarName {
-    var positionName: PositionList
-    var positionVarName: PositionList
+    var positionName: MovementList
+    var positionVarName: MovementList
     
-    init(position name: PositionList, varName: PositionList) {
+    init(position name: MovementList, varName: MovementList) {
         self.positionName = name
         self.positionVarName = varName
     }
@@ -65,7 +65,7 @@ struct PositionWithVarName {
 
 struct DetailPositionWIthMsgInfo: Codable {
     var message: MessageType
-    var detailInfo: PositionDirectionScoreInfo
+    var detailInfo: MovementDirectionScoreInfo
 }
 
 struct LottieMsgInfo: Codable {
@@ -82,10 +82,10 @@ enum LottieType: String, Codable {
 
 
 public struct PositionWithPainTestName {
-    var positionName: PositionList
-    var painTestName: PositionList
+    var positionName: MovementList
+    var painTestName: MovementList
     
-    init(position name: PositionList, testName: PositionList) {
+    init(position name: MovementList, testName: MovementList) {
         self.positionName = name
         self.painTestName = testName
     }

@@ -25,7 +25,7 @@ class CameraController: UIViewController {
     
     // MARK: - Properties
     var positionTitle: String
-    var direction: PositionDirection
+    var direction: MovementDirection
     var trialCore: TrialCore
     var systemSoundID: SystemSoundID = 1057
     //    var systemSoundID: SystemSoundID = 1016
@@ -75,7 +75,7 @@ class CameraController: UIViewController {
             //        self.positionTitle = positionDirectionScoreInfo.title
             //        self.direction = positionDirectionScoreInfo.direction
             self.positionTitle = trialCore.title
-            guard let validDirection = PositionDirection(rawValue: trialCore.direction) else {fatalError() }
+            guard let validDirection = MovementDirection(rawValue: trialCore.direction) else {fatalError() }
             
             self.direction = validDirection
             
@@ -164,10 +164,9 @@ class CameraController: UIViewController {
     }
     
     @objc func startRecordingNowNoti(_ notification: Notification) {
-        //        print("flag1")
         print("startRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? PositionDirection,
+              let direction = notification.userInfo?["direction"] as? MovementDirection,
               let score = notification.userInfo?["score"] as? Int? else { return }
         
         startRecording()
@@ -177,10 +176,9 @@ class CameraController: UIViewController {
     
     
     @objc func stopRecordingNoti(_ notification: Notification) {
-        //        print("flag2")
         print("stopRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? PositionDirection,
+              let direction = notification.userInfo?["direction"] as? MovementDirection,
               let score = notification.userInfo?["score"] as? Int? else { return }
         
         stopRecording()
@@ -188,7 +186,6 @@ class CameraController: UIViewController {
     
     // not recommended
     @objc func startRecordingAtNoti(_ notification: Notification) {
-        //        print("flag3")
         print(#function, #line)
         guard let dateToStartRecordingInMilliSec = notification.userInfo?["receivedTime"] as? Int,
               //              let msg = notification.userInfo?["msg"] as? RecordingType
@@ -216,7 +213,6 @@ class CameraController: UIViewController {
     
     // not recommended
     @objc func startCountdownAtNoti(_ notification: Notification) {
-        //        print("flag4")
         guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
               //              let msg = notification.userInfo?["msg"] as? RecordingType
               let msg = notification.userInfo?["msg"] as? MessageType
@@ -232,7 +228,6 @@ class CameraController: UIViewController {
     
     // this one called!!
     @objc func updateConnectionStateNoti(_ notification: Notification) {
-        //        print("flag5")
         print(#file, #line)
         guard let state = notification.userInfo?["connectionState"] as? ConnectionState else {
             print("failed to get connectionState normally")
@@ -315,7 +310,7 @@ hideCompleteMsgView()
             // Send Start Msg
             //            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
             
-            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
+            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
             
             
             startRecording()
@@ -346,7 +341,7 @@ hideCompleteMsgView()
             // Send Stop Msg
             //            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
             
-            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
+            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
             
         }
     }
@@ -510,9 +505,6 @@ hideCompleteMsgView()
     }
     
     @objc private func triggerCountDownTimer() {
-        print("triggerCoundDownTimerFlag 0 called")
-        
-        
         
         DispatchQueue.main.async {
             self.durationLabel.text = "00:00"
@@ -1072,7 +1064,7 @@ extension CameraController: ScoreControllerDelegate {
         guard let validVideoUrl = videoUrl else { return }
         
         let trialId = UUID()
-        guard let direction = PositionDirection(rawValue: core.direction) else { return }
+        guard let direction = MovementDirection(rawValue: core.direction) else { return }
         
         let optionalScore = detail.score.scoreToInt()
         let optionalPain = detail.isPainful .painToBool()
@@ -1080,7 +1072,7 @@ extension CameraController: ScoreControllerDelegate {
         print("Data to post \n title: \(core.title),\n direction: \(direction.rawValue), \n score: \(String(describing: optionalScore)), \n pain: \(optionalPain), \n trialCount: trialCount: \(detail.trialNo),\n trialId: trialId: \(trialId)")
         
         APIManager.shared.postRequest(
-            positionDirectionScoreInfo: PositionDirectionScoreInfo(
+            positionDirectionScoreInfo: MovementDirectionScoreInfo(
                 title: trialCore.title, direction: direction, score: optionalScore, pain: optionalPain),
             trialCount: Int(detail.trialNo), trialId: trialId,
             videoUrl: validVideoUrl, angle: .front)
@@ -1100,11 +1092,11 @@ extension CameraController: ScoreControllerDelegate {
     //    }
     
     // triggered when 'Next' Tapped
-    func updatePosition(with positionDirectionScoreInfo: PositionDirectionScoreInfo) {
+    func updatePosition(with positionDirectionScoreInfo: MovementDirectionScoreInfo) {
 
         self.positionTitle = trialCore.title
 
-        guard let validDirection = PositionDirection(rawValue: trialCore.direction) else {fatalError() }
+        guard let validDirection = MovementDirection(rawValue: trialCore.direction) else {fatalError() }
 
         self.direction = validDirection
         scoreVC.setupAgain(with: positionDirectionScoreInfo)

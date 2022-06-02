@@ -45,7 +45,6 @@ class SubjectController: UIViewController {
                  }
             
             for subject in fetchedSubjects {
-                print("fail flag 33")
                 print(subject.value(forKey: "name_") as! String)
                 subjects.append(subject)
             }
@@ -106,15 +105,11 @@ class SubjectController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("subjectcontroller viewdidload called")
-        print("flag 0")
         fetchAndReloadSubjects() // 여기서 에러 발생.
-        print("flag 1 ")
 //        registerCollectionView()
         registerTableView()
         
-        print("flag 2")
         setupLayout()
-        print("flag 3")
         // Do any additional setup after loading the view.
     }
     

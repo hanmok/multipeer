@@ -64,7 +64,7 @@ extension TrialCore {
     
     static func saveBundle(belongTo parent: Screen) {
         // 여기 어딘가에서 에러 발생
-        for (idx, each) in PositionList.allCases.enumerated() {
+        for (idx, each) in MovementList.allCases.enumerated() {
 
             if each.rawValue.contains("Var") { continue }
             // 여기에서 발생.
@@ -76,19 +76,19 @@ extension TrialCore {
     // Error 발생지.. 여기 아님. 정상출력됨.
     static func save(title: String, parent: Screen, tag: Int64) { // title 에 따른 direction 에 따라 1~2 개 return
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            fatalError("error !! flag 2")
+            fatalError("error !!")
         }
 
         let managedContext = appDelegate.persistentContainer.viewContext
-        guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else { fatalError("error !! flag 3") }
+        guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else { fatalError("error !!") }
         
         // for loop needed..
-        guard let positionName = PositionList(rawValue: title),
+        guard let positionName = MovementList(rawValue: title),
               let numOfDirections = Dummy.numOfDirections[positionName],
-              let directionNames = Dummy.directionName[numOfDirections] else { fatalError("error !! flag 4") }
+              let directionNames = Dummy.directionName[numOfDirections] else { fatalError("error !!") }
         
         for direction in directionNames {
-            guard let trialCore = NSManagedObject(entity: entity, insertInto: managedContext) as? TrialCore else { fatalError("error !! flag 5") }
+            guard let trialCore = NSManagedObject(entity: entity, insertInto: managedContext) as? TrialCore else { fatalError("error !!") }
             
             trialCore.setValue(parent, forKey: .TrialCoreStr.parentScreen)
             trialCore.setValue(title, forKey: .TrialCoreStr.title)
@@ -102,26 +102,26 @@ extension TrialCore {
                 try managedContext.save()
             } catch {
                 print("error : \(error.localizedDescription)")
-                fatalError("error !! flag 6")
+                fatalError("error !! ")
             }
         }
     }
     
     static func save(title: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            fatalError("error !! flag 2")
+            fatalError("error !! ")
         }
 
         let managedContext = appDelegate.persistentContainer.viewContext
-        guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else { fatalError("error !! flag 3") }
+        guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else { fatalError("error !! ") }
         
         // for loop needed..
-        guard let positionName = PositionList(rawValue: title),
+        guard let positionName = MovementList(rawValue: title),
               let numOfDirections = Dummy.numOfDirections[positionName],
-              let directionNames = Dummy.directionName[numOfDirections] else { fatalError("error !! flag 4") }
+              let directionNames = Dummy.directionName[numOfDirections] else { fatalError("error !! ") }
         
         for direction in directionNames {
-            guard let trialCore = NSManagedObject(entity: entity, insertInto: managedContext) as? TrialCore else { fatalError("error !! flag 5") }
+            guard let trialCore = NSManagedObject(entity: entity, insertInto: managedContext) as? TrialCore else { fatalError("error !!") }
             
 //            trialCore.setValue(parent, forKey: .TrialCoreStr.parentScreen)
             trialCore.setValue(title, forKey: .TrialCoreStr.title)
@@ -134,7 +134,7 @@ extension TrialCore {
                 try managedContext.save()
             } catch {
                 print("error : \(error.localizedDescription)")
-                fatalError("error !! flag 6")
+                fatalError("error !!")
             }
         }
     }
@@ -145,7 +145,7 @@ extension TrialCore {
          
          if sortedDetails.count != 0 {
              guard let lastDetailElement = sortedDetails.last else { fatalError() }
-             guard let positionTitle = PositionList(rawValue: self.title) else { fatalError() }
+             guard let positionTitle = MovementList(rawValue: self.title) else { fatalError() }
              
              switch positionTitle {
              
@@ -182,7 +182,7 @@ extension TrialCore {
         let details = self.trialDetails.sorted { $0.trialNo > $1.trialNo }
         
         for eachDetail in details {
-            guard let name = PositionList(rawValue: self.title) else { fatalError("")}
+            guard let name = MovementList(rawValue: self.title) else { fatalError("")}
             switch name {
             case .ankleClearing:
                 if eachDetail.isPainful == .DefaultValue.trialPain || eachDetail.score == .DefaultValue.trialScore {

@@ -22,11 +22,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
 
 //        let positionVC = PositionController()
-        let positionVC = NewMainViewController()
+        let movementVC = MovementListController()
 //        let positionVC = SoundTestViewController()
 //        window?.rootViewController = PositionController()
 //        window?.rootViewController = UIViewController(nibName: nil, bundle: nil)
-        window?.rootViewController = UINavigationController(rootViewController: positionVC)
+        window?.rootViewController = UINavigationController(rootViewController: movementVC)
 //        window?.rootViewController = CameraController()
 
         window?.makeKeyAndVisible()

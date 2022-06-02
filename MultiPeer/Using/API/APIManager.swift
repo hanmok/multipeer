@@ -12,7 +12,7 @@ class APIManager {
     
     static let shared = APIManager()
     
-    func postRequest(positionDirectionScoreInfo: PositionDirectionScoreInfo,  trialCount: Int, trialId: UUID, videoUrl: URL, angle: CapturingAngle) {
+    func postRequest(positionDirectionScoreInfo: MovementDirectionScoreInfo,  trialCount: Int, trialId: UUID, videoUrl: URL, angle: CapturingAngle) {
         let detailInfo = positionDirectionScoreInfo
         print("---------------- post request!! ----------------")
         print("title : \(detailInfo.title)")

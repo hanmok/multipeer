@@ -14,7 +14,7 @@ import MobileCoreServices
 import AVFoundation
 
 
-class NewMainViewController: UIViewController {
+class MovementListController: UIViewController {
     
     // MARK: - Properties
     var connectionManager = ConnectionManager()
@@ -31,6 +31,7 @@ class NewMainViewController: UIViewController {
         }
     }
     
+    // TODO: change to false after some updates..
     var testMode = true
     
     var trialCores: [[TrialCore]] = [[]]
@@ -56,7 +57,7 @@ class NewMainViewController: UIViewController {
         }
     }
     
-    private let positionCollectionView: UICollectionView = {
+    private let movementCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         
@@ -98,8 +99,11 @@ class NewMainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("viewDidLoad in MovementListController called")
         updateTrialCores()
         registerCollectionView()
+        
+        connectionManager.delegate = self
         
         fetchDefaultScreen()
         setupLayout()
@@ -159,12 +163,12 @@ class NewMainViewController: UIViewController {
         }
         
         guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? PositionDirection,
+              let direction = notification.userInfo?["direction"] as? MovementDirection,
               let score = notification.userInfo?["score"] as? Int? else {
             print("failed to converting userInfo back.")
             return }
         
-        let positionWithDirectionInfo = PositionDirectionScoreInfo(title: title, direction: direction, score: score)
+        let movementWithDirectionInfo = MovementDirectionScoreInfo(title: title, direction: direction, score: score)
         
         guard let selectedTrialCore = selectedTrialCore else {
             return
@@ -222,7 +226,8 @@ class NewMainViewController: UIViewController {
     }
     
     private func updateScoreLabels() {
-        // TODO: Update if score has changed using PositionCollectionCell
+        // TODO: Update if score has changed using MovementCollectionCell
+        print("updateScoreLabels Called ")
         if let validScreen = screen {
             updateTrialCores(screen: validScreen)
         } else {
@@ -237,6 +242,7 @@ class NewMainViewController: UIViewController {
     // TODO: Default Screen 보다 , Default Subject 를 갖는게 더 좋지 않을까 ?
     
     private func updateTrialCores(screen: Screen? = nil) {
+        print("updateTrialCores Called ")
         self.trialCores = [[]] // initialize
         
         if screen != nil { self.screen = screen! } else {
@@ -265,15 +271,25 @@ class NewMainViewController: UIViewController {
         }
         
         self.trialCores.removeFirst()
-        // TODO: Filter ! using PositionImgsDictionary
+        // TODO: Filter ! using MovementImgsDictionary
         trialCoresToShow = [[]]
         for eachCore in trialCores {
-            if PositionImgsDictionary[eachCore.first!.title] != nil {
+            if MovementImgsDictionary[eachCore.first!.title] != nil {
                 trialCoresToShow.append(eachCore)
             }
         }
         trialCoresToShow.removeFirst()
-        printCurrentState()
+        printCurrentState() //이거랑, 실제 받는 값과 어떤.. 차이가 있음. 뭐지 대체 ??
+
+        // Async 때문에 아래 코드가 실행이 이상하게 되는걸까 ?
+        
+        // 여기 코드때문에 그래.. 왜지 ?? 왜지 ???
+        // 이 코드 실행하지 않을 수는 없음 ;;
+//        self.viewDidLoad() // 이거 너무 개뻘짓.. + iNfinite loop
+        
+        DispatchQueue.main.async {
+            self.movementCollectionView.reloadData()
+        }
     }
     
     private func printCurrentState() {
@@ -363,8 +379,8 @@ class NewMainViewController: UIViewController {
         
         
         
-        self.view.addSubview(positionCollectionView)
-        positionCollectionView.snp.makeConstraints { make in
+        self.view.addSubview(movementCollectionView)
+        movementCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
             make.top.equalTo(view.safeAreaLayoutGuide).inset(30)
             make.bottom.equalTo(view.snp.bottom).offset(-120)
@@ -398,21 +414,21 @@ class NewMainViewController: UIViewController {
     }
     
     private func registerCollectionView() {
-        positionCollectionView.register(PositionCell.self, forCellWithReuseIdentifier: PositionCell.cellId)
-        positionCollectionView.delegate = self
-        positionCollectionView.dataSource = self
+        movementCollectionView.register(MovementCell.self, forCellWithReuseIdentifier: MovementCell.cellId)
+        movementCollectionView.delegate = self
+        movementCollectionView.dataSource = self
     }
 }
 
-// MARK: - PositionCell Delegate
-extension NewMainViewController: PositionCellDelegate {
+// MARK: - MovementCell Delegate
+extension MovementListController: MovementCellDelegate {
     func cell(navToCameraWith trialCore: TrialCore) {
             presentCamera(with: trialCore)
     }
 }
 
 
-extension NewMainViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
+extension MovementListController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return trialCoresToShow.count
@@ -420,11 +436,12 @@ extension NewMainViewController: UICollectionViewDelegateFlowLayout, UICollectio
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         print("cell index: \(indexPath.row)")
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PositionCell.cellId, for: indexPath) as! PositionCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovementCell.cellId, for: indexPath) as! MovementCell
         //        print("")
         cell.delegate = self
         print("trialsToShow: \(trialCoresToShow[indexPath.row].count)")
-        cell.viewModel = PositionViewModel(trialCores: trialCoresToShow[indexPath.row])
+        cell.viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
+        // RenderingBug: 여기서 문제가 있어보이지는 않는데 ...
         print("cell : \(cell.viewModel?.title)")
         return cell
     }
@@ -438,7 +455,7 @@ extension NewMainViewController: UICollectionViewDelegateFlowLayout, UICollectio
 
 
 
-extension NewMainViewController: SubjectControllerDelegate {
+extension MovementListController: SubjectControllerDelegate {
     func updateCurrentScreen(from subject: Subject, with screen: Screen, closure: () -> Void) {
 //        updateTrialCores(subject: subject, screen: screen)
         updateTrialCores(screen: screen)
@@ -449,7 +466,7 @@ extension NewMainViewController: SubjectControllerDelegate {
 }
 
 
-extension NewMainViewController: CameraControllerDelegate {
+extension MovementListController: CameraControllerDelegate {
     func makeSound() {
         // TODO: make sound ?? 보류.
     }
@@ -463,6 +480,7 @@ extension NewMainViewController: CameraControllerDelegate {
 //            cameraVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
             cameraVC.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
         } completion: { done in
+            
             // TODO: remove cameraController after animation
 //            if done {
 //                if self.children.count > 0 {
@@ -476,5 +494,29 @@ extension NewMainViewController: CameraControllerDelegate {
 //            }
         }
         updateScoreLabels()
+    }
+}
+
+
+extension MovementListController: ConnectionManagerDelegate {
+    
+    // TODO: Update Connection Indicator on the right top (next to connect btn)
+    func updateState(state: ConnectionState) {
+        switch state {
+        case .connected: break
+//            triggerDurationTimer()
+        case .disconnected: break
+//            stopDurationTimer()
+        }
+        
+        DispatchQueue.main.async {
+//            self.connectionStateLabel.text = state.rawValue
+        }
+    }
+    
+    func updateDuration(in seconds: Int) {
+        DispatchQueue.main.async {
+//            self.durationLabel.text = "\(seconds) s"
+        }
     }
 }

@@ -38,7 +38,7 @@ class TestController2 {
     }
     
     func exportVideo() {
-        print("export Video Triggered!")
+        print("export Video Triggered! ffffflllllaaaagggg")
         // MARK: - Asset To Export
         guard let assetToExport = self.player?.currentItem?.asset else { fatalError() }
         

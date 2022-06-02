@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Users/fittobe/Desktop/Multipeer2/MultiPeer/Using/Position/SubViews/ScoreBtnView.swift">
+   </FileRef>
+   <FileRef
       location = "group:MultiPeer.xcodeproj">
    </FileRef>
    <FileRef

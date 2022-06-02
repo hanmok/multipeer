@@ -18,7 +18,7 @@ protocol ScoreControllerDelegate: AnyObject {
 
     func saveAction(core: TrialCore, detail: TrialDetail) // 알아서 처리됨 ..;; 여기서 다 처리하면 ? 아닌가? 다른앤ㄱ ㅏ??
     
-    func updatePosition(with positionDirectionScoreInfo: PositionDirectionScoreInfo)
+    func updatePosition(with positionDirectionScoreInfo: MovementDirectionScoreInfo)
     
     func updatePressedBtnTitle(with btnTitle: String)
     
@@ -31,7 +31,7 @@ class ScoreController: UIViewController {
     var hasPainField: Bool = false
     
     var positionTitle: String
-    var direction: PositionDirection
+    var direction: MovementDirection
 
     var trialCore: TrialCore?
     var trialDetail: TrialDetail?
@@ -162,26 +162,26 @@ class ScoreController: UIViewController {
     
     init(positionTitle: String, direction: String) {
         self.positionTitle = positionTitle
-        guard let direction = PositionDirection(rawValue: direction) else {fatalError()}
+        guard let direction = MovementDirection(rawValue: direction) else {fatalError()}
         self.direction = direction
-        self.scoreType = positionToScoreType[positionTitle] ?? .zeroToThree
+        self.scoreType = movementToScoreType[positionTitle] ?? .zeroToThree
         
-        self.painTestName = (positionWithPainTestTitle[positionTitle])
-        self.varTestName = (positionWithVariation[positionTitle])
+        self.painTestName = (movementWithPainTestTitle[positionTitle])
+        self.varTestName = (movementWithVariation[positionTitle])
 
         super.init(nibName: nil, bundle: nil)
     }
     
     /// called from CameraController
-    public func setupAgain(with positionDirectionScoreInfo: PositionDirectionScoreInfo) {
+    public func setupAgain(with positionDirectionScoreInfo: MovementDirectionScoreInfo) {
                 
         self.positionTitle = positionDirectionScoreInfo.title
         self.direction = positionDirectionScoreInfo.direction
-        self.scoreType = positionToScoreType[positionDirectionScoreInfo.title] ?? .zeroToThree
+        self.scoreType = movementToScoreType[positionDirectionScoreInfo.title] ?? .zeroToThree
         
         
-        self.painTestName = (positionWithPainTestTitle[positionDirectionScoreInfo.title])
-        self.varTestName = (positionWithVariation[positionDirectionScoreInfo.title])
+        self.painTestName = (movementWithPainTestTitle[positionDirectionScoreInfo.title])
+        self.varTestName = (movementWithVariation[positionDirectionScoreInfo.title])
         
         print("painTestName: \(painTestName)")
 //        print("varTestName: \(varTestName)")
@@ -233,7 +233,6 @@ class ScoreController: UIViewController {
             }
         }
 
-        print("selectedBtn flag: \(score)")
     }
     
     @objc func painBtnTapped(_ sender: SelectableButton) {
@@ -267,7 +266,7 @@ class ScoreController: UIViewController {
         print("ffff setScore triggered, pain: \(pain)")
         var converted = Int64.DefaultValue.trialPain
         
-        if positionWithPainNoAnkle.contains(title) && pain != nil {
+        if movementWithPainNoAnkle.contains(title) && pain != nil {
             print("ffff if if setscore called, title: \(title), pain : \(pain)")
             converted = pain! ? .Value.painFul : .Value.notPainful
         } else {
@@ -285,9 +284,9 @@ class ScoreController: UIViewController {
         guard let trialCore = trialCore else { fatalError("trialCore is nil") }
 
 
-        if positionWithPainTestTitle[trialCore.title] != nil {
-            if trialCore.title != PositionList.ankleClearing.rawValue {
-                guard let followingTitle = positionWithPainTestTitle[trialCore.title] else { fatalError("failed to get followingTitle") }
+        if movementWithPainTestTitle[trialCore.title] != nil {
+            if trialCore.title != MovementList.ankleClearing.rawValue {
+                guard let followingTitle = movementWithPainTestTitle[trialCore.title] else { fatalError("failed to get followingTitle") }
                 
                 let screen = trialCore.parentScreen
                 for eachCore in screen.trialCores {
@@ -302,7 +301,7 @@ class ScoreController: UIViewController {
             }
         } else {
             print("positionHasPain does not contains \(trialCore.title)")
-            for eachTitle in positionsHasPain {
+            for eachTitle in movementsHasPain {
                 print("name of position that has pain: \(eachTitle)")
             }
         }
@@ -496,7 +495,6 @@ class ScoreController: UIViewController {
         painMinusBtn.wrappedString = "-"
         
 //        if painTestName != nil {
-            print("flag!!!! painTestName is Not Nil!!!")
             view.addSubview(painPositionLabel)
             painPositionLabel.snp.makeConstraints { make in
 //                make.top.equalTo(scoreStackView.snp.bottom).offset(20)

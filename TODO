@@ -38,6 +38,40 @@ Trim .. 해야하지...
 
 왜 여기에선 DurationLabel 이 바뀌지 않고
 다른 곳에선 바뀌는걸까 ??
-졸려 죽겠다
 
 
+움.. 문제가 어디였지 ?
+CurrentState 출력이 이상하게 되는 ..
+
+현재 문제 ?
+Movement 실행 후 MovementListCOntroller 로 돌아왔을 때, 업데이트가 되지 않음.
+해결됨. 근데 좌우 구분을 못함 ㅋㅋㅋㅋ
+
+
+Prob: 띄우는 것부터 문제임.
+reloadData 할 때, 갯수가 다른가? 아닐걸 ? 어디서 생긴 문제지? Cell 가서 찾아내야할듯 뭐지 ??
+
+비정상: HS, SM, RS
+정상: IL, AC, ASLR
+View Rendering 시
+찌꺼기같은게 있긴 한데, 지금은 일단 정상
+아니네 ? 이게 뭐야 ... ??
+
+
+Prob: 점수가 구분하지 못함 ㅋㅋㅋ
+어디서 생긴거지
+
+
+
+처음 Rendering
+비정상: HS, RS
+
+언제부터 이따위였지??
+일단.. 그냥 진행한다. ..
+
+
+
+SM 도 이러네
+
+
+Left, RIght 구분 못함 

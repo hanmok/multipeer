@@ -1,5 +1,5 @@
 //
-//  PositionCollectionCell.swift
+//  movementCollectionCell.swift
 //  MultiPeer
 //
 //  Created by 핏투비 on 2022/05/30.
@@ -10,22 +10,23 @@ import UIKit
 import SnapKit
 import Then
 
-protocol PositionCellDelegate: AnyObject {
+protocol MovementCellDelegate: AnyObject {
     func cell(navToCameraWith trialCore: TrialCore)
 }
 
-class PositionCell: UICollectionViewCell {
+class MovementCell: UICollectionViewCell {
     static let cellId = "cellId"
     
-    var viewModel: PositionViewModel? { // viewmodel get trialCores (one or two)
+    var viewModel: MovementViewModel? { // viewmodel get trialCores (one or two)
         didSet {
             loadView()
             assignTrialCore()
             addTargets()
+            printReceivedData()
         }
     }
     
-    weak var delegate: PositionCellDelegate?
+    weak var delegate: MovementCellDelegate?
     
     private func assignTrialCore() {
         guard let viewModel = viewModel else {
@@ -88,10 +89,12 @@ class PositionCell: UICollectionViewCell {
     
     let imageView1 = UIImageView().then{
         $0.isUserInteractionEnabled = true
+        $0.backgroundColor = .white
     }
     
     let imageView2 = UIImageView().then {
         $0.isUserInteractionEnabled = true
+        $0.backgroundColor = .white
     }
     
 //    var imgBtnLeft = ImgBtnView(title: "", direction: .neutral)
@@ -114,7 +117,7 @@ class PositionCell: UICollectionViewCell {
         $0.layer.cornerRadius = 4
         $0.clipsToBounds = true
     }
-    
+
     private let bottomLineView = UIView().then {
         $0.backgroundColor = UIColor(red: 227/255, green: 42/255, blue: 47/255, alpha: 1)
     }
@@ -126,23 +129,20 @@ class PositionCell: UICollectionViewCell {
     private let scoreContainerView2 = UIView()
 //        .then { $0.backgroundColor = .cyan }
     
-//    private let triggerBtn1 = UIButton()
-//    private let triggerBtn1 = ButtonWIthTrialCore()
-//    private let triggerBtn2 = ButtonWIthTrialCore()
+
     
     private func trueIfDone(_ str: String) -> Bool {
-        // ??? ????
-//        print("in trueIfDone func, ")
-        print("passed str1 : \(str)")
+
         if str.count != 1 { return false }
         guard let asciiOfChar = Character(str).asciiValue else { fatalError("passed str2: \(str)") }
-//        if Character(str).asciiValue! > 90 || Character(str).asciiValue! < 65 {
+
         if asciiOfChar > 90 || asciiOfChar < 65 {
             return true
         }
         return false
     }
     
+    //TODO: Fix) 왜 이거 두번 호출됨? cell 잘못 아님. Controller 쪽으로 넘어가야함.
     private func loadView() {
         // two images
         guard let vm = viewModel else {fatalError()}
@@ -166,31 +166,36 @@ class PositionCell: UICollectionViewCell {
         }
         
         // Has Left and Right
+        
         if vm.imageName.count == 2 {
-//            UIColor(red)
+            print("two images are rendered for title: \(vm.title)")
+            
             imageView1.image = UIImage(imageLiteralResourceName: vm.imageName[0])
             imageView2.image = UIImage(imageLiteralResourceName: vm.imageName[1])
-            
+            print("imageNames: \(vm.imageName[0]), \(vm.imageName[1])")
             scoreView1.text = vm.scoreLabel[0]
             scoreView2.text = vm.scoreLabel[1]
-
+            print("movement title: \(vm.title)")
+            
+            print("left scoreLabel: \(vm.scoreLabel[0])")
+            print("right scoreLabel: \(vm.scoreLabel[1])")
+//            print("")
+            
             
             if trueIfDone(vm.scoreLabel[0]) {
                 scoreView1.backgroundColor = UIColor.purple500
             }
-//            changeColor(of: scoreView1, when: trueIfDone(vm.scoreLabel[0]))
             
             if trueIfDone(vm.scoreLabel[1]) {
                 scoreView2.backgroundColor = UIColor.purple500
             }
-            
-//            changeColor(of: scoreView2, when: trueIfDone(vm.scoreLabel[1]))
-            
+
+
             if trueIfDone(vm.scoreLabel[0]) && trueIfDone(vm.scoreLabel[1]) {
                 layer.borderColor = UIColor.purple300.cgColor
                 layer.borderWidth = 1
             }
-            
+            // 이게 좀 수상한데 ..
             let imageStackView = UIStackView(arrangedSubviews: [imageView1, imageView2])
             self.addSubview(imageStackView)
             
@@ -203,20 +208,17 @@ class PositionCell: UICollectionViewCell {
                 make.height.equalToSuperview().dividedBy(2)
             }
 
-
-//            imgBtnLeft = ImgBtnView(title: vm.title, direction: .left)
             imageView1.addSubview(imgBtnLeft)
             imgBtnLeft.snp.makeConstraints { make in
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
             
-//            imgBtnRight = ImgBtnView(title: vm.title, direction: .right)
             imageView2.addSubview(imgBtnRight)
             imgBtnRight.snp.makeConstraints { make in
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
             
-//            let scoreStackView = UIStackView(arrangedSubviews: [scoreView1, scoreView2])
+
             let scoreStackView = UIStackView(arrangedSubviews: [scoreContainerView1, scoreContainerView2])
             
             scoreStackView.distribution = .fillEqually
@@ -227,7 +229,6 @@ class PositionCell: UICollectionViewCell {
                 make.top.equalTo(imageStackView.snp.bottom).offset(10)
                 make.left.equalToSuperview().offset(10)
                 make.right.equalToSuperview().offset(-10)
-//                make.height.equalTo(50)
                 make.bottom.equalTo(nameLabel.snp.top)
             }
             
@@ -242,10 +243,14 @@ class PositionCell: UICollectionViewCell {
                 make.center.equalToSuperview()
                 make.width.height.equalTo(20)
             }
-
-        
             // one Image
-        } else {
+        } else if vm.imageName.count == 1 {
+            
+            print("movement title: \(vm.title)")
+            
+            print("left scoreLabel: \(vm.scoreLabel[0])")
+
+            
             let allViews = [imageView1,
                             scoreContainerView1]
             
@@ -289,35 +294,21 @@ class PositionCell: UICollectionViewCell {
                 make.width.height.equalTo(20)
             }
             
-//            self.addSubview(scoreStackView)
-//            scoreStackView.snp.makeConstraints { make in
-//                make.top.equalTo(imageStackView.snp.bottom).offset(10)
-//                make.left.equalToSuperview().offset(10)
-//                make.right.equalToSuperview().offset(-10)
-////                make.height.equalTo(50)
-//                make.bottom.equalTo(nameLabel.snp.top)
-//            }
+//            self.addSubview(imageView2)
             
-//            self.addSubview(scoreView2)
-//            self.addSubview(scoreContainerView2)
-            self.addSubview(imageView2)
-//            scoreView2.isHidden = true
-            scoreContainerView2.isHidden = true
-            imageView2.isHidden = true
+            // 여기 코드가 문제일 수 있다.. ?? 왜 ?
+//            scoreContainerView2.isHidden = true
             
-            // 이것들 반드시 필요함..?
-//            scoreView2.snp.makeConstraints { make in
-//            scoreContainerView2.snp.makeConstraints { make in
+//            scoreContainerView2.isHidden = false
+//            imageView2.isHidden = false
+            
+//            imageView2.snp.makeConstraints { make in
 //                make.center.equalToSuperview()
 //                make.height.width.equalToSuperview()
 //            }
             
-            imageView2.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-                make.height.width.equalToSuperview()
-            }
         }
-        
+
         addSubview(bottomLineView)
         bottomLineView.snp.makeConstraints { make in
             make.bottom.equalToSuperview()
@@ -325,31 +316,17 @@ class PositionCell: UICollectionViewCell {
             make.width.equalToSuperview().dividedBy(2.5)
             make.height.equalTo(2)
         }
-        
-
-//        scoreContainerView1.addSubview(scoreView1)
-//        scoreContainerView1.snp.makeConstraints { make in
-//            make.center.equalToSuperview()
-//            make.height.width.equalTo(20)
+// not needed at all
+//        switch vm.title {
+//        case MovementList.flexionClearing.rawValue,
+//            MovementList.shoulderClearing.rawValue,
+//            MovementList.extensionClearing.rawValue:
+//            imgBtnLeft.isUserInteractionEnabled = false
+//            imgBtnRight.isUserInteractionEnabled = false
+//        default:
+//            break
 //        }
-        
-//        scoreContainerView2.addSubview(scoreView2)
-//        scoreContainerView2.snp.makeConstraints { make in
-//            make.center.equalToSuperview()
-//            make.height.width.equalTo(20)
-//        }
-        
-        switch vm.title {
-        case PositionList.flexionClearing.rawValue,
-            PositionList.shoulderClearing.rawValue,
-            PositionList.extensionClearing.rawValue:
-            imgBtnLeft.isUserInteractionEnabled = false
-            imgBtnRight.isUserInteractionEnabled = false
-        default:
-            break
-        }
     }
-    
     
     private func configureLayout() {
         
@@ -363,9 +340,20 @@ class PositionCell: UICollectionViewCell {
         super.init(frame: .zero)
         setupLayout()
 
-        backgroundColor = .white
+        backgroundColor = .white // 아니 ㅅㅂ...옆에 찌꺼기 뭐야 ??  일단 pass..
         
         layer.cornerRadius = 16
+        
+    }
+    
+    private func printReceivedData() {
+        
+        guard let viewModel = viewModel else { fatalError() }
+        print("numOfTrialCore: \(viewModel.trialCore.count)")
+        print("trial title: \(viewModel.trialCore.first!.title)")
+        for eachTrial in viewModel.trialCore {
+            print("directions: \(eachTrial.direction)")
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -389,7 +377,7 @@ class ButtonWIthTrialCore: UIButton {
 
 extension UIView{
     
-     func blink() {
+    func blink() {
     print("blink triggered")
 //         self.alpha = 0.2
 //         self.backgroundColor = UIColor.lavenderGray900

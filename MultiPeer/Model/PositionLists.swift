@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Position
-enum PositionList: String, CaseIterable {
+enum MovementList: String, CaseIterable {
     case deepSquat = "Deep Squat"
     case deepSquatVar = "Deep Squat Var"
     case hurdleStep = "Hurdle Step"
@@ -24,7 +24,7 @@ enum PositionList: String, CaseIterable {
     case flexionClearing = "Flexion Clearing"
 }
 
-enum PositionListWithoutVars: String, CaseIterable {
+enum MovementListWithoutVars: String, CaseIterable {
     case deepSquat = "Deep Squat"
 //    case deepSquatVar = "Deep Squat Var"
     case hurdleStep = "Hurdle Step"
@@ -52,7 +52,7 @@ extension CaseIterable where Self: Equatable {
 struct Dummy {
     static let directionName: [Int: [String]] = [1: ["Neutral"], 2: ["Left", "Right"]]
     
-    static let numOfDirections: [PositionList: Int] = [
+    static let numOfDirections: [MovementList: Int] = [
         .deepSquat : 1,
         .deepSquatVar : 1,
         .hurdleStep:2,
@@ -69,17 +69,17 @@ struct Dummy {
     ]
     
     static let shortName: [String: String] = [
-        PositionList.deepSquat.rawValue: "DS",
-        PositionList.hurdleStep.rawValue: "HS",
-        PositionList.inlineLunge.rawValue: "IL",
-        PositionList.ankleClearing.rawValue: "AC",
-        PositionList.shoulderMobility.rawValue: "SM",
-        PositionList.activeStraightLegRaise.rawValue: "ASLR",
-        PositionList.trunkStabilityPushUp.rawValue: "TSPU",
-        PositionList.rotaryStability.rawValue: "RS"
+        MovementList.deepSquat.rawValue: "DS",
+        MovementList.hurdleStep.rawValue: "HS",
+        MovementList.inlineLunge.rawValue: "IL",
+        MovementList.ankleClearing.rawValue: "AC",
+        MovementList.shoulderMobility.rawValue: "SM",
+        MovementList.activeStraightLegRaise.rawValue: "ASLR",
+        MovementList.trunkStabilityPushUp.rawValue: "TSPU",
+        MovementList.rotaryStability.rawValue: "RS"
     ]
     
-    enum PositionSequence: String, CaseIterable {
+    enum MovementsShowing: String, CaseIterable {
         case deepSquat = "DS"
         case hurdleStep = "HS"
         case inlineLunge = "IL"
@@ -91,123 +91,123 @@ struct Dummy {
     }
 }
 
-let PositionsHasPain: [String: String] = [
-    PositionList.ankleClearing.rawValue: PositionList.ankleClearing.rawValue,
-    PositionList.shoulderMobility.rawValue: PositionList.shoulderClearing.rawValue,
-    PositionList.trunkStabilityPushUp.rawValue: PositionList.extensionClearing.rawValue,
-    PositionList.trunkStabilityPushUpVar.rawValue: PositionList.extensionClearing.rawValue,
-    PositionList.rotaryStability.rawValue: PositionList.flexionClearing.rawValue
+let MovementsHasPain: [String: String] = [
+    MovementList.ankleClearing.rawValue: MovementList.ankleClearing.rawValue,
+    MovementList.shoulderMobility.rawValue: MovementList.shoulderClearing.rawValue,
+    MovementList.trunkStabilityPushUp.rawValue: MovementList.extensionClearing.rawValue,
+    MovementList.trunkStabilityPushUpVar.rawValue: MovementList.extensionClearing.rawValue,
+    MovementList.rotaryStability.rawValue: MovementList.flexionClearing.rawValue
 ]
 
 
 
 
-enum PositionImgs {
+enum MovementImgs {
     
-    static let deepSquat = (title: PositionList.deepSquat.rawValue, imageNames: ["deepSquat"])
-    static let hurdleStep = (title: PositionList.hurdleStep.rawValue, imageNames: ["hurdleStepLeft", "hurdleStepRight"])
-    static let inlineLunge = (title: PositionList.inlineLunge.rawValue, imageNames: ["inlineLungeLeft","inlineLungeRight"])
-    static let ankleClearing = (title: PositionList.ankleClearing.rawValue, imageNames: ["ankleClearingLeft","ankleClearingRight"])
+    static let deepSquat = (title: MovementList.deepSquat.rawValue, imageNames: ["deepSquat"])
+    static let hurdleStep = (title: MovementList.hurdleStep.rawValue, imageNames: ["hurdleStepLeft", "hurdleStepRight"])
+    static let inlineLunge = (title: MovementList.inlineLunge.rawValue, imageNames: ["inlineLungeLeft","inlineLungeRight"])
+    static let ankleClearing = (title: MovementList.ankleClearing.rawValue, imageNames: ["ankleClearingLeft","ankleClearingRight"])
     
-    static let shoulderMobility = (title: PositionList.shoulderMobility.rawValue, imageNames: ["shoulderMobilityLeft", "shoulderMobilityRight"])
-    static let shoulderClearing = (title: PositionList.shoulderClearing.rawValue, imageNames: ["shoulderClearingLeft", "shoulderClearingRight"])
-    static let straightLegRaise = (title: PositionList.activeStraightLegRaise.rawValue, imageNames: ["activeStraightLegRaiseLeft", "activeStraightLegRaiseRight"])
+    static let shoulderMobility = (title: MovementList.shoulderMobility.rawValue, imageNames: ["shoulderMobilityLeft", "shoulderMobilityRight"])
+    static let shoulderClearing = (title: MovementList.shoulderClearing.rawValue, imageNames: ["shoulderClearingLeft", "shoulderClearingRight"])
+    static let straightLegRaise = (title: MovementList.activeStraightLegRaise.rawValue, imageNames: ["activeStraightLegRaiseLeft", "activeStraightLegRaiseRight"])
     
-    static let stabilityPushup = (title: PositionList.trunkStabilityPushUp.rawValue, imageNames: ["trunkStabilityPushup"])
-    static let extensionClearing = (title: PositionList.extensionClearing.rawValue, imageNames: ["extensionClearing"])
-    static let rotaryStability = (title: PositionList.rotaryStability.rawValue, imageNames: ["rotaryStabilityLeft","rotaryStabilityRight"])
-    static let flexionClearing = (title: PositionList.flexionClearing.rawValue, imageNames: ["flexionClearing"])
+    static let stabilityPushup = (title: MovementList.trunkStabilityPushUp.rawValue, imageNames: ["trunkStabilityPushup"])
+    static let extensionClearing = (title: MovementList.extensionClearing.rawValue, imageNames: ["extensionClearing"])
+    static let rotaryStability = (title: MovementList.rotaryStability.rawValue, imageNames: ["rotaryStabilityLeft","rotaryStabilityRight"])
+    static let flexionClearing = (title: MovementList.flexionClearing.rawValue, imageNames: ["flexionClearing"])
 }
 
 
-enum PositionWithImageListEnum {
-    static let deepsquat = PositionInfo(title: PositionImgs.deepSquat.0,
-                                         imageName: [PositionImgs.deepSquat.imageNames[0]])
+enum MovementWithImageListEnum {
+    static let deepsquat = PositionInfo(title: MovementImgs.deepSquat.0,
+                                         imageName: [MovementImgs.deepSquat.imageNames[0]])
     
-    static let hurdleStep = PositionInfo(title: PositionImgs.hurdleStep.0,
-                                          imageName: [PositionImgs.hurdleStep.imageNames[0],
-                                                      PositionImgs.hurdleStep.imageNames[1]])
+    static let hurdleStep = PositionInfo(title: MovementImgs.hurdleStep.0,
+                                          imageName: [MovementImgs.hurdleStep.imageNames[0],
+                                                      MovementImgs.hurdleStep.imageNames[1]])
     
-    static let inlineLunge = PositionInfo(title: PositionImgs.inlineLunge.0,
-                                           imageName: [PositionImgs.inlineLunge.imageNames[0],
-                                                       PositionImgs.inlineLunge.imageNames[1]])
+    static let inlineLunge = PositionInfo(title: MovementImgs.inlineLunge.0,
+                                           imageName: [MovementImgs.inlineLunge.imageNames[0],
+                                                       MovementImgs.inlineLunge.imageNames[1]])
     
-    static let ankleClearing = PositionInfo(title: PositionImgs.ankleClearing.0,
-                                           imageName: [PositionImgs.ankleClearing.imageNames[0],
-                                                       PositionImgs.ankleClearing.imageNames[1]])
+    static let ankleClearing = PositionInfo(title: MovementImgs.ankleClearing.0,
+                                           imageName: [MovementImgs.ankleClearing.imageNames[0],
+                                                       MovementImgs.ankleClearing.imageNames[1]])
     
     
     
-    static let shoulderMobility = PositionInfo(title: PositionImgs.shoulderMobility.0,
-                                                imageName: [PositionImgs.shoulderMobility.imageNames[0],
-                                                            PositionImgs.shoulderMobility.imageNames[1]])
-    static let shoulderClearing = PositionInfo(title: PositionImgs.shoulderClearing.0,
-                                        imageName: [PositionImgs.shoulderClearing.imageNames[0],
-                                                    PositionImgs.shoulderClearing.imageNames[1]])
-    static let straightLegRaise = PositionInfo(title: PositionImgs.straightLegRaise.0,
-                                                imageName: [PositionImgs.straightLegRaise.imageNames[0],
-                                                            PositionImgs.straightLegRaise.imageNames[1]])
+    static let shoulderMobility = PositionInfo(title: MovementImgs.shoulderMobility.0,
+                                                imageName: [MovementImgs.shoulderMobility.imageNames[0],
+                                                            MovementImgs.shoulderMobility.imageNames[1]])
+    static let shoulderClearing = PositionInfo(title: MovementImgs.shoulderClearing.0,
+                                        imageName: [MovementImgs.shoulderClearing.imageNames[0],
+                                                    MovementImgs.shoulderClearing.imageNames[1]])
+    static let straightLegRaise = PositionInfo(title: MovementImgs.straightLegRaise.0,
+                                                imageName: [MovementImgs.straightLegRaise.imageNames[0],
+                                                            MovementImgs.straightLegRaise.imageNames[1]])
     
-    static let stabilityPushup = PositionInfo(title: PositionImgs.stabilityPushup.0,
-                                               imageName: [PositionImgs.stabilityPushup.imageNames[0]])
-    static let extensionClearing = PositionInfo(title: PositionImgs.extensionClearing.0,
-                                          imageName: [PositionImgs.extensionClearing.imageNames[0]])
-    static let rotaryStability = PositionInfo(title: PositionImgs.rotaryStability.0,
-                                               imageName:[PositionImgs.rotaryStability.imageNames[0],
-                                                          PositionImgs.rotaryStability.imageNames[1]])
-    static let flexionClearing = PositionInfo(title: PositionImgs.flexionClearing.0, imageName:
-                                        [PositionImgs.flexionClearing.imageNames[0]])
+    static let stabilityPushup = PositionInfo(title: MovementImgs.stabilityPushup.0,
+                                               imageName: [MovementImgs.stabilityPushup.imageNames[0]])
+    static let extensionClearing = PositionInfo(title: MovementImgs.extensionClearing.0,
+                                          imageName: [MovementImgs.extensionClearing.imageNames[0]])
+    static let rotaryStability = PositionInfo(title: MovementImgs.rotaryStability.0,
+                                               imageName:[MovementImgs.rotaryStability.imageNames[0],
+                                                          MovementImgs.rotaryStability.imageNames[1]])
+    static let flexionClearing = PositionInfo(title: MovementImgs.flexionClearing.0, imageName:
+                                        [MovementImgs.flexionClearing.imageNames[0]])
 }
 
 // Clearing 제외한 상태. 변수 이름 변경 필요.
-let  PositionImgsDictionary: [String: [String]] = [
-    PositionList.deepSquat.rawValue: ["deepSquat"],
-    PositionList.hurdleStep.rawValue: ["hurdleStepLeft", "hurdleStepRight"],
-    PositionList.inlineLunge.rawValue: ["inlineLungeLeft","inlineLungeRight"],
-    PositionList.ankleClearing.rawValue: ["ankleClearingLeft","ankleClearingRight"],
-    PositionList.shoulderMobility.rawValue: ["shoulderMobilityLeft", "shoulderMobilityRight"],
-    PositionList.activeStraightLegRaise.rawValue: ["activeStraightLegRaiseLeft", "activeStraightLegRaiseRight"],
-    PositionList.trunkStabilityPushUp.rawValue: ["trunkStabilityPushup"],
-    PositionList.rotaryStability.rawValue: ["rotaryStabilityLeft","rotaryStabilityRight"]
+let  MovementImgsDictionary: [String: [String]] = [
+    MovementList.deepSquat.rawValue: ["deepSquat"],
+    MovementList.hurdleStep.rawValue: ["hurdleStepLeft", "hurdleStepRight"],
+    MovementList.inlineLunge.rawValue: ["inlineLungeLeft","inlineLungeRight"],
+    MovementList.ankleClearing.rawValue: ["ankleClearingLeft","ankleClearingRight"],
+    MovementList.shoulderMobility.rawValue: ["shoulderMobilityLeft", "shoulderMobilityRight"],
+    MovementList.activeStraightLegRaise.rawValue: ["activeStraightLegRaiseLeft", "activeStraightLegRaiseRight"],
+    MovementList.trunkStabilityPushUp.rawValue: ["trunkStabilityPushup"],
+    MovementList.rotaryStability.rawValue: ["rotaryStabilityLeft","rotaryStabilityRight"]
                                      ]
 
 
 
 // 위, 아래가 중복 데이터임. ;; 어.. 어떤 형태로 사용할 지 정해주는게 좋을 것 같은데 ??
 // 현재 안쓰는중
-public enum PositionWithPain {
+public enum MovementWithPain {
     case ankleClearing
     case shoulderClearing
     case extensionClearing
     case flexionClearing
 }
 
-public let positionWithPainNoAnkle = [
-    PositionList.shoulderClearing.rawValue,
-    PositionList.flexionClearing.rawValue,
-    PositionList.extensionClearing.rawValue
+public let movementWithPainNoAnkle = [
+    MovementList.shoulderClearing.rawValue,
+    MovementList.flexionClearing.rawValue,
+    MovementList.extensionClearing.rawValue
 ]
 
 // 둘중 하나는 없애는게 ..
 // 이것도 안쓰고있음.
-public let positionsHasPain = [
-    PositionList.ankleClearing.rawValue,
-    PositionList.shoulderClearing.rawValue,
-    PositionList.flexionClearing.rawValue,
-    PositionList.extensionClearing.rawValue
+public let movementsHasPain = [
+    MovementList.ankleClearing.rawValue,
+    MovementList.shoulderClearing.rawValue,
+    MovementList.flexionClearing.rawValue,
+    MovementList.extensionClearing.rawValue
 ]
 
-public let positionWithPainTestTitle: [String: String] = [
-    PositionList.ankleClearing.rawValue : PositionList.ankleClearing.rawValue,
-    PositionList.shoulderMobility.rawValue: PositionList.shoulderClearing.rawValue,
-    PositionList.trunkStabilityPushUp.rawValue: PositionList.extensionClearing.rawValue,
-    PositionList.trunkStabilityPushUpVar.rawValue: PositionList.extensionClearing.rawValue,
-    PositionList.rotaryStability.rawValue: PositionList.flexionClearing.rawValue
+public let movementWithPainTestTitle: [String: String] = [
+    MovementList.ankleClearing.rawValue : MovementList.ankleClearing.rawValue,
+    MovementList.shoulderMobility.rawValue: MovementList.shoulderClearing.rawValue,
+    MovementList.trunkStabilityPushUp.rawValue: MovementList.extensionClearing.rawValue,
+    MovementList.trunkStabilityPushUpVar.rawValue: MovementList.extensionClearing.rawValue,
+    MovementList.rotaryStability.rawValue: MovementList.flexionClearing.rawValue
 ]
 
-public let positionWithVariation: [String: String] = [
-    PositionList.deepSquat.rawValue : PositionList.deepSquatVar.rawValue,
-    PositionList.trunkStabilityPushUp.rawValue: PositionList.trunkStabilityPushUpVar.rawValue
+public let movementWithVariation: [String: String] = [
+    MovementList.deepSquat.rawValue : MovementList.deepSquatVar.rawValue,
+    MovementList.trunkStabilityPushUp.rawValue: MovementList.trunkStabilityPushUpVar.rawValue
 ]
 
 
@@ -222,25 +222,25 @@ public enum ScoreType {
     case RYG
 }
 
-let positionToScoreType: [String: ScoreType] = [
-    PositionList.deepSquat.rawValue: .zeroThreeHold,
-    PositionList.deepSquatVar.rawValue: .zeroToTwo,
+let movementToScoreType: [String: ScoreType] = [
+    MovementList.deepSquat.rawValue: .zeroThreeHold,
+    MovementList.deepSquatVar.rawValue: .zeroToTwo,
     
-    PositionList.hurdleStep.rawValue: .zeroToThree,
-    PositionList.inlineLunge.rawValue: .zeroToThree,
+    MovementList.hurdleStep.rawValue: .zeroToThree,
+    MovementList.inlineLunge.rawValue: .zeroToThree,
 
-    PositionList.ankleClearing.rawValue: .RYG,
+    MovementList.ankleClearing.rawValue: .RYG,
 //        PositionList.ankleClearing.rawValue: .RGB,
     
-    PositionList.shoulderMobility.rawValue: .zeroToThree,
+    MovementList.shoulderMobility.rawValue: .zeroToThree,
 //        PositionList.shoulderClearing.rawValue: .painOrNot,
     
-    PositionList.activeStraightLegRaise.rawValue: .zeroToThree,
+    MovementList.activeStraightLegRaise.rawValue: .zeroToThree,
     
-    PositionList.trunkStabilityPushUp.rawValue: .zeroThreeHold,
-    PositionList.trunkStabilityPushUpVar.rawValue: .zeroToTwo,
+    MovementList.trunkStabilityPushUp.rawValue: .zeroThreeHold,
+    MovementList.trunkStabilityPushUpVar.rawValue: .zeroToTwo,
 //        PositionList.extensionClearing.rawValue: .painOrNot,
     
-    PositionList.rotaryStability.rawValue: .zeroToThree,
+    MovementList.rotaryStability.rawValue: .zeroToThree,
 //        PositionList.flexionClearing.rawValue: .painOrNot
 ]

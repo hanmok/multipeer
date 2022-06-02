@@ -1,5 +1,5 @@
 //
-//  PositionViewModel.swift
+//  MovementViewModel.swift
 //  MultiPeer
 //
 //  Created by 핏투비 on 2022/05/30.
@@ -8,12 +8,10 @@
 import Foundation
 
 
-struct PositionViewModel {
+struct MovementViewModel {
     
     public init(trialCores: [TrialCore]) {
         self.trialCore = trialCores
-        print("trialCore.first.title: \(trialCore.first?.title)")
-        print("trialCore.count: flag")
         print(trialCores.count)
         self.title = trialCores.first!.title
     }
@@ -24,7 +22,7 @@ struct PositionViewModel {
     
     // indicator whether it has one or two directions. 이건 또 뭐야 ... ??
     
-    var imageName: [String] { return PositionImgsDictionary[trialCore.first!.title]! }
+    var imageName: [String] { return MovementImgsDictionary[trialCore.first!.title]! }
     
     var shortTitleLabel: String { return Dummy.shortName[title]! + addSuffix(title: title) }
     
@@ -71,9 +69,9 @@ struct PositionViewModel {
     }
     
     func addSuffix(title: String) -> String {
-        if PositionsHasPain[title] != nil {
+        if MovementsHasPain[title] != nil {
             print("title that has clearing: \(title)")
-            if title != PositionList.ankleClearing.rawValue {
+            if title != MovementList.ankleClearing.rawValue {
                 return " + Clearing "
             }
         }

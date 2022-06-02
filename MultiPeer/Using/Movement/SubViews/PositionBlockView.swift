@@ -185,9 +185,9 @@ class PositionBlockView: UIView {
 //        }
         
         switch positionBlock.title {
-        case PositionList.flexionClearing.rawValue,
-            PositionList.shoulderClearing.rawValue,
-            PositionList.extensionClearing.rawValue:
+        case MovementList.flexionClearing.rawValue,
+            MovementList.shoulderClearing.rawValue,
+            MovementList.extensionClearing.rawValue:
             imgBtnLeft.isUserInteractionEnabled = false
             imgBtnRight.isUserInteractionEnabled = false
         default:
