@@ -166,7 +166,6 @@ class MovementCell: UICollectionViewCell {
         }
         
         // Has Left and Right
-        
         if vm.imageName.count == 2 {
             print("two images are rendered for title: \(vm.title)")
             
@@ -190,12 +189,12 @@ class MovementCell: UICollectionViewCell {
                 scoreView2.backgroundColor = UIColor.purple500
             }
 
-
             if trueIfDone(vm.scoreLabel[0]) && trueIfDone(vm.scoreLabel[1]) {
                 layer.borderColor = UIColor.purple300.cgColor
                 layer.borderWidth = 1
             }
-            // 이게 좀 수상한데 ..
+            
+
             let imageStackView = UIStackView(arrangedSubviews: [imageView1, imageView2])
             self.addSubview(imageStackView)
             
@@ -348,11 +347,12 @@ class MovementCell: UICollectionViewCell {
     
     private func printReceivedData() {
         
-        guard let viewModel = viewModel else { fatalError() }
-        print("numOfTrialCore: \(viewModel.trialCore.count)")
+        guard let viewModel = viewModel else { fatalError() } // 왜 이 점수가 아니지 ?
+        print("numOfTrialCore: \(viewModel.trialCore.count)") // 점수 안나옴 . 어디서 나오는거지.. ?
         print("trial title: \(viewModel.trialCore.first!.title)")
         for eachTrial in viewModel.trialCore {
             print("directions: \(eachTrial.direction)")
+            print("score: \(eachTrial.latestScore)")
         }
     }
     

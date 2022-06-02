@@ -25,7 +25,7 @@ struct MovementViewModel {
     var imageName: [String] { return MovementImgsDictionary[trialCore.first!.title]! }
     
     var shortTitleLabel: String { return Dummy.shortName[title]! + addSuffix(title: title) }
-    
+    // 여기서는 제대로 나옴..
     var scoreLabel: [String] { return convertScoreToString() }
     
     // TODO: convert score var into scoreLabel, Not Complete yet
@@ -37,15 +37,14 @@ struct MovementViewModel {
         if trialCore.count == 1 {
 //            if trialCore.first!.latestScore == .DefaultValue.trialScore || trialCore.first!.latestScore < 0 {
             if trialCore.first!.latestScore < 0 {
-                return ["N"]
+                temp.append("N")
             } else {
-                return [String(trialCore.first!.latestScore)]
+
+                temp.append(String(trialCore.first!.latestScore))
             }
             // Has Left & Right
         } else if trialCore.count == 2 {
-            // first element
-            
-//            if trialCore.first!.latestScore == .DefaultValue.trialScore {
+
             if trialCore.first!.latestScore < 0 {
                 temp.append("L")
             } else {
@@ -57,15 +56,18 @@ struct MovementViewModel {
             if trialCore.last!.latestScore < 0 {
                 temp.append("R")
             } else {
-                temp.append(String(trialCore.first!.latestScore))
+                temp.append(String(trialCore.last!.latestScore))
             }
-            
+            print("my test title: \(title)")
+            print("temp: \(temp)")
             return temp
         }
         
         else {
             fatalError("numOfTrialCore: \(trialCore.count)")
         }
+        
+        return temp
     }
     
     func addSuffix(title: String) -> String {

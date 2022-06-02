@@ -439,7 +439,7 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovementCell.cellId, for: indexPath) as! MovementCell
         //        print("")
         cell.delegate = self
-        print("trialsToShow: \(trialCoresToShow[indexPath.row].count)")
+//        print("num of trialsToShow: \(trialCoresToShow[indexPath.row].count)")
         cell.viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
         // RenderingBug: 여기서 문제가 있어보이지는 않는데 ...
         print("cell : \(cell.viewModel?.title)")
@@ -453,6 +453,7 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
     }
 }
 
+// 점수 처리는 대체 어디서 되는거야 ?
 
 
 extension MovementListController: SubjectControllerDelegate {

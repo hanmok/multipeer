@@ -74,4 +74,12 @@ Prob: 점수가 구분하지 못함 ㅋㅋㅋ
 SM 도 이러네
 
 
-Left, RIght 구분 못함 
+Left, Right 구분 못함
+이거.. Cell 에는 Data 가 없음.
+고침. ViewModel 의 Convert func 에서 출력함.
+
+AnkleClearing 업데이트 아예 안됨.
+IL 은 됨 ;;
+
+RS + Clearing
+Clearing Check 하는 거는 Right 에서 해주기. 
