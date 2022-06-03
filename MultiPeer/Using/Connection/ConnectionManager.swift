@@ -110,6 +110,7 @@ class ConnectionManager: NSObject {
 //        }
     }
     
+    // FIXME: Action need to be changed to send difference of recording start time
     func send(_ messageWithTime: MsgWithTime) {
         let encoder = JSONEncoder()
         
@@ -139,14 +140,14 @@ class ConnectionManager: NSObject {
     
     
     
-    func send(_ position: DetailPositionWIthMsgInfo) {
+    func send(_ movement: MsgWithMovementDetail) {
         
         let encoder = JSONEncoder()
 
         guard let session = session else { return }
         
         do {
-            let data = try encoder.encode(position)
+            let data = try encoder.encode(movement)
             try session.send(data, toPeers: session.connectedPeers, with: .reliable)
         } catch {
             print(error.localizedDescription)
@@ -220,7 +221,7 @@ extension ConnectionManager: MCSessionDelegate {
         let jsonDecoder = JSONDecoder()
         
         do {
-            let positionInfoWithMsg = try jsonDecoder.decode(DetailPositionWIthMsgInfo.self, from: data)
+            let positionInfoWithMsg = try jsonDecoder.decode(MsgWithMovementDetail.self, from: data)
             
             let detailInfo = positionInfoWithMsg.detailInfo
             
@@ -255,15 +256,17 @@ extension ConnectionManager: MCSessionDelegate {
 //                let date = Date().addingTimeInterval(3)
 //                let timeInfo: [AnyHashable: Any] = ["triggerAt": date]
 //                NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
-            
+
             case .none:
                 print("none has been passed!")
                 break
             
-            case .startCountDownMsg:
-                break
-//            case .startRecordingAfterMsg:
-//                <#code#>
+//            case .startCountDownMsg:
+//                break
+
+                // TODO: Make it work
+            case .requestPostMsg:
+                NotificationCenter.default.post(name: .requestPostKey, object: nil, userInfo: detailInfoDic)
             }
             
         } catch {
@@ -282,9 +285,9 @@ extension ConnectionManager: MCSessionDelegate {
 //                        NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
 //                    print("successfully post startRecordingAfterKey")
                         
-                    case .startCountDownMsg:
-                        NotificationCenter.default.post(name: .startCountdownAfterKey, object: nil, userInfo: timeInfo)
-                        print("post startCountdownAfterKey")
+//                    case .startCountDownMsg:
+//                        NotificationCenter.default.post(name: .startCountdownAfterKey, object: nil, userInfo: timeInfo)
+//                        print("post startCountdownAfterKey")
                     
                     default:
                         print("something has posted! \(msgReceived.rawValue)")

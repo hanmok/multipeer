@@ -10,16 +10,17 @@ import Foundation
 
 import Foundation
 
+
 struct MsgWithTime: Codable {
     let msg: MessageType
     let timeInMilliSec: Int
 }
 
 
-struct MessageWithInfo {
-    var date: Date
-    var messageType: OrderMessageTypes
-}
+//struct MessageWithInfo {
+//    var date: Date
+//    var messageType: OrderMessageTypes
+//}
 
 
 
@@ -33,15 +34,18 @@ public enum MessageType: String, Codable {
     case stopRecordingMsg
     case none
 //    case startRecordingAfterMsg
-    case startCountDownMsg
+//    case startCountDownMsg
+    case requestPostMsg
 }
 
 
-public enum OrderMessageTypes {
-    case presentCameraMsg
-    case startRecordingMsg
-    case stopRecordingMsg
-}
+//public enum OrderMessageTypes {
+//    case presentCameraMsg
+//    case startRecordingMsg
+//    case stopRecordingMsg
+//    case requestPostMsg
+//}
+
 
 
 // MARK: - Connection State

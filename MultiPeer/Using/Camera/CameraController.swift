@@ -32,15 +32,16 @@ class CameraController: UIViewController {
     var trialCore: TrialCore
     // FIXME: Countdown Before Recording
     // 그런데.. 3초를 굳이 세야하나 ?
+    
     var systemSoundID: SystemSoundID = 1057
 
     var timeDifference: CGFloat = 0 // or CMTime
     
     var screen: Screen
     
-    private var pressedBtnTitle = ""
+    var rank: Rank
     
-
+    private var pressedBtnTitle = ""
     
     var updatingDurationTimer = Timer()
     var decreasingTimer = Timer()
@@ -73,7 +74,8 @@ class CameraController: UIViewController {
     
     init(
         connectionManager: ConnectionManager,
-        screen: Screen, trialCore: TrialCore) {
+        screen: Screen, trialCore: TrialCore,
+        rank: Rank) {
             
             self.connectionManager = connectionManager
             
@@ -86,10 +88,11 @@ class CameraController: UIViewController {
             self.direction = direction
             
             scoreVC = ScoreController(positionTitle: trialCore.title, direction: trialCore.direction)
-            
+            self.rank = rank
             super.init(nibName: nil, bundle: nil)
             connectionManager.delegate = self
             scoreVC.delegate = self
+            scoreVC.parentController = self
             
             setupTrialDetail(with: trialCore)
         }
@@ -109,6 +112,23 @@ class CameraController: UIViewController {
         
         setupCompleteView()
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        removeChildrenVC()
+    }
+    
+    deinit {
+        print("cameraController deinit triggered!")
+        if self.children.count > 0 {
+            let viewControllers: [UIViewController] = self.children
+            for vc in viewControllers {
+                vc.willMove(toParent: nil)
+                vc.view.removeFromSuperview()
+                vc.removeFromParent()
+            }
+        }
+    }
+    
     
     
     // MARK: - UI Funcs
@@ -153,13 +173,22 @@ class CameraController: UIViewController {
 //        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAtNoti(_:)),
 //                                               name: .startRecordingAfterKey, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(startCountdownAtNoti(_:)),
-                                               name: .startCountdownAfterKey, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(startCountdownAtNoti(_:)),
+//                                               name: .startCountdownAfterKey, object: nil)
+        
         
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnectionStateNoti(_:)),
                                                name: .updateConnectionStateKey, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(requestPost(_:)), name: .requestPostKey, object: nil)
     }
-
+    
+    @objc func requestPost(_ notification: Notification) {
+        
+        saveAction(core: <#T##TrialCore#>, detail: <#T##TrialDetail#>)
+    
+    }
+    
     @objc func startRecordingNowNoti(_ notification: Notification) {
         print("startRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
@@ -170,12 +199,13 @@ class CameraController: UIViewController {
         // TODO: 그런데, 몰라도 될 것 같음.
         startRecording()
         // duration update needed ??
-
+    
     }
     
     
     @objc func stopRecordingNoti(_ notification: Notification) {
         print("stopRecording has been triggered by observer. ")
+        
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? MovementDirection,
               let score = notification.userInfo?["score"] as? Int? else { return }
@@ -183,32 +213,6 @@ class CameraController: UIViewController {
         stopRecording()
     }
     
-    // not recommended
-//    @objc func startRecordingAtNoti(_ notification: Notification) {
-//        print(#function, #line)
-//        guard let dateToStartRecordingInMilliSec = notification.userInfo?["receivedTime"] as? Int,
-//              //              let msg = notification.userInfo?["msg"] as? RecordingType
-//              let msg = notification.userInfo?["msg"] as? MessageType
-//        else {
-//            print("fail to convert receivedTime to Int", #line)
-//            // millisec since 1970
-//            //            print(error?.localizedDescription)
-//            return
-//        }
-//        print(#function, #line)
-//        print("receivedMillisecData: \(dateToStartRecordingInMilliSec)")
-//        print("currentMillisecData: \(Date().millisecondsSince1970)")
-//        // 이거 뭐지 ?
-//        let recordingTimer = Timer(fireAt: Date(milliseconds: dateToStartRecordingInMilliSec), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
-//        //TimeInterval(
-//        DispatchQueue.main.async {
-//            //            self.recordingTimerBtn.setTitle("\(dateToStartRecordingInMilliSec)", for: .normal)
-//
-//        }
-//
-//        RunLoop.main.add(recordingTimer, forMode: .common)
-//        print("startRecordingAfter has ended", #line)
-//    }
     
     // not recommended
     @objc func startCountdownAtNoti(_ notification: Notification) {
@@ -244,17 +248,7 @@ class CameraController: UIViewController {
         }
     }
     
-    deinit {
-        print("cameraController deinit triggered!")
-        if self.children.count > 0 {
-            let viewControllers: [UIViewController] = self.children
-            for vc in viewControllers {
-                vc.willMove(toParent: nil)
-                vc.view.removeFromSuperview()
-                vc.removeFromParent()
-            }
-        }
-    }
+    
     
     // MARK: - Button Actions
     private func setupAddTargets() {
@@ -274,7 +268,7 @@ class CameraController: UIViewController {
         // TODO: update Position for Variation
 //        updatePosition(with: <#T##PositionDirectionScoreInfo#>)
             
-hideCompleteMsgView()
+            hideCompleteMsgView()
         }
     }
     
@@ -286,9 +280,6 @@ hideCompleteMsgView()
     
     
     @objc func retryTapped(_ sender: UIButton) {
-//        updateTrialDetail()
-
-//        setSelectedButtonNone()
         retryAction()
     }
     
@@ -298,21 +289,18 @@ hideCompleteMsgView()
         print("recordingBtn Tapped!!")
         
         recordingBtnAction()
-        
     }
     
     @objc func recordingBtnAction() {
         // Start Recording!!
         removeChildrenVC()
         if !isRecording {
-            //            removePreview()
-            // Send Start Msg
-            //            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
             
-            connectionManager.send(DetailPositionWIthMsgInfo(message: .startRecordingMsg, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
+            connectionManager.send(MsgWithMovementDetail(message: .startRecordingMsg, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
             
             
             startRecording()
+            
             UIView.animate(withDuration: 0.4) {
                 self.outerRecCircle.backgroundColor = .lavenderGray900
                 self.innerShape.layer.cornerRadius = 6
@@ -321,7 +309,6 @@ hideCompleteMsgView()
                 self.leftShape.layer.cornerRadius = 2
                 self.leftShape.backgroundColor = .lavenderGray400
             }
-            
         } else {
             
             stopRecording()
@@ -338,8 +325,7 @@ hideCompleteMsgView()
             // Send Stop Msg
             // start, stop 할 때가 아닌,  Save 눌렀을 때 Core Info 를 전달해야함.
             
-            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
-            
+            connectionManager.send(MsgWithMovementDetail(message: .stopRecordingMsg, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
         }
     }
     
@@ -404,25 +390,31 @@ hideCompleteMsgView()
     /// prepare scoreVC to the bottom (to come up later)
     @objc func prepareScoreView() {
 
+        if rank == .boss {
         addChild(scoreVC)
         view.addSubview(scoreVC.view)
         scoreVC.view.layer.cornerRadius = 10
         
         self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+        }
     }
     
     // TODO: need to change trialCore of scoreVC here (why ?
     private func showScoreView() {
+        if rank == .boss {
         scoreVC.setupTrialCore(with: trialCore )
         
         UIView.animate(withDuration: 0.4) {
             self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 330, width: screenWidth, height: screenHeight)
         }
+        }
     }
     
     private func hideScoreView() {
+        if rank == .boss {
         UIView.animate(withDuration: 0.4) {
             self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+        }
         }
     }
     
@@ -599,9 +591,7 @@ hideCompleteMsgView()
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        removeChildrenVC()
-    }
+
     
     private func removeChildrenVC() {
         
@@ -972,6 +962,12 @@ extension CameraController: ConnectionManagerDelegate {
 
 
 extension CameraController: ScoreControllerDelegate {
+    func orderRequest(core: TrialCore, detail: TrialDetail) {
+//        connectionManager.send
+        saveAction(core: core, detail: detail)
+//        connectionManager.send
+    }
+    
     func navigateToSecondView() {
         print("navigateToSecondView Triggered")
         showCompleteMsgView()
@@ -1002,6 +998,7 @@ extension CameraController: ScoreControllerDelegate {
         TrialDetail.save(belongTo: trialCore)
     }
     
+    // TODO: Fix if necessary
     func deleteAction() {
         // 왜 제거가 안됨 ?? ;;; 글쎄다
         guard let validVideoUrl = videoUrl else { fatalError() }
@@ -1025,16 +1022,16 @@ extension CameraController: ScoreControllerDelegate {
         guard let validVideoUrl = videoUrl else { return }
         
         let trialId = UUID()
-        guard let coreDirection = MovementDirection(rawValue: core.direction) else { return }
+        guard let direction = MovementDirection(rawValue: core.direction) else { return }
         
         let optionalScore = detail.score.scoreToInt()
         let optionalPain = detail.isPainful .painToBool()
         
-        print("Data to post \n title: \(core.title),\n direction: \(coreDirection.rawValue), \n score: \(String(describing: optionalScore)), \n pain: \(optionalPain), \n trialCount: trialCount: \(detail.trialNo),\n trialId: trialId: \(trialId)")
+//        print("Data to post \n title: \(core.title),\n direction: \(direction.rawValue), \n score: \(String(describing: optionalScore)), \n pain: \(optionalPain), \n trialCount: trialCount: \(detail.trialNo),\n trialId: trialId: \(trialId)")
         
         APIManager.shared.postRequest(
             movementDirectionScoreInfo: MovementDirectionScoreInfo(
-                title: core.title, direction: coreDirection, score: optionalScore, pain: optionalPain),
+                title: core.title, direction: direction, score: optionalScore, pain: optionalPain),
             trialCount: Int(detail.trialNo), trialId: trialId,
             videoUrl: validVideoUrl, angle: .front)
     }

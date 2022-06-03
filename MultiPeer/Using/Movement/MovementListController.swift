@@ -13,7 +13,6 @@ import CoreData
 import MobileCoreServices
 import AVFoundation
 
-
 class MovementListController: UIViewController {
     
     // MARK: - Properties
@@ -38,6 +37,7 @@ class MovementListController: UIViewController {
     
     var selectedTrialCore: TrialCore?
     
+    var rank: Rank?
     
     
     // MARK: - UI Properties
@@ -224,11 +224,12 @@ class MovementListController: UIViewController {
         
         print("trialCore passed to cameracontroller : \(selectedTrialCore.title) \(selectedTrialCore.direction)")
         
+        // if camera presented by notification, it is follower.
         DispatchQueue.main.async {
             let cameraVC = CameraController(
                 connectionManager: self.connectionManager,
                 screen: screen,
-                trialCore: selectedTrialCore
+                trialCore: selectedTrialCore, rank: .follower
             )
             
             self.present(cameraVC, animated: true)
@@ -331,6 +332,9 @@ class MovementListController: UIViewController {
     // message 를 전혀 안보냄 ;;
     private func presentCamera(with selectedTrial: TrialCore) {
         
+        rank = .boss
+        guard let rank = rank else { fatalError() }
+        
         guard let screen = screen else {
             self.moveToSubjectController()
             return
@@ -342,7 +346,8 @@ class MovementListController: UIViewController {
             self.cameraVC = CameraController(
                 connectionManager: self.connectionManager,
                 screen: screen,
-                trialCore: selectedTrial
+                trialCore: selectedTrial,
+                rank: rank
             )
             
             guard self.cameraVC != nil else { return }
@@ -357,7 +362,10 @@ class MovementListController: UIViewController {
             }
         }
         
+        
+        
         connectionManager.send(.presentCamera)
+        
     }
     
 

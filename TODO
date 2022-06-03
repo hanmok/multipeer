@@ -217,4 +217,52 @@ Movement 바꿀 때마다 메인 화면으로 돌아가게 만들지 말것.
 
 
 Design
-ScrollBar 를 화면 끝쪽으로 붙여야 할 것 같은데 ? 
+ScrollBar 를 화면 끝쪽으로 붙여야 할 것 같은데 ?
+
+왜 안됩니까
+현재 Connection 에 어떤 문제가 있음
+아니야, 멀쩡 한 것 같음.
+
+음...
+Rotation 을 어떻게 막아놓지 ??
+코드로도 Info.plist 로도 안막아짐.
+
+
+보내는 애가 boss
+받는 peer 가 follower
+
+
+
+preview 가 반드시 scoreController 내에 있어야하나 ??
+이거 CameraController 에 있음.
+
+
+
+Lottie Animation 별로 안중요함
+
+
+ScoreController 는 Camera Controller 내에 속해있음.
+따라서 um,, parentController 로 전달.
+
+
+어차피, Post Request 는 Background 에서 일어나는 건데
+반드시 이 시간을 기다려야하나 ?
+
+
+어떤 정보들이 Post 되어야하지? 화요일에 여쭤보기 .
+1. Movement Name
+2. Movement Direction
+3. Score (and pain)
+
+4. 인간 or Screen 식별
+이거까지 포함해서, Multipeer Msg 전달 Struct 를 추가해야함.
+
+
+
+How ? 내역을 알아야함.
+그러려면 어떻게 하지 ??
+쓸 때마다 저장
+
+이 아니라, 실시간으로 더치페이 실천..
+둘다 현금이 없기 때문에.; ;;
+그리고 월급 받은 후에는 다시 현금이란 것은 없어질 것이기 때문에

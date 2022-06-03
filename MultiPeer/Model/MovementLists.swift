@@ -270,3 +270,9 @@ enum CameraAngleEnum: String, CaseIterable {
     case between
     case side
 }
+
+
+enum Rank: String {
+    case boss
+    case follower
+}

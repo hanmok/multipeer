@@ -23,10 +23,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 //        let positionVC = PositionController()
         let movementVC = MovementListController()
+//        movementVC.shouldAutorotate = false
 //        let positionVC = SoundTestViewController()
 //        window?.rootViewController = PositionController()
 //        window?.rootViewController = UIViewController(nibName: nil, bundle: nil)
         window?.rootViewController = UINavigationController(rootViewController: movementVC)
+//        window?.rootViewController = movementVC
 //        window?.rootViewController = CameraController()
 
         window?.makeKeyAndVisible()

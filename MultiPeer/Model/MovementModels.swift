@@ -42,6 +42,7 @@ struct PositionInfo: Codable {
 //    }
 //}
 
+/// title, direction, score, pain
 struct MovementDirectionScoreInfo: Codable {
     var title: String
     var direction: MovementDirection
@@ -52,7 +53,7 @@ struct MovementDirectionScoreInfo: Codable {
 
 
 
-struct PositionWithVarName {
+struct MovementWithVarName {
     var positionName: MovementList
     var positionVarName: MovementList
     
@@ -63,7 +64,7 @@ struct PositionWithVarName {
 }
 
 
-struct DetailPositionWIthMsgInfo: Codable {
+struct MsgWithMovementDetail: Codable {
     var message: MessageType
     var detailInfo: MovementDirectionScoreInfo
 }
@@ -73,15 +74,12 @@ struct LottieMsgInfo: Codable {
 }
 
 enum LottieType: String, Codable {
-//    typealias RawValue = <#type#>
     case countDown
-    
-    
 }
 
 
 
-public struct PositionWithPainTestName {
+public struct MovementWithPainTestName {
     var positionName: MovementList
     var painTestName: MovementList
     

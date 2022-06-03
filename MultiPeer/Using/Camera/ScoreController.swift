@@ -23,7 +23,10 @@ protocol ScoreControllerDelegate: AnyObject {
     func updatePressedBtnTitle(with btnTitle: String)
     
     func navigateToSecondView()
+    
+    func orderRequest(core: TrialCore, detail: TrialDetail)
 }
+
 
 
 class ScoreController: UIViewController {
@@ -40,6 +43,8 @@ class ScoreController: UIViewController {
     /// follwing Clearing Test
     var fClearingCore: TrialCore?
     var fClearingDetail: TrialDetail?
+    
+    var parentController: CameraController?
     
     var score: Int64? { // why int instead of Int64 ?? 모든 계산은 64 로 하고, 나중에 Int 로 반환하자.
         willSet {
@@ -150,7 +155,8 @@ class ScoreController: UIViewController {
         
         self.painTestName = (movementWithPainTestTitle[positionTitle])
         self.varTestName = (movementWithVariation[positionTitle])
-
+//        self.parentController = parentVC
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -240,7 +246,7 @@ class ScoreController: UIViewController {
             case .ScoreStr.green: score = .Value.green
 
             default: score = nil
-            
+                
             }
         }
     }
@@ -271,7 +277,7 @@ class ScoreController: UIViewController {
         
         if saveConditionSatisfied() {
             
-            guard let score = score else { fatalError("score is nil")}
+            guard let score = score else { fatalError("score is nil") }
             print("save Condition satisfied.")
             
             setupFTrialCoreIfNeeded()
@@ -287,19 +293,22 @@ class ScoreController: UIViewController {
             setScore(title: trialCore.title, to: trialDetail, score: score, pain: pain)
             
             delegate?.saveAction(core: trialCore, detail: trialDetail)
+            delegate?.orderRequest(core: trialCore, detail: trialDetail)
             trialCore.updateLatestScore()
-            
 
             // 어떤게 invalid 일까 ?? 둘다일 수 있다.
             if fClearingCore != nil && fClearingDetail != nil {
-                print("fClearingCore and fClearingDetail is valid ")
-                print("fClearingCore Name1: \(fClearingCore!.title)")
+                
                 setScore(title: fClearingCore!.title , to: fClearingDetail!, score: .DefaultValue.trialScore, pain: pain)
-                print("fClearingCore Name2: \(fClearingCore!.title)") // 여기까진 정상..
+                
                 // TODO: 경우에 맞게 Clearing Test Direction 설정
                 // 버튼 선택에 따라 Clearing 값이 업데이트 되지 않음.
+                
+                // scoreController Delegate
                 print("fClearingDetail Pain: \(fClearingDetail?.isPainful)")
                 delegate?.saveAction(core: fClearingCore!, detail: fClearingDetail!)
+                delegate?.orderRequest(core: fClearingCore!, detail: fClearingDetail!)
+                
 
                 fClearingCore!.updateLatestScore()
             } else {
