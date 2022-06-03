@@ -17,6 +17,7 @@ import AVFoundation
 class MovementListController: UIViewController {
     
     // MARK: - Properties
+    
     var connectionManager = ConnectionManager()
     
     var screen: Screen?
@@ -26,10 +27,7 @@ class MovementListController: UIViewController {
     var count = 0
     var durationTimer: Timer?
     
-    var subject: Subject? {
-        didSet {
-        }
-    }
+    var subject: Subject?
     
     // TODO: change to false after some updates..
     var testMode = true
@@ -39,6 +37,8 @@ class MovementListController: UIViewController {
     var trialCoresToShow: [[TrialCore]] = [[]]
     
     var selectedTrialCore: TrialCore?
+    
+    
     
     // MARK: - UI Properties
     
@@ -62,36 +62,34 @@ class MovementListController: UIViewController {
         layout.scrollDirection = .vertical
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = UIColor(red: 248 / 255, green: 247 / 255 , blue: 249 / 255, alpha: 1)
+        collectionView.backgroundColor = .lavenderGray50
         return collectionView
     }()
     
     private let completeBtn = UIButton().then {
         $0.setTitle("Complete Screen", for: .normal)
-        $0.setTitleColor(UIColor(red: 187 / 255 , green: 187 / 255, blue: 187 / 255, alpha: 1), for: .normal)
-        $0.backgroundColor = UIColor(red: 237 / 255, green: 236 / 255, blue: 239 / 255, alpha: 1)
+        $0.setTitleColor(.gray400, for: .normal)
+        $0.backgroundColor = .lavenderGray100
         $0.layer.cornerRadius = 8
     }
     
     private let finishBtn = UIButton().then {
         $0.setTitle("Finish Later", for: .normal)
-        $0.setTitleColor(UIColor(red: 187 / 255 , green: 187 / 255, blue: 187 / 255, alpha: 1), for: .normal)
-        $0.backgroundColor = UIColor(red: 237 / 255, green: 236 / 255, blue: 239 / 255, alpha: 1)
+        $0.setTitleColor(.gray400, for: .normal)
+        $0.backgroundColor = .lavenderGray100
         $0.layer.cornerRadius = 8
     }
     
     private let bottomView = UIView().then {
-        $0.backgroundColor = UIColor(red: 248 / 255, green: 247 / 255, blue: 249 / 255, alpha: 1)
+        $0.backgroundColor = .lavenderGray50
     }
     
     private let leftConnectionStateView = UIView().then {
-//        $0.backgroundColor = UIColor(red: 203/255, green: 202/255, blue: 211/255, alpha: 1)
         $0.backgroundColor = .lavenderGray300
         $0.layer.cornerRadius = 5
     }
 
     private let rightConnectionStateView = UIView().then {
-//        $0.backgroundColor = UIColor(red: 203/255, green: 202/255, blue: 211/255, alpha: 1)
         $0.backgroundColor = .lavenderGray300
         $0.layer.cornerRadius = 5
     }
@@ -119,6 +117,50 @@ class MovementListController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
+    // call if no screen assigned
+    func fetchDefaultScreen() {
+        print("fetchDefaultScreen called")
+        if testMode {
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate")}
+            
+            let subjectContext = appDelegate.persistentContainer.viewContext
+            
+            let subjectReq = NSFetchRequest<NSFetchRequestResult>(entityName: "Subject")
+            subjectReq.returnsObjectsAsFaults = false
+            
+            do {
+                let result = try subjectContext.fetch(subjectReq)
+                guard let fetchedSubjects = result as? [Subject] else { fatalError("failed to cast result to [Subject]")}
+                
+                if !fetchedSubjects.isEmpty {
+                    subject = fetchedSubjects.first!
+                }
+                guard let subject = subject else {
+                    return
+                }
+                print("fetched Subject's name: \(subject.name)")
+                if !subject.screens.isEmpty {
+                    screen = subject.screens.sorted{$0.date < $1.date}.first
+                    print("fetchedScreen date: \(screen?.date)")
+                    //                    updateTrialCores(subject: subject, screen: screen!)
+                    updateTrialCores(screen: screen)
+                    print("updateTrialCores called")
+                } else {
+                    print("subject has no screen")
+                }
+                print("current Screen : \(screen)")
+            } catch {
+                fatalError("failed to fetch subjects!")
+            }
+        }
+    }
+    
+    private func registerCollectionView() {
+        movementCollectionView.register(MovementCell.self, forCellWithReuseIdentifier: MovementCell.cellId)
+        movementCollectionView.delegate = self
+        movementCollectionView.dataSource = self
+    }
+    
     // MARK: - Btn Action
    
     private func setupAddTargets() {
@@ -126,6 +168,7 @@ class MovementListController: UIViewController {
         
         subjectSettingBtn.addTarget(self, action: #selector(subjectBtnTapped), for: .touchUpInside)
     }
+    
     
     @objc func showConnectivityAction(_ sender: UIButton) {
         print("connect btn tapped!!")
@@ -143,9 +186,12 @@ class MovementListController: UIViewController {
         self.present(actionSheet, animated: true, completion: nil)
     }
     
+    
     @objc func subjectBtnTapped(_ sender: UIButton) {
         moveToSubjectController()
     }
+    
+    
     
     // MARK: - Notifiaction Observers
     
@@ -189,61 +235,26 @@ class MovementListController: UIViewController {
         }
     }
     
-    // call if no screen assigned
-    func fetchDefaultScreen() {
-        print("fetchDefaultScreen called")
-        if testMode {
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate")}
-            
-            let subjectContext = appDelegate.persistentContainer.viewContext
-            
-            let subjectReq = NSFetchRequest<NSFetchRequestResult>(entityName: "Subject")
-            subjectReq.returnsObjectsAsFaults = false
-            
-            do {
-                let result = try subjectContext.fetch(subjectReq)
-                guard let fetchedSubjects = result as? [Subject] else { fatalError("failed to cast result to [Subject]")}
-                
-                if !fetchedSubjects.isEmpty {
-                    subject = fetchedSubjects.first!
-                }
-                guard let subject = subject else {
-                    return
-                }
-                print("fetched Subject's name: \(subject.name)")
-                if !subject.screens.isEmpty {
-                    screen = subject.screens.sorted{$0.date < $1.date}.first
-                    print("fetchedScreen date: \(screen?.date)")
-                    //                    updateTrialCores(subject: subject, screen: screen!)
-                    updateTrialCores(screen: screen)
-                    print("updateTrialCores called")
-                } else {
-                    print("subject has no screen")
-                }
-                print("current Screen : \(screen)")
-            } catch {
-                fatalError("failed to fetch subjects!")
-            }
-        }
-    }
+    // MARK: - Helper Functions
+    
+    
     
     private func updateScoreLabels() {
         // TODO: Update if score has changed using MovementCollectionCell
         print("updateScoreLabels Called ")
-//        if let validScreen = screen {
-//            updateTrialCores(screen: validScreen)
-//        } else {
-//        updateTrialCores()
-//        }
         updateTrialCores(screen: screen)
     }
+
     
     
     
+    // FIXME: oh~~
+    // TODO: Default Screen 보다 , Default Subject 를 갖는게 더 좋지 않을까 ? ??
+    // TODO: Multipeer 의 경우에는 ??
+    // TODO: 여기 코드 수정이 필요하긴 함.
     
-    
-    // TODO: Default Screen 보다 , Default Subject 를 갖는게 더 좋지 않을까 ?
-    
+    /// <#Description#>
+    /// - Parameter screen: <#screen description#>
     private func updateTrialCores(screen: Screen? = nil) {
         print("updateTrialCores Called ")
         self.trialCores = [[]] // initialize
@@ -307,8 +318,7 @@ class MovementListController: UIViewController {
     }
     
     
-    
-    // MARK: - Helper Functions
+    // MARK: - UI, Navigation Functions
     
     private func moveToSubjectController() {
         let subjectSettingVC = SubjectController()
@@ -318,6 +328,7 @@ class MovementListController: UIViewController {
     }
     
     // present camera like Navigation
+    // message 를 전혀 안보냄 ;;
     private func presentCamera(with selectedTrial: TrialCore) {
         
         guard let screen = screen else {
@@ -326,7 +337,7 @@ class MovementListController: UIViewController {
         }
         
         print("trialCore passed to cameracontroller : \(selectedTrial.title) \(selectedTrial.direction)")
-        // TODO: direction 설정이 잘못됨 ;;;
+        
         DispatchQueue.main.async {
             self.cameraVC = CameraController(
                 connectionManager: self.connectionManager,
@@ -345,9 +356,11 @@ class MovementListController: UIViewController {
                 self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
             }
         }
+        
+        connectionManager.send(.presentCamera)
     }
     
-    
+
     
     private func setupLayout() {
         
@@ -413,16 +426,13 @@ class MovementListController: UIViewController {
             make.height.equalTo(48)
         }
     
-        
-        view.backgroundColor = UIColor(red: 248 / 255, green: 247 / 255, blue: 249 / 255, alpha: 1)
+        view.backgroundColor = .lavenderGray50
     }
     
-    private func registerCollectionView() {
-        movementCollectionView.register(MovementCell.self, forCellWithReuseIdentifier: MovementCell.cellId)
-        movementCollectionView.delegate = self
-        movementCollectionView.dataSource = self
-    }
+
 }
+
+
 
 // MARK: - MovementCell Delegate
 extension MovementListController: MovementCellDelegate {
@@ -459,7 +469,7 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
 
 // 점수 처리는 대체 어디서 되는거야 ?
 
-
+// MARK: - SubjectController Delegate
 extension MovementListController: SubjectControllerDelegate {
     func updateCurrentScreen(from subject: Subject, with screen: Screen, closure: () -> Void) {
 //        updateTrialCores(subject: subject, screen: screen)
@@ -471,9 +481,10 @@ extension MovementListController: SubjectControllerDelegate {
 }
 
 
+// MARK: - CameraController Delegate
 extension MovementListController: CameraControllerDelegate {
     func makeSound() {
-        // TODO: make sound ?? 보류.
+        // FIXME: make sound ?? 보류.
     }
     
     func dismissCamera() {
@@ -482,7 +493,6 @@ extension MovementListController: CameraControllerDelegate {
             return }
         
         UIView.animate(withDuration: 0.3) {
-//            cameraVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
             cameraVC.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
         } completion: { done in
             
@@ -503,6 +513,7 @@ extension MovementListController: CameraControllerDelegate {
 }
 
 
+// MARK: - ConnectionManager Delegate
 extension MovementListController: ConnectionManagerDelegate {
     
     // TODO: Update Connection Indicator on the right top (next to connect btn)
@@ -521,7 +532,7 @@ extension MovementListController: ConnectionManagerDelegate {
                 }
             default: break
             }
-//            triggerDurationTimer()
+
         case .disconnected:
             
             DispatchQueue.main.async {
@@ -533,8 +544,6 @@ extension MovementListController: ConnectionManagerDelegate {
     }
     
     func updateDuration(in seconds: Int) {
-        DispatchQueue.main.async {
-//            self.durationLabel.text = "\(seconds) s"
-        }
+        // FIXME: Nothing to do
     }
 }

@@ -36,7 +36,6 @@ struct MovementViewModel {
         
         // Neutral
         if trialCore.count == 1 {
-//            if trialCore.first!.latestScore == .DefaultValue.trialScore || trialCore.first!.latestScore < 0 {
             if trialCore.first!.latestScore < 0 {
                 temp.append("N")
             } else {
@@ -46,7 +45,6 @@ struct MovementViewModel {
         } else if trialCore.count == 2 {
 
             if -52 ... -50 ~= trialCore.first!.latestScore {
-//                temp.append(trialCore.last!.latestScore)
                 temp.append(convertScoreToColor(score: trialCore.first!.latestScore))
             }
             
@@ -56,10 +54,8 @@ struct MovementViewModel {
                 temp.append( String(trialCore.first!.latestScore))
             }
             
-            // second element
-//            if trialCore.last!.latestScore == .DefaultValue.trialScore {
+
             if -52 ... -50 ~= trialCore.last!.latestScore {
-//                temp.append(trialCore.last!.latestScore)
                 temp.append(convertScoreToColor(score: trialCore.last!.latestScore))
             }
             
@@ -94,10 +90,11 @@ struct MovementViewModel {
     private func convertScoreToColor(score: Int64) -> String {
         print("convertScoreToColor triggered!!")
         switch score {
-        case -50: return "Red"
-        case -51: return "Yellow"
-        case -52: return "Green"
+        case .Value.red: return .ScoreStr.red
+        case .Value.yellow: return .ScoreStr.yellow
+        case .Value.green: return .ScoreStr.green
         default: return String(score)
         }
     }
 }
+

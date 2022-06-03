@@ -14,12 +14,18 @@ extension Int64 {
         static let trialScore = Int64(-100)
         
         static let trialPain = Int64(-200)
+        
+//        static let
     }
     
     
     
     struct Value {
         static let hold = Int64(-1)
+        
+        static let red = Int64(-50)
+        static let yellow = Int64(-51)
+        static let green = Int64(-52)
         
         static let painFul = Int64(1)
         

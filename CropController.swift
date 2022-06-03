@@ -11,7 +11,7 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import Photos
 
-class TestController2 {
+class CropController {
     
     var player: AVPlayer? {
         didSet {
@@ -158,15 +158,9 @@ class TestController2 {
                     print("failed \(error.localizedDescription)")
                     fatalError()
                 } else {
-                    guard let vc = self.parentVC else {fatalError() }
-                    //            self.shareVideoFile(outputMovieURL, presentOn: vc)
                     self.saveVideoToLocal(with: outputMovieURL)
-                    //              UISaveVideoAtPathToSavedPhotosAlbum(outputMovieURL.absoluteString, vc, nil, nil)
-                    
-                    print("outputMovieURL : \(outputMovieURL.absoluteString)")
                 }
             }
-            
         })
     }
     
@@ -183,7 +177,6 @@ class TestController2 {
         
         // Make the activityViewContoller which shows the share-view
         let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
-        //        FileManager().
         
         // Show the share-view
         vc.present(activityViewController, animated: true, completion: nil)

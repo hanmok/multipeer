@@ -143,6 +143,78 @@ Trim Or Connection 을 만지는게 좋을 것 같아.
 
 
 
-1. "Save" 눌렀을 때 Loading Btn이 필요없음.
+1. "Save" 눌렀을 때 Loading Btn이 필요없음. 아님. 필요함.
 
 
+오늘의 할일~
+
+0. Refactoring
+1. Refactoring
+2. Peer 도 함께 Upload 하기.
+3. Connection State 에 맞게 처리하기.
+
+
+Multipeer Connection 관련 처리 해야할 것
+
+1. Main 화면에서 점 두개
+2. CameraController 에서 neighbor Bar 내 Recording / Stop
+*3. 촬영이 완료된 후 화면은 어떻게 바꿈 ??
+
+*4. Preview 까지는 보여줘야하나 ? 일단 Preview 는 보여주는게 맞는 것 같아.
+
+*5. Multipeer 에서, 하나의 폰만 사용하는 것을 가정으로 해도 되는가?
+*6. Peer 에서도 현재 진행상황을 메인화면에 모두 그려내야하는가?
+7. 정확히.. 어떻게 돌아가는지부터 알아야함..
+
+* 사항은 대표님과 회의해볼것.
+
+Host 와 Master 는 다른개념.
+그러면, 연결된 폰 중 Master 폰이 무엇인지 어떻게 알지?
+모름. 메시지를 보내는 주체인지 받는 지만 알 수 있음.
+
+Phone Name 은 동일 할 수 있음. 따라서 식별 불가.
+
+누가 Master 할래?
+먼저 카메라를 띄운 폰 ?
+가끔 어떤 폰에서 메시지를 보내도 실패하는데, 왜지 ?
+
+현재는 Connection 기본세팅부터 하면 되겠다 ..
+Peer 쪽에서 카메라 동기화가 안됨.
+
+
+
+
+
+
+
+디자인 관련
+SafeArea 어떻게 처리하지 ??
+1. 그냥.. 맨 아래에 붙이고 사이즈를 더 크게 ?
+2. 맨 아래에서 조금 띄우고 주어진 높이로 ?
+
+
+Multipeer 끊겼을 때, 메인 화면에서 빨간불이 안꺼짐.
+
+
+
+Multipeer 를 고려해서 다른 폰에서도 UI 처리를 그때그때 맞게 해주어야 한다고 하더라도, 현재는 Test 가 중요하기때문에, 기본 처리를 확실하게 먼저 해주어야함. 다른요소를 넣으면 테스트에 많은 방해가 될 것이기 때문에.. 우선 기본을 먼저 하자.
+
+가장 기본적인 기능으로 반드시 작동해야 하는 것은,
+1. Start / Stop Recording
+2. Upload
+
+
+가정: Master 폰에서만 동작을 정하고,
+Peer 에서는 CameraController 내에서 Title, Direction 만 바꿔준다.
+Movement 바꿀 때마다 메인 화면으로 돌아가게 만들지 말것.
+
+
+
+대신, Camera 에서 Main 으로 나왔을 때 어떤것 어떤것들이 정상적으로 올라갔는지 확인할 수 있도록 Master 와 동일한 방식으로 체크.
+
+
+그럼.. Camera 는 어떤 방식이든 Screen 을 가져야 하고, 상황에 따라 Core 값을 바꿔야한다.
+
+
+Design
+ScrollBar 를 화면 끝쪽으로 붙여야 할 것 같은데 ? 

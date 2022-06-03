@@ -10,6 +10,8 @@ import MultipeerConnectivity
 import AVFoundation
 
 
+// MARK: - references for later
+
 // TO be used for transferring Videos to a Server.
 // use it? or Coding Key
 // https://shark-sea.kr/entry/Swift-Codable-알아보기
@@ -32,33 +34,25 @@ import AVFoundation
 //    let body: String
 //    var time = Date()
 //
-//    var isUser: Bool {
-//        return displayName == UIDevice.current.name
-//    }
 //}
 
 
 
 
-//struct MessageTypes {
-//    var message:
-//}
 
 
-
-extension ConnectionManager: MCNearbyServiceAdvertiserDelegate {
-    func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-        invitationHandler(true, session)
-    }
-}
-
-
+// MARK: - ConnectionManager Delegate Protocol
 protocol ConnectionManagerDelegate: NSObject {
-//    func presentVideo()
+//    func presentVideo() // What the hell is that ?
+    
     func updateState(state: ConnectionState, connectedNum: Int)
     func updateDuration(in seconds: Int)
 }
 
+
+
+
+// TODO: Diversify Delegate for Each Controllers (MovementListController, CameraController) Sure ?? What about Common Situations ?
 
 class ConnectionManager: NSObject {
     
@@ -66,7 +60,7 @@ class ConnectionManager: NSObject {
     var duration = 0
     
      var sessionTimer: Timer?
-//    let uuid = UUID(uuidString: <#T##String#>)
+
     static let shared = ConnectionManager()
     
     private static let service = "jobmanager-chat"
@@ -216,10 +210,9 @@ class ConnectionManager: NSObject {
 }
 
 
+// MARK: - MCSessionDelegate
 extension ConnectionManager: MCSessionDelegate {
-    
-//didreceive
-    
+
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         print("data received via ConnectionManager !!")
         
@@ -230,9 +223,14 @@ extension ConnectionManager: MCSessionDelegate {
             let positionInfoWithMsg = try jsonDecoder.decode(DetailPositionWIthMsgInfo.self, from: data)
             
             let detailInfo = positionInfoWithMsg.detailInfo
+            
             let msg = positionInfoWithMsg.message
             
-            let detailInfoDic: [AnyHashable: Any] = ["title": detailInfo.title,"direction": detailInfo.direction, "score": detailInfo.score ?? -1 ]
+            let detailInfoDic: [AnyHashable: Any] = [
+                "title": detailInfo.title,
+                "direction": detailInfo.direction,
+                "score": detailInfo.score ?? -1
+            ]
             
             switch msg {
                 
@@ -253,10 +251,10 @@ extension ConnectionManager: MCSessionDelegate {
                 NotificationCenter.default.post(name: .stopRecordingKey, object: nil, userInfo: detailInfoDic)
                 break
                 
-            case .startRecordingAfterMsg:
-                let date = Date().addingTimeInterval(3)
-                let timeInfo: [AnyHashable: Any] = ["triggerAt": date]
-                NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
+//            case .startRecordingAfterMsg:
+//                let date = Date().addingTimeInterval(3)
+//                let timeInfo: [AnyHashable: Any] = ["triggerAt": date]
+//                NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
             
             case .none:
                 print("none has been passed!")
@@ -264,7 +262,10 @@ extension ConnectionManager: MCSessionDelegate {
             
             case .startCountDownMsg:
                 break
+//            case .startRecordingAfterMsg:
+//                <#code#>
             }
+            
         } catch {
                 print("Error Occurred during Decoding DetailPositionWithMsgInfo!!!")
                 do {
@@ -277,9 +278,10 @@ extension ConnectionManager: MCSessionDelegate {
                     
                     switch msgReceived {
                         
-                    case .startRecordingAfterMsg:
-                        NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
-                    print("successfully post startRecordingAfterKey")
+//                    case .startRecordingAfterMsg:
+//                        NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
+//                    print("successfully post startRecordingAfterKey")
+                        
                     case .startCountDownMsg:
                         NotificationCenter.default.post(name: .startCountdownAfterKey, object: nil, userInfo: timeInfo)
                         print("post startCountdownAfterKey")
@@ -301,17 +303,13 @@ extension ConnectionManager: MCSessionDelegate {
             if !ConnectionManager.peers.contains(peerID) {
                 ConnectionManager.peers.insert(peerID, at: 0)
             }
-//            connectionman
+            
             let connectedNum = ConnectionManager.peers.count
             self.connectionState = .connected
             print("state: connected !")
             startTime = Date()
             
             delegate?.updateState(state: .connected, connectedNum: connectedNum)
-            
-            
-//            self.connectionState =
-//            NotificationCenter.default.post(name: NSNotification.Name(NotificationKeys.connectedKey), object: nil)
             
             self.startDurationTimer()
             
@@ -359,6 +357,8 @@ extension ConnectionManager: MCSessionDelegate {
     }
 }
 
+
+// MARK: - MCBrowserViewController Delegate
 extension ConnectionManager: MCBrowserViewControllerDelegate {
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
         browserViewController.dismiss(animated: true) {
@@ -372,3 +372,11 @@ extension ConnectionManager: MCBrowserViewControllerDelegate {
     }
 }
 
+
+
+// MARK: - MCNearbyServiceAdvertiser Delegate
+extension ConnectionManager: MCNearbyServiceAdvertiserDelegate {
+    func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
+        invitationHandler(true, session)
+    }
+}

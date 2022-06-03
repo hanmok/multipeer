@@ -55,7 +55,7 @@ extension CaseIterable where Self: Equatable {
     }
 }
 
-enum DirectionList: String {
+enum MovementDirectionList: String {
     case left
     case right
     case neutral
@@ -263,3 +263,10 @@ let movementToScoreType: [String: ScoreType] = [
     MovementList.rotaryStability.rawValue: .zeroToThree,
 //        PositionList.flexionClearing.rawValue: .painOrNot
 ]
+
+
+enum CameraAngleEnum: String, CaseIterable {
+    case front
+    case between
+    case side
+}

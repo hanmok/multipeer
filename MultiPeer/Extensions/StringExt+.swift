@@ -61,4 +61,11 @@ extension String {
         
         static let parentTrialCore = "parentTrialCore_"
     }
+    
+    struct ScoreStr {
+        static let hold = "Hold"
+        static let red = "Red"
+        static let yellow = "Yellow"
+        static let green = "Green"
+    }
 }

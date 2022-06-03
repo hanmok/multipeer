@@ -59,9 +59,12 @@ class MovementCell: UICollectionViewCell {
 //    }
     
     @objc func imgBtnTapped(_ sender: ButtonWIthTrialCore) {
-//        sender.blink()
+
         
         guard let vm = viewModel else { return }
+        
+        // TODO: Implement Blink Animation
+        //        sender.blink()
         
 //        if vm.trialCore.count == 2 {
 //            UIView.animate(withDuration: 0.4) {
@@ -97,37 +100,33 @@ class MovementCell: UICollectionViewCell {
         $0.backgroundColor = .white
     }
     
-//    var imgBtnLeft = ImgBtnView(title: "", direction: .neutral)
+
     var imgBtnLeft = ButtonWIthTrialCore()
-//    var imgBtnRight = ImgBtnView(title: "", direction: .neutral)
     var imgBtnRight = ButtonWIthTrialCore()
     
     var scoreViewDefaultColor = UIColor.white
     
     public var scoreView1 = UILabel().then { $0.textAlignment = .center
-        $0.backgroundColor = UIColor(red: 71 / 255,  green: 69 / 255, blue: 78 / 255, alpha: 1)
         $0.textColor = .white
         $0.layer.cornerRadius = 4
         $0.clipsToBounds = true
     }
     
     public var scoreView2 = UILabel().then { $0.textAlignment = .center
-        $0.backgroundColor = UIColor(red: 71 / 255,  green: 69 / 255, blue: 78 / 255, alpha: 1)
         $0.textColor = .white
         $0.layer.cornerRadius = 4
         $0.clipsToBounds = true
     }
 
     private let bottomLineView = UIView().then {
-        $0.backgroundColor = UIColor(red: 227/255, green: 42/255, blue: 47/255, alpha: 1)
+        $0.backgroundColor = .red500
     }
     
     let nameLabel = UILabel()
     
     private let scoreContainerView1 = UIView()
-//        .then { $0.backgroundColor = .magenta }
+
     private let scoreContainerView2 = UIView()
-//        .then { $0.backgroundColor = .cyan }
     
 
     
@@ -150,6 +149,10 @@ class MovementCell: UICollectionViewCell {
     }
     
     //TODO: Fix) 왜 이거 두번 호출됨? cell 잘못 아님. Controller 쪽으로 넘어가야함.
+    // FIXME: separate into two Funcs (configureLayout, setupLayout)
+    // But.. Two funcs rely on ViewModel.
+    // then.. How ?
+    
     private func loadView() {
         // two images
         guard let vm = viewModel else {fatalError()}
@@ -179,19 +182,10 @@ class MovementCell: UICollectionViewCell {
             
             imageView1.image = UIImage(imageLiteralResourceName: vm.imageName[0])
             imageView2.image = UIImage(imageLiteralResourceName: vm.imageName[1])
-            
-            print("imageNames: \(vm.imageName[0]), \(vm.imageName[1])")
-            
 
             scoreView1.text = String(vm.scoreLabel[0].first!)
             scoreView2.text = String(vm.scoreLabel[1].first!)
-            
-            print("movement title: \(vm.title)")
-            
-            print("left scoreLabel: \(vm.scoreLabel[0])")
-            print("right scoreLabel: \(vm.scoreLabel[1])")
-//            print("")
-            
+                        
             
             if trueIfDone(vm.scoreLabel[0]) {
                 scoreView1.backgroundColor = UIColor.purple500
@@ -237,7 +231,8 @@ class MovementCell: UICollectionViewCell {
             }
             
 
-            let scoreStackView = UIStackView(arrangedSubviews: [scoreContainerView1, scoreContainerView2])
+            let scoreStackView = UIStackView(
+                arrangedSubviews: [scoreContainerView1, scoreContainerView2])
             
             scoreStackView.distribution = .fillEqually
             scoreStackView.spacing = 10
@@ -261,13 +256,9 @@ class MovementCell: UICollectionViewCell {
                 make.center.equalToSuperview()
                 make.width.height.equalTo(20)
             }
+            
             // one Image
         } else if vm.imageName.count == 1 {
-            
-            print("movement title: \(vm.title)")
-            
-            print("left scoreLabel: \(vm.scoreLabel[0])")
-
             
             let allViews = [imageView1,
                             scoreContainerView1]
@@ -276,7 +267,6 @@ class MovementCell: UICollectionViewCell {
                 self.addSubview(view)
             }
             
-            print("imageName: \(vm.imageName[0])")
             imageView1.image = UIImage(imageLiteralResourceName: vm.imageName[0])
             
             if trueIfDone(vm.scoreLabel[0]) {
@@ -302,7 +292,6 @@ class MovementCell: UICollectionViewCell {
             
             scoreView1.text = vm.scoreLabel[0]
             
-            
             addSubview(scoreContainerView1)
             scoreContainerView1.snp.makeConstraints { make in
                 make.top.equalTo(imageView1.snp.bottom).offset(10)
@@ -315,20 +304,6 @@ class MovementCell: UICollectionViewCell {
                 make.center.equalToSuperview()
                 make.width.height.equalTo(20)
             }
-            
-//            self.addSubview(imageView2)
-            
-            // 여기 코드가 문제일 수 있다.. ?? 왜 ?
-//            scoreContainerView2.isHidden = true
-            
-//            scoreContainerView2.isHidden = false
-//            imageView2.isHidden = false
-            
-//            imageView2.snp.makeConstraints { make in
-//                make.center.equalToSuperview()
-//                make.height.width.equalToSuperview()
-//            }
-            
         }
 
         addSubview(bottomLineView)
@@ -338,16 +313,6 @@ class MovementCell: UICollectionViewCell {
             make.width.equalToSuperview().dividedBy(2.5)
             make.height.equalTo(2)
         }
-// not needed at all
-//        switch vm.title {
-//        case MovementList.flexionClearing.rawValue,
-//            MovementList.shoulderClearing.rawValue,
-//            MovementList.extensionClearing.rawValue:
-//            imgBtnLeft.isUserInteractionEnabled = false
-//            imgBtnRight.isUserInteractionEnabled = false
-//        default:
-//            break
-//        }
     }
     
     private func configureLayout() {
@@ -396,30 +361,4 @@ class ButtonWIthTrialCore: UIButton {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-
-extension UIView{
-    
-    func blink() {
-    print("blink triggered")
-//         self.alpha = 0.2
-//         self.backgroundColor = UIColor.lavenderGray900
-         
-         UIView.animate(withDuration: 0.4) {
-             self.backgroundColor = UIColor.lavenderGray900
-         } completion: { done in
-             if done {
-                 UIView.animate(withDuration: 0.4) {
-                     self.backgroundColor = UIColor.clear
-                 }
-             }
-         }
-
-         
-//         UIView.animate(withDuration: 1, delay: 0.0, options: [.curveLinear, .repeat, .autoreverse], animations: {
-////             self.alpha = 1.0
-//             self.backgroundColor = .white
-//         }, completion: nil)
-     }
 }

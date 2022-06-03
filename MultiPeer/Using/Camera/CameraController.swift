@@ -13,7 +13,7 @@ import MultipeerConnectivity
 import AVFoundation
 import CoreData
 import Lottie
-// need to create TrialDetail when .. new Trial needed.
+
 
 protocol CameraControllerDelegate: AnyObject {
     func dismissCamera()
@@ -24,20 +24,23 @@ protocol CameraControllerDelegate: AnyObject {
 class CameraController: UIViewController {
     
     // MARK: - Properties
+    
+    private var videoUrl: URL?
+    
     var positionTitle: String
     var direction: MovementDirection
     var trialCore: TrialCore
+    // FIXME: Countdown Before Recording
+    // 그런데.. 3초를 굳이 세야하나 ?
     var systemSoundID: SystemSoundID = 1057
-    //    var systemSoundID: SystemSoundID = 1016
-    var timeDifference: CGFloat = 0 // Could be CMTime
+
+    var timeDifference: CGFloat = 0 // or CMTime
     
     var screen: Screen
     
     private var pressedBtnTitle = ""
     
-    weak var delegate: CameraControllerDelegate?
-    //    let soundService = SoundService()
-    var connectionManager: ConnectionManager
+
     
     var updatingDurationTimer = Timer()
     var decreasingTimer = Timer()
@@ -46,47 +49,43 @@ class CameraController: UIViewController {
     
     var isRecordingEnded = false
     
-    private var picker = UIImagePickerController()
+    weak var delegate: CameraControllerDelegate?
     
-    private var isRecording = false
+    var connectionManager: ConnectionManager
+    
+    private var picker = UIImagePickerController()
     
     var previewVC: PreviewController?
     
     private var scoreVC: ScoreController
     
+    private var isRecording = false
     
-    
-   
+
     
     var variationName: String?
     var trialDetail: TrialDetail?
     var sequentialPainPosition: String?
     
-    // PositionDirectionScoreInfo: title, direction, score, pain
+
+    
+    // MARK: - Life Cycle
     
     init(
-        //        positionDirectionScoreInfo: PositionDirectionScoreInfo,
         connectionManager: ConnectionManager,
         screen: Screen, trialCore: TrialCore) {
             
-            self.screen = screen
-            self.trialCore = trialCore
-            
-            //        self.positionTitle = positionDirectionScoreInfo.title
-            //        self.direction = positionDirectionScoreInfo.direction
-            self.positionTitle = trialCore.title
-            guard let validDirection = MovementDirection(rawValue: trialCore.direction) else {fatalError() }
-            
-            self.direction = validDirection
-            
             self.connectionManager = connectionManager
             
+            self.screen = screen
+            self.trialCore = trialCore
+            self.positionTitle = trialCore.title
+            
+            guard let direction = MovementDirection(rawValue: trialCore.direction) else { fatalError() }
+            
+            self.direction = direction
+            
             scoreVC = ScoreController(positionTitle: trialCore.title, direction: trialCore.direction)
-            
-//            guard let scoreVC = scoreVC else {fatalError()}
-            
-            
-            //        self.scoreVC = ScoreController(positionDirectionScoreInfo: positionDirectionScoreInfo)
             
             super.init(nibName: nil, bundle: nil)
             connectionManager.delegate = self
@@ -99,7 +98,7 @@ class CameraController: UIViewController {
         trialDetail = trialCore.returnFreshTrialDetail()
     }
     
-    // MARK: - LifeCycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
@@ -112,15 +111,13 @@ class CameraController: UIViewController {
     }
     
     
-    
-    
-    
+    // MARK: - UI Funcs
     private func setupNavigationBar() {
         DispatchQueue.main.async {
             if self.direction == .neutral {
-                self.positionNameLabel.text = self.positionTitle
+                self.movementNameLabel.text = self.positionTitle
             } else {
-                self.positionNameLabel.text = self.positionTitle + " " + self.direction.rawValue
+                self.movementNameLabel.text = self.positionTitle + " " + self.direction.rawValue
             }
         }
     }
@@ -153,8 +150,8 @@ class CameraController: UIViewController {
                                                name: .stopRecordingKey, object: nil)
         
         
-        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAtNoti(_:)),
-                                               name: .startRecordingAfterKey, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAtNoti(_:)),
+//                                               name: .startRecordingAfterKey, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(startCountdownAtNoti(_:)),
                                                name: .startCountdownAfterKey, object: nil)
@@ -162,16 +159,18 @@ class CameraController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnectionStateNoti(_:)),
                                                name: .updateConnectionStateKey, object: nil)
     }
-    
+
     @objc func startRecordingNowNoti(_ notification: Notification) {
         print("startRecording has been triggered by observer. ")
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? MovementDirection,
               let score = notification.userInfo?["score"] as? Int? else { return }
         
+        // TODO: 정보는,, Score 가 알아야하나 Camera가 알아야하나.. ?? 굳이 따지면 Camera
+        // TODO: 그런데, 몰라도 될 것 같음.
         startRecording()
-        // duration update needed
-        // start
+        // duration update needed ??
+
     }
     
     
@@ -185,31 +184,31 @@ class CameraController: UIViewController {
     }
     
     // not recommended
-    @objc func startRecordingAtNoti(_ notification: Notification) {
-        print(#function, #line)
-        guard let dateToStartRecordingInMilliSec = notification.userInfo?["receivedTime"] as? Int,
-              //              let msg = notification.userInfo?["msg"] as? RecordingType
-              let msg = notification.userInfo?["msg"] as? MessageType
-        else {
-            print("fail to convert receivedTime to Int", #line)
-            // millisec since 1970
-            //            print(error?.localizedDescription)
-            return
-        }
-        print(#function, #line)
-        print("receivedMillisecData: \(dateToStartRecordingInMilliSec)")
-        print("currentMillisecData: \(Date().millisecondsSince1970)")
-        // 이거 뭐지 ?
-        let recordingTimer = Timer(fireAt: Date(milliseconds: dateToStartRecordingInMilliSec), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
-        //TimeInterval(
-        DispatchQueue.main.async {
-            //            self.recordingTimerBtn.setTitle("\(dateToStartRecordingInMilliSec)", for: .normal)
-            
-        }
-        
-        RunLoop.main.add(recordingTimer, forMode: .common)
-        print("startRecordingAfter has ended", #line)
-    }
+//    @objc func startRecordingAtNoti(_ notification: Notification) {
+//        print(#function, #line)
+//        guard let dateToStartRecordingInMilliSec = notification.userInfo?["receivedTime"] as? Int,
+//              //              let msg = notification.userInfo?["msg"] as? RecordingType
+//              let msg = notification.userInfo?["msg"] as? MessageType
+//        else {
+//            print("fail to convert receivedTime to Int", #line)
+//            // millisec since 1970
+//            //            print(error?.localizedDescription)
+//            return
+//        }
+//        print(#function, #line)
+//        print("receivedMillisecData: \(dateToStartRecordingInMilliSec)")
+//        print("currentMillisecData: \(Date().millisecondsSince1970)")
+//        // 이거 뭐지 ?
+//        let recordingTimer = Timer(fireAt: Date(milliseconds: dateToStartRecordingInMilliSec), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+//        //TimeInterval(
+//        DispatchQueue.main.async {
+//            //            self.recordingTimerBtn.setTitle("\(dateToStartRecordingInMilliSec)", for: .normal)
+//
+//        }
+//
+//        RunLoop.main.add(recordingTimer, forMode: .common)
+//        print("startRecordingAfter has ended", #line)
+//    }
     
     // not recommended
     @objc func startCountdownAtNoti(_ notification: Notification) {
@@ -315,16 +314,14 @@ hideCompleteMsgView()
             
             startRecording()
             UIView.animate(withDuration: 0.4) {
-                self.outerRecCircle.backgroundColor = UIColor(red: 71/255, green: 69/255, blue: 78/255, alpha: 1)
+                self.outerRecCircle.backgroundColor = .lavenderGray900
                 self.innerShape.layer.cornerRadius = 6
-                self.recordingTimerBtn.setTitleColor(UIColor(red: 21/255, green: 21/255, blue: 21/255, alpha: 1), for: .normal)
+                self.recordingTimerBtn.setTitleColor(.gray900, for: .normal)
                 
                 self.leftShape.layer.cornerRadius = 2
-                self.leftShape.backgroundColor = UIColor(red: 181/255, green: 179/255, blue: 192/255, alpha: 1)
+                self.leftShape.backgroundColor = .lavenderGray400
             }
-            //            }
             
-            // STOP Recording !!
         } else {
             
             stopRecording()
@@ -339,74 +336,10 @@ hideCompleteMsgView()
             }
             
             // Send Stop Msg
-            //            connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: PositionDirectionScoreInfo(title: positionTitle, direction: direction, score: score)))
+            // start, stop 할 때가 아닌,  Save 눌렀을 때 Core Info 를 전달해야함.
             
             connectionManager.send(DetailPositionWIthMsgInfo(message: .stopRecordingMsg, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
             
-        }
-    }
-    
-    private func setupCompleteView() {
-        
-        view.addSubview(completeMsgView)
-        
-        completeMsgView.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-        
-
-        
-        [checkmarkLottieView,completeMsgLabel, retryBtn, nextBtn].forEach { completeMsgView.addSubview($0)}
-        
-        checkmarkLottieView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(50)
-            make.height.equalToSuperview().dividedBy(10)
-            make.centerY.equalToSuperview().offset(-70)
-        }
-        
-        completeMsgLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(50)
-//            make.height.equalToSuperview().dividedBy(2)
-            make.height.equalTo(40)
-//            make.centerY.equalToSuperview()
-            make.top.equalTo(checkmarkLottieView.snp.bottom).offset(15)
-        }
-        
-        retryBtn.snp.makeConstraints { make in
-            make.leading.bottom.equalToSuperview()
-            make.height.equalTo(60)
-            make.width.equalToSuperview().dividedBy(3)
-        }
-        
-        nextBtn.snp.makeConstraints { make in
-            make.leading.equalTo(retryBtn.snp.trailing)
-            make.trailing.bottom.equalToSuperview()
-//            make.height.equalTo(48)
-            make.height.equalTo(60)
-        }
-    }
-    
-    
-    @objc func prepareScoreView() {
-
-        addChild(scoreVC)
-        view.addSubview(scoreVC.view)
-        scoreVC.view.layer.cornerRadius = 10
-//        scoreVC.view.layer.borderWidth = 2
-        // prepare scoreVC to the bottom (to come up later)
-        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-    }
-    
-    // TODO: need to change trialCore of scoreVC here
-    private func showScoreView() {
-        scoreVC.setupTrialCore(with: trialCore )
-        
-        UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 330, width: screenWidth, height: screenHeight)
-        }
-    }
-    
-    private func hideScoreView() {
-        UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
         }
     }
     
@@ -421,10 +354,11 @@ hideCompleteMsgView()
             //            startRecording()
             recordingBtnAction()
         } else {
-            // TODO: Uncomment after testing
+//             TODO: Uncomment after testing
 //            _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {  [weak self] _ in
 //                self?.recordingBtnAction()
 //            }
+            
 //            playCountDownLottie()
             
             
@@ -433,6 +367,67 @@ hideCompleteMsgView()
         }
     }
     
+    private func setupCompleteView() {
+        
+        view.addSubview(completeMsgView)
+        
+        completeMsgView.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+        
+
+        [checkmarkLottieView,completeMsgLabel, retryBtn, nextBtn].forEach { completeMsgView.addSubview($0)}
+        
+        checkmarkLottieView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(50)
+            make.height.equalToSuperview().dividedBy(10)
+            make.centerY.equalToSuperview().offset(-70)
+        }
+        
+        completeMsgLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(50)
+            make.height.equalTo(40)
+            make.top.equalTo(checkmarkLottieView.snp.bottom).offset(15)
+        }
+        
+        retryBtn.snp.makeConstraints { make in
+            make.leading.bottom.equalToSuperview()
+            make.height.equalTo(60)
+            make.width.equalToSuperview().dividedBy(3)
+        }
+        
+        nextBtn.snp.makeConstraints { make in
+            make.leading.equalTo(retryBtn.snp.trailing)
+            make.trailing.bottom.equalToSuperview()
+            make.height.equalTo(60)
+        }
+    }
+    
+    /// prepare scoreVC to the bottom (to come up later)
+    @objc func prepareScoreView() {
+
+        addChild(scoreVC)
+        view.addSubview(scoreVC.view)
+        scoreVC.view.layer.cornerRadius = 10
+        
+        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+    }
+    
+    // TODO: need to change trialCore of scoreVC here (why ?
+    private func showScoreView() {
+        scoreVC.setupTrialCore(with: trialCore )
+        
+        UIView.animate(withDuration: 0.4) {
+            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 330, width: screenWidth, height: screenHeight)
+        }
+    }
+    
+    private func hideScoreView() {
+        UIView.animate(withDuration: 0.4) {
+            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+        }
+    }
+    
+    
+    
     
     // MARK: - Basic Functions
     @objc private func startRecording() {
@@ -440,9 +435,7 @@ hideCompleteMsgView()
         if !isRecording {
             DispatchQueue.main.async {
                 self.picker.startVideoCapture()
-                //                self.recordingBtn.setTitle("Stop", for: .normal)
-                //                self.recordingTimerBtn.setTitle("Stop", for: .normal)
-                
+
                 let attributedTitle = NSMutableAttributedString(string: "STOP", attributes: [.font: UIFont.systemFont(ofSize: 12)])
                 self.recordingTimerBtn.setAttributedTitle(attributedTitle, for: .normal)
                 
@@ -451,7 +444,7 @@ hideCompleteMsgView()
             self.isRecording = true
             
             triggerDurationTimer()
-            // 이것부터 해결하자..
+            // 이것부터 해결하자.. ?? ??? What?
         }
     }
     
@@ -459,10 +452,8 @@ hideCompleteMsgView()
         if isRecording {
             DispatchQueue.main.async {
                 self.picker.stopVideoCapture()
-                //                self.recordingTimerBtn.setTitle("REC", for: .normal)
                 let attributedTitle = NSMutableAttributedString(string: "REC", attributes: [.font: UIFont.systemFont(ofSize: 12)])
                 self.recordingTimerBtn.setAttributedTitle(attributedTitle, for: .normal)
-                //                $0.setTitleColor(.red, for: .normal)
             }
             
             self.isRecording = false
@@ -474,8 +465,9 @@ hideCompleteMsgView()
     /// updating durationLabel contained
     private func triggerDurationTimer() {
         count = 0
+        
         //        print("timer triggered!!")
-        // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ??
+        // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ?? 몰러
         
         updatingDurationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
             guard let `self` = self else {
@@ -489,15 +481,13 @@ hideCompleteMsgView()
         }
     }
     
-    // only func changes DurationLabel
+
     private func updateDurationLabel() {
-        //        print("updateDuration Triggered!")
         
         let recordingDuration = convertIntoRecordingTimeFormat(count)
         
         DispatchQueue.main.async {
             self.durationLabel.text = recordingDuration // is this code working?
-            //            print(#function, #line, "updating Duration Label!")
         }
     }
     
@@ -517,7 +507,6 @@ hideCompleteMsgView()
         
         DispatchQueue.main.async {
             self.durationLabel.text = "00:00"
-            //            self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
         }
         
         
@@ -576,13 +565,23 @@ hideCompleteMsgView()
         updatingDurationTimer.invalidate()
     }
     
-    // TODO: For now, it's ratio not accurate, so it looks weird.
+    private func showReconnectionGuideAction() {
+        let actionSheet = UIAlertController(title: "Connection Lost", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        actionSheet.addAction(UIAlertAction(title: "Reconnect Session", style: .default, handler: { (action: UIAlertAction) in
+            self.showConnectivityAction()
+        }))
+        
+        self.present(actionSheet, animated: true, completion: nil)
+    }
+    
+    
+    
+    
+    // TODO: For now, it's ratio not accurate so that it looks weird.
     // TODO: Don't need to change for now.
-    
-    
-    //    private func preparePreview() {
-    //
-    //    }
     
     private func presentPreview(with videoURL: URL) {
         
@@ -598,8 +597,6 @@ hideCompleteMsgView()
             make.bottom.equalTo(bottomView.snp.top)
             make.width.height.equalTo(view.snp.width)
         }
-        //        view.addSubview(testScoreView)
-        //        showScoreView()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -655,6 +652,7 @@ hideCompleteMsgView()
             make.height.equalTo((screenHeight - screenWidth) / 2)
         }
         
+        
         topView.addSubview(dismissBtn)
         dismissBtn.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(90)
@@ -663,8 +661,8 @@ hideCompleteMsgView()
         }
         
         
-        topView.addSubview(positionNameLabel)
-        positionNameLabel.snp.makeConstraints { make in
+        topView.addSubview(movementNameLabel)
+        movementNameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(90)
             make.centerX.equalToSuperview()
             make.width.equalTo(250)
@@ -731,7 +729,8 @@ hideCompleteMsgView()
         
     }
     
-    //MARK: Reconnect! when it ends.
+    
+    //MARK: Reconnect! when it disconnected
     func showConnectivityAction() {
         let actionSheet = UIAlertController(title: "Connect Camera", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
         
@@ -750,44 +749,29 @@ hideCompleteMsgView()
     
     // MARK: - UI Properties
     
-    //    private let testScoreView = UIButton(frame: CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)).then { $0.backgroundColor = .orange }
-    
     private let bottomView = UIView().then { $0.backgroundColor = .white }
     private let topView = UIView().then { $0.backgroundColor = .white }
     
-    private let positionNameLabel = UILabel().then {
-        //        $0.textColor = .white
+    private let movementNameLabel = UILabel().then {
         $0.textColor = .black
-        //        $0.textAlignment = .center
         $0.textAlignment = .center
         $0.font = UIFont.systemFont(ofSize: 20)
-        //        $0.backgroundColor = .green
     }
     
     private let imageView = UIImageView()
     
-    private var videoUrl: URL?
-    
     private let connectionStateLabel = UILabel().then {
-        
         $0.textColor = .white
     }
-    
     
     private let durationLabel = UILabel().then {
         $0.textColor = .white
         $0.text = "00:00"
         $0.textAlignment = .center
         $0.layer.cornerRadius = 24
-        $0.backgroundColor = UIColor(red: 109 / 255, green: 107 / 255, blue: 115 / 255, alpha: 1)
+        $0.backgroundColor = .lavenderGray700
         $0.clipsToBounds = true
     }
-    
-    //    private let dismissBtn = UIButton().then {
-    ////        $0.setTitle("<", for: .normal)
-    //        $0.setTitleColor(.black, for: .normal)
-    //        $0.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-    //    }
     
     private let dismissBtn: UIButton = {
         let btn = UIButton()
@@ -800,13 +784,7 @@ hideCompleteMsgView()
             make.width.equalToSuperview().dividedBy(2)
             make.height.equalToSuperview()
         }
-        //        let image = UIImage(systemName: "chevron.left")!.withTintColor(.black)
-        //        image?.withTintColor(<#T##color: UIColor##UIColor#>)
         
-        //        btn.setBackgroundImage(UIImage(systemName: "chevron.left"), for: .normal)
-        //        btn.setBackgroundImage(image, for: .normal)
-        btn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
-        //        btn.backgroundColor = .magenta
         return btn
     }()
     
@@ -821,7 +799,7 @@ hideCompleteMsgView()
     }
     
     private let neighborLongBar = UIView().then {
-        $0.backgroundColor = UIColor(red: 237 / 255, green: 236/255, blue: 239/255, alpha: 1)
+        $0.backgroundColor = .lavenderGray100
         $0.layer.cornerRadius = 24
     }
     
@@ -832,11 +810,10 @@ hideCompleteMsgView()
     
     private let rightShape = UIView().then {
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = UIColor(red: 203/255, green: 202/255, blue: 211/255, alpha: 1)
+        $0.backgroundColor = .lavenderGray300
     }
     
     private let recordingTimerBtn = UIButton().then {
-        //        $0.setTitle("REC", for: .normal)
         let attributedTitle = NSMutableAttributedString(string: "REC", attributes: [.font: UIFont.systemFont(ofSize: 12)])
         $0.setAttributedTitle(attributedTitle, for: .normal)
         $0.setTitleColor(.red, for: .normal)
@@ -867,10 +844,11 @@ hideCompleteMsgView()
     }
     
     private let completeMsgLabel = UILabel().then {
+//    private let completeMsgLabel = UITextView().then {
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         
-        var attrText = NSMutableAttributedString(string: "Upload Completed!", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
+        var attrText = NSMutableAttributedString(string: "Upload Completed!\n", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
         
         attrText.append(NSAttributedString(string: "Contrats!\nYour video has been successfully uploaded.", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
@@ -878,15 +856,9 @@ hideCompleteMsgView()
             .paragraphStyle: paragraph]))
         
         $0.attributedText = attrText
-        $0.numberOfLines = 5
+        $0.numberOfLines = 0
         
-        
-//        $0.text = "Completed!"
-//        $0.textColor = .gray900
-        
-//        $0.textAlignment = .center
     }
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -905,12 +877,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         //        var videoUrl: URL?
         guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
               mediaType == (kUTTypeMovie as String),
-              //            let crop = info[UIImagePickerController.InfoKey.cropRect], // makes fail.. TT..
-              // the delegate method gives a URL pointing to the video
                 let url = info[UIImagePickerController.InfoKey.mediaURL] as? URL,
-              //              videoUrl = url
-              // Verify that the app can save the file to the device's photo album
-                
                 UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(url.path)
         else {
             print("failed to get url Path!")
@@ -921,59 +888,23 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         // Save Video To Photos Album
         UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
         
-        
-        
-        
         videoUrl = url
-        //        guard url != nil else {return }
-        
-        //        CropperController.cropVideo(from: url, presentOn: self)
+
         guard let validUrl = videoUrl else { fatalError() }
-        let testController2 = TestController2(url: validUrl, vc: self)
-        testController2.exportVideo()
-        //        test
-        
-        //        TestController.cropVideoWithGivenSize(asset: <#T##AVAsset#>, baseSize: <#T##CGSize#>, completionHandler: <#T##TestController.CropTaskCompletion##TestController.CropTaskCompletion##(Result<URL, Error>) -> Void#>)
-        //        guard let
-        //        CropperController.cropVideo(from: videoUrl)
-        
-        
-        
-        //        removeItem(at: <#T##URL#>)
+        let cropController = CropController(url: validUrl, vc: self)
+        cropController.exportVideo()
+
         print("url: \(url.path)")
         
-        //        do {
-        //            try FileManager().removeItem(at: url)
-        //            print("success to remove URL!! ")
-        //        } catch {
-        //            print("failed to remove URL !!")
-        //            print(error.localizedDescription)
-        //        }
         
         // TODO: Present Preview In a second
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            //            self.present(VideoPlayerViewController(videoURL: url), animated: true)
             self.presentPreview(with: url)
             self.prepareScoreView()
             self.showScoreView()
         }
-        
-        //        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-        //            self.showMore()
-        //        }
     }
     
-    private func showReconnectionGuideAction() {
-        let actionSheet = UIAlertController(title: "Connection Lost", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
-        
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
-        actionSheet.addAction(UIAlertAction(title: "Reconnect Session", style: .default, handler: { (action: UIAlertAction) in
-            self.showConnectivityAction()
-        }))
-        
-        self.present(actionSheet, animated: true, completion: nil)
-    }
     
     private func updateTrialCore() {
         
@@ -982,14 +913,9 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
     private func updateTrialDetail() {
         
     }
-    
-
 }
 
 // MARK: - Connection Manager Delegate
-
-
-
 
 
 //    @objc func video(_ videoPath: String, didFinishSavingWithError error: Error?, contextInfo info: AnyObject) {
@@ -1035,7 +961,6 @@ extension CameraController: ConnectionManagerDelegate {
             self.checkmarkLottieView.play()
             }
         }
-
     }
     
     
@@ -1069,10 +994,7 @@ extension CameraController: ScoreControllerDelegate {
         removeChildrenVC()
         prepareScoreView()
         makeTrialDetail()
-//        guard let scoreVC = scoreVC else {fatalError()}
-//        scoreVC.navigateBackToFirstView()
         
-        //        self.updateTrialCore()
         self.updateTrialDetail()
     }
     
@@ -1123,12 +1045,7 @@ extension CameraController: ScoreControllerDelegate {
         return title + direction
     }
     
-    
-    //    func moveUp() {
-    //        // TODO: Move ScoreController up
-    //    }
-    
-    // triggered when 'Next' Tapped
+    // triggered if 'Next' Tapped
     func updateMovement(with movementDirectionScoreInfo: MovementDirectionScoreInfo) {
 
         self.positionTitle = trialCore.title
@@ -1138,8 +1055,6 @@ extension CameraController: ScoreControllerDelegate {
         self.direction = validDirection
         scoreVC.setupAgain(with: movementDirectionScoreInfo)
     }
-    
-
     
     func prepareRecording() {
         setupNavigationBar()

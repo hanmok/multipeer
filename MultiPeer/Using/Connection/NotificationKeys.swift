@@ -14,7 +14,7 @@ public enum NotificationKeys {
     static let startRecording = Notification.Name(rawValue: "startRecording")
     static let stopRecording = Notification.Name(rawValue: "stopRecording")
     static let updateConnectionState = Notification.Name(rawValue: "updateConnectionState")
-    static let startRecordingAfter = Notification.Name(rawValue: "startRecordingAfter")
+//    static let startRecordingAfter = Notification.Name(rawValue: "startRecordingAfter")
     static let startCountdownAfter = Notification.Name(rawValue: "startCountDownAfter")
 }
 
@@ -24,7 +24,7 @@ extension Notification.Name {
     static let startRecordingKey = NotificationKeys.startRecording
     static let stopRecordingKey = NotificationKeys.stopRecording
     static let updateConnectionStateKey = NotificationKeys.updateConnectionState
-    static let startRecordingAfterKey = NotificationKeys.startRecordingAfter
+//    static let startRecordingAfterKey = NotificationKeys.startRecordingAfter
     static let startCountdownAfterKey = NotificationKeys.startCountdownAfter
 }
 

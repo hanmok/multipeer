@@ -32,7 +32,7 @@ public enum MessageType: String, Codable {
     case startRecordingMsg
     case stopRecordingMsg
     case none
-    case startRecordingAfterMsg
+//    case startRecordingAfterMsg
     case startCountDownMsg
 }
 
@@ -48,5 +48,6 @@ public enum OrderMessageTypes {
 public enum ConnectionState: String, Codable {
     case connected
     case disconnected
+//    case notConnected
 }
 
