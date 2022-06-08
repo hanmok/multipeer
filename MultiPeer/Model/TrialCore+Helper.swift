@@ -32,14 +32,15 @@ extension TrialCore {
         }
     }
     
-    public var parentScreen: Screen {
-        get {
-            return self.parentScreen_!
-        }
-        set {
-            self.parentScreen_ = newValue
-        }
-    }
+    // peer 쪽 Crash! found nil ;;
+//    public var parentScreen: Screen {
+//        get {
+//            return self.parentScreen_!
+//        }
+//        set {
+//            self.parentScreen_ = newValue
+//        }
+//    }
     
     public var direction: String {
         get {
@@ -108,10 +109,11 @@ extension TrialCore {
     }
     
     static func save(title: String) {
+//        DispatchQueue.main.async {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             fatalError("error !! ")
         }
-
+//tq 뭐가 많이 잘못됐구나..
         let managedContext = appDelegate.persistentContainer.viewContext
         guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else { fatalError("error !! ") }
         
@@ -137,6 +139,61 @@ extension TrialCore {
                 fatalError("error !!")
             }
         }
+//        }
+    }
+    
+    @discardableResult
+    static func save(title: String, direction: String) -> TrialCore {
+//        DispatchQueue.main.async {
+//            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+//                fatalError("error !! ")
+//            }
+//        }
+
+        
+//        DispatchQueue.main.async {
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+                fatalError("error !! ")
+            }
+        
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        guard let entity = NSEntityDescription.entity(forEntityName: .CoreEntitiesStr.trialCore, in: managedContext) else { fatalError("error !! ") }
+        
+        // for loop needed..
+        guard let positionName = MovementList(rawValue: title),
+              let numOfDirections = Dummy.numOfDirections[positionName],
+              let directionNames = Dummy.directionName[numOfDirections] else { fatalError("error !! ") }
+        
+        for eachDirection in directionNames {
+            if direction == eachDirection {
+                // 여기서 맞는 direction 골라서 써라~
+                
+                guard let trialCore = NSManagedObject(entity: entity, insertInto: managedContext) as? TrialCore else { fatalError("error !!") }
+                
+                trialCore.setValue(title, forKey: .TrialCoreStr.title)
+                trialCore.setValue(direction, forKey: .TrialCoreStr.direction)
+                
+                print("parent of TrialCore : \(String(describing: trialCore.parentScreen))")
+                print("title of TrialCore : \(trialCore.title)")
+                print("direction of TrialCore : \(trialCore.direction)")
+                
+                do {
+                    try managedContext.save()
+                    
+                } catch {
+                    print("error : \(error.localizedDescription)")
+                    fatalError("error !!")
+                }
+                return trialCore
+            } else {
+                fatalError()
+            }
+        }
+//            return
+
+//        }
+        fatalError() // little weird..
     }
     
      func returnFreshTrialDetail() -> TrialDetail {
@@ -367,3 +424,9 @@ extension TrialCore {
 //}
 //
 //}
+
+extension TrialCore: Encodable {
+    public func encode(to encoder: Encoder) throws {
+//        <#code#>
+    }
+}

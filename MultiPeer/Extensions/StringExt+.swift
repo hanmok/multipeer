@@ -14,7 +14,7 @@ extension String {
         static let positionTitleCore = "PositionTitleCore"
         static let trialCore = "TrialCore"
         static let screen = "Screen"
-        static let subject = "Subject"
+        static let Subject = "Subject"
         static let trialDetail = "TrialDetail"
     }
 
@@ -49,7 +49,7 @@ extension String {
         static let trials = "trialD" // what the hell is this ? master 에 있는 것을 공유.
     
         static let tag = "tag"
-        static let parentScreen = "parentScreen_"
+        static let parentScreen = "parentScreen"
         static let trialDetails = "trialDetails_"
     }
     

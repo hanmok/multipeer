@@ -353,7 +353,7 @@ class ScoreController: UIViewController {
 
         guard let trialCore = trialCore else { fatalError("trialCore is nil") }
         
-        let screen = trialCore.parentScreen
+        guard let screen = trialCore.parentScreen else { fatalError() }
 
         let currentDirection = trialCore.direction
 

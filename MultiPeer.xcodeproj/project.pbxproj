@@ -70,16 +70,16 @@
 		22F65E6E2844770100646FCD /* MovementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E6D2844770100646FCD /* MovementCell.swift */; };
 		22F65E702844772300646FCD /* MovementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E6F2844772300646FCD /* MovementViewModel.swift */; };
 		22F65E7C2845F47900646FCD /* ColorExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E7B2845F47900646FCD /* ColorExt.swift */; };
-		22F65E9E28484A7D00646FCD /* RemovableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E9D28484A7D00646FCD /* RemovableCell.swift */; };
-		22F65EA028484AA300646FCD /* ScoreBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E9F28484AA300646FCD /* ScoreBtnView.swift */; };
 		22F65EA228484AB900646FCD /* ImgBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EA128484AB900646FCD /* ImgBtnView.swift */; };
 		22F65EA428484AD100646FCD /* ButtonWithInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EA328484AD100646FCD /* ButtonWithInfo.swift */; };
-		22F65EA628484B0000646FCD /* ScoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EA528484B0000646FCD /* ScoreButton.swift */; };
-		22F65EA828484B1700646FCD /* SelectableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EA728484B1700646FCD /* SelectableButton.swift */; };
-		22F65EAA28484B3200646FCD /* SelectableButtonStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EA928484B3200646FCD /* SelectableButtonStackView.swift */; };
 		22F65EAC28484B6400646FCD /* PositionBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EAB28484B6400646FCD /* PositionBlockView.swift */; };
 		22F65EB02848BD8400646FCD /* checkmark.json in Resources */ = {isa = PBXBuildFile; fileRef = 22F65EAF2848BD8400646FCD /* checkmark.json */; };
 		22F65EB22849B0FA00646FCD /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EB12849B0FA00646FCD /* UIView+Ext.swift */; };
+		22F65EB6284EDC6100646FCD /* ScoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EB5284EDC6100646FCD /* ScoreButton.swift */; };
+		22F65EB8284EDCA200646FCD /* SelectableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EB7284EDCA200646FCD /* SelectableButton.swift */; };
+		22F65EBA284EDCB600646FCD /* SelectableButtonStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EB9284EDCB600646FCD /* SelectableButtonStackView.swift */; };
+		22F65EBC284EDDC600646FCD /* RemovableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EBB284EDDC600646FCD /* RemovableCell.swift */; };
+		22F65EBE284EDF0F00646FCD /* ScoreBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EBD284EDF0F00646FCD /* ScoreBtnView.swift */; };
 		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 		9A7545B9283B257400558CA7 /* Homework in Resources */ = {isa = PBXBuildFile; fileRef = 9A7545B8283B257400558CA7 /* Homework */; };
 		9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7545BA283B596F00558CA7 /* SoundService.swift */; };
@@ -157,12 +157,14 @@
 		22F65E9F28484AA300646FCD /* ScoreBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScoreBtnView.swift; path = /Users/fittobe/Desktop/Multipeer2/MultiPeer/Using/Position/SubViews/ScoreBtnView.swift; sourceTree = "<absolute>"; };
 		22F65EA128484AB900646FCD /* ImgBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImgBtnView.swift; sourceTree = "<group>"; };
 		22F65EA328484AD100646FCD /* ButtonWithInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWithInfo.swift; sourceTree = "<group>"; };
-		22F65EA528484B0000646FCD /* ScoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScoreButton.swift; path = MultiPeer/Using/Position/SubViews/ScoreButton.swift; sourceTree = SOURCE_ROOT; };
-		22F65EA728484B1700646FCD /* SelectableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SelectableButton.swift; path = MultiPeer/Using/Position/SubViews/SelectableButton.swift; sourceTree = SOURCE_ROOT; };
-		22F65EA928484B3200646FCD /* SelectableButtonStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SelectableButtonStackView.swift; path = MultiPeer/Using/Position/SubViews/SelectableButtonStackView.swift; sourceTree = SOURCE_ROOT; };
 		22F65EAB28484B6400646FCD /* PositionBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionBlockView.swift; sourceTree = "<group>"; };
 		22F65EAF2848BD8400646FCD /* checkmark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = checkmark.json; path = ../../../../Downloads/checkmark.json; sourceTree = "<group>"; };
 		22F65EB12849B0FA00646FCD /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
+		22F65EB5284EDC6100646FCD /* ScoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreButton.swift; sourceTree = "<group>"; };
+		22F65EB7284EDCA200646FCD /* SelectableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableButton.swift; sourceTree = "<group>"; };
+		22F65EB9284EDCB600646FCD /* SelectableButtonStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableButtonStackView.swift; sourceTree = "<group>"; };
+		22F65EBB284EDDC600646FCD /* RemovableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovableCell.swift; sourceTree = "<group>"; };
+		22F65EBD284EDF0F00646FCD /* ScoreBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBtnView.swift; sourceTree = "<group>"; };
 		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A7545B8283B257400558CA7 /* Homework */ = {isa = PBXFileReference; lastKnownFileType = text; path = Homework; sourceTree = "<group>"; };
 		9A7545BA283B596F00558CA7 /* SoundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
@@ -193,16 +195,6 @@
 				22315E3C282E1FCB0093079B /* ScreenViewModel.swift */,
 			);
 			path = SubjectDetail;
-			sourceTree = "<group>";
-		};
-		226D87612834B99D00E3F547 /* Camera */ = {
-			isa = PBXGroup;
-			children = (
-				22F65EA528484B0000646FCD /* ScoreButton.swift */,
-				22F65EA728484B1700646FCD /* SelectableButton.swift */,
-				22F65EA928484B3200646FCD /* SelectableButtonStackView.swift */,
-			);
-			path = Camera;
 			sourceTree = "<group>";
 		};
 		22795064282B922800B675A1 /* Movement */ = {
@@ -269,10 +261,11 @@
 				22F65E9F28484AA300646FCD /* ScoreBtnView.swift */,
 				22F65EA128484AB900646FCD /* ImgBtnView.swift */,
 				22F65EA328484AD100646FCD /* ButtonWithInfo.swift */,
-				226D87612834B99D00E3F547 /* Camera */,
+				22F65EB5284EDC6100646FCD /* ScoreButton.swift */,
+				22F65EB7284EDCA200646FCD /* SelectableButton.swift */,
+				22F65EB9284EDCB600646FCD /* SelectableButtonStackView.swift */,
 			);
-			name = SubViews;
-			path = Position/SubViews;
+			path = SubViews;
 			sourceTree = "<group>";
 		};
 		227950B3282BBDA500B675A1 /* Model */ = {
@@ -329,11 +322,11 @@
 			children = (
 				227DA6C528291D450097F8F1 /* Memos */,
 				22315E40282E4CA30093079B /* MemoForCoreData */,
-				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
 				227E7C922833A5C800084BA2 /* CameraWithCoreData */,
-				22F65DFD283F75A100646FCD /* CropController.swift */,
 				226D87682834FE7B00E3F547 /* TODO */,
 				9A7545B8283B257400558CA7 /* Homework */,
+				22F65DFD283F75A100646FCD /* CropController.swift */,
+				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
 				6C823DBE391EE5CB5A4C0AA5 /* Pods */,
@@ -354,7 +347,12 @@
 			children = (
 				228B88362806577A007A6842 /* AppDelegate.swift */,
 				228B88382806577A007A6842 /* SceneDelegate.swift */,
-				22ADC439281A226700B1C639 /* Using */,
+				22795064282B922800B675A1 /* Movement */,
+				22795065282B924100B675A1 /* Camera */,
+				22795066282B926600B675A1 /* Subject */,
+				22795073282B94AC00B675A1 /* SubViews */,
+				2279506B282B92F300B675A1 /* API */,
+				2279506E282B936500B675A1 /* Connection */,
 				227950B3282BBDA500B675A1 /* Model */,
 				22F65E6C2844750600646FCD /* Extensions */,
 				22F65E612840B4E300646FCD /* Lottie */,
@@ -362,6 +360,7 @@
 				22ADC438281A200300B1C639 /* NotUsing */,
 				228B884128065784007A6842 /* LaunchScreen.storyboard */,
 				228B884428065784007A6842 /* Info.plist */,
+				22F65EBD284EDF0F00646FCD /* ScoreBtnView.swift */,
 			);
 			path = MultiPeer;
 			sourceTree = "<group>";
@@ -379,19 +378,6 @@
 				22F65EAB28484B6400646FCD /* PositionBlockView.swift */,
 			);
 			path = NotUsing;
-			sourceTree = "<group>";
-		};
-		22ADC439281A226700B1C639 /* Using */ = {
-			isa = PBXGroup;
-			children = (
-				22795064282B922800B675A1 /* Movement */,
-				22795065282B924100B675A1 /* Camera */,
-				22795066282B926600B675A1 /* Subject */,
-				22795073282B94AC00B675A1 /* SubViews */,
-				2279506B282B92F300B675A1 /* API */,
-				2279506E282B936500B675A1 /* Connection */,
-			);
-			path = Using;
 			sourceTree = "<group>";
 		};
 		22F65E612840B4E300646FCD /* Lottie */ = {
@@ -412,6 +398,7 @@
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				22F65E7B2845F47900646FCD /* ColorExt.swift */,
 				22F65EB12849B0FA00646FCD /* UIView+Ext.swift */,
+				22F65EBB284EDDC600646FCD /* RemovableCell.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -590,18 +577,17 @@
 				22F65E702844772300646FCD /* MovementViewModel.swift in Sources */,
 				22F65EA428484AD100646FCD /* ButtonWithInfo.swift in Sources */,
 				227950B5282BBE1600B675A1 /* PersistenceController.swift in Sources */,
+				22F65EBA284EDCB600646FCD /* SelectableButtonStackView.swift in Sources */,
 				22795070282B937C00B675A1 /* MsgModels.swift in Sources */,
+				22F65EB6284EDC6100646FCD /* ScoreButton.swift in Sources */,
 				22795068282B929A00B675A1 /* MovementModels.swift in Sources */,
-				22F65EA028484AA300646FCD /* ScoreBtnView.swift in Sources */,
-				22F65EAA28484B3200646FCD /* SelectableButtonStackView.swift in Sources */,
-				22F65E9E28484A7D00646FCD /* RemovableCell.swift in Sources */,
 				2282DD8D281646E0008928A4 /* Orientation.swift in Sources */,
 				226D20DF282DE6C6001D6019 /* StringExt+.swift in Sources */,
 				2279506A282B92DA00B675A1 /* Subject.swift in Sources */,
 				2283BEC2281A884F007D74FC /* NotificationKeys.swift in Sources */,
 				2280DCDB28334BEE0036632E /* TrialHeader.swift in Sources */,
 				2282DD8F28164707008928A4 /* PreviewView.swift in Sources */,
-				22F65EA628484B0000646FCD /* ScoreButton.swift in Sources */,
+				22F65EB8284EDCA200646FCD /* SelectableButton.swift in Sources */,
 				22889EFD2820CA96002A9C4F /* PreviewController.swift in Sources */,
 				2282DD882816466A008928A4 /* SwiftyCamViewController.swift in Sources */,
 				2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */,
@@ -619,9 +605,10 @@
 				22795061282B880800B675A1 /* SubjectCollectionCell.swift in Sources */,
 				E54927E7283B87D30049D00A /* ScreenTableCell.swift in Sources */,
 				22315E3D282E1FCB0093079B /* ScreenViewModel.swift in Sources */,
+				22F65EBE284EDF0F00646FCD /* ScoreBtnView.swift in Sources */,
 				22F65DFE283F75A100646FCD /* CropController.swift in Sources */,
-				22F65EA828484B1700646FCD /* SelectableButton.swift in Sources */,
 				228B88392806577A007A6842 /* SceneDelegate.swift in Sources */,
+				22F65EBC284EDDC600646FCD /* RemovableCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

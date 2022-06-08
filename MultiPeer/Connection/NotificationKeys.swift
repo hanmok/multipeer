@@ -28,4 +28,5 @@ extension Notification.Name {
 //    static let startRecordingAfterKey = NotificationKeys.startRecordingAfter
 //    static let startCountdownAfterKey = NotificationKeys.startCountdownAfter
     static let requestPostKey = Notification.Name(rawValue: "requestPostMsg")
+    static let updatePeerTitleKey = Notification.Name(rawValue: "updatePeerTitle")
 }

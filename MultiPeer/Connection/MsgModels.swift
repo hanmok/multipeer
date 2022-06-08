@@ -36,6 +36,8 @@ public enum MessageType: String, Codable {
 //    case startRecordingAfterMsg
 //    case startCountDownMsg
     case requestPostMsg
+    
+    case updatePeerTitle
 }
 
 

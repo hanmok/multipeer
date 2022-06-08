@@ -16,7 +16,7 @@ import Lottie
 
 
 protocol CameraControllerDelegate: AnyObject {
-    func dismissCamera()
+    func dismissCamera(closure: () -> Void)
     func makeSound()
 }
 
@@ -37,7 +37,7 @@ class CameraController: UIViewController {
 
     var timeDifference: CGFloat = 0 // or CMTime
     
-    var screen: Screen
+//    var screen: Screen
     
     var rank: Rank
     
@@ -72,14 +72,19 @@ class CameraController: UIViewController {
     
     // MARK: - Life Cycle
     
+//    deinit {
+//        print("cameraController deinit")
+//    }
+    
     init(
         connectionManager: ConnectionManager,
-        screen: Screen, trialCore: TrialCore,
+//        screen: Screen,
+        trialCore: TrialCore,
         rank: Rank) {
             
             self.connectionManager = connectionManager
             
-            self.screen = screen
+//            self.screen = screen
             self.trialCore = trialCore
             self.positionTitle = trialCore.title
             
@@ -95,8 +100,10 @@ class CameraController: UIViewController {
             scoreVC.parentController = self
             
             setupTrialDetail(with: trialCore)
+            print("cameraController init")
         }
-    
+
+
     private func setupTrialDetail(with core: TrialCore) {
         trialDetail = trialCore.returnFreshTrialDetail()
     }
@@ -104,6 +111,7 @@ class CameraController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("CameraController viewdidLoad triggered")
         setupNavigationBar()
         setupAddTargets()
         setupLayout()
@@ -111,11 +119,24 @@ class CameraController: UIViewController {
         updateInitialConnectionState()
         
         setupCompleteView()
+        
+        updatePeerTitle()
+    }
+    
+    
+    private func updatePeerTitle() {
+//        connectionManager.send(.update, trialCore)
+        let direction: MovementDirection = MovementDirection(rawValue: trialCore.direction) ?? .neutral
+        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: trialCore.title, direction: direction)))
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        print("cameraController viewWillDisappear ")
         removeChildrenVC()
     }
+    
+    // not triggered even if view disappears
     
     deinit {
         print("cameraController deinit triggered!")
@@ -180,12 +201,30 @@ class CameraController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(updateConnectionStateNoti(_:)),
                                                name: .updateConnectionStateKey, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(requestPost(_:)), name: .requestPostKey, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(requestPostNoti(_:)), name: .requestPostKey, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updatePeerTitleNoti(_:)), name: .updatePeerTitleKey, object: nil)
     }
     
-    @objc func requestPost(_ notification: Notification) {
+    @objc func updatePeerTitleNoti(_ notification: Notification) {
+
+        guard let title = notification.userInfo?["title"] as? String,
+              let direction = notification.userInfo?["direction"] as? MovementDirection
+                
+        else { return }
         
-        saveAction(core: <#T##TrialCore#>, detail: <#T##TrialDetail#>)
+        DispatchQueue.main.async {
+            if self.direction == .neutral {
+                self.movementNameLabel.text = title
+            } else {
+                self.movementNameLabel.text = title + " " + direction.rawValue
+            }
+        }
+    }
+    
+    @objc func requestPostNoti(_ notification: Notification) {
+        
+//        saveAction(core: <#T##TrialCore#>, detail: <#T##TrialDetail#>)
     
     }
     
@@ -263,7 +302,11 @@ class CameraController: UIViewController {
         // if pressedBtn is "Hold", update self.trialCore with Variation
     
         if pressedBtnTitle != "Hold" {
-            delegate?.dismissCamera() // CameraController Delegate
+            delegate?.dismissCamera() {
+                
+                self.dismiss(animated: true)
+            }
+            // CameraController Delegate
         } else {
         // TODO: update Position for Variation
 //        updatePosition(with: <#T##PositionDirectionScoreInfo#>)
@@ -331,7 +374,13 @@ class CameraController: UIViewController {
     
     @objc func dismissBtnTapped(_ sender: UIButton) {
         print("dismiss btn tapped!")
-        delegate?.dismissCamera()
+        self.dismiss(animated: true)
+        // 왜 dismiss 가 안되지?
+        delegate?.dismissCamera() {
+            self.dismiss(animated: true)
+        }
+//        self.dismiss(animated: true)
+//        delegate
     }
     
     @objc func timerRecordingBtnTapped(_ sender: UIButton) {
@@ -768,8 +817,9 @@ class CameraController: UIViewController {
         let innerImage = UIImageView(image: UIImage(systemName: "chevron.left"))
         innerImage.tintColor = .black
         btn.addSubview(innerImage)
+        
         innerImage.snp.makeConstraints { make in
-            make.top.leading.trailing.bottom.equalToSuperview()
+//            make.top.leading.trailing.bottom.equalToSuperview()
             make.center.equalToSuperview()
             make.width.equalToSuperview().dividedBy(2)
             make.height.equalToSuperview()

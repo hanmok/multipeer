@@ -112,6 +112,7 @@ class ConnectionManager: NSObject {
     
     // FIXME: Action need to be changed to send difference of recording start time
     func send(_ messageWithTime: MsgWithTime) {
+//        print("message: \(message.rawValue) sended")
         let encoder = JSONEncoder()
         
         guard let session = session else {return }
@@ -122,9 +123,9 @@ class ConnectionManager: NSObject {
             print(error.localizedDescription)
         }
     }
-    
+    // invalid peer id ?
     func send(_ message: MessageType) {
-
+        print("message: \(message.rawValue) sended")
         let encoder = JSONEncoder()
 
         guard let session = session else { return }
@@ -141,7 +142,7 @@ class ConnectionManager: NSObject {
     
     
     func send(_ movement: MsgWithMovementDetail) {
-        
+        print("message: \(movement.message.rawValue) sended")
         let encoder = JSONEncoder()
 
         guard let session = session else { return }
@@ -154,6 +155,20 @@ class ConnectionManager: NSObject {
 //            fatalError("Fatal Error during encoding!!", file: #function)
         }
     }
+    
+    func send(_ movementCore: TrialCore) {
+        let encoder = JSONEncoder()
+        
+        guard let session = session else { return }
+        
+        do {
+            let data = try encoder.encode(movementCore)
+            try session.send(data, toPeers: session.connectedPeers, with: .reliable)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
     
     func join() {
         ConnectionManager.peers.removeAll()
@@ -221,11 +236,11 @@ extension ConnectionManager: MCSessionDelegate {
         let jsonDecoder = JSONDecoder()
         
         do {
-            let positionInfoWithMsg = try jsonDecoder.decode(MsgWithMovementDetail.self, from: data)
+            let movementInfoWithMsg = try jsonDecoder.decode(MsgWithMovementDetail.self, from: data)
             
-            let detailInfo = positionInfoWithMsg.detailInfo
+            let detailInfo = movementInfoWithMsg.detailInfo
             
-            let msg = positionInfoWithMsg.message
+            let msg = movementInfoWithMsg.message
             
             let detailInfoDic: [AnyHashable: Any] = [
                 "title": detailInfo.title,
@@ -252,24 +267,20 @@ extension ConnectionManager: MCSessionDelegate {
                 NotificationCenter.default.post(name: .stopRecordingKey, object: nil, userInfo: detailInfoDic)
                 break
                 
-//            case .startRecordingAfterMsg:
-//                let date = Date().addingTimeInterval(3)
-//                let timeInfo: [AnyHashable: Any] = ["triggerAt": date]
-//                NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
-
+            case .updatePeerTitle:
+                NotificationCenter.default.post(name: .updatePeerTitleKey, object: nil, userInfo: detailInfoDic)
+                
             case .none:
                 print("none has been passed!")
                 break
             
-//            case .startCountDownMsg:
-//                break
-
                 // TODO: Make it work
             case .requestPostMsg:
                 NotificationCenter.default.post(name: .requestPostKey, object: nil, userInfo: detailInfoDic)
             }
             
         } catch {
+            print("error: \(error.localizedDescription)")
                 print("Error Occurred during Decoding DetailPositionWithMsgInfo!!!")
                 do {
                     let testInfoMsg = try jsonDecoder.decode(MsgWithTime.self, from: data)
@@ -298,6 +309,9 @@ extension ConnectionManager: MCSessionDelegate {
                     print("Error : \(error.localizedDescription)")
                 }
         }
+        
+        
+        
     }
     
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
