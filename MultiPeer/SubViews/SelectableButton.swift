@@ -33,6 +33,10 @@ class SelectableButton: UIButton, Identifiable { // has id
         self.backgroundColor = color
     }
     
+    public func setTitleColor(to color: UIColor) {
+        self.setTitleColor(color, for: .normal)
+    }
+    
     // called from SelectableButtonStackView
     public func setupInitialColor(_ color: UIColor) {
         self.backgroundColor = color

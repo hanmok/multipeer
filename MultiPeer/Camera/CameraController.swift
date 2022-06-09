@@ -24,7 +24,7 @@ protocol CameraControllerDelegate: AnyObject {
 class CameraController: UIViewController {
     
     // MARK: - Properties
-    
+//    uialertcontroller
     private var videoUrl: URL?
     
     var positionTitle: String
@@ -122,6 +122,8 @@ class CameraController: UIViewController {
         setupCompleteView()
         
         updatePeerTitle()
+        
+//        UIAlertController.init(title: "hi", message: "message", preferredStyle: .actionSheet)
     }
     
     
@@ -174,7 +176,9 @@ class CameraController: UIViewController {
     }
     
     private func resetTimer() {
-        durationLabel.text = "00:00"
+        count = 0
+        updateDurationLabel()
+//        durationLabel.text = "00:00"
     }
     
     
@@ -240,9 +244,12 @@ class CameraController: UIViewController {
     
     @objc func startRecordingNowNoti(_ notification: Notification) {
         print("startRecording has been triggered by observer. ")
-        guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? MovementDirection,
-              let score = notification.userInfo?["score"] as? Int? else { return }
+        
+//        guard let title = notification.userInfo?["title"] as? String,
+//              let direction = notification.userInfo?["direction"] as? MovementDirection,
+//              let score = notification.userInfo?["score"] as? Int? else { return }
+        
+        
         
         // TODO: 정보는,, Score 가 알아야하나 Camera가 알아야하나.. ?? 굳이 따지면 Camera
         // TODO: 그런데, 몰라도 될 것 같음.
@@ -252,18 +259,17 @@ class CameraController: UIViewController {
         
         startRecording()
         changeBtnLookForRecording(animation: false)
-//        recordingBtnAction()
-        // duration update needed ??
-    
+        
+        triggerDurationTimer()
     }
     
     
     @objc func stopRecordingNoti(_ notification: Notification) {
         print("stopRecording has been triggered by observer. ")
         
-        guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? MovementDirection,
-              let score = notification.userInfo?["score"] as? Int? else { return }
+//        guard let title = notification.userInfo?["title"] as? String,
+//              let direction = notification.userInfo?["direction"] as? MovementDirection,
+//              let score = notification.userInfo?["score"] as? Int? else { return }
         
         stopRecording()
         changeBtnLookForPreparing(animation: false)
@@ -339,8 +345,7 @@ class CameraController: UIViewController {
                 self.positionTitle = variationName!
                 updateNameLabel()
                 
-                count = 0
-                updateDurationLabel()
+resetTimer()
                 print("current title from nextTapped: \(positionTitle)")
                 
                 scoreVC.setupAgain(positionTitle: self.positionTitle, direction: direction)
@@ -572,10 +577,10 @@ class CameraController: UIViewController {
     }
     
     
-    /// updating durationLabel contained
+    /// Update duration timer every seconds from 0
     private func triggerDurationTimer() {
         count = 0
-        
+        // 왜 업데이트가 안되는지는 잘 모르겠는데.. ??
         //        print("timer triggered!!")
         // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ?? 몰러
         
@@ -583,21 +588,20 @@ class CameraController: UIViewController {
             guard let `self` = self else {
                 print("self is nil in timer!!")
                 return }
-            
-            //            print("trigger working!") // 왜.. 시행하는 쪽에서만 되냐 ?? 아님. 받는 쪽에서도 작동하넹.
+
             self.count += 1
-            
+
             self.updateDurationLabel()
         }
     }
-    
+
 
     private func updateDurationLabel() {
         
         let recordingDuration = convertIntoRecordingTimeFormat(count)
         
         DispatchQueue.main.async {
-            self.durationLabel.text = recordingDuration // is this code working?
+            self.durationLabel.text = recordingDuration
         }
     }
     

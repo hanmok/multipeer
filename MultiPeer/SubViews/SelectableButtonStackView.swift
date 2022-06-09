@@ -11,8 +11,11 @@ import UIKit
 
 class SelectableButtonStackView: UIStackView {
     
-    private var selectedColor: UIColor
-    private var defaultColor: UIColor
+    private var selectedBGColor: UIColor
+    private var defaultBGColor: UIColor
+    
+    private var selectedTitleColor: UIColor
+    private var defaultTitleColor: UIColor
     
     private var prevSelectedBtnId: UUID?
     private var currentSelectedBtnId: UUID?
@@ -31,7 +34,7 @@ class SelectableButtonStackView: UIStackView {
     public func addArrangedButton(_ btn: SelectableButton) {
         super.addArrangedSubview(btn)
         buttons.append(btn)
-        btn.setupInitialColor(defaultColor)
+        btn.setupInitialColor(defaultBGColor)
     }
     
     
@@ -39,7 +42,8 @@ class SelectableButtonStackView: UIStackView {
         guard let id = id else {
             for button in buttons {
                 if button.id == currentSelectedBtnId {
-                    button.setBackgroundColor(to: defaultColor)
+                    button.setBackgroundColor(to: defaultBGColor)
+                    button.setTitleColor(to: defaultTitleColor)
                 }
             }
             
@@ -56,7 +60,9 @@ class SelectableButtonStackView: UIStackView {
                 currentSelectedBtnId = id
                 selectedBtnIndex = index
                 
-                button.setBackgroundColor(to: selectedColor)
+                button.setBackgroundColor(to: selectedBGColor)
+                button.setTitleColor(to: selectedTitleColor)
+                
                 button.setIsSelected(to: true)
                 
                 selectedBtnTitle = button.title
@@ -64,7 +70,8 @@ class SelectableButtonStackView: UIStackView {
             } else if let validPrev = prevSelectedBtnId,
                       validPrev == button.id {
                 
-                button.setBackgroundColor(to: defaultColor)
+                button.setBackgroundColor(to: defaultBGColor)
+                button.setTitleColor(to: defaultTitleColor)
                 button.setIsSelected(to: false)
             }
         }
@@ -73,13 +80,19 @@ class SelectableButtonStackView: UIStackView {
     
     
     init(
-        selectedColor: UIColor = .gray,
+//        selectedColor: UIColor = .gray,
+        selectedBGColor: UIColor = .purple500,
         defaultBGColor: UIColor = .lavenderGray300,
-        spacing: CGFloat = 10, frame: CGRect = .zero) {
+        selectedTitleColor: UIColor = .white,
+        defaultTitleColor: UIColor = .gray900,
+        spacing: CGFloat = 16, frame: CGRect = .zero) {
             
-            self.selectedColor = selectedColor
-            self.defaultColor = defaultBGColor
+            self.selectedBGColor = selectedBGColor
+            self.defaultBGColor = defaultBGColor
             
+            self.selectedTitleColor = selectedTitleColor
+            self.defaultTitleColor = defaultTitleColor
+
             super.init(frame: frame)
             
             setupSubBtnBGColor()
@@ -88,7 +101,7 @@ class SelectableButtonStackView: UIStackView {
     
     private func setupSubBtnBGColor(){
         for eachBtn in buttons {
-            eachBtn.setupInitialColor(defaultColor)
+            eachBtn.setupInitialColor(defaultBGColor)
         }
     }
     

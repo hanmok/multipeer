@@ -139,7 +139,10 @@ class ScoreController: UIViewController {
         $0.setTitle("Delete", for: .normal)
         $0.setTitleColor(.red500, for: .normal)
         $0.backgroundColor = .white
-        $0.addBorders(to: [.top, .bottom], in: .lavenderGray100, width: 1)
+//        $0.addBorders(to: [.top, .bottom], in: .lavenderGray100, width: 1)
+        $0.layer.cornerRadius = 8
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = UIColor.red500.cgColor
     }
     
     private let saveBtn = UIButton().then {
@@ -148,7 +151,8 @@ class ScoreController: UIViewController {
 
 
         $0.backgroundColor = .red500
-        $0.addBorders(to: [.top, .bottom], in: .lavenderGray100, width: 1)
+//        $0.addBorders(to: [.top, .bottom], in: .lavenderGray100, width: 1)
+        $0.layer.cornerRadius = 8
     }
     
      // MARK: - Life Cyle
@@ -190,6 +194,7 @@ class ScoreController: UIViewController {
     public func setupTrialCore(with trialCore: TrialCore) {
         
         self.trialCore = trialCore
+        if painTestName != nil {
         if setupFTrialCoreIfNeeded() {
             UIView.animate(withDuration: 0.3) {
                 self.painBtnGroup.isHidden = false
@@ -200,6 +205,7 @@ class ScoreController: UIViewController {
                 self.painBtnGroup.isHidden = true
                 self.painPositionLabel.isHidden = true
             }
+        }
         }
     }
     
@@ -282,6 +288,12 @@ class ScoreController: UIViewController {
             default: score = nil
                 
             }
+        }
+        
+        // 
+        if painTestName == nil {
+            painBtnGroup.isHidden = true
+            painPositionLabel.isHidden = true
         }
     }
     
@@ -557,7 +569,7 @@ class ScoreController: UIViewController {
         scoreBtnGroup.snp.makeConstraints { make in
             make.top.equalTo(scoreLabel.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(35)
-            make.height.equalTo(40)
+            make.height.equalTo(48)
         }
         
         painPlusBtn.wrappedString = "+"
@@ -586,7 +598,7 @@ class ScoreController: UIViewController {
 //                make.leading.trailing.equalToSuperview().inset(50)
                 make.centerX.equalToSuperview()
                 make.width.equalToSuperview().dividedBy(2.5)
-                make.height.equalTo(40)
+                make.height.equalTo(48)
             }
 //        }
         
@@ -609,19 +621,21 @@ class ScoreController: UIViewController {
         view.addSubview(saveBtn)
         
         deleteBtn.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
+//            make.leading.equalToSuperview()
+            make.leading.equalToSuperview().inset(20)
 //            make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
-            make.top.equalTo(painBtnGroup.snp.bottom).offset(70)
-            make.height.equalTo(50)
+            make.top.equalTo(painBtnGroup.snp.bottom).offset(30)
+            make.height.equalTo(48)
             make.width.equalToSuperview().dividedBy(3)
         }
         
         saveBtn.snp.makeConstraints { make in
-            make.leading.equalTo(deleteBtn.snp.trailing)
-            make.trailing.equalToSuperview()
+            make.leading.equalTo(deleteBtn.snp.trailing).offset(16)
+//            make.trailing.equalToSuperview()
+            make.trailing.equalToSuperview().inset(20)
 //            make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
-            make.top.equalTo(painBtnGroup.snp.bottom).offset(70)
-            make.height.equalTo(50)
+            make.top.equalTo(painBtnGroup.snp.bottom).offset(30)
+            make.height.equalTo(48)
         }
         
 //        if setupFTrialCoreIfNeeded() {
