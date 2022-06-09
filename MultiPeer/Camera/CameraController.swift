@@ -126,9 +126,11 @@ class CameraController: UIViewController {
     
     
     private func updatePeerTitle() {
-//        connectionManager.send(.update, trialCore)
+
         let direction: MovementDirection = MovementDirection(rawValue: trialCore.direction) ?? .neutral
-        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: trialCore.title, direction: direction)))
+        
+//        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: trialCore.title, direction: direction)))
+        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction)))
         
     }
     
@@ -342,6 +344,8 @@ class CameraController: UIViewController {
                 print("current title from nextTapped: \(positionTitle)")
                 
                 scoreVC.setupAgain(positionTitle: self.positionTitle, direction: direction)
+                
+                updatePeerTitle()
             } else { print("variation is valid!! nope!!") }
             
             hideCompleteMsgView()
@@ -1084,11 +1088,6 @@ extension CameraController: ConnectionManagerDelegate {
 
 
 extension CameraController: ScoreControllerDelegate {
-//    func updateMovement() {
-//        <#code#>
-//    }
-    
-    
     
     func orderRequest(core: TrialCore, detail: TrialDetail) {
 //        connectionManager.send
