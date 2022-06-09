@@ -56,6 +56,7 @@ protocol ConnectionManagerDelegate: NSObject {
 
 class ConnectionManager: NSObject {
     
+    var isHost = false
     var connectionState: ConnectionState = .disconnected
     var duration = 0
     

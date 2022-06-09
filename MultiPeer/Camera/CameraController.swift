@@ -141,12 +141,16 @@ class CameraController: UIViewController {
     
     deinit {
         print("cameraController deinit triggered!")
-        if self.children.count > 0 {
-            let viewControllers: [UIViewController] = self.children
-            for vc in viewControllers {
-                vc.willMove(toParent: nil)
-                vc.view.removeFromSuperview()
-                vc.removeFromParent()
+        DispatchQueue.main.async {
+            
+            
+            if self.children.count > 0 {
+                let viewControllers: [UIViewController] = self.children
+                for vc in viewControllers {
+                    vc.willMove(toParent: nil)
+                    vc.view.removeFromSuperview()
+                    vc.removeFromParent()
+                }
             }
         }
     }
@@ -286,7 +290,9 @@ class CameraController: UIViewController {
         case .disconnected:
             DispatchQueue.main.async {
                 self.connectionStateLabel.text = "Disconnected!"
-                self.showReconnectionGuideAction()
+                if self.connectionManager.isHost == false {
+                    self.showReconnectionGuideAction()
+                }
             }
         case .connected:
             DispatchQueue.main.async {
@@ -683,25 +689,22 @@ class CameraController: UIViewController {
 
     
     private func removeChildrenVC() {
-        
-        guard let previewVC = previewVC else {
+        DispatchQueue.main.async {
+            guard let previewVC = self.previewVC else {
             return
         }
-        
-        if self.children.count > 0 {
-            // 이거.. 하면 ScoreView 도 없어지는거 아님? 맞음. 이거로 방지가 되려나.. ??
-            
-            let viewcontrollers: [UIViewController] = self.children
-            for vc in viewcontrollers {
+
+            if self.children.count > 0 {
+                // 이거.. 하면 ScoreView 도 없어지는거 아님? 맞음. 이거로 방지가 되려나.. ??
                 
-                if vc != scoreVC {
-                    DispatchQueue.main.async {
+                let viewcontrollers: [UIViewController] = self.children
+                for vc in viewcontrollers {
+                    
+                    if vc != self.scoreVC {
                         vc.willMove(toParent: nil)
                         vc.view.removeFromSuperview()
                         vc.removeFromParent()
                     }
-
-
                 }
             }
         }
@@ -819,10 +822,12 @@ class CameraController: UIViewController {
         
         actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
             self.connectionManager.host()
+            self.connectionManager.isHost = true
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
             self.connectionManager.join()
+            self.connectionManager.isHost = false
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -1023,7 +1028,9 @@ extension CameraController: ConnectionManagerDelegate {
                 self.connectionStateLabel.text = "Disconnected!"
                 //                self.showConnectivityAction()
                 print("showReconnectionGuideAction!")
-                self.showReconnectionGuideAction()
+                if self.connectionManager.isHost == false {
+                    self.showReconnectionGuideAction()
+                }
             }
             
         case .connected:

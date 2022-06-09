@@ -190,10 +190,12 @@ class MovementListController: UIViewController {
         
         actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
             self.connectionManager.host()
+            self.connectionManager.isHost = true
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
             self.connectionManager.join()
+            self.connectionManager.isHost = false
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -229,6 +231,7 @@ class MovementListController: UIViewController {
 //            fatalError("fail to get subject and screen. Plz select target first")
 //        }
         // peer 한테 굳이 Subject 가 있어야하나.. ?
+            
         guard let subject = subject else { fatalError("fail to get subject ")}
         
         guard let screen = screen else { fatalError(" fail to get screen") }
@@ -245,11 +248,7 @@ class MovementListController: UIViewController {
             $0.title == title && $0.direction == direction.rawValue
         }.first!
         
-        // 방향은 위에꺼 사용해.
-        // 아마 이거때문에 나는거 아닐까 싶음 ??
-        // 이게.. 문제가 큰데..
-        // TODO: 여기서 새로 생성하지 말고, 이미 있는 screen 에서 가져와 ;;
-        
+            
 //        let trialCoreTobeUsed: TrialCore = TrialCore.save(title: title, direction: direction.rawValue)
         
 //        presentUsingChild(trialCore: trialCoreTobeUsed, rank: .follower)
@@ -446,8 +445,6 @@ class MovementListController: UIViewController {
                 }
             }
         }
-//        result == nil ? false : true
-//        return result!
         return result ?? false
     }
     
@@ -646,9 +643,9 @@ extension MovementListController: ConnectionManagerDelegate {
 
 
 extension UIViewController {
-    func printFlag(type: FlagType, count: Int) {
+    func printFlag(type: FlagType, count: Int, message: String = "" ) {
         //    print("type.rawValue, )
-        let str = type.rawValue + ", " + "flag \(count)"
+        let str = type.rawValue + ", " + "flag \(count)" + " " + message
         print(str)
     }
 }
@@ -657,5 +654,6 @@ enum FlagType: String {
     case updatingTrialCore
     case defaultSubjectScreen
     case printingSequence
+    case printingScoresFromCell
+    case rsBug
 }
-

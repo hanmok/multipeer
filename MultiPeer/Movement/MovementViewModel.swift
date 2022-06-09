@@ -31,7 +31,7 @@ struct MovementViewModel {
     
     // TODO: convert score var into scoreLabel, Not Complete yet
     func convertScoreToString() -> [String] {
-        
+        // 여기서 출력했던 것 같은데 ??
         var temp: [String] = []
         
         // Neutral
@@ -97,4 +97,5 @@ struct MovementViewModel {
         }
     }
 }
+
 

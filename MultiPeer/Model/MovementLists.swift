@@ -56,9 +56,9 @@ extension CaseIterable where Self: Equatable {
 }
 
 enum MovementDirectionList: String {
-    case left
-    case right
-    case neutral
+    case left = "Left"
+    case right = "Right"
+    case neutral = "Neutral"
 }
 
 struct Dummy {

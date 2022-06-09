@@ -67,7 +67,11 @@ class ScoreController: UIViewController {
     var pain: Bool?
     var scoreType: ScoreType
     
-    var painTestName: String?
+    var painTestName: String? {
+        didSet {
+            print("painTestName has been setup, currentTitle: \(positionTitle), direction: \(direction.rawValue)")
+        }
+    }
     var varTestName: String?
     
     weak var delegate: ScoreControllerDelegate?
@@ -149,11 +153,22 @@ class ScoreController: UIViewController {
     
     init(positionTitle: String, direction: String) {
         self.positionTitle = positionTitle
+        
         guard let direction = MovementDirection(rawValue: direction) else {fatalError()}
+        
         self.direction = direction
         self.scoreType = movementToScoreType[positionTitle] ?? .zeroToThree
         
         self.painTestName = (movementWithPainTestTitle[positionTitle])
+        
+//        printFlag(type: .rsBug, count: 9, message: "title: \(positionTitle), direction: \(direction)")
+        print("init, painTestName: \(painTestName), positionTitle: \(positionTitle), direction: \(direction.rawValue)")
+        
+        if positionTitle == MovementList.rotaryStability.rawValue && direction.rawValue == MovementDirectionList.left.rawValue {
+            print("title, direction: \(positionTitle), \(direction), rsbug, count: 11")
+            self.painTestName = nil
+        }
+        
         self.varTestName = (movementWithVariation[positionTitle])
 //        self.parentController = parentVC
         
@@ -190,13 +205,23 @@ class ScoreController: UIViewController {
     
     /// called from CameraController
     public func setupAgain(with movementDirectionScoreInfo: MovementDirectionScoreInfo) {
-                
+                print("setupagain triggered")
         self.positionTitle = movementDirectionScoreInfo.title
         self.direction = movementDirectionScoreInfo.direction
         self.scoreType = movementToScoreType[movementDirectionScoreInfo.title] ?? .zeroToThree
         
         
         self.painTestName = (movementWithPainTestTitle[movementDirectionScoreInfo.title])
+//        printFlag(type: .rsBug, count: 13, message: "currentTitle: \()")
+        printFlag(type: .rsBug, count: 13, message: "currentTitle: \(movementDirectionScoreInfo.title), direction: \(movementDirectionScoreInfo.direction.rawValue)")
+        
+        print("setupAgain, painTestName: \(painTestName), positionTitle: \(movementDirectionScoreInfo.title), direction: \(movementDirectionScoreInfo.title)")
+        
+        if movementDirectionScoreInfo.title == MovementList.rotaryStability.rawValue && movementDirectionScoreInfo.direction.rawValue == MovementDirectionList.left.rawValue {
+            print("title, direction: \(positionTitle), \(direction), rsbug, count: 12")
+            self.painTestName = nil
+        }
+        
         self.varTestName = (movementWithVariation[movementDirectionScoreInfo.title])
         
         print("painTestName: \(painTestName)")
@@ -274,9 +299,11 @@ class ScoreController: UIViewController {
     
     @objc func saveTapped() {
         // if tapped Button is "Hold" then send it back to CameraController
+        printFlag(type: .rsBug, count: 0)
         
         if saveConditionSatisfied() {
-            
+        
+            printFlag(type: .rsBug, count: 1)
             guard let score = score else { fatalError("score is nil") }
             print("save Condition satisfied.")
             
@@ -309,11 +336,8 @@ class ScoreController: UIViewController {
                 delegate?.saveAction(core: fClearingCore!, detail: fClearingDetail!)
                 delegate?.orderRequest(core: fClearingCore!, detail: fClearingDetail!)
                 
-
                 fClearingCore!.updateLatestScore()
-            } else {
-                print("fClearingCore or fClearingDetail is invalid ")
-            }
+            } else { print("fClearingCore or fClearingDetail is invalid ") }
             
         } else { print("save Condition not satisfied.") }
         
@@ -332,18 +356,14 @@ class ScoreController: UIViewController {
         print("ffff setScore triggered, pain: \(pain)")
         var converted = Int64.DefaultValue.trialPain
         
-
         if movementWithPain.contains(title) && pain != nil {
-            print("ffff if if setscore called, title: \(title), pain : \(pain)")
             converted = pain! ? .Value.painFul : .Value.notPainful
-        } else {
-            print("ffff else in setscore called, title: \(title), pain: \(pain) ")
         }
         //TODO: AnkleClearing 의 경우에 대해 PAIN 값 정해주기 .
         
         trialDetail.setValue(score, forKey: .TrialDetailStr.score)
         trialDetail.setValue(converted, forKey: .TrialDetailStr.isPainful)
-        print("ffff score: \(score), pain: \(converted)")
+        print("ffff title: \(title), score: \(score), pain: \(converted)")
         trialDetail.saveChanges()
     }
 
@@ -393,16 +413,21 @@ class ScoreController: UIViewController {
     
     // what is required conditions ?
     func saveConditionSatisfied() -> Bool {
+        printFlag(type: .rsBug, count: 2)
         guard let score = score else {
             return false }
-        
+        printFlag(type: .rsBug, count: 3)
+        printFlag(type: .rsBug, count: 8, message: "painTestName: \(painTestName)")
         if painTestName != nil { // if painTest exist,
             if score == .Value.hold {
+                printFlag(type: .rsBug, count: 4)
                 return true
             } else {
+                printFlag(type: .rsBug, count: 5)
                 return pain != nil
             }
         } else {
+            printFlag(type: .rsBug, count: 7)
             return true // if score is selected -> true. or -> false
         }
     }
@@ -576,7 +601,8 @@ class ScoreController: UIViewController {
         
         deleteBtn.snp.makeConstraints { make in
             make.leading.equalToSuperview()
-            make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
+//            make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
+            make.top.equalTo(painBtnGroup.snp.bottom).offset(70)
             make.height.equalTo(50)
             make.width.equalToSuperview().dividedBy(3)
         }
@@ -584,13 +610,15 @@ class ScoreController: UIViewController {
         saveBtn.snp.makeConstraints { make in
             make.leading.equalTo(deleteBtn.snp.trailing)
             make.trailing.equalToSuperview()
-            make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
+//            make.top.equalTo(painBtnGroup.snp.bottom).offset(25)
+            make.top.equalTo(painBtnGroup.snp.bottom).offset(70)
             make.height.equalTo(50)
         }
         
 //        if setupFTrialCoreIfNeeded() {
 //            painBtnGroup.isHidden = true
 //        } else { painBtnGroup.isHidden = false }
+        // 집중이 앙댕 .. 어떡하지 ??
     }
     
     
