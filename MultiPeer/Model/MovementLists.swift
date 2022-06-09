@@ -241,7 +241,7 @@ public enum ScoreType {
     case RYG
 }
 
-let movementToScoreType: [String: ScoreType] = [
+let movementNameToScoreType: [String: ScoreType] = [
     MovementList.deepSquat.rawValue: .zeroThreeHold,
     MovementList.deepSquatVar.rawValue: .zeroToTwo,
     

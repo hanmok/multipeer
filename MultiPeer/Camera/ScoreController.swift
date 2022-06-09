@@ -18,7 +18,9 @@ protocol ScoreControllerDelegate: AnyObject {
 
     func saveAction(core: TrialCore, detail: TrialDetail)
     
-    func updateMovement(with movementDirectionScoreInfo: MovementDirectionScoreInfo)
+//    func updateMovement(with movementDirectionScoreInfo: MovementDirectionScoreInfo)
+    
+    func updateMovement()
     
     func updatePressedBtnTitle(with btnTitle: String)
     
@@ -157,7 +159,7 @@ class ScoreController: UIViewController {
         guard let direction = MovementDirection(rawValue: direction) else {fatalError()}
         
         self.direction = direction
-        self.scoreType = movementToScoreType[positionTitle] ?? .zeroToThree
+        self.scoreType = movementNameToScoreType[positionTitle] ?? .zeroToThree
         
         self.painTestName = (movementWithPainTestTitle[positionTitle])
         
@@ -204,27 +206,34 @@ class ScoreController: UIViewController {
     
     
     /// called from CameraController
-    public func setupAgain(with movementDirectionScoreInfo: MovementDirectionScoreInfo) {
+    public func setupAgain(positionTitle: String, direction: MovementDirection) {
+        print("received positionTitle from scoreController: \(positionTitle)")
                 print("setupagain triggered")
-        self.positionTitle = movementDirectionScoreInfo.title
-        self.direction = movementDirectionScoreInfo.direction
-        self.scoreType = movementToScoreType[movementDirectionScoreInfo.title] ?? .zeroToThree
+//        self.positionTitle = movementDirectionScoreInfo.title
+        self.positionTitle = positionTitle
+//        self.direction = movementDirectionScoreInfo.direction
+        self.direction = direction
+//        self.scoreType = movementNameToScoreType[movementDirectionScoreInfo.title] ?? .zeroToThree
+        
+//        self.scoreType = movementNameToScoreType[positionTitle] ?? .zeroToThree
+        print("scoreVC, setupAgain, positionTitle: \(positionTitle)")
+        self.scoreType = movementNameToScoreType[positionTitle]!
         
         
-        self.painTestName = (movementWithPainTestTitle[movementDirectionScoreInfo.title])
+        self.painTestName = (movementWithPainTestTitle[positionTitle])
 //        printFlag(type: .rsBug, count: 13, message: "currentTitle: \()")
-        printFlag(type: .rsBug, count: 13, message: "currentTitle: \(movementDirectionScoreInfo.title), direction: \(movementDirectionScoreInfo.direction.rawValue)")
+//        printFlag(type: .rsBug, count: 13, message: "currentTitle: \(movementDirectionScoreInfo.title), direction: \(movementDirectionScoreInfo.direction.rawValue)")
         
-        print("setupAgain, painTestName: \(painTestName), positionTitle: \(movementDirectionScoreInfo.title), direction: \(movementDirectionScoreInfo.title)")
+//        print("setupAgain, painTestName: \(painTestName), positionTitle: \(movementDirectionScoreInfo.title), direction: \(movementDirectionScoreInfo.title)")
         
-        if movementDirectionScoreInfo.title == MovementList.rotaryStability.rawValue && movementDirectionScoreInfo.direction.rawValue == MovementDirectionList.left.rawValue {
+        if positionTitle == MovementList.rotaryStability.rawValue && direction.rawValue == MovementDirectionList.left.rawValue {
             print("title, direction: \(positionTitle), \(direction), rsbug, count: 12")
             self.painTestName = nil
         }
         
-        self.varTestName = (movementWithVariation[movementDirectionScoreInfo.title])
+        self.varTestName = movementWithVariation[positionTitle]
         
-        print("painTestName: \(painTestName)")
+//        print("painTestName: \(painTestName)")
 //        print("varTestName: \(varTestName)")
         
         viewDidLoad()
@@ -507,7 +516,7 @@ class ScoreController: UIViewController {
             scoreBtnGroup.addArrangedButton($0)
         }
         
-        
+        print("scoreType: \(scoreType)")
         // Three Elements
         if scoreType == .zeroThreeHold || scoreType == .zeroToTwo || scoreType == .RYG{
 

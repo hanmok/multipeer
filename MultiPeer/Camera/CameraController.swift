@@ -113,7 +113,7 @@ class CameraController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("CameraController viewdidLoad triggered")
-        setupNavigationBar()
+        updateNameLabel()
         setupAddTargets()
         setupLayout()
         addNotificationObservers()
@@ -158,7 +158,10 @@ class CameraController: UIViewController {
     
     
     // MARK: - UI Funcs
-    private func setupNavigationBar() {
+    private func updateNameLabel() {
+        print("updateNameLabel triggered!!")
+        print("current title from updateNameLabel: \(positionTitle)")
+        print("direction: \(direction)")
         DispatchQueue.main.async {
             if self.direction == .neutral {
                 self.movementNameLabel.text = self.positionTitle
@@ -323,7 +326,23 @@ class CameraController: UIViewController {
             // CameraController Delegate
         } else {
         // TODO: update Position for Variation
-//        updatePosition(with: <#T##PositionDirectionScoreInfo#>)
+//            if positionTitle == MovementList.deepSquat.rawValue {
+//                positionTitle = movementWithVariation[positionTitle]!
+//            }
+            
+            variationName = movementWithVariation[positionTitle]
+            print("variation : \(variationName)")
+            if variationName != nil {
+                print("variation is valid!!")
+                self.positionTitle = variationName!
+                updateNameLabel()
+                
+                count = 0
+                updateDurationLabel()
+print("current title from nextTapped: \(positionTitle)")
+                
+                scoreVC.setupAgain(positionTitle: self.positionTitle, direction: direction)
+            } else { print("variation is valid!! nope!!") }
             
             hideCompleteMsgView()
         }
@@ -844,6 +863,8 @@ class CameraController: UIViewController {
         $0.textColor = .black
         $0.textAlignment = .center
         $0.font = UIFont.systemFont(ofSize: 20)
+//        $0.numberOfLines = 0
+        $0.adjustsFontSizeToFitWidth = true
     }
     
     private let imageView = UIImageView()
@@ -1063,6 +1084,8 @@ extension CameraController: ConnectionManagerDelegate {
 
 
 extension CameraController: ScoreControllerDelegate {
+    
+    
     func orderRequest(core: TrialCore, detail: TrialDetail) {
 //        connectionManager.send
         saveAction(core: core, detail: detail)
@@ -1144,18 +1167,11 @@ extension CameraController: ScoreControllerDelegate {
     }
     
     // triggered if 'Next' Tapped
-    func updateMovement(with movementDirectionScoreInfo: MovementDirectionScoreInfo) {
-
-        self.positionTitle = trialCore.title
-
-        guard let validDirection = MovementDirection(rawValue: trialCore.direction) else {fatalError() }
-
-        self.direction = validDirection
-        scoreVC.setupAgain(with: movementDirectionScoreInfo)
-    }
+    
+    
     
     func prepareRecording() {
-        setupNavigationBar()
+        updateNameLabel()
         removeChildrenVC()
         resetTimer()
         hideScoreView()
