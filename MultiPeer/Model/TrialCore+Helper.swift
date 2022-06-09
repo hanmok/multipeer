@@ -144,14 +144,7 @@ extension TrialCore {
     
     @discardableResult
     static func save(title: String, direction: String) -> TrialCore {
-//        DispatchQueue.main.async {
-//            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-//                fatalError("error !! ")
-//            }
-//        }
-
         
-//        DispatchQueue.main.async {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
                 fatalError("error !! ")
             }
@@ -190,7 +183,7 @@ extension TrialCore {
                 fatalError()
             }
         }
-//            return
+
 
 //        }
         fatalError() // little weird..

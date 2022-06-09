@@ -30,7 +30,9 @@ class MovementListController: UIViewController {
     
     // TODO: change to false after some updates..
     // TODO: false -> 정상 작동 ;;
-    var testMode = false
+//    var testMode = false
+    
+    var testMode = true
     
     var trialCores: [[TrialCore]] = [[]]
     /// 화면에 나타날 trialCores
@@ -103,18 +105,24 @@ class MovementListController: UIViewController {
         print("viewDidLoad in MovementListController called")
         // FIXME: updateingTrialCore 버그 출현 지역 ;; 왜 ... 버그가.. 발생할까.. ?
 //        printFlag(type: .updatingTrialCore, count: 0)
-        printFlag(type: .updatingTrialCore, count: 1)
-        
+//        printFlag(type: .updatingTrialCore, count: 1)
+//        printFlag(type: .printingSequence, count: 0)
         registerCollectionView()
-        
+//        printFlag(type: .printingSequence, count: 1)
         connectionManager.delegate = self
-        
+//        printFlag(type: .printingSequence, count: 2)
+        // 여기에서 에러
         fetchDefaultScreen()
-        updateTrialCores(screen: screen)
-        setupLayout()
-        setupAddTargets()
-        addNotificationObservers()
         
+        printFlag(type: .printingSequence, count: 3)
+        updateTrialCores(screen: screen)
+        printFlag(type: .printingSequence, count: 4)
+        setupLayout()
+        printFlag(type: .printingSequence, count: 5)
+        setupAddTargets()
+        printFlag(type: .printingSequence, count: 6)
+        addNotificationObservers()
+        printFlag(type: .printingSequence, count: 7)
         printCurrentState()
     }
     
@@ -141,15 +149,14 @@ class MovementListController: UIViewController {
                     subject = fetchedSubjects.first!
                 }
                 guard let subject = subject else {
-                    return
+                    fatalError(" empty subject ")
                 }
-                print("fetched Subject's name: \(subject.name)")
+
                 if !subject.screens.isEmpty {
                     screen = subject.screens.sorted{$0.date < $1.date}.first
                     print("fetchedScreen date: \(screen?.date)")
-                    //                    updateTrialCores(subject: subject, screen: screen!)
-                    print("sortedCoreError flag1")
                     printFlag(type: .updatingTrialCore, count: 2)
+                    // 여기에서 에러남 ;; 왜 ?
                     updateTrialCores(screen: screen)
                     print("updateTrialCores called")
                 } else {
@@ -176,7 +183,7 @@ class MovementListController: UIViewController {
         subjectSettingBtn.addTarget(self, action: #selector(subjectBtnTapped), for: .touchUpInside)
     }
     
-    
+    // TODO: Host 인 경우, 어떤 값을 설정해주기.
     @objc func showConnectivityAction(_ sender: UIButton) {
         print("connect btn tapped!!")
         let actionSheet = UIAlertController(title: "Connect Camera", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
@@ -209,16 +216,23 @@ class MovementListController: UIViewController {
             name: .presentCameraKey, object: nil)
     }
     
+    // 여기서 Crash 발생. Why ??
     @objc func notifiedPresentCamera(_ notification: Notification) {
         print("presentCamera triggered by observing notification")
         
-        
+        if !isCameraOn {
         printFlag(type: .defaultSubjectScreen, count: 0)
         
-        guard let subject = subject,
-              let screen = screen else {
-            fatalError("fail to get subject and screen. Plz select target first")
-        }
+
+//        guard let subject = subject,
+//              let screen = screen else {
+//            fatalError("fail to get subject and screen. Plz select target first")
+//        }
+        // peer 한테 굳이 Subject 가 있어야하나.. ?
+        guard let subject = subject else { fatalError("fail to get subject ")}
+        
+        guard let screen = screen else { fatalError(" fail to get screen") }
+
         
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? MovementDirection,
@@ -226,22 +240,22 @@ class MovementListController: UIViewController {
             print("failed to converting userInfo back.")
             return }
         
-        let movementWithDirectionInfo = MovementDirectionScoreInfo(title: title, direction: direction, score: score)
+//        let movementWithDirectionInfo = MovementDirectionScoreInfo(title: title, direction: direction, score: score)
+        var trialCore = screen.trialCores.filter {
+            $0.title == title && $0.direction == direction.rawValue
+        }.first!
         
         // 방향은 위에꺼 사용해.
-        let trialCoreTobeUsed: TrialCore = TrialCore.save(title: title, direction: direction.rawValue)
+        // 아마 이거때문에 나는거 아닐까 싶음 ??
+        // 이게.. 문제가 큰데..
+        // TODO: 여기서 새로 생성하지 말고, 이미 있는 screen 에서 가져와 ;;
         
+//        let trialCoreTobeUsed: TrialCore = TrialCore.save(title: title, direction: direction.rawValue)
         
-//        let trialCore =
-        DispatchQueue.main.async {
-            let cameraVC = CameraController(
-                connectionManager: self.connectionManager,
-//                screen: screen,
-                trialCore: trialCoreTobeUsed,
-                rank: .follower
-            )
-            
-            self.present(cameraVC, animated: true)
+//        presentUsingChild(trialCore: trialCoreTobeUsed, rank: .follower)
+        presentUsingChild(trialCore: trialCore, rank: .follower)
+        } else {
+            // update peer's camera title
         }
     }
     
@@ -270,8 +284,9 @@ class MovementListController: UIViewController {
         if screen != nil { self.screen = screen! } else {
             self.screen = Screen.save() // default Screen
         }
-        
-        
+//        guard let screen = screen else { fatalError("empty screen")}
+//        guard screen.trialCores.count != 0 else { fatalError("empty trialCore")}
+        // 여기서 터짐.
         
         let sortedCores = self.screen!.trialCores.sorted {
             if $0.tag != $1.tag {
@@ -285,8 +300,12 @@ class MovementListController: UIViewController {
         // FIXME: unwrapping fatal error
         printFlag(type: .updatingTrialCore, count: 0)
         print("sortedCores: \(sortedCores)")
-        print("screen 을 가져온게 맞아..? ")
+        print("screen 을 가져온게 맞아..? ") // 아마.. 맞는데 비어있는 느낌 ??
         // screen 이 비었어.
+//        guard let screen = screen else {
+//            fatalError("screen empty")
+//        }
+
         var prev = sortedCores.first!
         
         self.trialCores.append([])
@@ -357,11 +376,44 @@ class MovementListController: UIViewController {
         
         print("trialCore passed to cameracontroller : \(selectedTrial.title) \(selectedTrial.direction)")
         
+//        DispatchQueue.main.async {
+//
+//            self.cameraVC = CameraController(
+//                connectionManager: self.connectionManager,
+////                screen: screen,
+//                trialCore: selectedTrial,
+//                rank: rank
+//            )
+//
+//            guard self.cameraVC != nil else { return }
+//            self.cameraVC!.delegate = self
+//            self.addChild(self.cameraVC!) // 왜 Nav 말고 child 로 했었을까? ConnectionManager 때문에 ?
+//            self.view.addSubview(self.cameraVC!.view)
+////            self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+//            self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
+//
+//            UIView.animate(withDuration: 0.3) {
+//                self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+//            }
+//        }
+        
+        presentUsingChild(trialCore: selectedTrial, rank: rank)
+        
+        
+        let direction: MovementDirection = MovementDirection(rawValue: selectedTrial.direction) ?? .neutral
+        
+//        connectionManager.send(.presentCamera)
+        connectionManager.send(MsgWithMovementDetail(message: .presentCamera, detailInfo: MovementDirectionScoreInfo(title: selectedTrial.title, direction: direction)))
+    }
+    
+    private func presentUsingChild(trialCore: TrialCore, rank: Rank) {
+        
         DispatchQueue.main.async {
+            
             self.cameraVC = CameraController(
                 connectionManager: self.connectionManager,
 //                screen: screen,
-                trialCore: selectedTrial,
+                trialCore: trialCore,
                 rank: rank
             )
             
@@ -376,13 +428,27 @@ class MovementListController: UIViewController {
                 self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
             }
         }
-        
-        
-        let direction: MovementDirection = MovementDirection(rawValue: selectedTrial.direction) ?? .neutral
-        
-//        connectionManager.send(.presentCamera)
-        connectionManager.send(MsgWithMovementDetail(message: .presentCamera, detailInfo: MovementDirectionScoreInfo(title: selectedTrial.title, direction: direction)))
-        
+    }
+    
+//    private func checkIfHasCameraAsChild() -> Bool {
+//        self.children.forEach { }
+//    }
+    
+    private var isCameraOn: Bool {
+        var result: Bool?
+        DispatchQueue.main.async {
+            let children = self.children
+            
+            for child2 in children {
+                if child2 is CameraController {
+                    result = true
+                    break
+                }
+            }
+        }
+//        result == nil ? false : true
+//        return result!
+        return result ?? false
     }
     
 
@@ -583,11 +649,13 @@ extension UIViewController {
     func printFlag(type: FlagType, count: Int) {
         //    print("type.rawValue, )
         let str = type.rawValue + ", " + "flag \(count)"
+        print(str)
     }
 }
 
 enum FlagType: String {
     case updatingTrialCore
     case defaultSubjectScreen
+    case printingSequence
 }
 

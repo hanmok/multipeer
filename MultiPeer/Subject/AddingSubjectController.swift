@@ -29,7 +29,7 @@ class AddingSubjectController: UIViewController {
     
     private let maleBtn = SelectableButton(title: "Male")
     private let femaleBtn = SelectableButton(title: "Female")
-    private let genderStackView = SelectableButtonStackView(selectedColor: .green, defaultColor: .gray, spacing: 40).then {
+    private let genderStackView = SelectableButtonStackView(selectedColor: .green, defaultBGColor: .gray, spacing: 40).then {
         $0.distribution = .fillEqually
         $0.spacing = 10
         $0.axis = .horizontal

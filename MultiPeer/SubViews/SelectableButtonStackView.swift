@@ -74,19 +74,19 @@ class SelectableButtonStackView: UIStackView {
     
     init(
         selectedColor: UIColor = .gray,
-        defaultColor: UIColor = .black,
+        defaultBGColor: UIColor = .lavenderGray300,
         spacing: CGFloat = 10, frame: CGRect = .zero) {
             
             self.selectedColor = selectedColor
-            self.defaultColor = defaultColor
+            self.defaultColor = defaultBGColor
             
             super.init(frame: frame)
             
-            setupSubBtnColor()
+            setupSubBtnBGColor()
             setupInitialLayout()
         }
     
-    private func setupSubBtnColor(){
+    private func setupSubBtnBGColor(){
         for eachBtn in buttons {
             eachBtn.setupInitialColor(defaultColor)
         }

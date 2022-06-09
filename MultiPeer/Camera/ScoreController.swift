@@ -111,7 +111,7 @@ class ScoreController: UIViewController {
         $0.setTitleColor(.gray900, for: .normal)
     }
     
-    public var painBtnGroup = SelectableButtonStackView(defaultColor: .lavenderGray300).then {
+    public var painBtnGroup = SelectableButtonStackView(defaultBGColor: .lavenderGray300).then {
         $0.spacing = 16
     }
     

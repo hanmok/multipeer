@@ -29,24 +29,22 @@ class CameraController: UIViewController {
     
     var positionTitle: String
     var direction: MovementDirection
+    
     var trialCore: TrialCore
-    // FIXME: Countdown Before Recording
-    // 그런데.. 3초를 굳이 세야하나 ?
     
     var systemSoundID: SystemSoundID = 1057
 
     var timeDifference: CGFloat = 0 // or CMTime
-    
-//    var screen: Screen
-    
+        
     var rank: Rank
     
     private var pressedBtnTitle = ""
     
     var updatingDurationTimer = Timer()
     var decreasingTimer = Timer()
+    
     var count = 0
-    var decreasingCount = 3
+//    var decreasingCount = 3
     
     var isRecordingEnded = false
     
@@ -62,13 +60,13 @@ class CameraController: UIViewController {
     
     private var isRecording = false
     
-
+    private let shouldRecordLater = false
     
     var variationName: String?
     var trialDetail: TrialDetail?
     var sequentialPainPosition: String?
     
-
+    
     
     // MARK: - Life Cycle
     
@@ -93,13 +91,16 @@ class CameraController: UIViewController {
             self.direction = direction
             
             scoreVC = ScoreController(positionTitle: trialCore.title, direction: trialCore.direction)
+            
             self.rank = rank
+            
             super.init(nibName: nil, bundle: nil)
             connectionManager.delegate = self
             scoreVC.delegate = self
             scoreVC.parentController = self
             
             setupTrialDetail(with: trialCore)
+            
             print("cameraController init")
         }
 
@@ -236,7 +237,13 @@ class CameraController: UIViewController {
         
         // TODO: 정보는,, Score 가 알아야하나 Camera가 알아야하나.. ?? 굳이 따지면 Camera
         // TODO: 그런데, 몰라도 될 것 같음.
+        
+        // remove preview if master order recording
+        removeChildrenVC()
+        
         startRecording()
+        changeBtnLookForRecording(animation: false)
+//        recordingBtnAction()
         // duration update needed ??
     
     }
@@ -250,6 +257,7 @@ class CameraController: UIViewController {
               let score = notification.userInfo?["score"] as? Int? else { return }
         
         stopRecording()
+        changeBtnLookForPreparing(animation: false)
     }
     
     
@@ -334,6 +342,50 @@ class CameraController: UIViewController {
         recordingBtnAction()
     }
     
+    private func changeBtnLookForRecording(animation: Bool) {
+        if animation {
+            UIView.animate(withDuration: 0.4) {
+                self.outerRecCircle.backgroundColor = .lavenderGray900
+                self.innerShape.layer.cornerRadius = 6
+                self.recordingTimerBtn.setTitleColor(.gray900, for: .normal)
+                
+                self.leftShape.layer.cornerRadius = 2
+                self.leftShape.backgroundColor = .lavenderGray400
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.outerRecCircle.backgroundColor = .lavenderGray900
+                self.innerShape.layer.cornerRadius = 6
+                self.recordingTimerBtn.setTitleColor(.gray900, for: .normal)
+                
+                self.leftShape.layer.cornerRadius = 2
+                self.leftShape.backgroundColor = .lavenderGray400
+            }
+
+        }
+    }
+    private func changeBtnLookForPreparing(animation: Bool ) {
+        if animation {
+        UIView.animate(withDuration: 0.4) {
+            self.outerRecCircle.backgroundColor = .red
+            self.innerShape.layer.cornerRadius = 18
+            self.recordingTimerBtn.setTitleColor(.red, for: .normal)
+            
+            self.leftShape.layer.cornerRadius = 10
+            self.leftShape.backgroundColor = .red
+        }
+        } else {
+            DispatchQueue.main.async {
+                self.outerRecCircle.backgroundColor = .red
+                self.innerShape.layer.cornerRadius = 18
+                self.recordingTimerBtn.setTitleColor(.red, for: .normal)
+                
+                self.leftShape.layer.cornerRadius = 10
+                self.leftShape.backgroundColor = .red
+            }
+        }
+    }
+    
     @objc func recordingBtnAction() {
         // Start Recording!!
         removeChildrenVC()
@@ -344,26 +396,14 @@ class CameraController: UIViewController {
             
             startRecording()
             
-            UIView.animate(withDuration: 0.4) {
-                self.outerRecCircle.backgroundColor = .lavenderGray900
-                self.innerShape.layer.cornerRadius = 6
-                self.recordingTimerBtn.setTitleColor(.gray900, for: .normal)
-                
-                self.leftShape.layer.cornerRadius = 2
-                self.leftShape.backgroundColor = .lavenderGray400
-            }
+            changeBtnLookForRecording(animation: true)
+            
         } else {
             
             stopRecording()
             
-            UIView.animate(withDuration: 0.4) {
-                self.outerRecCircle.backgroundColor = .red
-                self.innerShape.layer.cornerRadius = 18
-                self.recordingTimerBtn.setTitleColor(.red, for: .normal)
-                
-                self.leftShape.layer.cornerRadius = 10
-                self.leftShape.backgroundColor = .red
-            }
+
+            changeBtnLookForPreparing(animation: true)
             
             // Send Stop Msg
             // start, stop 할 때가 아닌,  Save 눌렀을 때 Core Info 를 전달해야함.
@@ -389,16 +429,16 @@ class CameraController: UIViewController {
             //            startRecording()
             recordingBtnAction()
         } else {
-//             TODO: Uncomment after testing
-//            _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {  [weak self] _ in
-//                self?.recordingBtnAction()
-//            }
-            
-//            playCountDownLottie()
-            
-            
-            self.recordingBtnAction()
-            
+            // MARK: - Testing Mode
+            //             TODO: Uncomment after testing
+            if shouldRecordLater {
+                _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {  [weak self] _ in
+                    self?.recordingBtnAction()
+                }
+                playCountDownLottie()
+            } else {
+                self.recordingBtnAction()
+            }
         }
     }
     
@@ -655,9 +695,13 @@ class CameraController: UIViewController {
             for vc in viewcontrollers {
                 
                 if vc != scoreVC {
-                    vc.willMove(toParent: nil)
-                    vc.view.removeFromSuperview()
-                    vc.removeFromParent()
+                    DispatchQueue.main.async {
+                        vc.willMove(toParent: nil)
+                        vc.view.removeFromSuperview()
+                        vc.removeFromParent()
+                    }
+
+
                 }
             }
         }
