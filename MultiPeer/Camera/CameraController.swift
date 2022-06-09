@@ -339,7 +339,7 @@ class CameraController: UIViewController {
                 
                 count = 0
                 updateDurationLabel()
-print("current title from nextTapped: \(positionTitle)")
+                print("current title from nextTapped: \(positionTitle)")
                 
                 scoreVC.setupAgain(positionTitle: self.positionTitle, direction: direction)
             } else { print("variation is valid!! nope!!") }
@@ -1084,6 +1084,10 @@ extension CameraController: ConnectionManagerDelegate {
 
 
 extension CameraController: ScoreControllerDelegate {
+//    func updateMovement() {
+//        <#code#>
+//    }
+    
     
     
     func orderRequest(core: TrialCore, detail: TrialDetail) {

@@ -20,7 +20,7 @@ protocol ScoreControllerDelegate: AnyObject {
     
 //    func updateMovement(with movementDirectionScoreInfo: MovementDirectionScoreInfo)
     
-    func updateMovement()
+//    func updateMovement()
     
     func updatePressedBtnTitle(with btnTitle: String)
     
