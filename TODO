@@ -325,3 +325,48 @@ Retry Btn UI 바꾸기.
 Peer 측 Connection State 표시 안됨.
 
 
+Connection 을 위주로 처리하면 좋을 것 같아
+그리고, 협업도 해야해
+API 에 어떤 것을 보내야하는지,
+peer 화면은 어떻게 되어야 하는지,
+
+
+0.
+FMS 테스트 진행방식부터 알면 좋음.. Peer, 전체적인 면에서...
+
+
+1.
+Duration Update
+
+2.
+Connection Update
+
+두개가 가장 급할듯
+
+
+3. API Call
+
+4. Direction Check (Duplicate)
+
+
+5. 점수 체크 안해도 Save 눌림.. ;; ?? ? 
+
+
+duplicate 문구 수정
+
+
+The difference is subtle, but in this case, Duplicate Data would be preferred. I would interpret the two phrases as follows:
+
+Duplicate Data: Entries that have been added by a system user multiple times, for example, re-registering because you have forgotten your details.
+
+Duplicated Data: Someone has deliberately taken a precise duplicate of the data - or a proportion of it - maybe for backup or reporting purposes. It may have been accidentally added to the original.
+
+In the context of what you are talking about, the difference is important, because the second implies exact duplicates, whereas the first is a much more complex issue.
+
+And yes, "exact duplicate" and "partial duplicate" are misnomers - it is either a duplicate or not - but these are the terms used.
+
+
+출처: https://english.stackexchange.com/questions/67463/duplicate-data-or-duplicated-data
+
+
+

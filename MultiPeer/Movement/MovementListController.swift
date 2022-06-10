@@ -32,6 +32,7 @@ class MovementListController: UIViewController {
     // TODO: false -> 정상 작동 ;;
     //    var testMode = false
     
+//    var testMode = false
     var testMode = true
     
     var trialCores: [[TrialCore]] = [[]]

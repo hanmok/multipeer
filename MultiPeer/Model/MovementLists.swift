@@ -288,4 +288,5 @@ enum FlagType: String {
     case printingSequence
     case printingScoresFromCell
     case rsBug
+    case durationBug
 }

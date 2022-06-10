@@ -60,14 +60,13 @@ class CameraController: UIViewController {
     
     private var isRecording = false
     
-    private let shouldRecordLater = false
+//    private let shouldRecordLater = false
+    private let shouldRecordLater = true
     
     var variationName: String?
 
     var trialDetail: TrialDetail?
 
-    
-    
     
     // MARK: - Life Cycle
     
@@ -243,10 +242,20 @@ class CameraController: UIViewController {
         // remove preview if master order recording
         removeChildrenVC()
         
-        startRecording()
+        let recordingTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+        
+//            DispatchQueue.main.async {
+//                self.recordingTimerBtn.setTitle("\(milliTime)", for: .normal)
+//
+//            }
+        
+        RunLoop.main.add(recordingTimer, forMode: .common)
+        
+//        startRecording()
         changeBtnLookForRecording(animation: false)
         
         triggerDurationTimer()
+        
     }
     
     
@@ -402,6 +411,8 @@ class CameraController: UIViewController {
             
             
             startRecording()
+ 
+            
             
             changeBtnLookForRecording(animation: true)
             
@@ -431,7 +442,7 @@ class CameraController: UIViewController {
     }
     
     @objc func timerRecordingBtnTapped(_ sender: UIButton) {
-        
+        // FIXME: Condition 이 약간 이상해보이는데. ?
         if isRecording {
             //            startRecording()
             recordingBtnAction()
@@ -567,30 +578,37 @@ class CameraController: UIViewController {
     }
     
     
+    // 함수는 똑같은데, 이건 안되고 저건 된다.
     /// Update duration timer every seconds from 0
     private func triggerDurationTimer() {
+        printFlag(type: .durationBug, count: -1)
         count = 0
         // 왜 업데이트가 안되는지는 잘 모르겠는데.. ??
         //        print("timer triggered!!")
         // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ?? 몰러
         
         updatingDurationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+            self?.printFlag(type: .durationBug, count: 0)
             guard let `self` = self else { return }
-
+            self.printFlag(type: .durationBug, count: 1)
             self.count += 1
 
             self.updateDurationLabel()
         }
+        
+        
+        
+        printFlag(type: .durationBug, count: 5)
     }
 
-
     private func updateDurationLabel() {
-        
+        printFlag(type: .durationBug, count: 2)
         let recordingDuration = convertIntoRecordingTimeFormat(count)
-        
+        printFlag(type: .durationBug, count: 3)
         DispatchQueue.main.async {
             self.durationLabel.text = recordingDuration
         }
+        printFlag(type: .durationBug, count: 4)
     }
     
     private func playLottie(type: LottieType) {
