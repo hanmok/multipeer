@@ -28,7 +28,10 @@ class CameraController: UIViewController {
     private var videoUrl: URL?
     
     var positionTitle: String
+    
     var direction: MovementDirection
+    
+    var connectedAmount: Int = 0
     
     var trialCore: TrialCore
     
@@ -73,7 +76,7 @@ class CameraController: UIViewController {
     init(
         connectionManager: ConnectionManager,
         trialCore: TrialCore,
-        rank: Rank) {
+        rank: Rank, connectedAmount: Int = 0) {
             
             self.connectionManager = connectionManager
             
@@ -86,15 +89,16 @@ class CameraController: UIViewController {
             scoreVC = ScoreController(positionTitle: trialCore.title, direction: trialCore.direction)
             
             self.rank = rank
-            
+            self.connectedAmount = connectedAmount
             super.init(nibName: nil, bundle: nil)
             connectionManager.delegate = self
             scoreVC.delegate = self
             scoreVC.parentController = self
             
             setupTrialDetail(with: trialCore)
+            changeBtnLookForPreparing(animation: false)
         }
-
+    
 
     private func setupTrialDetail(with core: TrialCore) {
         trialDetail = trialCore.returnFreshTrialDetail()
@@ -272,7 +276,6 @@ class CameraController: UIViewController {
         guard let state = notification.userInfo?["connectionState"] as? ConnectionState else { return }
         
         switch state {
-            
         case .disconnected:
             DispatchQueue.main.async {
                 self.connectionStateLabel.text = "Disconnected!"
@@ -358,15 +361,72 @@ class CameraController: UIViewController {
         recordingBtnAction()
     }
     
+    private func changeMode(target: Side?, mode: Mode) {
+        printFlag(type: .peerConnectivity, count: 0, message: "changeMode triggered")
+        guard let target = target else {
+//        print("target is nil")
+            printFlag(type: .peerConnectivity, count: 0, message: "target is nil")
+            self.leftShape.layer.cornerRadius = 10
+            self.leftShape.backgroundColor = .lavenderGray400
+            
+            self.rightShape.layer.cornerRadius = 10
+            self.rightShape.backgroundColor = .lavenderGray400
+            
+            return
+        }
+//        print("target: \(target)")
+        printFlag(type: .peerConnectivity, count: 1, message: "target: \(target)")
+
+        switch mode {
+        case .onRecording:
+            switch target {
+                
+            case .left:
+                self.leftShape.layer.cornerRadius = 10
+                self.leftShape.backgroundColor = .red
+                
+            case .right:
+                self.rightShape.layer.cornerRadius = 10
+                self.rightShape.backgroundColor = .red
+                
+            case .both:
+                self.leftShape.layer.cornerRadius = 10
+                self.leftShape.backgroundColor = .red
+                self.rightShape.layer.cornerRadius = 10
+                self.rightShape.backgroundColor = .red
+            }
+            
+        case .stop:
+            switch target {
+            case .left:
+                self.leftShape.layer.cornerRadius = 2
+                self.leftShape.backgroundColor = .lavenderGray400
+                
+            case .right:
+                self.rightShape.layer.cornerRadius = 2
+                self.rightShape.backgroundColor = .lavenderGray400
+                
+            case .both:
+                self.leftShape.layer.cornerRadius = 2
+                self.leftShape.backgroundColor = .lavenderGray400
+            
+                self.rightShape.layer.cornerRadius = 2
+                self.rightShape.backgroundColor = .lavenderGray400
+            }
+        }
+    }
+    
     private func changeBtnLookForRecording(animation: Bool) {
         if animation {
+//            if connectionMa
             UIView.animate(withDuration: 0.4) {
                 self.outerRecCircle.backgroundColor = .lavenderGray900
                 self.innerShape.layer.cornerRadius = 6
                 self.recordingTimerBtn.setTitleColor(.gray900, for: .normal)
                 
-                self.leftShape.layer.cornerRadius = 2
-                self.leftShape.backgroundColor = .lavenderGray400
+                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
+//                self.leftShape.layer.cornerRadius = 2
+//                self.leftShape.backgroundColor = .lavenderGray400
             }
         } else {
             DispatchQueue.main.async {
@@ -374,12 +434,13 @@ class CameraController: UIViewController {
                 self.innerShape.layer.cornerRadius = 6
                 self.recordingTimerBtn.setTitleColor(.gray900, for: .normal)
                 
-                self.leftShape.layer.cornerRadius = 2
-                self.leftShape.backgroundColor = .lavenderGray400
+//                self.leftShape.layer.cornerRadius = 2
+//                self.leftShape.backgroundColor = .lavenderGray400
+                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
             }
-
         }
     }
+    
     private func changeBtnLookForPreparing(animation: Bool ) {
         if animation {
         UIView.animate(withDuration: 0.4) {
@@ -387,8 +448,9 @@ class CameraController: UIViewController {
             self.innerShape.layer.cornerRadius = 18
             self.recordingTimerBtn.setTitleColor(.red, for: .normal)
             
-            self.leftShape.layer.cornerRadius = 10
-            self.leftShape.backgroundColor = .red
+//            self.leftShape.layer.cornerRadius = 10
+//            self.leftShape.backgroundColor = .red
+            self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
         }
         } else {
             DispatchQueue.main.async {
@@ -396,8 +458,9 @@ class CameraController: UIViewController {
                 self.innerShape.layer.cornerRadius = 18
                 self.recordingTimerBtn.setTitleColor(.red, for: .normal)
                 
-                self.leftShape.layer.cornerRadius = 10
-                self.leftShape.backgroundColor = .red
+//                self.leftShape.layer.cornerRadius = 10
+//                self.leftShape.backgroundColor = .red
+                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
             }
         }
     }
@@ -581,34 +644,26 @@ class CameraController: UIViewController {
     // 함수는 똑같은데, 이건 안되고 저건 된다.
     /// Update duration timer every seconds from 0
     private func triggerDurationTimer() {
-        printFlag(type: .durationBug, count: -1)
+
         count = 0
         // 왜 업데이트가 안되는지는 잘 모르겠는데.. ??
         //        print("timer triggered!!")
         // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ?? 몰러
         
         updatingDurationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-            self?.printFlag(type: .durationBug, count: 0)
+
             guard let `self` = self else { return }
-            self.printFlag(type: .durationBug, count: 1)
             self.count += 1
 
             self.updateDurationLabel()
         }
-        
-        
-        
-        printFlag(type: .durationBug, count: 5)
     }
 
     private func updateDurationLabel() {
-        printFlag(type: .durationBug, count: 2)
         let recordingDuration = convertIntoRecordingTimeFormat(count)
-        printFlag(type: .durationBug, count: 3)
         DispatchQueue.main.async {
             self.durationLabel.text = recordingDuration
         }
-        printFlag(type: .durationBug, count: 4)
     }
     
     private func playLottie(type: LottieType) {
@@ -963,7 +1018,7 @@ class CameraController: UIViewController {
     
     private let leftShape = UIView().then {
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = .red
+        $0.backgroundColor = .lavenderGray300
     }
     
     private let rightShape = UIView().then {
@@ -1097,7 +1152,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
 
 
 extension CameraController: ConnectionManagerDelegate {
-    func updateState(state: ConnectionState, connectedNum: Int) {
+    func updateState(state: ConnectionState, connectedAmount: Int) {
         switch state {
         case .disconnected:
             DispatchQueue.main.async {
@@ -1111,15 +1166,23 @@ extension CameraController: ConnectionManagerDelegate {
             }
             
         case .connected:
-            DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Connected!"
-            }
+            
+//            DispatchQueue.main.async {
+//                self.connectionStateLabel.text = "Connected!"
+//            }
+            
+            self.connectedAmount = connectedAmount
+//            switch connectedAmount {
+//
+//            case 1:break
+//
+//            case 2:break
+//            default:break
+//
+//            }
+            
         }
     }
-    
-//    func updateDuration(in seconds: Int) {
-//
-//    }
     
     private func showCompleteMsgView() {
         UIView.animate(withDuration: 0.4) {

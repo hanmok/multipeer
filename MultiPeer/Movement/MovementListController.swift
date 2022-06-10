@@ -28,6 +28,7 @@ class MovementListController: UIViewController {
     
     var subject: Subject?
     
+    var connectedAmount: Int = 0
     // TODO: change to false after some updates..
     // TODO: false -> 정상 작동 ;;
     //    var testMode = false
@@ -104,7 +105,7 @@ class MovementListController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("viewDidLoad in MovementListController called")
-        // FIXME: updateingTrialCore 버그 출현 지역 ;; 왜 ... 버그가.. 발생할까.. ?
+        // FIXME: updatingTrialCore 버그 출현 지역 ;; 왜 ... 버그가.. 발생할까.. ?
         //        printFlag(type: .updatingTrialCore, count: 0)
         //        printFlag(type: .updatingTrialCore, count: 1)
         //        printFlag(type: .printingSequence, count: 0)
@@ -405,7 +406,8 @@ class MovementListController: UIViewController {
                 connectionManager: self.connectionManager,
                 //                screen: screen,
                 trialCore: trialCore,
-                rank: rank
+                rank: rank,
+                connectedAmount: self.connectedAmount
             )
             
             guard self.cameraVC != nil else { return }
@@ -600,16 +602,12 @@ extension MovementListController: CameraControllerDelegate {
 
 // MARK: - ConnectionManager Delegate
 extension MovementListController: ConnectionManagerDelegate {
-//    func updateDuration(in seconds: Int) {
-//        <#code#>
-//    }
-    
     
     // TODO: Update Connection Indicator on the right top (next to connect btn)
-    func updateState(state: ConnectionState, connectedNum: Int) {
+    func updateState(state: ConnectionState, connectedAmount: Int) {
         switch state {
         case .connected:
-            switch connectedNum {
+            switch connectedAmount {
             case 1:
                 DispatchQueue.main.async {
                     self.leftConnectionStateView.backgroundColor = .red
@@ -619,8 +617,13 @@ extension MovementListController: ConnectionManagerDelegate {
                 DispatchQueue.main.async {
                     self.rightConnectionStateView.backgroundColor = .red
                 }
-            default: break
+            default:
+                DispatchQueue.main.async {
+                    self.leftConnectionStateView.backgroundColor = .lavenderGray300
+                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
+                }
             }
+            self.connectedAmount = connectedAmount
             
         case .disconnected:
             
@@ -628,8 +631,8 @@ extension MovementListController: ConnectionManagerDelegate {
                 self.leftConnectionStateView.backgroundColor = .lavenderGray300
                 self.rightConnectionStateView.backgroundColor = .lavenderGray300
             }
+            self.connectedAmount = 0
         }
-        
     }
 }
 

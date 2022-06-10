@@ -45,7 +45,7 @@ import AVFoundation
 protocol ConnectionManagerDelegate: NSObject {
 //    func presentVideo() // What the hell is that ?
     
-    func updateState(state: ConnectionState, connectedNum: Int)
+    func updateState(state: ConnectionState, connectedAmount: Int)
 //    func updateDuration(in seconds: Int)
 }
 
@@ -68,7 +68,11 @@ class ConnectionManager: NSObject {
     
     weak var delegate: ConnectionManagerDelegate?
     
-    static var peers: [MCPeerID] = []
+    static var peers: [MCPeerID] = [] {
+        didSet {
+            print("current peers: \(oldValue.count)")
+        }
+    }
     static var connectedToChat = false
     
     let myPeerId = MCPeerID(displayName: UIDevice.current.name)
@@ -313,13 +317,15 @@ extension ConnectionManager: MCSessionDelegate {
             if !ConnectionManager.peers.contains(peerID) {
                 ConnectionManager.peers.insert(peerID, at: 0)
             }
+
             
             let connectedNum = ConnectionManager.peers.count
+            print("connectedNum: \(connectedNum)")
             self.connectionState = .connected
             print("state: connected !")
             startTime = Date()
             
-            delegate?.updateState(state: .connected, connectedNum: connectedNum)
+            delegate?.updateState(state: .connected, connectedAmount: connectedNum)
             
             self.startDurationTimer()
             
@@ -334,7 +340,7 @@ extension ConnectionManager: MCSessionDelegate {
             self.connectionState = .disconnected
             endTime = Date()
             
-            delegate?.updateState(state: .disconnected, connectedNum: 0)
+            delegate?.updateState(state: .disconnected, connectedAmount: 0)
             
             print("disconnected!!")
         case .connecting:

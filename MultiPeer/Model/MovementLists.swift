@@ -289,4 +289,19 @@ enum FlagType: String {
     case printingScoresFromCell
     case rsBug
     case durationBug
+    case peerConnectivity
 }
+
+
+enum Side {
+    case left
+    case right
+    case both
+}
+
+enum Mode {
+    case onRecording
+    case stop
+}
+
+let countToSideDic: [Int: Side?] = [0: nil, 1: .left, 2: .both]
