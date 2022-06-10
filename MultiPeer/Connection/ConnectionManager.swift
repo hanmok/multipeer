@@ -46,7 +46,7 @@ protocol ConnectionManagerDelegate: NSObject {
 //    func presentVideo() // What the hell is that ?
     
     func updateState(state: ConnectionState, connectedNum: Int)
-    func updateDuration(in seconds: Int)
+//    func updateDuration(in seconds: Int)
 }
 
 
@@ -206,22 +206,14 @@ class ConnectionManager: NSObject {
         advertiserAssistant = nil
     }
     
-    @objc func updateTime() {
-//        delegate?.updateDuration(startTime, current: Date())
-    }
-    
     func startDurationTimer() {
         print("connection timer has started!")
         
         sessionTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-            guard let `self` = self else {
-                print("self is nil ")
-                return }
+            guard let `self` = self else { return }
             
-            print("hi!!!!!")
+
             self.duration += 1
-            self.delegate?.updateDuration(in: self.duration)
-            
         }
     }
 }

@@ -276,3 +276,16 @@ enum Rank: String {
     case boss
     case follower
 }
+
+
+
+
+
+
+enum FlagType: String {
+    case updatingTrialCore
+    case defaultSubjectScreen
+    case printingSequence
+    case printingScoresFromCell
+    case rsBug
+}

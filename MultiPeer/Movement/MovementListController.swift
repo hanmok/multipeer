@@ -30,7 +30,7 @@ class MovementListController: UIViewController {
     
     // TODO: change to false after some updates..
     // TODO: false -> 정상 작동 ;;
-//    var testMode = false
+    //    var testMode = false
     
     var testMode = true
     
@@ -38,7 +38,7 @@ class MovementListController: UIViewController {
     /// 화면에 나타날 trialCores
     var trialCoresToShow: [[TrialCore]] = [[]]
     
-//    var selectedTrialCore: TrialCore?
+    //    var selectedTrialCore: TrialCore?
     
     var rank: Rank?
     
@@ -91,12 +91,12 @@ class MovementListController: UIViewController {
         $0.backgroundColor = .lavenderGray300
         $0.layer.cornerRadius = 5
     }
-
+    
     private let rightConnectionStateView = UIView().then {
         $0.backgroundColor = .lavenderGray300
         $0.layer.cornerRadius = 5
     }
-
+    
     
     // MARK: - LifeCycle
     
@@ -104,13 +104,13 @@ class MovementListController: UIViewController {
         super.viewDidLoad()
         print("viewDidLoad in MovementListController called")
         // FIXME: updateingTrialCore 버그 출현 지역 ;; 왜 ... 버그가.. 발생할까.. ?
-//        printFlag(type: .updatingTrialCore, count: 0)
-//        printFlag(type: .updatingTrialCore, count: 1)
-//        printFlag(type: .printingSequence, count: 0)
+        //        printFlag(type: .updatingTrialCore, count: 0)
+        //        printFlag(type: .updatingTrialCore, count: 1)
+        //        printFlag(type: .printingSequence, count: 0)
         registerCollectionView()
-//        printFlag(type: .printingSequence, count: 1)
+        //        printFlag(type: .printingSequence, count: 1)
         connectionManager.delegate = self
-//        printFlag(type: .printingSequence, count: 2)
+        //        printFlag(type: .printingSequence, count: 2)
         // 여기에서 에러
         fetchDefaultScreen()
         
@@ -151,10 +151,10 @@ class MovementListController: UIViewController {
                 guard let subject = subject else {
                     fatalError(" empty subject ")
                 }
-
+                
                 if !subject.screens.isEmpty {
                     screen = subject.screens.sorted{$0.date < $1.date}.first
-                    print("fetchedScreen date: \(screen?.date)")
+                    
                     printFlag(type: .updatingTrialCore, count: 2)
                     // 여기에서 에러남 ;; 왜 ?
                     updateTrialCores(screen: screen)
@@ -162,7 +162,7 @@ class MovementListController: UIViewController {
                 } else {
                     print("subject has no screen")
                 }
-                print("current Screen : \(screen)")
+                
             } catch {
                 fatalError("failed to fetch subjects!")
             }
@@ -176,7 +176,7 @@ class MovementListController: UIViewController {
     }
     
     // MARK: - Btn Action
-   
+    
     private func setupAddTargets() {
         sessionBtn.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
         
@@ -223,36 +223,27 @@ class MovementListController: UIViewController {
         print("presentCamera triggered by observing notification")
         
         if !isCameraOn {
-        printFlag(type: .defaultSubjectScreen, count: 0)
-        
-
-//        guard let subject = subject,
-//              let screen = screen else {
-//            fatalError("fail to get subject and screen. Plz select target first")
-//        }
-        // peer 한테 굳이 Subject 가 있어야하나.. ?
+            printFlag(type: .defaultSubjectScreen, count: 0)
             
-        guard let subject = subject else { fatalError("fail to get subject ")}
-        
-        guard let screen = screen else { fatalError(" fail to get screen") }
-
-        
-        guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? MovementDirection,
-              let score = notification.userInfo?["score"] as? Int? else {
-            print("failed to converting userInfo back.")
-            return }
-        
-//        let movementWithDirectionInfo = MovementDirectionScoreInfo(title: title, direction: direction, score: score)
-        var trialCore = screen.trialCores.filter {
-            $0.title == title && $0.direction == direction.rawValue
-        }.first!
-        
+            //        guard let subject = subject else { fatalError("fail to get subject ")}
             
-//        let trialCoreTobeUsed: TrialCore = TrialCore.save(title: title, direction: direction.rawValue)
-        
-//        presentUsingChild(trialCore: trialCoreTobeUsed, rank: .follower)
-        presentUsingChild(trialCore: trialCore, rank: .follower)
+            guard let screen = screen else { fatalError(" fail to get screen")}
+            
+            
+            guard let title = notification.userInfo?["title"] as? String,
+                  let direction = notification.userInfo?["direction"] as? MovementDirection
+                    //                ,let score = notification.userInfo?["score"] as? Int?
+            else {
+                print("failed to converting userInfo back.")
+                return }
+            
+            let trialCore = screen.trialCores.filter {
+                $0.title == title && $0.direction == direction.rawValue
+            }.first!
+            
+            
+            
+            presentUsingChild(trialCore: trialCore, rank: .follower)
         } else {
             // update peer's camera title
         }
@@ -267,7 +258,7 @@ class MovementListController: UIViewController {
         print("updateScoreLabels Called ")
         updateTrialCores(screen: screen)
     }
-
+    
     
     
     
@@ -283,8 +274,8 @@ class MovementListController: UIViewController {
         if screen != nil { self.screen = screen! } else {
             self.screen = Screen.save() // default Screen
         }
-//        guard let screen = screen else { fatalError("empty screen")}
-//        guard screen.trialCores.count != 0 else { fatalError("empty trialCore")}
+        //        guard let screen = screen else { fatalError("empty screen")}
+        //        guard screen.trialCores.count != 0 else { fatalError("empty trialCore")}
         // 여기서 터짐.
         
         let sortedCores = self.screen!.trialCores.sorted {
@@ -301,10 +292,10 @@ class MovementListController: UIViewController {
         print("sortedCores: \(sortedCores)")
         print("screen 을 가져온게 맞아..? ") // 아마.. 맞는데 비어있는 느낌 ??
         // screen 이 비었어.
-//        guard let screen = screen else {
-//            fatalError("screen empty")
-//        }
-
+        //        guard let screen = screen else {
+        //            fatalError("screen empty")
+        //        }
+        
         var prev = sortedCores.first!
         
         self.trialCores.append([])
@@ -329,12 +320,12 @@ class MovementListController: UIViewController {
         }
         trialCoresToShow.removeFirst()
         printCurrentState() //이거랑, 실제 받는 값과 어떤.. 차이가 있음. 뭐지 대체 ??
-
+        
         // Async 때문에 아래 코드가 실행이 이상하게 되는걸까 ?
         
         // 여기 코드때문에 그래.. 왜지 ?? 왜지 ???
         // 이 코드 실행하지 않을 수는 없음 ;;
-//        self.viewDidLoad() // 이거 너무 개뻘짓.. + iNfinite loop
+        //        self.viewDidLoad() // 이거 너무 개뻘짓.. + iNfinite loop
         
         DispatchQueue.main.async {
             self.movementCollectionView.reloadData()
@@ -375,33 +366,33 @@ class MovementListController: UIViewController {
         
         print("trialCore passed to cameracontroller : \(selectedTrial.title) \(selectedTrial.direction)")
         
-//        DispatchQueue.main.async {
-//
-//            self.cameraVC = CameraController(
-//                connectionManager: self.connectionManager,
-////                screen: screen,
-//                trialCore: selectedTrial,
-//                rank: rank
-//            )
-//
-//            guard self.cameraVC != nil else { return }
-//            self.cameraVC!.delegate = self
-//            self.addChild(self.cameraVC!) // 왜 Nav 말고 child 로 했었을까? ConnectionManager 때문에 ?
-//            self.view.addSubview(self.cameraVC!.view)
-////            self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-//            self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
-//
-//            UIView.animate(withDuration: 0.3) {
-//                self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
-//            }
-//        }
+        //        DispatchQueue.main.async {
+        //
+        //            self.cameraVC = CameraController(
+        //                connectionManager: self.connectionManager,
+        ////                screen: screen,
+        //                trialCore: selectedTrial,
+        //                rank: rank
+        //            )
+        //
+        //            guard self.cameraVC != nil else { return }
+        //            self.cameraVC!.delegate = self
+        //            self.addChild(self.cameraVC!) // 왜 Nav 말고 child 로 했었을까? ConnectionManager 때문에 ?
+        //            self.view.addSubview(self.cameraVC!.view)
+        ////            self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+        //            self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
+        //
+        //            UIView.animate(withDuration: 0.3) {
+        //                self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+        //            }
+        //        }
         
         presentUsingChild(trialCore: selectedTrial, rank: rank)
         
         
         let direction: MovementDirection = MovementDirection(rawValue: selectedTrial.direction) ?? .neutral
         
-//        connectionManager.send(.presentCamera)
+        //        connectionManager.send(.presentCamera)
         connectionManager.send(MsgWithMovementDetail(message: .presentCamera, detailInfo: MovementDirectionScoreInfo(title: selectedTrial.title, direction: direction)))
     }
     
@@ -411,7 +402,7 @@ class MovementListController: UIViewController {
             
             self.cameraVC = CameraController(
                 connectionManager: self.connectionManager,
-//                screen: screen,
+                //                screen: screen,
                 trialCore: trialCore,
                 rank: rank
             )
@@ -420,7 +411,7 @@ class MovementListController: UIViewController {
             self.cameraVC!.delegate = self
             self.addChild(self.cameraVC!) // 왜 Nav 말고 child 로 했었을까? ConnectionManager 때문에 ?
             self.view.addSubview(self.cameraVC!.view)
-//            self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+            //            self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
             self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
             
             UIView.animate(withDuration: 0.3) {
@@ -429,9 +420,9 @@ class MovementListController: UIViewController {
         }
     }
     
-//    private func checkIfHasCameraAsChild() -> Bool {
-//        self.children.forEach { }
-//    }
+    //    private func checkIfHasCameraAsChild() -> Bool {
+    //        self.children.forEach { }
+    //    }
     
     private var isCameraOn: Bool {
         var result: Bool?
@@ -448,7 +439,7 @@ class MovementListController: UIViewController {
         return result ?? false
     }
     
-
+    
     
     private func setupLayout() {
         
@@ -497,7 +488,7 @@ class MovementListController: UIViewController {
             make.height.equalTo(100)
         }
         
-
+        
         self.view.addSubview(completeBtn)
         completeBtn.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(20)
@@ -505,7 +496,7 @@ class MovementListController: UIViewController {
             make.width.equalTo(screenWidth / 2 - 20 - 8)
             make.height.equalTo(48)
         }
-
+        
         self.view.addSubview(finishBtn)
         finishBtn.snp.makeConstraints { make in
             make.leading.equalTo(completeBtn.snp.trailing).offset(16)
@@ -513,11 +504,11 @@ class MovementListController: UIViewController {
             make.trailing.equalToSuperview().inset(32)
             make.height.equalTo(48)
         }
-    
+        
         view.backgroundColor = .lavenderGray50
     }
     
-
+    
 }
 
 
@@ -525,7 +516,7 @@ class MovementListController: UIViewController {
 // MARK: - MovementCell Delegate
 extension MovementListController: MovementCellDelegate {
     func cell(navToCameraWith trialCore: TrialCore) {
-            presentCamera(with: trialCore)
+        presentCamera(with: trialCore)
     }
 }
 
@@ -541,7 +532,7 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovementCell.cellId, for: indexPath) as! MovementCell
         //        print("")
         cell.delegate = self
-//        print("num of trialsToShow: \(trialCoresToShow[indexPath.row].count)")
+        //        print("num of trialsToShow: \(trialCoresToShow[indexPath.row].count)")
         cell.viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
         // RenderingBug: 여기서 문제가 있어보이지는 않는데 ...
         print("cell : \(cell.viewModel?.title)")
@@ -560,7 +551,7 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
 // MARK: - SubjectController Delegate
 extension MovementListController: SubjectControllerDelegate {
     func updateCurrentScreen(from subject: Subject, with screen: Screen, closure: () -> Void) {
-//        updateTrialCores(subject: subject, screen: screen)
+        //        updateTrialCores(subject: subject, screen: screen)
         printFlag(type: .updatingTrialCore, count: 3)
         updateTrialCores(screen: screen)
         // when currentSubject set, it calls setupSubjectInfo()
@@ -572,9 +563,9 @@ extension MovementListController: SubjectControllerDelegate {
 
 // MARK: - CameraController Delegate
 extension MovementListController: CameraControllerDelegate {
-//    func dismissCamera() {
-//        <#code#>
-//    }
+    //    func dismissCamera() {
+    //        <#code#>
+    //    }
     
     func makeSound() {
         // FIXME: make sound 보류.
@@ -588,8 +579,8 @@ extension MovementListController: CameraControllerDelegate {
         UIView.animate(withDuration: 0.3) {
             cameraVC.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
         } completion: { done in
-//
-//            // TODO: remove cameraController after animation
+            //
+            //            // TODO: remove cameraController after animation
             if done {
                 if self.children.count > 0 {
                     let viewControllers: [UIViewController] = self.children
@@ -608,6 +599,10 @@ extension MovementListController: CameraControllerDelegate {
 
 // MARK: - ConnectionManager Delegate
 extension MovementListController: ConnectionManagerDelegate {
+//    func updateDuration(in seconds: Int) {
+//        <#code#>
+//    }
+    
     
     // TODO: Update Connection Indicator on the right top (next to connect btn)
     func updateState(state: ConnectionState, connectedNum: Int) {
@@ -625,7 +620,7 @@ extension MovementListController: ConnectionManagerDelegate {
                 }
             default: break
             }
-
+            
         case .disconnected:
             
             DispatchQueue.main.async {
@@ -633,27 +628,14 @@ extension MovementListController: ConnectionManagerDelegate {
                 self.rightConnectionStateView.backgroundColor = .lavenderGray300
             }
         }
-    
-    }
-    
-    func updateDuration(in seconds: Int) {
-        // FIXME: Nothing to do
+        
     }
 }
 
 
 extension UIViewController {
     func printFlag(type: FlagType, count: Int, message: String = "" ) {
-        //    print("type.rawValue, )
         let str = type.rawValue + ", " + "flag \(count)" + " " + message
         print(str)
     }
-}
-
-enum FlagType: String {
-    case updatingTrialCore
-    case defaultSubjectScreen
-    case printingSequence
-    case printingScoresFromCell
-    case rsBug
 }

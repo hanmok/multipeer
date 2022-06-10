@@ -41,10 +41,10 @@ class CameraController: UIViewController {
     private var pressedBtnTitle = ""
     
     var updatingDurationTimer = Timer()
+
     var decreasingTimer = Timer()
     
     var count = 0
-//    var decreasingCount = 3
     
     var isRecordingEnded = false
     
@@ -63,32 +63,26 @@ class CameraController: UIViewController {
     private let shouldRecordLater = false
     
     var variationName: String?
+
     var trialDetail: TrialDetail?
-    var sequentialPainPosition: String?
+
     
     
     
     // MARK: - Life Cycle
     
-//    deinit {
-//        print("cameraController deinit")
-//    }
-    
     init(
         connectionManager: ConnectionManager,
-//        screen: Screen,
         trialCore: TrialCore,
         rank: Rank) {
             
             self.connectionManager = connectionManager
             
-//            self.screen = screen
             self.trialCore = trialCore
             self.positionTitle = trialCore.title
             
-            guard let direction = MovementDirection(rawValue: trialCore.direction) else { fatalError() }
             
-            self.direction = direction
+            self.direction = MovementDirection(rawValue: trialCore.direction)!
             
             scoreVC = ScoreController(positionTitle: trialCore.title, direction: trialCore.direction)
             
@@ -100,8 +94,6 @@ class CameraController: UIViewController {
             scoreVC.parentController = self
             
             setupTrialDetail(with: trialCore)
-            
-            print("cameraController init")
         }
 
 
@@ -114,26 +106,23 @@ class CameraController: UIViewController {
         super.viewDidLoad()
         print("CameraController viewdidLoad triggered")
         updateNameLabel()
-        setupAddTargets()
+
         setupLayout()
+        setupAddTargets()
         addNotificationObservers()
         updateInitialConnectionState()
         
         setupCompleteView()
         
         updatePeerTitle()
-        
-//        UIAlertController.init(title: "hi", message: "message", preferredStyle: .actionSheet)
     }
     
     
     private func updatePeerTitle() {
 
-        let direction: MovementDirection = MovementDirection(rawValue: trialCore.direction) ?? .neutral
+        let direction = MovementDirection(rawValue: trialCore.direction)!
         
-//        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: trialCore.title, direction: direction)))
         connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction)))
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -178,7 +167,6 @@ class CameraController: UIViewController {
     private func resetTimer() {
         count = 0
         updateDurationLabel()
-//        durationLabel.text = "00:00"
     }
     
     
@@ -198,34 +186,40 @@ class CameraController: UIViewController {
     
     // MARK: - Notification
     private func addNotificationObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingNowNoti(_:)),
-                                               name: .startRecordingKey, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(startRecordingNowNoti(_:)),
+            name: .startRecordingKey, object: nil
+        )
         
-        NotificationCenter.default.addObserver(self, selector: #selector(stopRecordingNoti(_:)),
-                                               name: .stopRecordingKey, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(stopRecordingNoti(_:)),
+            name: .stopRecordingKey, object: nil
+        )
         
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateConnectionStateNoti(_:)),
+            name: .updateConnectionStateKey, object: nil)
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(startRecordingAtNoti(_:)),
-//                                               name: .startRecordingAfterKey, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(requestPostNoti(_:)),
+            name: .requestPostKey, object: nil
+        )
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(startCountdownAtNoti(_:)),
-//                                               name: .startCountdownAfterKey, object: nil)
-        
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(updateConnectionStateNoti(_:)),
-                                               name: .updateConnectionStateKey, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(requestPostNoti(_:)), name: .requestPostKey, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(updatePeerTitleNoti(_:)), name: .updatePeerTitleKey, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updatePeerTitleNoti(_:)),
+            name: .updatePeerTitleKey, object: nil
+        )
     }
     
     @objc func updatePeerTitleNoti(_ notification: Notification) {
-
-        guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? MovementDirection
-                
-        else { return }
+        
+        let title = (notification.userInfo?["title"])! as! String
+        let direction = notification.userInfo?["direction"]! as! MovementDirection
         
         DispatchQueue.main.async {
             if self.direction == .neutral {
@@ -245,14 +239,6 @@ class CameraController: UIViewController {
     @objc func startRecordingNowNoti(_ notification: Notification) {
         print("startRecording has been triggered by observer. ")
         
-//        guard let title = notification.userInfo?["title"] as? String,
-//              let direction = notification.userInfo?["direction"] as? MovementDirection,
-//              let score = notification.userInfo?["score"] as? Int? else { return }
-        
-        
-        
-        // TODO: 정보는,, Score 가 알아야하나 Camera가 알아야하나.. ?? 굳이 따지면 Camera
-        // TODO: 그런데, 몰라도 될 것 같음.
         
         // remove preview if master order recording
         removeChildrenVC()
@@ -267,37 +253,17 @@ class CameraController: UIViewController {
     @objc func stopRecordingNoti(_ notification: Notification) {
         print("stopRecording has been triggered by observer. ")
         
-//        guard let title = notification.userInfo?["title"] as? String,
-//              let direction = notification.userInfo?["direction"] as? MovementDirection,
-//              let score = notification.userInfo?["score"] as? Int? else { return }
-        
         stopRecording()
         changeBtnLookForPreparing(animation: false)
-    }
-    
-    
-    // not recommended
-    @objc func startCountdownAtNoti(_ notification: Notification) {
-        guard let milliTime = notification.userInfo?["receivedTime"] as? Int,
-              //              let msg = notification.userInfo?["msg"] as? RecordingType
-              let msg = notification.userInfo?["msg"] as? MessageType
-        else {
-            print("success to convert receivedTime to Int", #line)
-            // millisec since 1970
-            return
-        }
-        
-        let countdownTimer = Timer(fireAt: Date(milliseconds: milliTime), interval: 0, target: self, selector: #selector(triggerCountDownTimer), userInfo: nil, repeats: false)
-        print("startCountdownAfter has triggered", #line)
     }
     
     // this one called!!
     @objc func updateConnectionStateNoti(_ notification: Notification) {
         print(#file, #line)
-        guard let state = notification.userInfo?["connectionState"] as? ConnectionState else {
-            print("failed to get connectionState normally")
-            return }
+        guard let state = notification.userInfo?["connectionState"] as? ConnectionState else { return }
+        
         switch state {
+            
         case .disconnected:
             DispatchQueue.main.async {
                 self.connectionStateLabel.text = "Disconnected!"
@@ -305,6 +271,7 @@ class CameraController: UIViewController {
                     self.showReconnectionGuideAction()
                 }
             }
+            
         case .connected:
             DispatchQueue.main.async {
                 self.connectionStateLabel.text = "Connected!"
@@ -316,11 +283,22 @@ class CameraController: UIViewController {
     
     // MARK: - Button Actions
     private func setupAddTargets() {
+        
         dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
+        
         recordingTimerBtn.addTarget(self, action: #selector(timerRecordingBtnTapped(_:)), for: .touchUpInside)
-        nextBtn.addTarget(self, action: #selector(nextTapped(_:)), for: .touchUpInside)
+        
+        homeBtn.addTarget(self, action: #selector(nextTapped(_:)), for: .touchUpInside)
         
         retryBtn.addTarget(self, action: #selector(retryTapped(_:)), for: .touchUpInside)
+        
+        for btn in directionStackView.buttons {
+            btn.addTarget(self, action: #selector(directionTapped(_:)), for: .touchUpInside)
+        }
+    }
+    
+    @objc func directionTapped(_ sender: SelectableButton) {
+        directionStackView.selectBtnAction(selected: sender.id)
     }
     
     @objc func nextTapped(_ sender: UIButton) {
@@ -334,24 +312,21 @@ class CameraController: UIViewController {
             // CameraController Delegate
         } else {
         // TODO: update Position for Variation
-//            if positionTitle == MovementList.deepSquat.rawValue {
-//                positionTitle = movementWithVariation[positionTitle]!
-//            }
             
             variationName = movementWithVariation[positionTitle]
-            print("variation : \(variationName)")
+            
             if variationName != nil {
-                print("variation is valid!!")
+
                 self.positionTitle = variationName!
                 updateNameLabel()
                 
-resetTimer()
-                print("current title from nextTapped: \(positionTitle)")
+                resetTimer()
                 
                 scoreVC.setupAgain(positionTitle: self.positionTitle, direction: direction)
                 
                 updatePeerTitle()
-            } else { print("variation is valid!! nope!!") }
+
+            } else { print("variation is invalid !!" ) }
             
             hideCompleteMsgView()
         }
@@ -363,11 +338,9 @@ resetTimer()
         }
     }
     
-    
     @objc func retryTapped(_ sender: UIButton) {
         retryAction()
     }
-    
     
     
     @objc func recordingBtnTapped(_ sender: UIButton) {
@@ -483,7 +456,7 @@ resetTimer()
         completeMsgView.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
         
 
-        [checkmarkLottieView,completeMsgLabel, retryBtn, nextBtn].forEach { completeMsgView.addSubview($0)}
+        [checkmarkLottieView,completeMsgLabel, retryBtn, homeBtn].forEach { completeMsgView.addSubview($0)}
         
         checkmarkLottieView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
@@ -498,15 +471,17 @@ resetTimer()
         }
         
         retryBtn.snp.makeConstraints { make in
-            make.leading.bottom.equalToSuperview()
-            make.height.equalTo(60)
-            make.width.equalToSuperview().dividedBy(3)
+            make.leading.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(34)
+            make.height.equalTo(48)
+            make.width.equalTo(97)
         }
         
-        nextBtn.snp.makeConstraints { make in
-            make.leading.equalTo(retryBtn.snp.trailing)
-            make.trailing.bottom.equalToSuperview()
-            make.height.equalTo(60)
+        homeBtn.snp.makeConstraints { make in
+            make.leading.equalTo(retryBtn.snp.trailing).offset(16)
+            make.trailing.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(34)
+            make.height.equalTo(48)
         }
     }
     
@@ -520,24 +495,39 @@ resetTimer()
         
         self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
         }
+        // 점수 초기화 !
+//        scoreVC.scoreBtnStackView.buttons.forEach {
+//
+//        }
+        
+        scoreVC.scoreBtnStackView.setSelectedBtnNone()
+        scoreVC.painBtnStackView.setSelectedBtnNone()
     }
     
     // TODO: need to change trialCore of scoreVC here (why ?
-    private func showScoreView() {
+    private func showScoreView(size: ScoreViewSize = .large) {
         if rank == .boss {
-        scoreVC.setupTrialCore(with: trialCore )
-        
-        UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 330, width: screenWidth, height: screenHeight)
-        }
+            
+            scoreVC.setupTrialCore(with: trialCore )
+            
+            if size == .large {
+                UIView.animate(withDuration: 0.4) {
+                    self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 330, width: screenWidth, height: screenHeight)
+                }
+            } else {
+                UIView.animate(withDuration: 0.4) {
+                    self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 220, width: screenWidth, height: screenHeight)
+                }
+            }
         }
     }
     
     private func hideScoreView() {
         if rank == .boss {
-        UIView.animate(withDuration: 0.4) {
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-        }
+            
+            UIView.animate(withDuration: 0.4) {
+                self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+            }
         }
     }
     
@@ -585,9 +575,7 @@ resetTimer()
         // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ?? 몰러
         
         updatingDurationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-            guard let `self` = self else {
-                print("self is nil in timer!!")
-                return }
+            guard let `self` = self else { return }
 
             self.count += 1
 
@@ -808,7 +796,23 @@ resetTimer()
             make.height.equalTo(48)
         }
         
+        [frontBtn, SideBtn, betweenBtn].forEach {
+//            directionStackView.addSubview($0)
+            directionStackView.addArrangedButton($0)
+        }
+        
+        bottomView.addSubview(directionStackView)
+        directionStackView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().inset(20)
+
+            make.width.equalTo(230)
+            make.height.equalTo(40)
+        }
+        
+        
         [leftShape, rightShape].forEach { neighborLongBar.addSubview($0) }
+        
         leftShape.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.centerX.equalTo(neighborLongBar.snp.leading).inset(24)
@@ -865,7 +869,25 @@ resetTimer()
     // MARK: - UI Properties
     
     private let bottomView = UIView().then { $0.backgroundColor = .white }
+    
     private let topView = UIView().then { $0.backgroundColor = .white }
+    
+    private let frontBtn = SelectableButton(title: "Front").then {
+        $0.layer.cornerRadius = 4
+    }
+    private let SideBtn = SelectableButton(title: "Side").then {
+        $0.layer.cornerRadius = 4
+    }
+    private let betweenBtn = SelectableButton(title: "45°").then {
+        $0.layer.cornerRadius = 4
+    }
+    
+    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 0).then {
+//        $0.backgroundColor = .magenta
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = UIColor.blueGray200.cgColor
+        $0.clipsToBounds = true
+    }
     
     private let movementNameLabel = UILabel().then {
         $0.textColor = .black
@@ -944,16 +966,23 @@ resetTimer()
     }
     
     private let completeMsgView = UIView().then { $0.backgroundColor = .white }
+    
     private let retryBtn = UIButton().then { $0.setTitle("Retry", for: .normal)
         $0.setTitleColor(.gray900, for: .normal)
         $0.layer.borderColor = UIColor.lavenderGray100.cgColor
         $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 8
+        $0.backgroundColor = .lavenderGray50
+        $0.clipsToBounds = true
     }
     
-    private let nextBtn = UIButton().then { $0.setTitle("Next", for: .normal)
+    private let homeBtn = UIButton().then { $0.setTitle("Home", for: .normal)
         $0.backgroundColor = .lavenderGray300
-        $0.layer.borderColor = UIColor.lavenderGray100.cgColor
-        $0.layer.borderWidth = 1
+//        $0.layer.borderColor = UIColor.lavenderGray100.cgColor
+//        $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 8
+        $0.clipsToBounds = true
+        $0.setTitleColor(.gray900, for: .normal)
     }
     
     private let checkmarkLottieView = AnimationView(name: "checkmark").then {
@@ -1019,6 +1048,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.presentPreview(with: url)
             self.prepareScoreView()
+            
             self.showScoreView()
         }
     }
@@ -1069,9 +1099,9 @@ extension CameraController: ConnectionManagerDelegate {
         }
     }
     
-    func updateDuration(in seconds: Int) {
-        
-    }
+//    func updateDuration(in seconds: Int) {
+//
+//    }
     
     private func showCompleteMsgView() {
         UIView.animate(withDuration: 0.4) {
@@ -1116,11 +1146,13 @@ extension CameraController: ScoreControllerDelegate {
     }
     
     func retryAction() {
+        //
         //TODO:  Upload to the Server, and Redo
         resetTimer()
         removeChildrenVC()
         prepareScoreView()
         makeTrialDetail()
+        hideCompleteMsgView()
         
         self.updateTrialDetail()
     }

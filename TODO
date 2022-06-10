@@ -281,3 +281,47 @@ How ? 내역을 알아야함.
 
 
 
+
+
+ScoreController
+
+
+
+
+Score 만 있는 경우, frame height 를 220 으로 해야함.
+
+How ?
+
+220 인 경우, Score 와 Delete / Save 와의 간격도 줄어야함.
+
+
+
+
+
+
+positionTitle,
+trialCore 있음.
+
+ 이거 두개 갖고 해야할 것 같은데 ?
+
+음.. 어떻게 할지 잘 모르겠는데..??
+코드가 꼬여서그래
+Refactoring !!
+
+
+
+Retry Action 에 Multipeer 업데이트 아직 안됨?? 상관 없을텐데 ?
+
+Retry 정상작동하지 않음.
+
+
+Retry 의 경우 점수 초기화
+완료!
+
+
+Retry Btn UI 바꾸기.
+
+
+Peer 측 Connection State 표시 안됨.
+
+

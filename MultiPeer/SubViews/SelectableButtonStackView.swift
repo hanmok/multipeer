@@ -20,67 +20,15 @@ class SelectableButtonStackView: UIStackView {
     private var prevSelectedBtnId: UUID?
     private var currentSelectedBtnId: UUID?
     
-    
     public var selectedBtnTitle: String = ""
+    
     public var buttons: [SelectableButton] = []
     
-    public var selectedBtnIndex: Int? {
-        willSet {
-            print("selectedBtnIndex: \(newValue)")
-        }
-    }
-    
-    /// add SelectableButton to self
-    public func addArrangedButton(_ btn: SelectableButton) {
-        super.addArrangedSubview(btn)
-        buttons.append(btn)
-        btn.setupInitialColor(defaultBGColor)
-    }
+    public var selectedBtnIndex: Int?
     
     
-    public func setSelectedButton(_ id: UUID?) {
-        guard let id = id else {
-            for button in buttons {
-                if button.id == currentSelectedBtnId {
-                    button.setBackgroundColor(to: defaultBGColor)
-                    button.setTitleColor(to: defaultTitleColor)
-                }
-            }
-            
-            currentSelectedBtnId = nil
-            return
-        }
-        
-        prevSelectedBtnId = currentSelectedBtnId // both can be nil for the first selection
-        
-        for (index, button) in buttons.enumerated() {
-            
-            
-            if button.id == id {
-                currentSelectedBtnId = id
-                selectedBtnIndex = index
-                
-                button.setBackgroundColor(to: selectedBGColor)
-                button.setTitleColor(to: selectedTitleColor)
-                
-                button.setIsSelected(to: true)
-                
-                selectedBtnTitle = button.title
-                
-            } else if let validPrev = prevSelectedBtnId,
-                      validPrev == button.id {
-                
-                button.setBackgroundColor(to: defaultBGColor)
-                button.setTitleColor(to: defaultTitleColor)
-                button.setIsSelected(to: false)
-            }
-        }
-    }
-    
-    
-    
+    // MARK: - Life Cycle
     init(
-//        selectedColor: UIColor = .gray,
         selectedBGColor: UIColor = .purple500,
         defaultBGColor: UIColor = .lavenderGray300,
         selectedTitleColor: UIColor = .white,
@@ -94,14 +42,71 @@ class SelectableButtonStackView: UIStackView {
             self.defaultTitleColor = defaultTitleColor
 
             super.init(frame: frame)
+
+            self.spacing = spacing
             
             setupSubBtnBGColor()
             setupInitialLayout()
         }
     
+    /// add SelectableButton to self
+    public func addArrangedButton(_ btn: SelectableButton) {
+        super.addArrangedSubview(btn)
+        buttons.append(btn)
+        btn.backgroundColor = defaultBGColor
+    }
+    
+    public func selectBtnAction(selected id: UUID?) {
+        print("selectBtnAction called")
+        guard let id = id else {
+            for button in buttons {
+                if button.id == currentSelectedBtnId {
+                    
+                    button.changeBtnColor(bgColor: defaultBGColor, titleColor: defaultTitleColor)
+                }
+            }
+            
+            currentSelectedBtnId = nil
+            return
+        }
+        
+        // both can be nil for the first selection
+        prevSelectedBtnId = currentSelectedBtnId
+        
+        for (index, button) in buttons.enumerated() {
+            
+            if button.id == id {
+                currentSelectedBtnId = id
+                selectedBtnIndex = index
+                
+                button.changeBtnColor(bgColor: selectedBGColor, titleColor: selectedTitleColor)
+                
+                button.setIsSelected(to: true)
+                
+                selectedBtnTitle = button.title
+                
+            } else if let validPrev = prevSelectedBtnId,
+                      validPrev == button.id {
+                
+                button.changeBtnColor(bgColor: defaultBGColor, titleColor: defaultTitleColor)
+                
+                button.setIsSelected(to: false)
+            }
+        }
+    }
+    
+    public func setSelectedBtnNone() {
+        prevSelectedBtnId = nil
+        currentSelectedBtnId = nil
+        
+        for button in buttons {
+            button.changeBtnColor(bgColor: defaultBGColor, titleColor: defaultTitleColor)
+        }
+    }
+    
     private func setupSubBtnBGColor(){
         for eachBtn in buttons {
-            eachBtn.setupInitialColor(defaultBGColor)
+            eachBtn.backgroundColor = defaultBGColor
         }
     }
     
