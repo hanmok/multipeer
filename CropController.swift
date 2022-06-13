@@ -74,6 +74,7 @@ class CropController {
         let size: CGFloat = screenWidth
         
         print("screenWidth: \(screenWidth), screenHeight: \(screenHeight)")
+        // 왜 400 이 뽑힙니까?
         
         //        let yCoordinate: CGFloat = (screenHeight - screenWidth) / 2
         //        let yCoordinate: CGFloat = 57
@@ -81,7 +82,18 @@ class CropController {
         // 이게.. 센터냐 ?
         //        아니,
         
-        var cropRect = CGRect(x: 0, y: 0, width: size, height: size)
+//        let eachSize: CGFloat = 1300 // 500 -> 400
+        let preferredSize: CGFloat = 1000
+        let sizeTobeUsed = preferredSize * 1.25
+        // 1000 -> 800 x 800
+        // 1200 -> 960 x 960
+        // 1300 -> 1040
+        // 700 -> 560 x 560
+//        ??? 뭐지 ??
+        
+//        var cropRect = CGRect(x: 0, y: 0, width: size, height: size)
+//        var cropRect = CGRect(x: 0, y: 0, width: 500, height: 500)
+        var cropRect = CGRect(x: 0, y: 0, width: sizeTobeUsed, height: sizeTobeUsed)
         
         //        let originFlipTransform = CGAffineTransform(scaleX: 1, y: -1)
         //        let frameTranslateTransform = CGAffineTransform(translationX: 0, y: renderingSize.height)
