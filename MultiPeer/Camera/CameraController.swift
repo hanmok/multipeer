@@ -24,19 +24,24 @@ protocol CameraControllerDelegate: AnyObject {
 class CameraController: UIViewController {
     
     // MARK: - Properties
-    //    uialertcontroller
+
     private var videoUrl: URL?
+    
+    // TODO: duplicate check, send msg if direction assigned.
+    var idToCameraDirectionDic: [String: CameraDirection] = [:]
     
     var positionTitle: String
     
     var direction: MovementDirection
+    
+    var cameraDirection: CameraDirection?
     
     var connectedAmount: Int = 0
     
     var trialCore: TrialCore
     
     var systemSoundID: SystemSoundID = 1057
-    
+// TODO: Cut Clip from the front as much as recording time diff
     var timeDifference: CGFloat = 0 // or CMTime
     
     var rank: Rank
@@ -45,8 +50,7 @@ class CameraController: UIViewController {
     
     var updatingDurationTimer = Timer()
     
-    var decreasingTimer = Timer()
-    
+
     var count = 0
     
     var isRecordingEnded = false
@@ -233,11 +237,35 @@ class CameraController: UIViewController {
         }
     }
     
+    
+    
     @objc func requestPostNoti(_ notification: Notification) {
+        printFlag(type: .peerRequest, count: 4)
+        guard let title = notification.userInfo?["title"] as? String,
+              let direction = notification.userInfo?["direction"] as? MovementDirection,
+              let score = notification.userInfo?["score"] as? Int?,
+              let pain = notification.userInfo?["pain"] as? Bool?,
+//              let pain = notification
+              let validVideoUrl = videoUrl else { return }
+        printFlag(type: .peerRequest, count: 5)
+        //TODO: 여기에서 막힘
+        guard let cameraDirection = cameraDirection else {
+            return
+        }
+
+        printFlag(type: .peerRequest, count: 6)
+//        let tempPain: Bool? = nil
+        let tempTrialCount = 0
+        let tempTrialId = UUID()
         
-        //        saveAction(core: <#T##TrialCore#>, detail: <#T##TrialDetail#>)
-        
+
+        APIManager.shared.postRequest(movementDirectionScoreInfo: MovementDirectionScoreInfo(title: title, direction: direction, score: score, pain: pain), trialCount: tempTrialCount, trialId: tempTrialId, videoUrl: validVideoUrl, angle: cameraDirection) {
+            self.printFlag(type: .peerRequest, count: 7)
+            print("closure called after post request")
+        }
     }
+    
+    
     
     @objc func startRecordingNowNoti(_ notification: Notification) {
         print("startRecording has been triggered by observer. ")
@@ -245,15 +273,19 @@ class CameraController: UIViewController {
         
         // remove preview if master order recording
         removeChildrenVC()
+        // original
+//        let recordingTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
-        let recordingTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+        updatingDurationTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
         //            DispatchQueue.main.async {
         //                self.recordingTimerBtn.setTitle("\(milliTime)", for: .normal)
         //
         //            }
         
-        RunLoop.main.add(recordingTimer, forMode: .common)
+        // original
+//        RunLoop.main.add(recordingTimer, forMode: .common)
+        RunLoop.main.add(updatingDurationTimer, forMode: .common)
         
         //        startRecording()
         changeBtnLookForRecording(animation: false)
@@ -311,6 +343,8 @@ class CameraController: UIViewController {
     
     @objc func directionTapped(_ sender: SelectableButton) {
         directionStackView.selectBtnAction(selected: sender.id)
+        
+        cameraDirection = CameraDirection(rawValue: sender.title)
     }
     
     @objc func nextTapped(_ sender: UIButton) {
@@ -362,10 +396,11 @@ class CameraController: UIViewController {
     }
     
     private func changeMode(target: Side?, mode: Mode) {
-        printFlag(type: .peerConnectivity, count: 0, message: "changeMode triggered")
+        printFlag(type: .peerConnectivity, count: -1, message: "changeMode triggered")
         guard let target = target else {
-            //        print("target is nil")
+
             printFlag(type: .peerConnectivity, count: 0, message: "target is nil")
+            
             self.leftShape.layer.cornerRadius = 10
             self.leftShape.backgroundColor = .lavenderGray400
             
@@ -374,9 +409,7 @@ class CameraController: UIViewController {
             
             return
         }
-        //        print("target: \(target)")
-        printFlag(type: .peerConnectivity, count: 1, message: "target: \(target)")
-        
+
         switch mode {
         case .onRecording:
             switch target {
@@ -581,22 +614,29 @@ class CameraController: UIViewController {
             scoreVC.setupTrialCore(with: trialCore )
             
             if size == .large {
-                UIView.animate(withDuration: 0.4) {
-                    self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 330, width: screenWidth, height: screenHeight)
+                DispatchQueue.main.async {
+                    UIView.animate(withDuration: 0.4) {
+                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 330, width: screenWidth, height: screenHeight)
+                    }
                 }
+
             } else {
-                UIView.animate(withDuration: 0.4) {
-                    self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 220, width: screenWidth, height: screenHeight)
+                DispatchQueue.main.async {
+                    UIView.animate(withDuration: 0.4) {
+                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 220, width: screenWidth, height: screenHeight)
+                    }
                 }
+
             }
         }
     }
     
     private func hideScoreView() {
         if rank == .boss {
-            
-            UIView.animate(withDuration: 0.4) {
-                self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+            DispatchQueue.main.async {
+                UIView.animate(withDuration: 0.4) {
+                    self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+                }
             }
         }
     }
@@ -679,57 +719,6 @@ class CameraController: UIViewController {
         DispatchQueue.main.async {
             self.durationLabel.text = "00:00"
         }
-        
-        
-        
-        
-        //        decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-        //            self?.delegate?.makeSound()
-        ////            print("triggerCoundDownTimerFlag 1 called")
-        //            guard let `self` = self else { return }
-        //            print("triggerCoundDownTimerFlag 2 called")
-        //
-        //            if self.decreasingCount > 0 {
-        //                print("triggerCoundDownTimerFlag 3 called")
-        //                self.decreasingCount -= 1
-        ////                SoundService.shard.someFunc()
-        ////                AudioServicesPlaySystemSound(self.systemSoundID)
-        //
-        //
-        //                print("triggerCoundDownTimerFlag 4 called")
-        //
-        //                if self.decreasingCount == 0 { // ????
-        //                    print("triggerCoundDownTimerFlag 5 called")
-        ////                    AudioServicesPlaySystemSound(self.systemSoundID)
-        //                    DispatchQueue.main.async {
-        //                        self.recordingTimerBtn.setTitle("Recording!", for: .normal)
-        //                    }
-        //                } else {
-        //                    // 세번 호출되어야함
-        //                        // 왜 두번밖에 호출되지 않았지 ?
-        //                        print("triggerCoundDownTimerFlag 6 called, decreasingCount : \(self.decreasingCount)")
-        //                        // make sound
-        //
-        ////                        AudioServicesPlaySystemSound(self.systemSoundID)
-        ////                        AudioServicesPlaySystemSound(1104)
-        //
-        ////                        AudioServicesPlaySystemSound(1052)
-        //                        DispatchQueue.main.async {
-        //                        self.recordingTimerBtn.setTitle(String(self.decreasingCount), for: .normal)
-        //                        }
-        //                    }
-        ////                }
-        //            } else { // self.decreasingCount <= 0
-        //                print("triggerCoundDownTimerFlag 7 called")
-        //                self.decreasingTimer.invalidate()
-        //                //                DispatchQueue.main.async {
-        //                //                    self.timerRecordingBtn.setTitle("Recording!", for: .normal)
-        //                //                }
-        //                self.decreasingCount = 3
-        //            }
-        //        }
-        
-        
     }
     
     private func stopTimer() {
@@ -947,12 +936,16 @@ class CameraController: UIViewController {
     }
     private let SideBtn = SelectableButton(title: "Side").then {
         $0.layer.cornerRadius = 4
+        $0.backgroundColor = .blue
     }
     private let betweenBtn = SelectableButton(title: "45°").then {
         $0.layer.cornerRadius = 4
+        
     }
     
-    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 0).then {
+//    private let
+    
+    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 0, cornerRadius: 6).then {
         //        $0.backgroundColor = .magenta
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.blueGray200.cgColor
@@ -1160,24 +1153,19 @@ extension CameraController: ConnectionManagerDelegate {
                 if self.connectionManager.isHost == false {
                     self.showReconnectionGuideAction()
                 }
+                // TODO: Update UI to notify disconnection
+                self.changeMode(target: nil, mode: .onRecording)
             }
             
+            resetRecording()
+            
         case .connected:
-            
-            //            DispatchQueue.main.async {
-            //                self.connectionStateLabel.text = "Connected!"
-            //            }
-            
             self.connectedAmount = connectedAmount
-            //            switch connectedAmount {
-            //
-            //            case 1:break
-            //
-            //            case 2:break
-            //            default:break
-            //
-            //            }
-            
+            switch connectedAmount {
+            case 1: self.changeMode(target: .left, mode: .stop)
+            case 2: self.changeMode(target: .both, mode: .stop)
+            default: break
+            }
         }
     }
     
@@ -1200,10 +1188,24 @@ extension CameraController: ConnectionManagerDelegate {
 
 
 extension CameraController: ScoreControllerDelegate {
-    
+    // TODO: Currently not being called ;; why ?
     func orderRequest(core: TrialCore, detail: TrialDetail) {
-        //        connectionManager.send
-        saveAction(core: core, detail: detail)
+        
+        printFlag(type: .peerRequest, count: 1)
+        
+        let title = core.title
+        guard let direction = MovementDirection(rawValue: core.direction) else { fatalError() }
+        
+        let optionalScore = detail.score.scoreToInt()
+        let optionalPain = detail.isPainful .painToBool()
+        
+        printFlag(type: .peerRequest, count: 2)
+        // TODO: type 이 달라야함.
+        connectionManager.send(MsgWithMovementDetail(message: .requestPostMsg, detailInfo: MovementDirectionScoreInfo(title: title, direction: direction, score: optionalScore, pain: optionalPain)))
+    
+        printFlag(type: .peerRequest, count: 3)
+    // printed
+//        saveAction(core: core, detail: detail)
         //        connectionManager.send
     }
     
@@ -1239,22 +1241,33 @@ extension CameraController: ScoreControllerDelegate {
         TrialDetail.save(belongTo: trialCore)
     }
     
+    private func resetRecording() {
+        stopRecording()
+        deleteAction()
+    }
+    
     // TODO: Fix if necessary
     func deleteAction() {
-        // 왜 제거가 안됨 ?? ;;; 글쎄다
+
         guard let validVideoUrl = videoUrl else { fatalError() }
-        print("file exist ? 1 \(FileManager().fileExists(atPath: validVideoUrl.path))")
-        do {
-            try FileManager().removeItem(at: validVideoUrl)
-            print("file exist ? 2 \(FileManager().fileExists(atPath: validVideoUrl.path))")
-            print("successfully deleted video !") // ?? 삭제 안됐는데 ?
-        } catch {
-            print("error: \(error.localizedDescription)")
-            print("file exist ? 3 \(FileManager().fileExists(atPath: validVideoUrl.path))")
-        }
+        
+        deleteVideo(with: validVideoUrl)
+
         // initialize selected score
         
         prepareRecording()
+    }
+    
+    
+    private func deleteVideo(with url: URL) {
+        do {
+            try FileManager().removeItem(at: url)
+//            print("file exist ? 2 \(FileManager().fileExists(atPath: url.path))")
+//            print("successfully deleted video !") // ?? 삭제 안됐는데 ?
+        } catch {
+//            print("error: \(error.localizedDescription)")
+//            print("file exist ? 3 \(FileManager().fileExists(atPath: url.path))")
+        }
     }
     
     
@@ -1268,13 +1281,15 @@ extension CameraController: ScoreControllerDelegate {
         let optionalScore = detail.score.scoreToInt()
         let optionalPain = detail.isPainful .painToBool()
         
-        //        print("Data to post \n title: \(core.title),\n direction: \(direction.rawValue), \n score: \(String(describing: optionalScore)), \n pain: \(optionalPain), \n trialCount: trialCount: \(detail.trialNo),\n trialId: trialId: \(trialId)")
-        
+        guard let cameraDirection = cameraDirection else { return }
         APIManager.shared.postRequest(
-            movementDirectionScoreInfo: MovementDirectionScoreInfo(
+            movementDirectionScoreInfo:
+                MovementDirectionScoreInfo(
                 title: core.title, direction: direction, score: optionalScore, pain: optionalPain),
             trialCount: Int(detail.trialNo), trialId: trialId,
-            videoUrl: validVideoUrl, angle: .front)
+            videoUrl: validVideoUrl, angle: cameraDirection) {
+                print("closure called after post request")
+            }
     }
     
     

@@ -49,6 +49,8 @@
 		228B88392806577A007A6842 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B88382806577A007A6842 /* SceneDelegate.swift */; };
 		228B884028065784007A6842 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 228B883F28065784007A6842 /* Assets.xcassets */; };
 		228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B884128065784007A6842 /* LaunchScreen.storyboard */; };
+		22A0343028572462005FDF0F /* DirectionBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0342F28572462005FDF0F /* DirectionBtnView.swift */; };
+		22A034322857246B005FDF0F /* DirectionBtnStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A034312857246B005FDF0F /* DirectionBtnStackView.swift */; };
 		22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACAF5428094ACF007277A7 /* DateExt+.swift */; };
 		22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* EditorService.swift */; };
 		22F65DFE283F75A100646FCD /* CropController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* CropController.swift */; };
@@ -119,6 +121,8 @@
 		228B883F28065784007A6842 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		228B884228065784007A6842 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		228B884428065784007A6842 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		22A0342F28572462005FDF0F /* DirectionBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionBtnView.swift; sourceTree = "<group>"; };
+		22A034312857246B005FDF0F /* DirectionBtnStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionBtnStackView.swift; sourceTree = "<group>"; };
 		22ACAF5428094ACF007277A7 /* DateExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateExt+.swift"; sourceTree = "<group>"; };
 		22F65DF1283E2DFB00646FCD /* EditorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorService.swift; sourceTree = "<group>"; };
 		22F65DFD283F75A100646FCD /* CropController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropController.swift; sourceTree = "<group>"; };
@@ -128,8 +132,6 @@
 		22F65E6D2844770100646FCD /* MovementCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovementCell.swift; sourceTree = "<group>"; };
 		22F65E6F2844772300646FCD /* MovementViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovementViewModel.swift; sourceTree = "<group>"; };
 		22F65E7B2845F47900646FCD /* ColorExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExt.swift; sourceTree = "<group>"; };
-		22F65E9D28484A7D00646FCD /* RemovableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RemovableCell.swift; path = ../../../../../Practice/RemovableCell.swift; sourceTree = "<group>"; };
-		22F65E9F28484AA300646FCD /* ScoreBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScoreBtnView.swift; path = /Users/fittobe/Desktop/Multipeer2/MultiPeer/Using/Position/SubViews/ScoreBtnView.swift; sourceTree = "<absolute>"; };
 		22F65EA128484AB900646FCD /* ImgBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImgBtnView.swift; sourceTree = "<group>"; };
 		22F65EA328484AD100646FCD /* ButtonWithInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWithInfo.swift; sourceTree = "<group>"; };
 		22F65EAF2848BD8400646FCD /* checkmark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = checkmark.json; path = ../../../../Downloads/checkmark.json; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				2265AC4D2817F42300E0FCCF /* CameraController.swift */,
+				22A034312857246B005FDF0F /* DirectionBtnStackView.swift */,
 				22889EFC2820CA96002A9C4F /* PreviewController.swift */,
 				22F65DF1283E2DFB00646FCD /* EditorService.swift */,
 				2283BEC6281FDFB5007D74FC /* ScoreController.swift */,
@@ -231,13 +234,12 @@
 		22795073282B94AC00B675A1 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
-				22F65E9D28484A7D00646FCD /* RemovableCell.swift */,
-				22F65E9F28484AA300646FCD /* ScoreBtnView.swift */,
 				22F65EA128484AB900646FCD /* ImgBtnView.swift */,
 				22F65EA328484AD100646FCD /* ButtonWithInfo.swift */,
 				22F65EB5284EDC6100646FCD /* ScoreButton.swift */,
 				22F65EB7284EDCA200646FCD /* SelectableButton.swift */,
 				22F65EB9284EDCB600646FCD /* SelectableButtonStackView.swift */,
+				22A0342F28572462005FDF0F /* DirectionBtnView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -478,6 +480,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22A034322857246B005FDF0F /* DirectionBtnStackView.swift in Sources */,
 				22F65EB22849B0FA00646FCD /* UIView+Ext.swift in Sources */,
 				22F65E6E2844770100646FCD /* MovementCell.swift in Sources */,
 				22795075282B965D00B675A1 /* SubjectDetailController.swift in Sources */,
@@ -487,6 +490,7 @@
 				227DA6C8282B60180097F8F1 /* SubjectController.swift in Sources */,
 				227950B2282BB8F900B675A1 /* Subject+Helper.swift in Sources */,
 				226D87672834E07600E3F547 /* RemovableProtocol.swift in Sources */,
+				22A0343028572462005FDF0F /* DirectionBtnView.swift in Sources */,
 				22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */,
 				2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */,
 				22795072282B939B00B675A1 /* MovementLists.swift in Sources */,
@@ -684,7 +688,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -718,7 +722,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

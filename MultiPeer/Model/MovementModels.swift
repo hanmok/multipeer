@@ -14,6 +14,12 @@ enum MovementDirection: String, Codable  {
     case neutral = "Neutral"
 }
 
+enum CameraDirection: String, Codable {
+    case front = "Front"
+    case side = "Side"
+    case between = "45°"
+}
+
 struct PositionInfo: Codable {
     var title: String
     
@@ -62,6 +68,7 @@ struct MovementWithVarName {
         self.positionVarName = varName
     }
 }
+
 
 
 struct MsgWithMovementDetail: Codable {

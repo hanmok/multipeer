@@ -9,7 +9,7 @@
 import UIKit
 
 
-class SelectableButtonStackView: UIStackView {
+class DirectionStackView: UIStackView {
     
     private var selectedBGColor: UIColor
     private var defaultBGColor: UIColor
@@ -22,7 +22,7 @@ class SelectableButtonStackView: UIStackView {
     
     public var selectedBtnTitle: String = ""
     
-    public var buttons: [SelectableButton] = []
+    public var buttons: [DirectionBtnView] = []
     
     public var selectedBtnIndex: Int?
     
@@ -53,10 +53,11 @@ class SelectableButtonStackView: UIStackView {
         }
     
     /// add SelectableButton to self
-    public func addArrangedButton(_ btn: SelectableButton) {
+    public func addArrangedButton(_ btn: DirectionBtnView) {
         super.addArrangedSubview(btn)
         buttons.append(btn)
         btn.backgroundColor = defaultBGColor
+        
     }
     
     public func selectBtnAction(selected id: UUID?) {

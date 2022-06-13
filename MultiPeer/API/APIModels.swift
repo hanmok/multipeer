@@ -33,8 +33,8 @@ struct PainModel: Codable {
 }
 
 
-public enum CapturingAngle: String {
-    case front
-    case side
-}
+//public enum CapturingAngle: String {
+//    case front
+//    case side
+//}
 

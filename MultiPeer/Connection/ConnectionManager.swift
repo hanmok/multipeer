@@ -229,7 +229,6 @@ extension ConnectionManager: MCSessionDelegate {
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         print("data received via ConnectionManager !!")
         
-        
         let jsonDecoder = JSONDecoder()
         
         do {
@@ -242,7 +241,8 @@ extension ConnectionManager: MCSessionDelegate {
             let detailInfoDic: [AnyHashable: Any] = [
                 "title": detailInfo.title,
                 "direction": detailInfo.direction,
-                "score": detailInfo.score ?? -1
+                "score": detailInfo.score ?? -1,
+                "pain": detailInfo.pain ?? false
             ]
             
             switch msg {
@@ -267,13 +267,16 @@ extension ConnectionManager: MCSessionDelegate {
             case .updatePeerTitle:
                 NotificationCenter.default.post(name: .updatePeerTitleKey, object: nil, userInfo: detailInfoDic)
                 
+                // TODO: Make it work
+            case .requestPostMsg:
+                NotificationCenter.default.post(name: .requestPostKey, object: nil, userInfo: detailInfoDic)
+                print("peerRequest, 0")
+                
             case .none:
                 print("none has been passed!")
                 break
             
-                // TODO: Make it work
-            case .requestPostMsg:
-                NotificationCenter.default.post(name: .requestPostKey, object: nil, userInfo: detailInfoDic)
+
             }
             
         } catch {

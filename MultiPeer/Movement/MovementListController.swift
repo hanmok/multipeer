@@ -33,8 +33,8 @@ class MovementListController: UIViewController {
     // TODO: false -> 정상 작동 ;;
     //    var testMode = false
     
-//    var testMode = false
-    var testMode = true
+    var testMode = false
+//    var testMode = true
     
     var trialCores: [[TrialCore]] = [[]]
     /// 화면에 나타날 trialCores
@@ -607,15 +607,20 @@ extension MovementListController: ConnectionManagerDelegate {
     func updateState(state: ConnectionState, connectedAmount: Int) {
         switch state {
         case .connected:
+            self.connectedAmount = connectedAmount
+            
             switch connectedAmount {
+                
             case 1:
                 DispatchQueue.main.async {
                     self.leftConnectionStateView.backgroundColor = .red
+                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
                 }
                 
             case 2:
                 DispatchQueue.main.async {
                     self.rightConnectionStateView.backgroundColor = .red
+                    self.leftConnectionStateView.backgroundColor = .red
                 }
             default:
                 DispatchQueue.main.async {
@@ -623,15 +628,13 @@ extension MovementListController: ConnectionManagerDelegate {
                     self.rightConnectionStateView.backgroundColor = .lavenderGray300
                 }
             }
-            self.connectedAmount = connectedAmount
             
         case .disconnected:
-            
+            self.connectedAmount = 0
             DispatchQueue.main.async {
                 self.leftConnectionStateView.backgroundColor = .lavenderGray300
                 self.rightConnectionStateView.backgroundColor = .lavenderGray300
             }
-            self.connectedAmount = 0
         }
     }
 }

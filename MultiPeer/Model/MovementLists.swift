@@ -290,6 +290,7 @@ enum FlagType: String {
     case rsBug
     case durationBug
     case peerConnectivity
+    case peerRequest
 }
 
 

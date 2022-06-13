@@ -325,7 +325,9 @@ class ScoreController: UIViewController {
             setScore(title: trialCore.title, to: trialDetail, score: score, pain: pain)
             
             delegate?.saveAction(core: trialCore, detail: trialDetail)
+            printFlag(type: .peerRequest, count: -1)
             delegate?.orderRequest(core: trialCore, detail: trialDetail)
+            printFlag(type: .peerRequest, count: -2)
             trialCore.updateLatestScore()
 
             // 어떤게 invalid 일까 ?? 둘다일 수 있다.
