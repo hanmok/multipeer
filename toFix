@@ -41,5 +41,23 @@ scoreVC
 ******************
 
 
+그리고....
 
 
+**************
+MovementListController
+동작 눌릴 때 색상 다르게 해주기
+원래 색상을 알아야하나 ?
+viewDidDisappear 트리거되지 않음.
+***************
+
+
+
+
+********
+Connect Btn 이 잘 안눌림
+어떻게 하지 ??
+SafeArea 때문에 그럼.
+따라서, Connect Btn 을 아래로 내려서 해결.
+
+********

@@ -18,17 +18,12 @@ protocol ScoreControllerDelegate: AnyObject {
 
     func saveAction(core: TrialCore, detail: TrialDetail)
     
-//    func updateMovement(with movementDirectionScoreInfo: MovementDirectionScoreInfo)
-    
-//    func updateMovement()
-    
     func updatePressedBtnTitle(with btnTitle: String)
     
     func navigateToSecondView(withNextTitle: Bool)
     
     func orderRequest(core: TrialCore, detail: TrialDetail)
     
-//    func presentCompleteMsgView(shouldShowNext: Bool)
 }
 
 

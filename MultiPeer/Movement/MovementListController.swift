@@ -80,8 +80,8 @@ class MovementListController: UIViewController {
     
     private let finishBtn = UIButton().then {
         $0.setTitle("Finish Later", for: .normal)
-        $0.setTitleColor(.gray400, for: .normal)
-        $0.backgroundColor = .lavenderGray100
+        $0.setTitleColor(.white, for: .normal)
+        $0.backgroundColor = .red500
         $0.layer.cornerRadius = 8
     }
     
@@ -99,11 +99,14 @@ class MovementListController: UIViewController {
         $0.layer.cornerRadius = 5
     }
     
-    
+    override func viewDidDisappear(_ animated: Bool) {
+        print("viewDidDisappear Triggered ")
+    }
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.insetsLayoutMarginsFromSafeArea = false
         print("viewDidLoad in MovementListController called")
         // FIXME: updatingTrialCore 버그 출현 지역 ;; 왜 ... 버그가.. 발생할까.. ?
         //        printFlag(type: .updatingTrialCore, count: 0)
@@ -449,7 +452,9 @@ class MovementListController: UIViewController {
         view.addSubview(sessionBtn)
         sessionBtn.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(-15)
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(-15)
+            make.top.equalTo(view.safeAreaLayoutGuide)
+//            make.top.equalToSuperview().offset(70)
             make.width.equalTo(100)
             make.height.equalTo(30)
         }
@@ -469,10 +474,12 @@ class MovementListController: UIViewController {
         }
         
         
+        
         view.addSubview(subjectSettingBtn)
         subjectSettingBtn.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(16)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(-15)
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(-15)
+            make.top.equalTo(view.safeAreaLayoutGuide)
             make.height.width.equalTo(40)
         }
         
@@ -481,7 +488,8 @@ class MovementListController: UIViewController {
         self.view.addSubview(movementCollectionView)
         movementCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(30)
+//            make.top.equalTo(view.safeAreaLayoutGuide).inset(30)
+            make.top.equalTo(sessionBtn.snp.bottom).offset(15)
             make.bottom.equalTo(view.snp.bottom).offset(-120)
         }
         
@@ -492,17 +500,17 @@ class MovementListController: UIViewController {
         }
         
         
-        self.view.addSubview(completeBtn)
-        completeBtn.snp.makeConstraints { make in
+        self.view.addSubview(finishBtn)
+        finishBtn.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().inset(32)
             make.width.equalTo(screenWidth / 2 - 20 - 8)
             make.height.equalTo(48)
         }
         
-        self.view.addSubview(finishBtn)
-        finishBtn.snp.makeConstraints { make in
-            make.leading.equalTo(completeBtn.snp.trailing).offset(16)
+        self.view.addSubview(completeBtn)
+        completeBtn.snp.makeConstraints { make in
+            make.leading.equalTo(finishBtn.snp.trailing).offset(16)
             make.bottom.equalToSuperview().inset(32)
             make.trailing.equalToSuperview().inset(32)
             make.height.equalTo(48)
