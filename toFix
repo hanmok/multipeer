@@ -1,0 +1,32 @@
+
+
+ScoreController 를.. 많이 수정해야함.
+pain stack 필요 없는 경우 없애기.
+
+고쳤당!
+UserInterAction 도 처리해주기. 
+
+Home, Next 상황에 따라 다르게 출력.
+
+
+
+
+CameraController 는,
+출현할 때마다 새로 만들어짐
+scoreVC 는 몰라
+Then ?
+scoreVC
+
+
+hidden 처리할 필요는 없음
+
+대신 BG Color 를 바꿔줘야함
+
+
+
+사진 Preview 위치를 조금 위로 올려야함 ;;
+
+
+음.. 카메라의 위치는 바뀔 수 있다고 가정.
+
+고로 안고친다.

@@ -613,19 +613,19 @@ class CameraController: UIViewController {
             scoreVC.setupTrialCore(with: trialCore )
             
             if size == .large {
+            
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 0.4) {
-                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 330, width: screenWidth, height: screenHeight)
+                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 324, width: screenWidth, height: screenHeight)
                     }
                 }
 
             } else {
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 0.4) {
-                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 220, width: screenWidth, height: screenHeight)
+                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 219, width: screenWidth, height: screenHeight)
                     }
                 }
-
             }
         }
     }
@@ -1107,11 +1107,14 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
         
         // TODO: Present Preview In a second
+        
+        let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.presentPreview(with: url)
             self.prepareScoreView()
             
-            self.showScoreView()
+            self.showScoreView(size: size)
         }
     }
     

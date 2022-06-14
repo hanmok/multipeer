@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22244D1F28586AC900B3D03C /* toFix in Resources */ = {isa = PBXBuildFile; fileRef = 22244D1E28586AC900B3D03C /* toFix */; };
 		22315E3B282E1F8F0093079B /* ScreenCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3A282E1F8F0093079B /* ScreenCollectionCell.swift */; };
 		22315E3D282E1FCB0093079B /* ScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3C282E1FCB0093079B /* ScreenViewModel.swift */; };
 		22315E3F282E38D40093079B /* TrialCore+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3E282E38D40093079B /* TrialCore+Helper.swift */; };
@@ -77,6 +78,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		22244D1E28586AC900B3D03C /* toFix */ = {isa = PBXFileReference; lastKnownFileType = text; path = toFix; sourceTree = "<group>"; };
 		22315E3A282E1F8F0093079B /* ScreenCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCollectionCell.swift; sourceTree = "<group>"; };
 		22315E3C282E1FCB0093079B /* ScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewModel.swift; sourceTree = "<group>"; };
 		22315E3E282E38D40093079B /* TrialCore+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrialCore+Helper.swift"; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 				22315E40282E4CA30093079B /* MemoForCoreData */,
 				227E7C922833A5C800084BA2 /* CameraWithCoreData */,
 				226D87682834FE7B00E3F547 /* TODO */,
+				22244D1E28586AC900B3D03C /* toFix */,
 				9A7545B8283B257400558CA7 /* Homework */,
 				22F65DFD283F75A100646FCD /* CropController.swift */,
 				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
@@ -426,6 +429,7 @@
 				22F65E632840B4F000646FCD /* countDown.json in Resources */,
 				22315E41282E4CA40093079B /* MemoForCoreData in Resources */,
 				9A7545B9283B257400558CA7 /* Homework in Resources */,
+				22244D1F28586AC900B3D03C /* toFix in Resources */,
 				226D87692834FE7B00E3F547 /* TODO in Resources */,
 				227DA6C628291D450097F8F1 /* Memos in Resources */,
 			);
