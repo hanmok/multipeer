@@ -181,11 +181,11 @@ class CameraController: UIViewController {
         switch connectionManager.connectionState {
         case .connected:
             DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Connected!"
+//                self.connectionStateLabel.text = "Connected!"
             }
         case .disconnected:
             DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Disconnected!"
+//                self.connectionStateLabel.text = "Disconnected!"
             }
         }
     }
@@ -316,7 +316,7 @@ class CameraController: UIViewController {
         switch state {
         case .disconnected:
             DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Disconnected!"
+//                self.connectionStateLabel.text = "Disconnected!"
                 if self.connectionManager.isHost == false {
                     self.showReconnectionGuideAction()
                 }
@@ -324,7 +324,7 @@ class CameraController: UIViewController {
             
         case .connected:
             DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Connected!"
+//                self.connectionStateLabel.text = "Connected!"
             }
         }
     }
@@ -1208,7 +1208,7 @@ extension CameraController: ConnectionManagerDelegate {
         case .disconnected:
             DispatchQueue.main.async {
                 print(#file, #line)
-                self.connectionStateLabel.text = "Disconnected!"
+//                self.connectionStateLabel.text = "Disconnected!"
                 //                self.showConnectivityAction()
                 print("showReconnectionGuideAction!")
                 if self.connectionManager.isHost == false {

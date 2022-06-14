@@ -490,7 +490,8 @@ class MovementListController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(20)
 //            make.top.equalTo(view.safeAreaLayoutGuide).inset(30)
             make.top.equalTo(sessionBtn.snp.bottom).offset(15)
-            make.bottom.equalTo(view.snp.bottom).offset(-120)
+//            make.bottom.equalTo(view.snp.bottom).offset(-120)
+            make.bottom.equalTo(view.snp.bottom).offset(-100)
         }
         
         self.view.addSubview(bottomView)
