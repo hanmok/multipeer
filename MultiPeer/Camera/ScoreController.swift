@@ -146,7 +146,8 @@ class ScoreController: UIViewController {
     private let saveBtn = UIButton().then {
         $0.setTitle("Save", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = .red500
+//        $0.backgroundColor = .red500
+        $0.backgroundColor = UIColor(redInt: 196, greenInt: 196, blueInt: 196)
         $0.layer.cornerRadius = 8
     }
     

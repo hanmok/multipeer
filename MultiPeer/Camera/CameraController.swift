@@ -50,7 +50,6 @@ class CameraController: UIViewController {
     
     var updatingDurationTimer = Timer()
     
-
     var count = 0
     
     var isRecordingEnded = false
