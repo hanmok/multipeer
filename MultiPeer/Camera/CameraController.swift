@@ -236,6 +236,13 @@ class CameraController: UIViewController {
         }
     }
     
+    private let leftLine = UIView().then {
+        $0.backgroundColor = UIColor(redInt: 225, greenInt: 225, blueInt: 230)
+    }
+    
+    private let rightLine = UIView().then {
+        $0.backgroundColor = UIColor(redInt: 225, greenInt: 225, blueInt: 230)
+    }
     
     
     @objc func requestPostNoti(_ notification: Notification) {
@@ -827,7 +834,8 @@ class CameraController: UIViewController {
         dismissBtn.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(90)
             make.leading.equalToSuperview().inset(16)
-            make.height.width.equalTo(20)
+//            make.height.width.equalTo(20)
+            make.height.width.equalTo(24)
         }
         
         
@@ -870,14 +878,47 @@ class CameraController: UIViewController {
             directionStackView.addArrangedButton($0)
         }
         
-        bottomView.addSubview(directionStackView)
-        directionStackView.snp.makeConstraints { make in
+        bottomView.addSubview(stackViewContainer)
+        stackViewContainer.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().inset(20)
             
             make.width.equalTo(230)
             make.height.equalTo(40)
         }
+        
+//        bottomView.addSubview(directionStackView)
+        stackViewContainer.addSubview(directionStackView)
+        directionStackView.snp.makeConstraints { make in
+//            make.top.equalToSuperview().offset(20)
+//            make.trailing.equalToSuperview().inset(20)
+//
+//            make.width.equalTo(230)
+//            make.height.equalTo(40)
+            make.leading.top.trailing.bottom.equalToSuperview().inset(2)
+        }
+        
+//        directionStackView.addSubview(<#T##view: UIView##UIView#>)
+//        [leftLine, rightLine].forEach { self.directionStackView.addSubview($0)}
+        [leftLine, rightLine].forEach { self.stackViewContainer.addSubview($0)}
+        
+        
+        leftLine.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(76)
+//            make.leading.equalToSuperview().offset(77)
+            make.centerY.equalToSuperview()
+            make.height.equalToSuperview().dividedBy(2)
+            make.width.equalTo(1)
+        }
+        
+        rightLine.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-76)
+//            make.trailing.equalToSuperview().offset(-77)
+            make.centerY.equalToSuperview()
+            make.height.equalToSuperview().dividedBy(2)
+            make.width.equalTo(1)
+        }
+        
         
         
         [leftShape, rightShape].forEach { neighborLongBar.addSubview($0) }
@@ -955,11 +996,19 @@ class CameraController: UIViewController {
     
 //    private let
     
-    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 0, cornerRadius: 6).then {
+    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
+//        .then {
         //        $0.backgroundColor = .magenta
+//        $0.layer.borderWidth = 1
+//        $0.layer.borderColor = UIColor.blueGray200.cgColor
+//        $0.clipsToBounds = true
+//    }
+    
+    private let stackViewContainer = UIView().then {
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.blueGray200.cgColor
         $0.clipsToBounds = true
+        $0.layer.cornerRadius = 6
     }
     
     private let movementNameLabel = UILabel().then {
@@ -980,7 +1029,7 @@ class CameraController: UIViewController {
         $0.textColor = .white
         $0.text = "00:00"
         $0.textAlignment = .center
-        $0.layer.cornerRadius = 24
+        $0.layer.cornerRadius = 20
         $0.backgroundColor = .lavenderGray700
         $0.clipsToBounds = true
     }
@@ -992,7 +1041,6 @@ class CameraController: UIViewController {
         btn.addSubview(innerImage)
         
         innerImage.snp.makeConstraints { make in
-            //            make.top.leading.trailing.bottom.equalToSuperview()
             make.center.equalToSuperview()
             make.width.equalToSuperview().dividedBy(2)
             make.height.equalToSuperview()
