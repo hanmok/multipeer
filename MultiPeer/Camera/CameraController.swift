@@ -551,7 +551,16 @@ class CameraController: UIViewController {
         }
     }
     
-    private func setupCompleteView() {
+    // TODO: Score 에서 Hold -> Next
+    // TODO:           그 외 -> Retry
+    
+    private func setupCompleteView(withNextTitle: Bool = false) {
+        if withNextTitle {
+//            retryBtn.setTitle("Next", for: .normal)
+            homeBtn.setTitle("Next", for: .normal)
+        } else {
+            homeBtn.setTitle("Home", for: .normal)
+        }
         
         view.addSubview(completeMsgView)
         
@@ -585,6 +594,8 @@ class CameraController: UIViewController {
             make.bottom.equalToSuperview().inset(34)
             make.height.equalTo(48)
         }
+        
+        
     }
     
     /// prepare scoreVC to the bottom (to come up later)
@@ -1190,6 +1201,11 @@ extension CameraController: ConnectionManagerDelegate {
 
 
 extension CameraController: ScoreControllerDelegate {
+    
+    func presentCompleteMsgView(shouldShowNext: Bool) {
+        
+    }
+    
     // TODO: Currently not being called ;; why ?
     func orderRequest(core: TrialCore, detail: TrialDetail) {
         
@@ -1211,8 +1227,10 @@ extension CameraController: ScoreControllerDelegate {
         //        connectionManager.send
     }
     
-    func navigateToSecondView() {
+
+    func navigateToSecondView(withNextTitle: Bool) {
         print("navigateToSecondView Triggered")
+        setupCompleteView(withNextTitle: withNextTitle)
         showCompleteMsgView()
         hideScoreView()
         hidePreview()

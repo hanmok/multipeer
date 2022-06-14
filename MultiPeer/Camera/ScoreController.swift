@@ -24,9 +24,11 @@ protocol ScoreControllerDelegate: AnyObject {
     
     func updatePressedBtnTitle(with btnTitle: String)
     
-    func navigateToSecondView()
+    func navigateToSecondView(withNextTitle: Bool)
     
     func orderRequest(core: TrialCore, detail: TrialDetail)
+    
+//    func presentCompleteMsgView(shouldShowNext: Bool)
 }
 
 
@@ -371,7 +373,14 @@ class ScoreController: UIViewController {
             
         } else { print("save Condition not satisfied.") }
         
-        delegate?.navigateToSecondView()
+//        scoreBtnStackView.selectedBtnTitle == .Value.hold.
+        if score == .Value.hold {
+            delegate?.navigateToSecondView(withNextTitle: true)
+        } else {
+            delegate?.navigateToSecondView(withNextTitle: false)
+        }
+        
+//        delegate?.navigateToSecondView()
     }
     
     
