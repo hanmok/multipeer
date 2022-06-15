@@ -71,10 +71,6 @@ struct MovementWithVarName {
 
 
 
-struct MsgWithMovementDetail: Codable {
-    var message: MessageType
-    var detailInfo: MovementDirectionScoreInfo
-}
 
 struct LottieMsgInfo: Codable {
     var lottieType: LottieType
@@ -83,7 +79,6 @@ struct LottieMsgInfo: Codable {
 enum LottieType: String, Codable {
     case countDown
 }
-
 
 
 public struct MovementWithPainTestName {

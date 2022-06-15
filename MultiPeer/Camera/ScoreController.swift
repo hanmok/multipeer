@@ -187,6 +187,8 @@ class ScoreController: UIViewController {
         setupAddtargets()
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor(white: 0.8, alpha: 1).cgColor
+        
+        
     }
     
     // MARK: - Helper Functions

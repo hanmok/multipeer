@@ -67,7 +67,7 @@ class CameraController: UIViewController {
     private var isRecording = false
     
     //    private let shouldRecordLater = false
-    private let shouldRecordLater = false
+    private let shouldRecordLater = true
     
     var variationName: String?
     
@@ -574,9 +574,9 @@ class CameraController: UIViewController {
         completeMsgView.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
         
         
-        [checkmarkLottieView,completeMsgLabel, retryBtn, homeBtn].forEach { completeMsgView.addSubview($0)}
+        [completeLottieView,completeMsgLabel, retryBtn, homeBtn].forEach { completeMsgView.addSubview($0)}
         
-        checkmarkLottieView.snp.makeConstraints { make in
+        completeLottieView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
             make.height.equalToSuperview().dividedBy(10)
             make.centerY.equalToSuperview().offset(-70)
@@ -584,8 +584,8 @@ class CameraController: UIViewController {
         
         completeMsgLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
-            make.height.equalTo(40)
-            make.top.equalTo(checkmarkLottieView.snp.bottom).offset(15)
+            make.height.equalTo(100)
+            make.top.equalTo(completeLottieView.snp.bottom).offset(15)
         }
         
         retryBtn.snp.makeConstraints { make in
@@ -1081,7 +1081,8 @@ class CameraController: UIViewController {
     }
     
     /// animation from Vikky
-    private let countDownLottieView = AnimationView(name: "countDown").then {
+//    private let countDownLottieView = AnimationView(name: "countDown").then {
+    private let countDownLottieView = AnimationView(name: "countDownLottie").then {
         $0.contentMode = .scaleAspectFit
         $0.loopMode = .playOnce
     }
@@ -1106,27 +1107,59 @@ class CameraController: UIViewController {
         $0.setTitleColor(.gray900, for: .normal)
     }
     
-    private let checkmarkLottieView = AnimationView(name: "checkmark").then {
+//    private let checkmarkLottieView = AnimationView(name: "checkmark").then {
+    private let completeLottieView = AnimationView(name: "completeLottie").then {
         $0.contentMode = .scaleAspectFit
         $0.loopMode = .playOnce
+        $0.backgroundColor = .white
     }
+    
+//    private let completeMsgLabel = UILabel().then {
+//        //    private let completeMsgLabel = UITextView().then {
+//        let paragraph = NSMutableParagraphStyle()
+//        paragraph.alignment = .center
+//
+//        let attrText = NSMutableAttributedString(string: "Upload Completed!\n hihi", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
+//
+//        attrText.append(NSAttributedString(string: "Contrats!\nYour video has been successfully uploaded.", attributes: [
+//            .font: UIFont.systemFont(ofSize: 17),
+//            .foregroundColor: UIColor.gray600,
+//            .paragraphStyle: paragraph]))
+//
+//        attrText.append(NSAttributedString(string: "Your video has been successfully uploaded", attributes: [
+//            .font: UIFont.systemFont(ofSize: 15),
+//            .paragraphStyle: paragraph
+//        ]))
+//
+//        $0.attributedText = attrText
+//        $0.numberOfLines = 0
+//    }
     
     private let completeMsgLabel = UILabel().then {
         //    private let completeMsgLabel = UITextView().then {
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         
-        var attrText = NSMutableAttributedString(string: "Upload Completed!\n", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
+        let attrText = NSMutableAttributedString(string: "Upload Completed\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 24, weight: .bold),
+            .foregroundColor: UIColor.gray900,
+//            .foregroundColor: UIColor.white,
+            .paragraphStyle: paragraph]
+        )
         
-        attrText.append(NSAttributedString(string: "Contrats!\nYour video has been successfully uploaded.", attributes: [
+        attrText.append(NSAttributedString(string: "\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 10)
+        ]))
+        
+        attrText.append(NSAttributedString(string: "Congrats!\n Video has been successfully uploaded.", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray600,
             .paragraphStyle: paragraph]))
         
         $0.attributedText = attrText
         $0.numberOfLines = 0
-        
     }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -1235,7 +1268,7 @@ extension CameraController: ConnectionManagerDelegate {
             self.completeMsgView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
         } completion: { done in
             if done {
-                self.checkmarkLottieView.play()
+                self.completeLottieView.play()
             }
         }
     }

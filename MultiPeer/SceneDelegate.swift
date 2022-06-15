@@ -23,6 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 //        let positionVC = PositionController()
         let movementVC = MovementListController()
+//        let movementVC = TestViewController()
 //        movementVC.shouldAutorotate = false
 //        let positionVC = SoundTestViewController()
 //        window?.rootViewController = PositionController()

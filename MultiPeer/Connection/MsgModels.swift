@@ -11,6 +11,22 @@ import Foundation
 import Foundation
 
 
+struct MsgWithMovementDetail: Codable {
+    var message: MessageType
+    var detailInfo: MovementDirectionScoreInfo // 이게 문제
+    
+}
+
+struct PeerInfo: Codable {
+    var message: MessageType
+    var info: Info
+}
+
+struct Info: Codable {
+    var movementDetail: MovementDirectionScoreInfo?
+    var cameraDirection: CameraDirection?
+}
+
 struct MsgWithTime: Codable {
     let msg: MessageType
     let timeInMilliSec: Int
@@ -28,16 +44,16 @@ struct MsgWithTime: Codable {
 
 public enum MessageType: String, Codable {
     case presentCamera
-    // Do I need to dismiss ?
-    // Timer ?
+
     case startRecordingMsg
     case stopRecordingMsg
     case none
-//    case startRecordingAfterMsg
-//    case startCountDownMsg
+
     case requestPostMsg
     
     case updatePeerTitle
+    
+    case updatePeerCameraDirection
 }
 
 

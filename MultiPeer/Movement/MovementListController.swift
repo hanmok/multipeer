@@ -43,7 +43,10 @@ class MovementListController: UIViewController {
     //    var selectedTrialCore: TrialCore?
     
     var rank: Rank?
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        print("viewWillAppear triggered")
+    }
     
     // MARK: - UI Properties
     
@@ -245,8 +248,6 @@ class MovementListController: UIViewController {
             let trialCore = screen.trialCores.filter {
                 $0.title == title && $0.direction == direction.rawValue
             }.first!
-            
-            
             
             presentUsingChild(trialCore: trialCore, rank: .follower)
         } else {
