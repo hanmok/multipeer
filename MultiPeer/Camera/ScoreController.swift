@@ -18,15 +18,12 @@ protocol ScoreControllerDelegate: AnyObject {
 
     func saveAction(core: TrialCore, detail: TrialDetail)
     
-//    func updateMovement(with movementDirectionScoreInfo: MovementDirectionScoreInfo)
-    
-//    func updateMovement()
-    
     func updatePressedBtnTitle(with btnTitle: String)
     
-    func navigateToSecondView()
+    func navigateToSecondView(withNextTitle: Bool)
     
     func orderRequest(core: TrialCore, detail: TrialDetail)
+    
 }
 
 
@@ -160,15 +157,22 @@ class ScoreController: UIViewController {
         
         self.direction = direction
         self.scoreType = movementNameToScoreType[positionTitle] ?? .zeroToThree
+        // 이거 하나로 판별 못함.
+        // 조건 하나 더 필요해. 아래에 있네.
+//        self.painTestName = (movementWithPainTestTitle[positionTitle])
         
-        self.painTestName = (movementWithPainTestTitle[positionTitle])
+//        print("init, painTestName: \(painTestName), positionTitle: \(positionTitle), direction: \(direction.rawValue)")
         
-        print("init, painTestName: \(painTestName), positionTitle: \(positionTitle), direction: \(direction.rawValue)")
         
-        if positionTitle == MovementList.rotaryStability.rawValue && direction.rawValue == MovementDirectionList.left.rawValue {
-            print("title, direction: \(positionTitle), \(direction), rsbug, count: 11")
-            self.painTestName = nil
-        }
+        
+//        if positionTitle == MovementList.rotaryStability.rawValue && direction.rawValue == MovementDirectionList.left.rawValue {
+//            print("title, direction: \(positionTitle), \(direction), rsbug, count: 11")
+//            self.painTestName = nil
+//        }
+        
+        self.painTestName = Dummy.getPainTestName(from: positionTitle, direction: direction)
+        
+        
         
         self.varTestName = (movementWithVariation[positionTitle])
         
@@ -181,6 +185,10 @@ class ScoreController: UIViewController {
         
         setupLayout()
         setupAddtargets()
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor(white: 0.8, alpha: 1).cgColor
+        
+        
     }
     
     // MARK: - Helper Functions
@@ -192,14 +200,15 @@ class ScoreController: UIViewController {
         if painTestName != nil {
             
             if setupFTrialCoreIfNeeded() {
-                UIView.animate(withDuration: 0.3) {
-                    self.painBtnStackView.isHidden = false
-                    self.painPositionLabel.isHidden = false
+                self.painBtnStackView.buttons.forEach { $0.backgroundColor = .lavenderGray300
+                    $0.setTitleColor(.gray900, for: .normal)
+                    $0.isUserInteractionEnabled = true
                 }
             } else {
-                UIView.animate(withDuration: 0.3) {
-                    self.painBtnStackView.isHidden = true
-                    self.painPositionLabel.isHidden = true
+                self.painBtnStackView.buttons.forEach {
+                    $0.backgroundColor = .lavenderGray100
+                    $0.setTitleColor(.gray400, for: .normal)
+                    $0.isUserInteractionEnabled = false
                 }
             }
         }
@@ -275,10 +284,17 @@ class ScoreController: UIViewController {
             }
         }
         
-        //
+
         if painTestName == nil {
-            painBtnStackView.isHidden = true
-            painPositionLabel.isHidden = true
+            //TODO: Change ScoreController to not have pain for unnecessary cases
+
+//            painBtnStackView.backgroundColor = .lavenderGray100
+            saveBtn.backgroundColor = .red500
+        } else {
+//            painBtnStackView.selectedBtnIndex
+            if painBtnStackView.selectedBtnIndex != nil {
+                saveBtn.backgroundColor = .red500
+            }
         }
     }
     
@@ -293,6 +309,11 @@ class ScoreController: UIViewController {
             print("pain is nil")
             pain = nil
         }
+        
+        if scoreBtnStackView.selectedBtnIndex != nil {
+            saveBtn.backgroundColor = .red500
+        }
+        
     }
 
     
@@ -349,7 +370,14 @@ class ScoreController: UIViewController {
             
         } else { print("save Condition not satisfied.") }
         
-        delegate?.navigateToSecondView()
+//        scoreBtnStackView.selectedBtnTitle == .Value.hold.
+        if score == .Value.hold {
+            delegate?.navigateToSecondView(withNextTitle: true)
+        } else {
+            delegate?.navigateToSecondView(withNextTitle: false)
+        }
+        
+//        delegate?.navigateToSecondView()
     }
     
     
@@ -456,35 +484,20 @@ class ScoreController: UIViewController {
     private func toggleAppearance(shouldHide: Bool) {
         
         if shouldHide {
-            UIView.animate(withDuration: 0.3) {
-                self.painPositionLabel.isHidden = true
-                self.painBtnStackView.isHidden = true
+            
+            self.painBtnStackView.buttons.forEach { $0.backgroundColor = .lavenderGray100
+                $0.setTitleColor(.gray400, for: .normal)
+                $0.isUserInteractionEnabled = false
             }
         } else {
-            UIView.animate(withDuration: 0.3) {
-                self.painPositionLabel.isHidden = false
-                self.painBtnStackView.isHidden = false
+            self.painBtnStackView.buttons.forEach {
+                $0.isUserInteractionEnabled = true
+                $0.backgroundColor = .lavenderGray300
+                $0.setTitleColor(.gray900, for: .normal)
             }
         }
     }
     
-    
-//    private func updateTrialDetail() {
-//        guard let trialCore = trialCore else { fatalError("trial Core is nil") }// could be changed.
-//
-//        let prevTrialDetails = trialCore.trialDetails.sorted { $0.trialNo < $1.trialNo }
-//
-//        if prevTrialDetails.count != 0 {
-//            guard let lastDetailElement = prevTrialDetails.last else { fatalError("error:") }
-//
-//            if lastDetailElement.score != .DefaultValue.trialScore { // pain 에 대한 조건이 필요.
-//                trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
-//            }
-//
-//        } else {
-//            trialDetail = createTrialDetail(with: Int64(prevTrialDetails.count))
-//        }
-//    }
     
     @discardableResult
     private func createTrialDetail(with trialNo: Int64) -> TrialDetail {
@@ -506,8 +519,8 @@ class ScoreController: UIViewController {
         view.addSubview(scoreLabel)
         scoreLabel.snp.makeConstraints { make in
             make.trailing.leading.equalToSuperview().inset(10)
-            make.height.equalTo(50)
-            make.top.equalToSuperview().offset(10)
+            make.height.equalTo(25)
+            make.top.equalToSuperview().offset(24)
         }
         
 
@@ -546,7 +559,7 @@ class ScoreController: UIViewController {
         
         view.addSubview(scoreBtnStackView)
         scoreBtnStackView.snp.makeConstraints { make in
-            make.top.equalTo(scoreLabel.snp.bottom).offset(10)
+            make.top.equalTo(scoreLabel.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview().inset(35)
             make.height.equalTo(48)
         }
@@ -555,13 +568,14 @@ class ScoreController: UIViewController {
         painMinusBtn.wrappedString = "-"
         
 
+        if painTestName != nil {
             view.addSubview(painPositionLabel)
             painPositionLabel.snp.makeConstraints { make in
-                make.top.equalTo(scoreBtnStackView.snp.bottom).offset(10)
+                make.top.equalTo(scoreBtnStackView.snp.bottom).offset(24)
                 make.leading.trailing.equalToSuperview().inset(10)
-                make.height.equalTo(40) // same as that of scoreLabel
+                make.height.equalTo(25) // same as that of scoreLabel
             }
-        // TODO: setup painPositionLabel
+
 
             [painPlusBtn, painMinusBtn].forEach {
                 painBtnStackView.addArrangedButton($0)
@@ -569,25 +583,25 @@ class ScoreController: UIViewController {
 
             view.addSubview(painBtnStackView)
             painBtnStackView.snp.makeConstraints { make in
-                make.top.equalTo(painPositionLabel.snp.bottom).offset(10)
+                make.top.equalTo(painPositionLabel.snp.bottom).offset(8)
                 make.centerX.equalToSuperview()
                 make.width.equalToSuperview().dividedBy(2.5)
                 make.height.equalTo(48)
             }
-
-        
-        if painTestName == nil {
-            painBtnStackView.isHidden = true
-            painPositionLabel.isHidden = true
         }
         
-
         view.addSubview(deleteBtn)
         view.addSubview(saveBtn)
         
         deleteBtn.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
-            make.top.equalTo(painBtnStackView.snp.bottom).offset(30)
+            
+            if painTestName != nil {
+            make.top.equalTo(painBtnStackView.snp.bottom).offset(32)
+            } else {
+                make.top.equalTo(scoreBtnStackView.snp.bottom).offset(30)
+            }
+            
             make.height.equalTo(48)
             make.width.equalToSuperview().dividedBy(3)
         }
@@ -595,7 +609,12 @@ class ScoreController: UIViewController {
         saveBtn.snp.makeConstraints { make in
             make.leading.equalTo(deleteBtn.snp.trailing).offset(16)
             make.trailing.equalToSuperview().inset(20)
-            make.top.equalTo(painBtnStackView.snp.bottom).offset(30)
+            
+            if painTestName != nil {
+            make.top.equalTo(painBtnStackView.snp.bottom).offset(32)
+            } else {
+                make.top.equalTo(scoreBtnStackView.snp.bottom).offset(32)
+            }
             make.height.equalTo(48)
         }
     }

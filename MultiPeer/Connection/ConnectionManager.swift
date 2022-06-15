@@ -73,6 +73,9 @@ class ConnectionManager: NSObject {
             print("current peers: \(oldValue.count)")
         }
     }
+    
+    var cameraDirectionDic: [String: CameraDirection] = [:]
+    
     static var connectedToChat = false
     
     let myPeerId = MCPeerID(displayName: UIDevice.current.name)
@@ -272,10 +275,14 @@ extension ConnectionManager: MCSessionDelegate {
                 NotificationCenter.default.post(name: .requestPostKey, object: nil, userInfo: detailInfoDic)
                 print("peerRequest, 0")
                 
+            case .updatePeerCameraDirection:
+                break
+                
             case .none:
                 print("none has been passed!")
                 break
             
+
 
             }
             
@@ -320,7 +327,7 @@ extension ConnectionManager: MCSessionDelegate {
             if !ConnectionManager.peers.contains(peerID) {
                 ConnectionManager.peers.insert(peerID, at: 0)
             }
-
+            
             
             let connectedNum = ConnectionManager.peers.count
             print("connectedNum: \(connectedNum)")

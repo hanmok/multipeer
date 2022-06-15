@@ -249,7 +249,7 @@
 		2F1C5680EDAB53891D4B3EA05B3B6E8E /* Then.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Then.modulemap; sourceTree = "<group>"; };
 		32BAA9FABE50D11661224677C054C26B /* TextDocument.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextDocument.swift; path = Sources/Private/Model/Text/TextDocument.swift; sourceTree = "<group>"; };
 		33854A3531FF94914C7A349F15394284 /* ColorValueProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ColorValueProvider.swift; path = Sources/Public/DynamicProperties/ValueProviders/ColorValueProvider.swift; sourceTree = "<group>"; };
-		3386D7B0FCC5A00E4FBBB43071A6095F /* Pods-MultiPeer */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-MultiPeer"; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3386D7B0FCC5A00E4FBBB43071A6095F /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		344F6AF5AA39260D6DC668A2E9289CEB /* CurveVertex.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CurveVertex.swift; path = Sources/Private/Utility/Primitives/CurveVertex.swift; sourceTree = "<group>"; };
 		3454835F3798CBC8D196BFFFC81C36FA /* Then-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Then-prefix.pch"; sourceTree = "<group>"; };
 		349261C104587DF85249D7C345E56E5C /* SnapKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SnapKit.debug.xcconfig; sourceTree = "<group>"; };
@@ -344,7 +344,7 @@
 		9A49DF35322ABCF0847680631AA606E3 /* Shape.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Shape.swift; path = Sources/Private/Model/ShapeItems/Shape.swift; sourceTree = "<group>"; };
 		9B07A50FB96DE981135A6F1009531DA5 /* ColorExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ColorExtension.swift; path = Sources/Private/Utility/Primitives/ColorExtension.swift; sourceTree = "<group>"; };
 		9CFF61FA209CB35564546D61AA11B0A4 /* AnimationTime.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnimationTime.swift; path = Sources/Public/Primitives/AnimationTime.swift; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9E706F2EE824F2374CB4B1E9F3A32DD7 /* SolidCompositionLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SolidCompositionLayer.swift; path = Sources/Private/LayerContainers/CompLayers/SolidCompositionLayer.swift; sourceTree = "<group>"; };
 		9FC0C02B15BC87AABC74EB4304D25B0A /* ConstraintInsets.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConstraintInsets.swift; path = Sources/ConstraintInsets.swift; sourceTree = "<group>"; };
 		A02135EAF83C416E8E683199BB85E0F4 /* SnapKit-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SnapKit-prefix.pch"; sourceTree = "<group>"; };
@@ -509,7 +509,6 @@
 				8C6899257D4AD4A7EA6911E34ACBC9D7 /* UILayoutSupport+Extensions.swift */,
 				76595494C0404E213C3B8E33E689D095 /* Support Files */,
 			);
-			name = SnapKit;
 			path = SnapKit;
 			sourceTree = "<group>";
 		};
@@ -519,7 +518,6 @@
 				B6A65B51AB2671D951330579C97F1128 /* Then.swift */,
 				E0FA2069B2A9F5944CD686BEA39F6C89 /* Support Files */,
 			);
-			name = Then;
 			path = Then;
 			sourceTree = "<group>";
 		};
@@ -709,7 +707,6 @@
 				87BC9BDAB59C7F0EB838CA6232234C8E /* VectorsExtensions.swift */,
 				C1D21F84207916C7184DDE8D4C8F69FD /* Support Files */,
 			);
-			name = "lottie-ios";
 			path = "lottie-ios";
 			sourceTree = "<group>";
 		};
@@ -766,7 +763,7 @@
 			isa = PBXGroup;
 			children = (
 				51BA97E8B5085EFFB47BC9C0B785CEA7 /* lottie-ios */,
-				3386D7B0FCC5A00E4FBBB43071A6095F /* Pods-MultiPeer */,
+				3386D7B0FCC5A00E4FBBB43071A6095F /* Pods_MultiPeer.framework */,
 				979486118B3E90C08386079D57962701 /* SnapKit */,
 				9317E4947CA2FE1B5D5999034C09CCA7 /* Then */,
 			);
@@ -876,7 +873,7 @@
 			);
 			name = "Pods-MultiPeer";
 			productName = Pods_MultiPeer;
-			productReference = 3386D7B0FCC5A00E4FBBB43071A6095F /* Pods-MultiPeer */;
+			productReference = 3386D7B0FCC5A00E4FBBB43071A6095F /* Pods_MultiPeer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		C17AEFC79E770A2906EFAAB1A3757406 /* Then */ = {

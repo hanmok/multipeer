@@ -62,6 +62,24 @@ enum MovementDirectionList: String {
 }
 
 struct Dummy {
+    
+    static func getPainTestName(from title: String, direction: MovementDirection) -> String? {
+        var painTest: String? = nil
+        
+        painTest =  movementWithPainTestTitle[title]
+        
+        if painTest != nil {
+            if title == MovementList.rotaryStability.rawValue && direction.rawValue == MovementDirectionList.left.rawValue {
+                
+                painTest = nil
+            }
+        }
+        
+        return painTest
+    }
+    
+    
+    
     static let directionName: [Int: [String]] = [1: ["Neutral"], 2: ["Left", "Right"]]
     
     static let numOfDirections: [MovementList: Int] = [

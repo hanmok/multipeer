@@ -67,7 +67,7 @@ class CameraController: UIViewController {
     private var isRecording = false
     
     //    private let shouldRecordLater = false
-    private let shouldRecordLater = false
+    private let shouldRecordLater = true
     
     var variationName: String?
     
@@ -181,11 +181,11 @@ class CameraController: UIViewController {
         switch connectionManager.connectionState {
         case .connected:
             DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Connected!"
+//                self.connectionStateLabel.text = "Connected!"
             }
         case .disconnected:
             DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Disconnected!"
+//                self.connectionStateLabel.text = "Disconnected!"
             }
         }
     }
@@ -236,6 +236,13 @@ class CameraController: UIViewController {
         }
     }
     
+    private let leftLine = UIView().then {
+        $0.backgroundColor = UIColor(redInt: 225, greenInt: 225, blueInt: 230)
+    }
+    
+    private let rightLine = UIView().then {
+        $0.backgroundColor = UIColor(redInt: 225, greenInt: 225, blueInt: 230)
+    }
     
     
     @objc func requestPostNoti(_ notification: Notification) {
@@ -309,7 +316,7 @@ class CameraController: UIViewController {
         switch state {
         case .disconnected:
             DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Disconnected!"
+//                self.connectionStateLabel.text = "Disconnected!"
                 if self.connectionManager.isHost == false {
                     self.showReconnectionGuideAction()
                 }
@@ -317,7 +324,7 @@ class CameraController: UIViewController {
             
         case .connected:
             DispatchQueue.main.async {
-                self.connectionStateLabel.text = "Connected!"
+//                self.connectionStateLabel.text = "Connected!"
             }
         }
     }
@@ -551,16 +558,25 @@ class CameraController: UIViewController {
         }
     }
     
-    private func setupCompleteView() {
+    // TODO: Score 에서 Hold -> Next
+    // TODO:           그 외 -> Retry
+    
+    private func setupCompleteView(withNextTitle: Bool = false) {
+        if withNextTitle {
+//            retryBtn.setTitle("Next", for: .normal)
+            homeBtn.setTitle("Next", for: .normal)
+        } else {
+            homeBtn.setTitle("Home", for: .normal)
+        }
         
         view.addSubview(completeMsgView)
         
         completeMsgView.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
         
         
-        [checkmarkLottieView,completeMsgLabel, retryBtn, homeBtn].forEach { completeMsgView.addSubview($0)}
+        [completeLottieView,completeMsgLabel, retryBtn, homeBtn].forEach { completeMsgView.addSubview($0)}
         
-        checkmarkLottieView.snp.makeConstraints { make in
+        completeLottieView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
             make.height.equalToSuperview().dividedBy(10)
             make.centerY.equalToSuperview().offset(-70)
@@ -568,8 +584,8 @@ class CameraController: UIViewController {
         
         completeMsgLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
-            make.height.equalTo(40)
-            make.top.equalTo(checkmarkLottieView.snp.bottom).offset(15)
+            make.height.equalTo(100)
+            make.top.equalTo(completeLottieView.snp.bottom).offset(15)
         }
         
         retryBtn.snp.makeConstraints { make in
@@ -585,6 +601,8 @@ class CameraController: UIViewController {
             make.bottom.equalToSuperview().inset(34)
             make.height.equalTo(48)
         }
+        
+        
     }
     
     /// prepare scoreVC to the bottom (to come up later)
@@ -613,19 +631,19 @@ class CameraController: UIViewController {
             scoreVC.setupTrialCore(with: trialCore )
             
             if size == .large {
+            
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 0.4) {
-                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 330, width: screenWidth, height: screenHeight)
+                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 324, width: screenWidth, height: screenHeight)
                     }
                 }
 
             } else {
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 0.4) {
-                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 220, width: screenWidth, height: screenHeight)
+                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 219, width: screenWidth, height: screenHeight)
                     }
                 }
-
             }
         }
     }
@@ -816,7 +834,8 @@ class CameraController: UIViewController {
         dismissBtn.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(90)
             make.leading.equalToSuperview().inset(16)
-            make.height.width.equalTo(20)
+//            make.height.width.equalTo(20)
+            make.height.width.equalTo(24)
         }
         
         
@@ -859,14 +878,47 @@ class CameraController: UIViewController {
             directionStackView.addArrangedButton($0)
         }
         
-        bottomView.addSubview(directionStackView)
-        directionStackView.snp.makeConstraints { make in
+        bottomView.addSubview(stackViewContainer)
+        stackViewContainer.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().inset(20)
             
             make.width.equalTo(230)
             make.height.equalTo(40)
         }
+        
+//        bottomView.addSubview(directionStackView)
+        stackViewContainer.addSubview(directionStackView)
+        directionStackView.snp.makeConstraints { make in
+//            make.top.equalToSuperview().offset(20)
+//            make.trailing.equalToSuperview().inset(20)
+//
+//            make.width.equalTo(230)
+//            make.height.equalTo(40)
+            make.leading.top.trailing.bottom.equalToSuperview().inset(2)
+        }
+        
+//        directionStackView.addSubview(<#T##view: UIView##UIView#>)
+//        [leftLine, rightLine].forEach { self.directionStackView.addSubview($0)}
+        [leftLine, rightLine].forEach { self.stackViewContainer.addSubview($0)}
+        
+        
+        leftLine.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(76)
+//            make.leading.equalToSuperview().offset(77)
+            make.centerY.equalToSuperview()
+            make.height.equalToSuperview().dividedBy(2)
+            make.width.equalTo(1)
+        }
+        
+        rightLine.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-76)
+//            make.trailing.equalToSuperview().offset(-77)
+            make.centerY.equalToSuperview()
+            make.height.equalToSuperview().dividedBy(2)
+            make.width.equalTo(1)
+        }
+        
         
         
         [leftShape, rightShape].forEach { neighborLongBar.addSubview($0) }
@@ -944,11 +996,19 @@ class CameraController: UIViewController {
     
 //    private let
     
-    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 0, cornerRadius: 6).then {
+    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
+//        .then {
         //        $0.backgroundColor = .magenta
+//        $0.layer.borderWidth = 1
+//        $0.layer.borderColor = UIColor.blueGray200.cgColor
+//        $0.clipsToBounds = true
+//    }
+    
+    private let stackViewContainer = UIView().then {
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.blueGray200.cgColor
         $0.clipsToBounds = true
+        $0.layer.cornerRadius = 6
     }
     
     private let movementNameLabel = UILabel().then {
@@ -969,7 +1029,7 @@ class CameraController: UIViewController {
         $0.textColor = .white
         $0.text = "00:00"
         $0.textAlignment = .center
-        $0.layer.cornerRadius = 24
+        $0.layer.cornerRadius = 20
         $0.backgroundColor = .lavenderGray700
         $0.clipsToBounds = true
     }
@@ -981,7 +1041,6 @@ class CameraController: UIViewController {
         btn.addSubview(innerImage)
         
         innerImage.snp.makeConstraints { make in
-            //            make.top.leading.trailing.bottom.equalToSuperview()
             make.center.equalToSuperview()
             make.width.equalToSuperview().dividedBy(2)
             make.height.equalToSuperview()
@@ -1022,7 +1081,8 @@ class CameraController: UIViewController {
     }
     
     /// animation from Vikky
-    private let countDownLottieView = AnimationView(name: "countDown").then {
+//    private let countDownLottieView = AnimationView(name: "countDown").then {
+    private let countDownLottieView = AnimationView(name: "countDownLottie").then {
         $0.contentMode = .scaleAspectFit
         $0.loopMode = .playOnce
     }
@@ -1047,27 +1107,59 @@ class CameraController: UIViewController {
         $0.setTitleColor(.gray900, for: .normal)
     }
     
-    private let checkmarkLottieView = AnimationView(name: "checkmark").then {
+//    private let checkmarkLottieView = AnimationView(name: "checkmark").then {
+    private let completeLottieView = AnimationView(name: "completeLottie").then {
         $0.contentMode = .scaleAspectFit
         $0.loopMode = .playOnce
+        $0.backgroundColor = .white
     }
+    
+//    private let completeMsgLabel = UILabel().then {
+//        //    private let completeMsgLabel = UITextView().then {
+//        let paragraph = NSMutableParagraphStyle()
+//        paragraph.alignment = .center
+//
+//        let attrText = NSMutableAttributedString(string: "Upload Completed!\n hihi", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
+//
+//        attrText.append(NSAttributedString(string: "Contrats!\nYour video has been successfully uploaded.", attributes: [
+//            .font: UIFont.systemFont(ofSize: 17),
+//            .foregroundColor: UIColor.gray600,
+//            .paragraphStyle: paragraph]))
+//
+//        attrText.append(NSAttributedString(string: "Your video has been successfully uploaded", attributes: [
+//            .font: UIFont.systemFont(ofSize: 15),
+//            .paragraphStyle: paragraph
+//        ]))
+//
+//        $0.attributedText = attrText
+//        $0.numberOfLines = 0
+//    }
     
     private let completeMsgLabel = UILabel().then {
         //    private let completeMsgLabel = UITextView().then {
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         
-        var attrText = NSMutableAttributedString(string: "Upload Completed!\n", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
+        let attrText = NSMutableAttributedString(string: "Upload Completed\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 24, weight: .bold),
+            .foregroundColor: UIColor.gray900,
+//            .foregroundColor: UIColor.white,
+            .paragraphStyle: paragraph]
+        )
         
-        attrText.append(NSAttributedString(string: "Contrats!\nYour video has been successfully uploaded.", attributes: [
+        attrText.append(NSAttributedString(string: "\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 10)
+        ]))
+        
+        attrText.append(NSAttributedString(string: "Congrats!\n Video has been successfully uploaded.", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray600,
             .paragraphStyle: paragraph]))
         
         $0.attributedText = attrText
         $0.numberOfLines = 0
-        
     }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -1107,11 +1199,14 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
         
         // TODO: Present Preview In a second
+        
+        let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.presentPreview(with: url)
             self.prepareScoreView()
             
-            self.showScoreView()
+            self.showScoreView(size: size)
         }
     }
     
@@ -1146,7 +1241,7 @@ extension CameraController: ConnectionManagerDelegate {
         case .disconnected:
             DispatchQueue.main.async {
                 print(#file, #line)
-                self.connectionStateLabel.text = "Disconnected!"
+//                self.connectionStateLabel.text = "Disconnected!"
                 //                self.showConnectivityAction()
                 print("showReconnectionGuideAction!")
                 if self.connectionManager.isHost == false {
@@ -1173,7 +1268,7 @@ extension CameraController: ConnectionManagerDelegate {
             self.completeMsgView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
         } completion: { done in
             if done {
-                self.checkmarkLottieView.play()
+                self.completeLottieView.play()
             }
         }
     }
@@ -1187,6 +1282,11 @@ extension CameraController: ConnectionManagerDelegate {
 
 
 extension CameraController: ScoreControllerDelegate {
+    
+    func presentCompleteMsgView(shouldShowNext: Bool) {
+        
+    }
+    
     // TODO: Currently not being called ;; why ?
     func orderRequest(core: TrialCore, detail: TrialDetail) {
         
@@ -1208,8 +1308,10 @@ extension CameraController: ScoreControllerDelegate {
         //        connectionManager.send
     }
     
-    func navigateToSecondView() {
+
+    func navigateToSecondView(withNextTitle: Bool) {
         print("navigateToSecondView Triggered")
+        setupCompleteView(withNextTitle: withNextTitle)
         showCompleteMsgView()
         hideScoreView()
         hidePreview()
