@@ -27,8 +27,9 @@ class CameraController: UIViewController {
 
     private var videoUrl: URL?
     
+    // TODO: Handle inside ConnectionManager
     // TODO: duplicate check, send msg if direction assigned.
-    var idToCameraDirectionDic: [String: CameraDirection] = [:]
+//    var idToCameraDirectionDic: [String: CameraDirection] = [:]
     
     var positionTitle: String
     
@@ -116,11 +117,14 @@ class CameraController: UIViewController {
         setupLayout()
         setupAddTargets()
         addNotificationObservers()
-        updateInitialConnectionState()
-        
+
         setupCompleteView()
         
         updatePeerTitle()
+        
+        if let myDirection = connectionManager.mydirection {
+            directionStackView.selectBtnAction(with: myDirection.rawValue)
+        }
     }
     
     
@@ -128,11 +132,12 @@ class CameraController: UIViewController {
         
         let direction = MovementDirection(rawValue: trialCore.direction)!
         
-        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction)))
+//        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction)))
+        
+        connectionManager.send(PeerInfo(msgType: .updatePeerTitle, info: Info(movementDetail: MovementDirectionScoreInfo(title: positionTitle, direction: direction))))
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        print("cameraController viewWillDisappear ")
         removeChildrenVC()
     }
     
@@ -141,8 +146,6 @@ class CameraController: UIViewController {
     deinit {
         print("cameraController deinit triggered!")
         DispatchQueue.main.async {
-            
-            
             if self.children.count > 0 {
                 let viewControllers: [UIViewController] = self.children
                 for vc in viewControllers {
@@ -173,21 +176,6 @@ class CameraController: UIViewController {
     private func resetTimer() {
         count = 0
         updateDurationLabel()
-    }
-    
-    
-    func updateInitialConnectionState() {
-        print(#file, #line)
-        switch connectionManager.connectionState {
-        case .connected:
-            DispatchQueue.main.async {
-//                self.connectionStateLabel.text = "Connected!"
-            }
-        case .disconnected:
-            DispatchQueue.main.async {
-//                self.connectionStateLabel.text = "Disconnected!"
-            }
-        }
     }
     
     // MARK: - Notification
@@ -336,7 +324,7 @@ class CameraController: UIViewController {
         
         dismissBtn.addTarget(self, action: #selector(dismissBtnTapped(_:)), for: .touchUpInside)
         
-        recordingTimerBtn.addTarget(self, action: #selector(timerRecordingBtnTapped(_:)), for: .touchUpInside)
+        recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
         
         homeBtn.addTarget(self, action: #selector(nextTapped(_:)), for: .touchUpInside)
         
@@ -351,6 +339,24 @@ class CameraController: UIViewController {
         directionStackView.selectBtnAction(selected: sender.id)
         
         cameraDirection = CameraDirection(rawValue: sender.title)
+
+        guard let cameraDirection = cameraDirection else {
+            fatalError("invalid camera direction")
+        }
+
+        connectionManager.cameraDirectionDic[connectionManager.myId] = cameraDirection
+        
+        connectionManager.mydirection = cameraDirection
+        
+        connectionManager.send(PeerInfo(msgType: .updatePeerCameraDirection, info: Info( idWithDirection: PeerIdWithCameraDirection(peerId: UIDevice.current.name, cameraDirection: cameraDirection))))
+        
+        // TODO: CameraDirection Check,
+        // TODO: Show Alert If exist.
+        for (peerId, direction) in connectionManager.cameraDirectionDic {
+            if direction == cameraDirection && peerId != connectionManager.myId{
+                showAlert("Duplicate Direction", "Please change camera direction of current device or the one with \"\(peerId)\"")
+            }
+        }
     }
     
     @objc func nextTapped(_ sender: UIButton) {
@@ -395,11 +401,11 @@ class CameraController: UIViewController {
     }
     
     
-    @objc func recordingBtnTapped(_ sender: UIButton) {
-        print("recordingBtn Tapped!!")
-        
-        recordingBtnAction()
-    }
+//    @objc func recordingBtnTapped(_ sender: UIButton) {
+//
+//        recordingBtnAction()
+//
+//    }
     
     private func changeMode(target: Side?, mode: Mode) {
         printFlag(type: .peerConnectivity, count: -1, message: "changeMode triggered")
@@ -461,7 +467,7 @@ class CameraController: UIViewController {
             UIView.animate(withDuration: 0.4) {
                 self.outerRecCircle.backgroundColor = .lavenderGray900
                 self.innerShape.layer.cornerRadius = 6
-                self.recordingTimerBtn.setTitleColor(.gray900, for: .normal)
+                self.recordingBtn.setTitleColor(.gray900, for: .normal)
                 
                 self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
                 //                self.leftShape.layer.cornerRadius = 2
@@ -471,7 +477,7 @@ class CameraController: UIViewController {
             DispatchQueue.main.async {
                 self.outerRecCircle.backgroundColor = .lavenderGray900
                 self.innerShape.layer.cornerRadius = 6
-                self.recordingTimerBtn.setTitleColor(.gray900, for: .normal)
+                self.recordingBtn.setTitleColor(.gray900, for: .normal)
                 
                 //                self.leftShape.layer.cornerRadius = 2
                 //                self.leftShape.backgroundColor = .lavenderGray400
@@ -485,7 +491,7 @@ class CameraController: UIViewController {
             UIView.animate(withDuration: 0.4) {
                 self.outerRecCircle.backgroundColor = .red
                 self.innerShape.layer.cornerRadius = 18
-                self.recordingTimerBtn.setTitleColor(.red, for: .normal)
+                self.recordingBtn.setTitleColor(.red, for: .normal)
                 
                 self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
             }
@@ -493,7 +499,7 @@ class CameraController: UIViewController {
             DispatchQueue.main.async {
                 self.outerRecCircle.backgroundColor = .red
                 self.innerShape.layer.cornerRadius = 18
-                self.recordingTimerBtn.setTitleColor(.red, for: .normal)
+                self.recordingBtn.setTitleColor(.red, for: .normal)
                 
                 self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
             }
@@ -502,15 +508,13 @@ class CameraController: UIViewController {
     
     @objc func recordingBtnAction() {
         // Start Recording!!
+        
         removeChildrenVC()
         if !isRecording {
             
-            connectionManager.send(MsgWithMovementDetail(message: .startRecordingMsg, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
-            
+            connectionManager.send(PeerInfo(msgType: .startRecordingMsg, info: Info()))
             
             startRecording()
-            
-            
             
             changeBtnLookForRecording(animation: true)
             
@@ -521,10 +525,7 @@ class CameraController: UIViewController {
             
             changeBtnLookForPreparing(animation: true)
             
-            // Send Stop Msg
-            // start, stop 할 때가 아닌,  Save 눌렀을 때 Core Info 를 전달해야함.
-            
-            connectionManager.send(MsgWithMovementDetail(message: .stopRecordingMsg, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction, score: nil)))
+            connectionManager.send(PeerInfo(msgType: .stopRecordingMsg, info: Info()))
         }
     }
     
@@ -535,12 +536,31 @@ class CameraController: UIViewController {
         delegate?.dismissCamera() {
             self.dismiss(animated: true)
         }
-        //        self.dismiss(animated: true)
-        //        delegate
     }
     
-    @objc func timerRecordingBtnTapped(_ sender: UIButton) {
+    @objc func recordingBtnTapped(_ sender: UIButton) {
         // FIXME: Condition 이 약간 이상해보이는데. ?
+//        if connectionManager.cameraDirectionDic
+        
+        if connectionManager.cameraDirectionDic.count < connectionManager.numOfPeers {
+            showAlert("Direction not determined", "Please check camera direction. ")
+            return
+        }
+        
+        // Duplicate check
+        var directionSet = Set<CameraDirection>()
+        
+        for (peerId, direction) in connectionManager.cameraDirectionDic {
+            if directionSet.contains(direction) {
+                showAlert("Duplicate Camera Direction", "\(direction.rawValue) are duplicate. ")
+                return
+            } else {
+                directionSet.update(with: direction)
+            }
+        }
+        
+        
+        
         if isRecording {
             //            startRecording()
             recordingBtnAction()
@@ -563,7 +583,7 @@ class CameraController: UIViewController {
     
     private func setupCompleteView(withNextTitle: Bool = false) {
         if withNextTitle {
-//            retryBtn.setTitle("Next", for: .normal)
+            
             homeBtn.setTitle("Next", for: .normal)
         } else {
             homeBtn.setTitle("Home", for: .normal)
@@ -615,11 +635,8 @@ class CameraController: UIViewController {
             
             self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
         }
-        // 점수 초기화 !
-        //        scoreVC.scoreBtnStackView.buttons.forEach {
-        //
-        //        }
         
+        // 점수 초기화 !
         scoreVC.scoreBtnStackView.setSelectedBtnNone()
         scoreVC.painBtnStackView.setSelectedBtnNone()
     }
@@ -669,7 +686,7 @@ class CameraController: UIViewController {
                 self.picker.startVideoCapture()
                 
                 let attributedTitle = NSMutableAttributedString(string: "STOP", attributes: [.font: UIFont.systemFont(ofSize: 12)])
-                self.recordingTimerBtn.setAttributedTitle(attributedTitle, for: .normal)
+                self.recordingBtn.setAttributedTitle(attributedTitle, for: .normal)
                 
             }
             
@@ -685,7 +702,7 @@ class CameraController: UIViewController {
             DispatchQueue.main.async {
                 self.picker.stopVideoCapture()
                 let attributedTitle = NSMutableAttributedString(string: "REC", attributes: [.font: UIFont.systemFont(ofSize: 12)])
-                self.recordingTimerBtn.setAttributedTitle(attributedTitle, for: .normal)
+                self.recordingBtn.setAttributedTitle(attributedTitle, for: .normal)
             }
             
             self.isRecording = false
@@ -937,7 +954,7 @@ class CameraController: UIViewController {
         
         bottomView.addSubview(outerRecCircle)
         outerRecCircle.addSubview(innerShape)
-        outerRecCircle.addSubview(recordingTimerBtn)
+        outerRecCircle.addSubview(recordingBtn)
         
         self.outerRecCircle.snp.makeConstraints { make in
             make.center.equalTo(self.bottomView.snp.center)
@@ -949,7 +966,7 @@ class CameraController: UIViewController {
             make.width.height.equalTo(36)
         }
         
-        self.recordingTimerBtn.snp.makeConstraints { make in
+        self.recordingBtn.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.width.height.equalTo(36)
         }
@@ -1074,7 +1091,7 @@ class CameraController: UIViewController {
         $0.backgroundColor = .lavenderGray300
     }
     
-    private let recordingTimerBtn = UIButton().then {
+    private let recordingBtn = UIButton().then {
         let attributedTitle = NSMutableAttributedString(string: "REC", attributes: [.font: UIFont.systemFont(ofSize: 12)])
         $0.setAttributedTitle(attributedTitle, for: .normal)
         $0.setTitleColor(.red, for: .normal)
@@ -1210,14 +1227,9 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         }
     }
     
-    
-    private func updateTrialCore() {
-        
-    }
-    
-    private func updateTrialDetail() {
-        
-    }
+//    private func updateTrialDetail() {
+//
+//    }
 }
 
 // MARK: - Connection Manager Delegate
@@ -1300,7 +1312,8 @@ extension CameraController: ScoreControllerDelegate {
         
         printFlag(type: .peerRequest, count: 2)
         // TODO: type 이 달라야함.
-        connectionManager.send(MsgWithMovementDetail(message: .requestPostMsg, detailInfo: MovementDirectionScoreInfo(title: title, direction: direction, score: optionalScore, pain: optionalPain)))
+//        connectionManager.send(MsgWithMovementDetail(message: .requestPostMsg, detailInfo: MovementDirectionScoreInfo(title: title, direction: direction, score: optionalScore, pain: optionalPain)))
+        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(movementDetail: MovementDirectionScoreInfo(title: title, direction: direction, score: optionalScore, pain: optionalPain))))
     
         printFlag(type: .peerRequest, count: 3)
     // printed
@@ -1335,7 +1348,7 @@ extension CameraController: ScoreControllerDelegate {
         makeTrialDetail()
         hideCompleteMsgView()
         
-        self.updateTrialDetail()
+//        self.updateTrialDetail()
     }
     
     private func makeTrialDetail() {

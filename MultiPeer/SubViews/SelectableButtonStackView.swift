@@ -68,7 +68,6 @@ class SelectableButtonStackView: UIStackView {
                     button.changeBtnColor(bgColor: defaultBGColor, titleColor: defaultTitleColor)
                 }
             }
-            
             currentSelectedBtnId = nil
             return
         }
@@ -96,6 +95,20 @@ class SelectableButtonStackView: UIStackView {
                 button.setIsSelected(to: false)
             }
         }
+    }
+    
+    public func selectBtnAction(with title: String) {
+        var id: UUID?
+        // TODO: find btn with given title
+        for button in buttons {
+            if button.title == title {
+                id = button.id
+                break
+            }
+        }
+        
+        selectBtnAction(selected: id)
+        
     }
     
     public func setSelectedBtnNone() {

@@ -60,6 +60,8 @@ class ConnectionManager: NSObject {
     var connectionState: ConnectionState = .disconnected
     var duration = 0
     
+
+    
      var sessionTimer: Timer?
 
     static let shared = ConnectionManager()
@@ -75,6 +77,11 @@ class ConnectionManager: NSObject {
     }
     
     var cameraDirectionDic: [String: CameraDirection] = [:]
+    
+    let myId = UIDevice.current.name
+    var mydirection: CameraDirection?
+    var peersId = Set<String>()
+    var numOfPeers = 0
     
     static var connectedToChat = false
     
@@ -177,8 +184,24 @@ class ConnectionManager: NSObject {
         }
     }
     
+    func send(_ peerInfo: PeerInfo) {
+        let encoder = JSONEncoder()
+        
+        guard let session = session else { return }
+        
+        do {
+//            let data = try encoder.encode(movementCore)
+            let data = try encoder.encode(peerInfo)
+            try session.send(data, toPeers: session.connectedPeers, with: .reliable)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    
     
     func join() {
+        // TODO: 이게 뭔 코드여? removeAll() ? why ?
         ConnectionManager.peers.removeAll()
 
         session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .required)
@@ -235,87 +258,138 @@ extension ConnectionManager: MCSessionDelegate {
         let jsonDecoder = JSONDecoder()
         
         do {
-            let movementInfoWithMsg = try jsonDecoder.decode(MsgWithMovementDetail.self, from: data)
+            let receivedData = try jsonDecoder.decode(PeerInfo.self, from: data)
+            let messageType = receivedData.msgType
             
-            let detailInfo = movementInfoWithMsg.detailInfo
+            guard let notificationName = PeerCommunicationHelper.msgToKeyDic[messageType] else { fatalError() }
             
-            let msg = movementInfoWithMsg.message
-            
-            let detailInfoDic: [AnyHashable: Any] = [
-                "title": detailInfo.title,
-                "direction": detailInfo.direction,
-                "score": detailInfo.score ?? -1,
-                "pain": detailInfo.pain ?? false
-            ]
-            
-            switch msg {
+            switch messageType {
+                // no msg
+            case .startRecordingMsg, .stopRecordingMsg:
+                NotificationCenter.default.post(name: notificationName, object: nil)
+                // detail info
+            case .presentCamera,
+                    .requestPostMsg, .updatePeerTitle:
+
+                guard let detailInfo = receivedData.info.movementDetail else { fatalError() }
                 
-            case .presentCamera:
-                // TODO: Send Message with position Info
-                
-                NotificationCenter.default.post(name: .presentCameraKey, object: nil, userInfo: detailInfoDic)
-                print("NotificationKey named presentCamera has posted.")
-                break
-                
-            case .startRecordingMsg:
-                // TODO: Send Message with position Info
-                print("post startRecording !!")
-                NotificationCenter.default.post(name: .startRecordingKey, object: nil, userInfo: detailInfoDic)
-                
-            case .stopRecordingMsg:
-                // TODO: Send Message with position Info
-                NotificationCenter.default.post(name: .stopRecordingKey, object: nil, userInfo: detailInfoDic)
-                break
-                
-            case .updatePeerTitle:
-                NotificationCenter.default.post(name: .updatePeerTitleKey, object: nil, userInfo: detailInfoDic)
-                
-                // TODO: Make it work
-            case .requestPostMsg:
-                NotificationCenter.default.post(name: .requestPostKey, object: nil, userInfo: detailInfoDic)
-                print("peerRequest, 0")
+                let detailInfoDic: [AnyHashable: Any] = [
+                    "title": detailInfo.title,
+                    "direction": detailInfo.direction,
+                    "score": detailInfo.score ?? -1,
+                    "pain": detailInfo.pain ?? false
+                ]
+    
+                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: detailInfoDic)
                 
             case .updatePeerCameraDirection:
-                break
+                // CameraDirection Used
+                guard let idWithCamera = receivedData.info.idWithDirection else { fatalError() }
                 
-            case .none:
-                print("none has been passed!")
-                break
-            
-
-
+//                let peerCameraDic: [AnyHashable: Any] = [
+//                    "peerId": idWithCamera.peerId,
+//                    "cameraDirection": idWithCamera.cameraDirection
+//                ]
+                
+                let peerId = idWithCamera.peerId
+                let cameraDirection = idWithCamera.cameraDirection
+//                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: peerCameraDic)
+                
+                cameraDirectionDic[peerId] = cameraDirection
+                
+                // TODO: 중복 체크.
+                //
+//                showalert 처리는 여기서 못함.. notification post 로 가서 처리하자. 아냐 ;; 버튼 누를 때 이미 처리했어 ㅠㅠ
+                //
             }
             
+            
         } catch {
-            print("error: \(error.localizedDescription)")
-                print("Error Occurred during Decoding DetailPositionWithMsgInfo!!!")
-                do {
-                    let testInfoMsg = try jsonDecoder.decode(MsgWithTime.self, from: data)
-                    
-                    let msgReceived = testInfoMsg.msg
-                    let timeReceived = testInfoMsg.timeInMilliSec
-                    
-                    let timeInfo: [AnyHashable: Any] = ["msg": msgReceived,"receivedTime": timeReceived]
-                    
-                    switch msgReceived {
-                        
-//                    case .startRecordingAfterMsg:
-//                        NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
-//                    print("successfully post startRecordingAfterKey")
-                        
-//                    case .startCountDownMsg:
-//                        NotificationCenter.default.post(name: .startCountdownAfterKey, object: nil, userInfo: timeInfo)
-//                        print("post startCountdownAfterKey")
-                    
-                    default:
-                        print("something has posted! \(msgReceived.rawValue)")
-                    }
-                    print(#function, #line)
-                } catch {
-                    print("Error Occurred during Decoding String!!!", #file, #line)
-                    print("Error : \(error.localizedDescription)")
-                }
+            fatalError(error.localizedDescription)
         }
+        
+//        do {
+//            let movementInfoWithMsg = try jsonDecoder.decode(MsgWithMovementDetail.self, from: data)
+//
+//            let detailInfo = movementInfoWithMsg.detailInfo
+//
+//            let msg = movementInfoWithMsg.message
+//
+//            let detailInfoDic: [AnyHashable: Any] = [
+//                "title": detailInfo.title,
+//                "direction": detailInfo.direction,
+//                "score": detailInfo.score ?? -1,
+//                "pain": detailInfo.pain ?? false
+//            ]
+//
+//            switch msg {
+//
+//            case .presentCamera:
+//                // TODO: Send Message with position Info
+//
+//                NotificationCenter.default.post(name: .presentCameraKey, object: nil, userInfo: detailInfoDic)
+//                print("NotificationKey named presentCamera has posted.")
+//                break
+//
+//            case .startRecordingMsg:
+//                // TODO: Send Message with position Info
+//                print("post startRecording !!")
+//                NotificationCenter.default.post(name: .startRecordingKey, object: nil, userInfo: detailInfoDic)
+//
+//            case .stopRecordingMsg:
+//                // TODO: Send Message with position Info
+//                NotificationCenter.default.post(name: .stopRecordingKey, object: nil, userInfo: detailInfoDic)
+//                break
+//
+//            case .updatePeerTitle:
+//                NotificationCenter.default.post(name: .updatePeerTitleKey, object: nil, userInfo: detailInfoDic)
+//
+//                // TODO: Make it work
+//            case .requestPostMsg:
+//                NotificationCenter.default.post(name: .requestPostKey, object: nil, userInfo: detailInfoDic)
+//                print("peerRequest, 0")
+//
+//            case .updatePeerCameraDirection:
+//                break
+//
+//            case .none:
+//                print("none has been passed!")
+//                break
+//
+//
+//
+//            }
+//
+//        } catch {
+//            print("error: \(error.localizedDescription)")
+//                print("Error Occurred during Decoding DetailPositionWithMsgInfo!!!")
+//                do {
+//                    let testInfoMsg = try jsonDecoder.decode(MsgWithTime.self, from: data)
+//
+//                    let msgReceived = testInfoMsg.msg
+//                    let timeReceived = testInfoMsg.timeInMilliSec
+//
+//                    let timeInfo: [AnyHashable: Any] = ["msg": msgReceived,"receivedTime": timeReceived]
+//
+//                    switch msgReceived {
+//
+////                    case .startRecordingAfterMsg:
+////                        NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
+////                    print("successfully post startRecordingAfterKey")
+//
+////                    case .startCountDownMsg:
+////                        NotificationCenter.default.post(name: .startCountdownAfterKey, object: nil, userInfo: timeInfo)
+////                        print("post startCountdownAfterKey")
+//
+//                    default:
+//                        print("something has posted! \(msgReceived.rawValue)")
+//                    }
+//                    print(#function, #line)
+//                } catch {
+//                    print("Error Occurred during Decoding String!!!", #file, #line)
+//                    print("Error : \(error.localizedDescription)")
+//                }
+//        }
         
         
         
@@ -336,7 +410,7 @@ extension ConnectionManager: MCSessionDelegate {
             startTime = Date()
             
             delegate?.updateState(state: .connected, connectedAmount: connectedNum)
-            
+            numOfPeers = connectedNum
             self.startDurationTimer()
             
         case .notConnected:
@@ -351,6 +425,7 @@ extension ConnectionManager: MCSessionDelegate {
             endTime = Date()
             
             delegate?.updateState(state: .disconnected, connectedAmount: 0)
+            numOfPeers = 0
             
             print("disconnected!!")
         case .connecting:

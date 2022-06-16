@@ -18,19 +18,40 @@ struct MsgWithMovementDetail: Codable {
 }
 
 struct PeerInfo: Codable {
-    var message: MessageType
+    var msgType: MessageType
     var info: Info
 }
 
 struct Info: Codable {
     var movementDetail: MovementDirectionScoreInfo?
-    var cameraDirection: CameraDirection?
+//    var cameraDirection: CameraDirection?
+    var idWithDirection: PeerIdWithCameraDirection?
+}
+
+struct PeerIdWithCameraDirection: Codable {
+    var peerId: String
+    var cameraDirection: CameraDirection
 }
 
 struct MsgWithTime: Codable {
     let msg: MessageType
     let timeInMilliSec: Int
 }
+
+struct PeerCommunicationHelper {
+    static let msgToKeyDic: [MessageType: Notification.Name] = [
+        .startRecordingMsg: .startRecordingKey,
+        .stopRecordingMsg: .stopRecordingKey,
+        
+        .presentCamera: .presentCameraKey,
+        .updatePeerTitle: .updatePeerTitleKey,
+        .requestPostMsg: .requestPostKey,
+        
+        .updatePeerCameraDirection: .updatePeerCameraDirectionKey
+    ]
+}
+
+
 
 
 //struct MessageWithInfo {
@@ -43,26 +64,16 @@ struct MsgWithTime: Codable {
 // MARK: - Message
 
 public enum MessageType: String, Codable {
-    case presentCamera
-
+    
     case startRecordingMsg
     case stopRecordingMsg
-    case none
-
-    case requestPostMsg
     
+    case presentCamera
+    case requestPostMsg
     case updatePeerTitle
     
     case updatePeerCameraDirection
 }
-
-
-//public enum OrderMessageTypes {
-//    case presentCameraMsg
-//    case startRecordingMsg
-//    case stopRecordingMsg
-//    case requestPostMsg
-//}
 
 
 
@@ -70,6 +81,6 @@ public enum MessageType: String, Codable {
 public enum ConnectionState: String, Codable {
     case connected
     case disconnected
-//    case notConnected
 }
+
 

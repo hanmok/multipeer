@@ -222,12 +222,12 @@ class MovementListController: UIViewController {
     private func addNotificationObservers() {
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(notifiedPresentCamera(_:)),
+            selector: #selector(presentCameraNoti(_:)),
             name: .presentCameraKey, object: nil)
     }
     
     // 여기서 Crash 발생. Why ??
-    @objc func notifiedPresentCamera(_ notification: Notification) {
+    @objc func presentCameraNoti(_ notification: Notification) {
         print("presentCamera triggered by observing notification")
         
         if !isCameraOn {
@@ -266,12 +266,7 @@ class MovementListController: UIViewController {
     }
     
     
-    
-    
-    // TODO: Default Screen 보다 , Default Subject 를 갖는게 더 좋지 않을까 ? ??
-    // TODO: Multipeer 의 경우에는 ??
-    // TODO: 여기 코드 수정이 필요하긴 함.
-    
+
     private func updateTrialCores(screen: Screen? = nil) {
         print("screen is nil? \(screen == nil)")
         print("updateTrialCores Called ")
@@ -325,13 +320,7 @@ class MovementListController: UIViewController {
             }
         }
         trialCoresToShow.removeFirst()
-        printCurrentState() //이거랑, 실제 받는 값과 어떤.. 차이가 있음. 뭐지 대체 ??
-        
-        // Async 때문에 아래 코드가 실행이 이상하게 되는걸까 ?
-        
-        // 여기 코드때문에 그래.. 왜지 ?? 왜지 ???
-        // 이 코드 실행하지 않을 수는 없음 ;;
-        //        self.viewDidLoad() // 이거 너무 개뻘짓.. + iNfinite loop
+        printCurrentState()
         
         DispatchQueue.main.async {
             self.movementCollectionView.reloadData()
@@ -358,7 +347,7 @@ class MovementListController: UIViewController {
         self.navigationController?.pushViewController(subjectSettingVC, animated: true)
     }
     
-    // present camera like Navigation
+    // present camera look like NavigationView does.
     // message 를 전혀 안보냄 ;;
     private func presentCamera(with selectedTrial: TrialCore) {
         
@@ -399,7 +388,9 @@ class MovementListController: UIViewController {
         let direction: MovementDirection = MovementDirection(rawValue: selectedTrial.direction) ?? .neutral
         
         //        connectionManager.send(.presentCamera)
-        connectionManager.send(MsgWithMovementDetail(message: .presentCamera, detailInfo: MovementDirectionScoreInfo(title: selectedTrial.title, direction: direction)))
+//        connectionManager.send(MsgWithMovementDetail(message: .presentCamera, detailInfo: MovementDirectionScoreInfo(title: selectedTrial.title, direction: direction)))
+        
+        connectionManager.send(PeerInfo(msgType: .presentCamera, info: Info(movementDetail: MovementDirectionScoreInfo(title: selectedTrial.title, direction: direction))))
     }
     
     private func presentUsingChild(trialCore: TrialCore, rank: Rank) {
@@ -416,9 +407,11 @@ class MovementListController: UIViewController {
             
             guard self.cameraVC != nil else { return }
             self.cameraVC!.delegate = self
-            self.addChild(self.cameraVC!) // 왜 Nav 말고 child 로 했었을까? ConnectionManager 때문에 ?
+            self.addChild(self.cameraVC!)
+            // 왜 Nav 말고 child 로 했었을까? ConnectionManager 때문에 ?
+            // 이게 child 라서, 뭐.. 문제가 되나?
             self.view.addSubview(self.cameraVC!.view)
-            //            self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+            //  self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
             self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
             
             UIView.animate(withDuration: 0.3) {
@@ -426,10 +419,6 @@ class MovementListController: UIViewController {
             }
         }
     }
-    
-    //    private func checkIfHasCameraAsChild() -> Bool {
-    //        self.children.forEach { }
-    //    }
     
     private var isCameraOn: Bool {
         var result: Bool?
