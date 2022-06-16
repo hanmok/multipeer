@@ -26,7 +26,7 @@ class CameraController: UIViewController {
     // MARK: - Properties
 
     private var videoUrl: URL?
-    
+    var shouldShowScoreView = true
     // TODO: Handle inside ConnectionManager
     // TODO: duplicate check, send msg if direction assigned.
 //    var idToCameraDirectionDic: [String: CameraDirection] = [:]
@@ -54,7 +54,7 @@ class CameraController: UIViewController {
     var count = 0
     
     var isRecordingEnded = false
-//    let testMode = false // for camera direction
+
     weak var delegate: CameraControllerDelegate?
     
     var connectionManager: ConnectionManager
@@ -352,13 +352,11 @@ class CameraController: UIViewController {
         
         // TODO: CameraDirection Check,
         // TODO: Show Alert If exist.
-//        if testMode == false {
         for (peerId, direction) in connectionManager.cameraDirectionDic {
             if direction == cameraDirection && peerId != connectionManager.myId{
                 showAlert("Duplicate Direction", "Please change camera direction of current device or the one with \"\(peerId)\"")
             }
         }
-//        }
     }
     
     @objc func nextTapped(_ sender: UIButton) {
@@ -644,8 +642,6 @@ class CameraController: UIViewController {
             make.bottom.equalToSuperview().inset(34)
             make.height.equalTo(48)
         }
-        
-        
     }
     
     /// prepare scoreVC to the bottom (to come up later)
@@ -671,7 +667,6 @@ class CameraController: UIViewController {
             scoreVC.setupTrialCore(with: trialCore )
             
             if size == .large {
-            
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 0.4) {
                         self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 324, width: screenWidth, height: screenHeight)
@@ -689,13 +684,13 @@ class CameraController: UIViewController {
     }
     
     private func hideScoreView() {
-        if rank == .boss {
+//        if rank == .boss {
             DispatchQueue.main.async {
                 UIView.animate(withDuration: 0.4) {
                     self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
                 }
             }
-        }
+//        }
     }
     
     
@@ -732,16 +727,10 @@ class CameraController: UIViewController {
             stopTimer()
         }
     }
-    
-    
-    // 함수는 똑같은데, 이건 안되고 저건 된다.
-    /// Update duration timer every seconds from 0
+
     private func triggerDurationTimer() {
         
         count = 0
-        // 왜 업데이트가 안되는지는 잘 모르겠는데.. ??
-        //        print("timer triggered!!")
-        // 여기까지 일을 하는데, 아래는 안가네 ? 왜지 ?? 몰러
         
         updatingDurationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
             
@@ -1216,6 +1205,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         //        var videoUrl: URL?
+        if shouldShowScoreView {
         guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
               mediaType == (kUTTypeMovie as String),
               let url = info[UIImagePickerController.InfoKey.mediaURL] as? URL,
@@ -1235,12 +1225,6 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
         let cropController = CropController(url: validUrl, vc: self)
         
-//        cropController.exportVideo() {
-//            print("exporting ended!")
-//            DispatchQueue.main.async {
-//                self.presentPreview(with: <#T##URL#>)
-//            }
-//        }
         cropController.exportVideo { CroppedUrl in
             DispatchQueue.main.async {
                 self.presentPreview(with: CroppedUrl)
@@ -1260,11 +1244,11 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             
             self.showScoreView(size: size)
         }
+        } else {
+            shouldShowScoreView.toggle()
+        }
     }
     
-//    private func updateTrialDetail() {
-//
-//    }
 }
 
 // MARK: - Connection Manager Delegate
@@ -1287,19 +1271,22 @@ extension CameraController: ConnectionManagerDelegate {
         switch state {
         case .disconnected:
             DispatchQueue.main.async {
-                print(#file, #line)
+
 //                self.connectionStateLabel.text = "Disconnected!"
                 //                self.showConnectivityAction()
-                print("showReconnectionGuideAction!")
                 if self.connectionManager.isHost == false {
+                    print("disconnect flag 1")
                     self.showReconnectionGuideAction()
+                    print("disconnect flag 2")
                 }
+                print("disconnect flag 3")
                 // TODO: Update UI to notify disconnection
                 self.changeMode(target: nil, mode: .onRecording)
+                print("disconnect flag 4")
             }
-            
+            print("disconnect flag 5")
             resetRecording()
-            
+            print("disconnect flag 6")
         case .connected:
             self.connectedAmount = connectedAmount
             switch connectedAmount {
@@ -1347,13 +1334,11 @@ extension CameraController: ScoreControllerDelegate {
         
         printFlag(type: .peerRequest, count: 2)
         // TODO: type 이 달라야함.
-//        connectionManager.send(MsgWithMovementDetail(message: .requestPostMsg, detailInfo: MovementDirectionScoreInfo(title: title, direction: direction, score: optionalScore, pain: optionalPain)))
+        
         connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(movementDetail: MovementDirectionScoreInfo(title: title, direction: direction, score: optionalScore, pain: optionalPain))))
     
         printFlag(type: .peerRequest, count: 3)
-    // printed
-//        saveAction(core: core, detail: detail)
-        //        connectionManager.send
+
     }
     
 
@@ -1393,18 +1378,27 @@ extension CameraController: ScoreControllerDelegate {
     private func resetRecording() {
         stopRecording()
         deleteAction()
+        // TODO: DismissPreview
+//        hidePreview()
+        
     }
     
     // TODO: Fix if necessary
     func deleteAction() {
 
-        guard let validVideoUrl = videoUrl else { fatalError() }
+//        guard let validVideoUrl = videoUrl else { fatalError() }
+        if let videoUrl = videoUrl {
+            deleteVideo(with: videoUrl)
+        }
         
-        deleteVideo(with: validVideoUrl)
-
         // initialize selected score
         
         prepareRecording()
+//        updateNameLabel()
+//        removeChildrenVC()
+//        resetTimer()
+        
+        self.shouldShowScoreView = false
     }
     
     
@@ -1453,6 +1447,8 @@ extension CameraController: ScoreControllerDelegate {
         updateNameLabel()
         removeChildrenVC()
         resetTimer()
-        hideScoreView()
+//        hideScoreView()
+//        hidePreview()
+//        hidePreview2()
     }
 }

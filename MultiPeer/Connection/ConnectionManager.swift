@@ -60,8 +60,6 @@ class ConnectionManager: NSObject {
     var connectionState: ConnectionState = .disconnected
     var duration = 0
     
-
-    
      var sessionTimer: Timer?
 
     static let shared = ConnectionManager()
@@ -307,97 +305,12 @@ extension ConnectionManager: MCSessionDelegate {
         } catch {
             fatalError(error.localizedDescription)
         }
-        
-//        do {
-//            let movementInfoWithMsg = try jsonDecoder.decode(MsgWithMovementDetail.self, from: data)
-//
-//            let detailInfo = movementInfoWithMsg.detailInfo
-//
-//            let msg = movementInfoWithMsg.message
-//
-//            let detailInfoDic: [AnyHashable: Any] = [
-//                "title": detailInfo.title,
-//                "direction": detailInfo.direction,
-//                "score": detailInfo.score ?? -1,
-//                "pain": detailInfo.pain ?? false
-//            ]
-//
-//            switch msg {
-//
-//            case .presentCamera:
-//                // TODO: Send Message with position Info
-//
-//                NotificationCenter.default.post(name: .presentCameraKey, object: nil, userInfo: detailInfoDic)
-//                print("NotificationKey named presentCamera has posted.")
-//                break
-//
-//            case .startRecordingMsg:
-//                // TODO: Send Message with position Info
-//                print("post startRecording !!")
-//                NotificationCenter.default.post(name: .startRecordingKey, object: nil, userInfo: detailInfoDic)
-//
-//            case .stopRecordingMsg:
-//                // TODO: Send Message with position Info
-//                NotificationCenter.default.post(name: .stopRecordingKey, object: nil, userInfo: detailInfoDic)
-//                break
-//
-//            case .updatePeerTitle:
-//                NotificationCenter.default.post(name: .updatePeerTitleKey, object: nil, userInfo: detailInfoDic)
-//
-//                // TODO: Make it work
-//            case .requestPostMsg:
-//                NotificationCenter.default.post(name: .requestPostKey, object: nil, userInfo: detailInfoDic)
-//                print("peerRequest, 0")
-//
-//            case .updatePeerCameraDirection:
-//                break
-//
-//            case .none:
-//                print("none has been passed!")
-//                break
-//
-//
-//
-//            }
-//
-//        } catch {
-//            print("error: \(error.localizedDescription)")
-//                print("Error Occurred during Decoding DetailPositionWithMsgInfo!!!")
-//                do {
-//                    let testInfoMsg = try jsonDecoder.decode(MsgWithTime.self, from: data)
-//
-//                    let msgReceived = testInfoMsg.msg
-//                    let timeReceived = testInfoMsg.timeInMilliSec
-//
-//                    let timeInfo: [AnyHashable: Any] = ["msg": msgReceived,"receivedTime": timeReceived]
-//
-//                    switch msgReceived {
-//
-////                    case .startRecordingAfterMsg:
-////                        NotificationCenter.default.post(name: .startRecordingAfterKey, object: nil, userInfo: timeInfo)
-////                    print("successfully post startRecordingAfterKey")
-//
-////                    case .startCountDownMsg:
-////                        NotificationCenter.default.post(name: .startCountdownAfterKey, object: nil, userInfo: timeInfo)
-////                        print("post startCountdownAfterKey")
-//
-//                    default:
-//                        print("something has posted! \(msgReceived.rawValue)")
-//                    }
-//                    print(#function, #line)
-//                } catch {
-//                    print("Error Occurred during Decoding String!!!", #file, #line)
-//                    print("Error : \(error.localizedDescription)")
-//                }
-//        }
-        
-        
-        
     }
     
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         switch state {
         case .connected:
+            print("connectionFlag, case: connected")
             if !ConnectionManager.peers.contains(peerID) {
                 ConnectionManager.peers.insert(peerID, at: 0)
             }
@@ -414,7 +327,7 @@ extension ConnectionManager: MCSessionDelegate {
             self.startDurationTimer()
             
         case .notConnected:
-
+            print("connectionFlag, case: notconnected")
             if let index = ConnectionManager.peers.firstIndex(of: peerID) {
                 ConnectionManager.peers.remove(at: index)
             }
@@ -425,10 +338,20 @@ extension ConnectionManager: MCSessionDelegate {
             endTime = Date()
             
             delegate?.updateState(state: .disconnected, connectedAmount: 0)
+            // TODO: initialize peers' direction
+//            self.cameraDirectionDic
+            for (someId, _ ) in self.cameraDirectionDic {
+                if someId != myId {
+                    cameraDirectionDic[someId] = nil
+                }
+            }
+            
+            
             numOfPeers = 0
             
             print("disconnected!!")
         case .connecting:
+            print("connectionFlag, case: connecting")
             print("it's connecting .. ")
         @unknown default:
             fatalError(" it's in unknown state")
