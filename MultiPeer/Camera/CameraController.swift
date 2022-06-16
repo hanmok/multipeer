@@ -817,7 +817,6 @@ class CameraController: UIViewController {
     }
     
     
-    
     private func removeChildrenVC() {
         DispatchQueue.main.async {
             guard let previewVC = self.previewVC else {
@@ -1233,8 +1232,20 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         videoUrl = url
         
         guard let validUrl = videoUrl else { fatalError() }
+        
         let cropController = CropController(url: validUrl, vc: self)
-        cropController.exportVideo()
+        
+//        cropController.exportVideo() {
+//            print("exporting ended!")
+//            DispatchQueue.main.async {
+//                self.presentPreview(with: <#T##URL#>)
+//            }
+//        }
+        cropController.exportVideo { CroppedUrl in
+            DispatchQueue.main.async {
+                self.presentPreview(with: CroppedUrl)
+            }
+        }
         
         print("url: \(url.path)")
         
@@ -1244,7 +1255,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.presentPreview(with: url)
+//            self.presentPreview(with: url)
             self.prepareScoreView()
             
             self.showScoreView(size: size)

@@ -107,9 +107,42 @@ Congrats!
 ********************************
 
 
+*********************************
+Connection 끊기고 돌아왔을 때 MovementListController
+바르게 업데이트 안해줌.. ㅠㅠ
+아직 연결 된것처럼 나옴.
+*********************************
 
 
 *********************************
 Refactoring
 
 *********************************
+
+
+
+*********************************
+2022-06-16 16:37:32.979722+0900 MultiPeer[631:59413] [Presentation] Attempt to present <UIAlertController: 0x106168a00> on <UINavigationController: 0x10681b400> (from <MultiPeer.CameraController: 0x10a038c00>) which is already presenting <UIAlertController: 0x10b070c00>.
+*********************************
+
+
+*********************************
+2022-06-16 16:29:03.735211+0900 MultiPeer[631:59413] <CATransformLayer: 0x28099fea0> - changing property allowsGroupBlending in transform-only layer, will have no effect
+*********************************
+
+
+*********************************
+2022-06-16 16:28:57.576663+0900 MultiPeer[631:59413] [Camera] Failed to start video capture with request <CAMMutableVideoCaptureRequest: sessionIdentifier:0, localDestinationURL:(null)>: (Capture request failed because session is currently interrupted)
+*********************************
+
+
+*********************************
+2022-06-16 16:28:52.380706+0900 MultiPeer[631:59413] [Snapshotting] Snapshotting a view (0x105dd2f20, CAMPreviewView) that has not been rendered at least once requires afterScreenUpdates:YES.
+*********************************
+
+
+*********************************
+현재, 약 5초 촬영, 1000 x 1000 일 때
+동영상 1개당 약 10MB -> 14번 촬영 -> 최소 140 MB
+*********************************
+

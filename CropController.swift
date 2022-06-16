@@ -37,7 +37,7 @@ class CropController {
         
     }
     
-    func exportVideo() {
+    func exportVideo(closure: @escaping (_ CroppedUrl: URL) -> Void ) {
         print("export Video Triggered! ffffflllllaaaagggg")
         // MARK: - Asset To Export
         guard let assetToExport = self.player?.currentItem?.asset else { fatalError() }
@@ -55,7 +55,37 @@ class CropController {
         
         guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("\(fileUUID).mov") else { fatalError() }
         
-        export(assetToExport, to: outputMovieURL, startTime: self.startTime, endTime: self.endTime, composition: composition)
+//        export(assetToExport, to: outputMovieURL, startTime: self.startTime, endTime: self.endTime, composition: composition)
+        
+        let timeRange = CMTimeRangeFromTimeToTime(start: self.startTime, end: self.endTime)
+        
+        do {
+            try FileManager.default.removeItem(at: outputMovieURL)
+        } catch {
+            print("Could not remove file \(error.localizedDescription)")
+        }
+        
+        let exporter = AVAssetExportSession(asset: assetToExport, presetName: AVAssetExportPresetHighestQuality)
+        
+        exporter?.videoComposition = composition
+        exporter?.outputURL = outputMovieURL
+        exporter?.outputFileType = .mov
+        exporter?.timeRange = timeRange
+        
+        exporter?.exportAsynchronously(completionHandler: {
+            [weak exporter] in
+            DispatchQueue.main.async {
+                if let error = exporter?.error {
+                    print("failed \(error.localizedDescription)")
+                    fatalError()
+                } else {
+                    self.saveVideoToLocal(with: outputMovieURL)
+                    closure(outputMovieURL)
+                }
+            }
+        })
+        
+        
     }
     
     func setupCropRect(item: AVPlayerItem) -> CGRect {
