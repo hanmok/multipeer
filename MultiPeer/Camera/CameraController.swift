@@ -45,7 +45,7 @@ class CameraController: UIViewController {
 // TODO: Cut Clip from the front as much as recording time diff
     var timeDifference: CGFloat = 0 // or CMTime
     
-    var rank: Rank
+    let rank: Rank
     
     private var pressedBtnTitle = ""
     
@@ -54,7 +54,7 @@ class CameraController: UIViewController {
     var count = 0
     
     var isRecordingEnded = false
-    
+//    let testMode = false // for camera direction
     weak var delegate: CameraControllerDelegate?
     
     var connectionManager: ConnectionManager
@@ -352,11 +352,13 @@ class CameraController: UIViewController {
         
         // TODO: CameraDirection Check,
         // TODO: Show Alert If exist.
+//        if testMode == false {
         for (peerId, direction) in connectionManager.cameraDirectionDic {
             if direction == cameraDirection && peerId != connectionManager.myId{
                 showAlert("Duplicate Direction", "Please change camera direction of current device or the one with \"\(peerId)\"")
             }
         }
+//        }
     }
     
     @objc func nextTapped(_ sender: UIButton) {
@@ -412,13 +414,13 @@ class CameraController: UIViewController {
         guard let target = target else {
 
             printFlag(type: .peerConnectivity, count: 0, message: "target is nil")
-            
+            DispatchQueue.main.async {
             self.leftShape.layer.cornerRadius = 10
             self.leftShape.backgroundColor = .lavenderGray400
             
             self.rightShape.layer.cornerRadius = 10
             self.rightShape.backgroundColor = .lavenderGray400
-            
+            }
             return
         }
 
@@ -427,37 +429,51 @@ class CameraController: UIViewController {
             switch target {
                 
             case .left:
-                self.leftShape.layer.cornerRadius = 10
-                self.leftShape.backgroundColor = .red
-                
+                DispatchQueue.main.async {
+                    self.leftShape.layer.cornerRadius = 10
+                    self.leftShape.backgroundColor = .red
+                }
+
             case .right:
+                DispatchQueue.main.async {
+                
                 self.rightShape.layer.cornerRadius = 10
                 self.rightShape.backgroundColor = .red
-                
+                }
             case .both:
+                DispatchQueue.main.async {
+                
                 self.leftShape.layer.cornerRadius = 10
                 self.leftShape.backgroundColor = .red
                 self.rightShape.layer.cornerRadius = 10
                 self.rightShape.backgroundColor = .red
+            }
             }
             
         case .stop:
             switch target {
             case .left:
+                DispatchQueue.main.async {
+                
                 self.leftShape.layer.cornerRadius = 2
                 self.leftShape.backgroundColor = .lavenderGray400
-                
+                }
             case .right:
+                DispatchQueue.main.async {
+                
                 self.rightShape.layer.cornerRadius = 2
                 self.rightShape.backgroundColor = .lavenderGray400
-                
+                }
             case .both:
+                DispatchQueue.main.async {
+                
                 self.leftShape.layer.cornerRadius = 2
                 self.leftShape.backgroundColor = .lavenderGray400
                 
                 self.rightShape.layer.cornerRadius = 2
                 self.rightShape.backgroundColor = .lavenderGray400
-            }
+                }
+                }
         }
     }
     
@@ -542,7 +558,10 @@ class CameraController: UIViewController {
         // FIXME: Condition 이 약간 이상해보이는데. ?
 //        if connectionManager.cameraDirectionDic
         
-        if connectionManager.cameraDirectionDic.count < connectionManager.numOfPeers {
+        // num of direction checked  ~ num of peers
+        // cameraDirectionDic  은 최대 3개,
+        // numOfPeers 는 최대 2 + 1 -> 3개
+        if connectionManager.cameraDirectionDic.count < connectionManager.numOfPeers + 1 {
             showAlert("Direction not determined", "Please check camera direction. ")
             return
         }
@@ -551,13 +570,17 @@ class CameraController: UIViewController {
         var directionSet = Set<CameraDirection>()
         
         for (peerId, direction) in connectionManager.cameraDirectionDic {
-            if directionSet.contains(direction) {
+            if directionSet.contains(direction) { // if duplicate
                 showAlert("Duplicate Camera Direction", "\(direction.rawValue) are duplicate. ")
                 return
-            } else {
+            } else { // if new -> update
                 directionSet.update(with: direction)
             }
         }
+        
+//        if connectionManager.mydirection == nil {
+//            showAlert(<#T##title: String##String#>, <#T##message: String##String#>)
+//        }
         
         
         
@@ -1125,10 +1148,11 @@ class CameraController: UIViewController {
     }
     
 //    private let checkmarkLottieView = AnimationView(name: "checkmark").then {
-    private let completeLottieView = AnimationView(name: "completeLottie").then {
+    private let completeLottieView = AnimationView(name: "completeLottie2").then {
         $0.contentMode = .scaleAspectFit
         $0.loopMode = .playOnce
-        $0.backgroundColor = .white
+//        $0.backgroundColor = .white
+//        $0.backgroundColor = .magenta
     }
     
 //    private let completeMsgLabel = UILabel().then {

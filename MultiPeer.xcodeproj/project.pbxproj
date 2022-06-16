@@ -16,6 +16,7 @@
 		22244D332859C2EE00B3D03C /* countDown.json in Resources */ = {isa = PBXBuildFile; fileRef = 22244D2E2859C2EE00B3D03C /* countDown.json */; };
 		22244D342859C2EE00B3D03C /* checkmark.json in Resources */ = {isa = PBXBuildFile; fileRef = 22244D2F2859C2EE00B3D03C /* checkmark.json */; };
 		22244D362859D16A00B3D03C /* UIViewControllerExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22244D352859D16A00B3D03C /* UIViewControllerExt+.swift */; };
+		22244D5B285B0F3000B3D03C /* completeLottie2.json in Resources */ = {isa = PBXBuildFile; fileRef = 22244D5A285B0F3000B3D03C /* completeLottie2.json */; };
 		22315E3B282E1F8F0093079B /* ScreenCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3A282E1F8F0093079B /* ScreenCollectionCell.swift */; };
 		22315E3D282E1FCB0093079B /* ScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3C282E1FCB0093079B /* ScreenViewModel.swift */; };
 		22315E3F282E38D40093079B /* TrialCore+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3E282E38D40093079B /* TrialCore+Helper.swift */; };
@@ -92,6 +93,7 @@
 		22244D2E2859C2EE00B3D03C /* countDown.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = countDown.json; sourceTree = "<group>"; };
 		22244D2F2859C2EE00B3D03C /* checkmark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = checkmark.json; sourceTree = "<group>"; };
 		22244D352859D16A00B3D03C /* UIViewControllerExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewControllerExt+.swift"; sourceTree = "<group>"; };
+		22244D5A285B0F3000B3D03C /* completeLottie2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = completeLottie2.json; sourceTree = "<group>"; };
 		22315E3A282E1F8F0093079B /* ScreenCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCollectionCell.swift; sourceTree = "<group>"; };
 		22315E3C282E1FCB0093079B /* ScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewModel.swift; sourceTree = "<group>"; };
 		22315E3E282E38D40093079B /* TrialCore+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrialCore+Helper.swift"; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 				22244D2C2859C2EE00B3D03C /* completeLottie.json */,
 				22244D2E2859C2EE00B3D03C /* countDown.json */,
 				22244D2B2859C2EE00B3D03C /* countDownLottie.json */,
+				22244D5A285B0F3000B3D03C /* completeLottie2.json */,
 				22244D2D2859C2EE00B3D03C /* loadingLottie.json */,
 			);
 			path = Lottie;
@@ -443,6 +446,7 @@
 				22244D332859C2EE00B3D03C /* countDown.json in Resources */,
 				22315E41282E4CA40093079B /* MemoForCoreData in Resources */,
 				22244D292859C2CC00B3D03C /* Assets.xcassets in Resources */,
+				22244D5B285B0F3000B3D03C /* completeLottie2.json in Resources */,
 				22244D342859C2EE00B3D03C /* checkmark.json in Resources */,
 				9A7545B9283B257400558CA7 /* Homework in Resources */,
 				22244D1F28586AC900B3D03C /* toFix in Resources */,
