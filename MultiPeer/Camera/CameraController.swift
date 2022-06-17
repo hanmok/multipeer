@@ -698,6 +698,7 @@ class CameraController: UIViewController {
     
     // MARK: - Basic Functions
     @objc private func startRecording() {
+        shouldShowScoreView = true
         print("startRecording triggered!! ")
         if !isRecording {
             DispatchQueue.main.async {
@@ -1225,9 +1226,13 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
         let cropController = CropController(url: validUrl, vc: self)
         
+            let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
+            
         cropController.exportVideo { CroppedUrl in
             DispatchQueue.main.async {
                 self.presentPreview(with: CroppedUrl)
+                self.prepareScoreView()
+                self.showScoreView(size: size)
             }
         }
         
@@ -1236,13 +1241,13 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
         // TODO: Present Preview In a second
         
-        let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
+//        let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
 //            self.presentPreview(with: url)
-            self.prepareScoreView()
-            
-            self.showScoreView(size: size)
+//            self.prepareScoreView()
+//
+//            self.showScoreView(size: size)
         }
         } else {
             shouldShowScoreView.toggle()
@@ -1309,7 +1314,10 @@ extension CameraController: ConnectionManagerDelegate {
     
     
     private func hidePreview() {
-        guard let previewVC = previewVC else {fatalError()}
+        guard let previewVC = previewVC else {
+//            fatalError()
+            return
+        }
         previewVC.view.isHidden = true
     }
 }
@@ -1367,7 +1375,7 @@ extension CameraController: ScoreControllerDelegate {
         prepareScoreView()
         makeTrialDetail()
         hideCompleteMsgView()
-        
+        scoreVC.changeSaveBtnColor()
 //        self.updateTrialDetail()
     }
     
@@ -1397,6 +1405,7 @@ extension CameraController: ScoreControllerDelegate {
 //        updateNameLabel()
 //        removeChildrenVC()
 //        resetTimer()
+        hideScoreView()
         
         self.shouldShowScoreView = false
     }

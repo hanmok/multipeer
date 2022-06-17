@@ -173,3 +173,22 @@ CoreData 업데이트 안함;; 왜죠 ????????
 *********************************
 
 
+*********************************
+Variation 의 경우 Peer 에서 Preview 를 닫지 않음 ;;
+
+retry 시 Peer 에서 Preview 닫지 않음 ;;
+
+delete 시 Peer 에서 Preview 닫지 않음 ;;
+
+retry 하고 다시 recording 했을 때 저장이 왜 안됨 ?
+
+delete 눌렀을 때 scoreView 가 들어가지 않음 ;; 고침
+
+delete 눌렀을 때 Peer 에서 영상 보이지 않음. (preview 없애야함)
+*********************************
+
+
+
+전반적으로.. preview 안닫는게 문제구나.// 언제닫아 ?
+글쎄... delete 눌리거나, retry 눌렸을 때.
+

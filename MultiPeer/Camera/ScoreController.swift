@@ -146,6 +146,8 @@ class ScoreController: UIViewController {
 //        $0.backgroundColor = .red500
         $0.backgroundColor = UIColor(redInt: 196, greenInt: 196, blueInt: 196)
         $0.layer.cornerRadius = 8
+        // additional code
+        $0.isUserInteractionEnabled = false
     }
     
      // MARK: - Life Cyle
@@ -290,10 +292,12 @@ class ScoreController: UIViewController {
 
 //            painBtnStackView.backgroundColor = .lavenderGray100
             saveBtn.backgroundColor = .red500
+            saveBtn.isUserInteractionEnabled = true
         } else {
 //            painBtnStackView.selectedBtnIndex
             if painBtnStackView.selectedBtnIndex != nil {
                 saveBtn.backgroundColor = .red500
+                saveBtn.isUserInteractionEnabled = true
             }
         }
     }
@@ -312,6 +316,7 @@ class ScoreController: UIViewController {
         
         if scoreBtnStackView.selectedBtnIndex != nil {
             saveBtn.backgroundColor = .red500
+            saveBtn.isUserInteractionEnabled = true
         }
         
     }
@@ -319,7 +324,7 @@ class ScoreController: UIViewController {
     
     @objc func deleteTapped() {
         print("delete tapped!")
-        
+        saveBtn.backgroundColor = UIColor(redInt: 196, greenInt: 196, blueInt: 196)
         setSelectedScoreButtonNone()
         delegate?.deleteAction()
     }
@@ -445,7 +450,10 @@ class ScoreController: UIViewController {
     // 여기서 정해줘야함 !
     
     
-    
+    public func changeSaveBtnColor() {
+        saveBtn.backgroundColor = UIColor(redInt: 196, greenInt: 196, blueInt: 196)
+        saveBtn.isUserInteractionEnabled = false
+    }
     
     // what is required conditions ?
     func saveConditionSatisfied() -> Bool {
