@@ -327,6 +327,7 @@ class ScoreController: UIViewController {
         saveBtn.backgroundColor = UIColor(redInt: 196, greenInt: 196, blueInt: 196)
         setSelectedScoreButtonNone()
         delegate?.deleteAction()
+        
     }
     
     @objc func saveTapped() {
@@ -448,7 +449,6 @@ class ScoreController: UIViewController {
     
     // clearing Test 가 있는 것들은 어떻게 진행됨 ?
     // 여기서 정해줘야함 !
-    
     
     public func changeSaveBtnColor() {
         saveBtn.backgroundColor = UIColor(redInt: 196, greenInt: 196, blueInt: 196)

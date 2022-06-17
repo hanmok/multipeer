@@ -42,6 +42,7 @@ struct PeerCommunicationHelper {
     static let msgToKeyDic: [MessageType: Notification.Name] = [
         .startRecordingMsg: .startRecordingKey,
         .stopRecordingMsg: .stopRecordingKey,
+        .hidePreviewMsg: .hidePreviewKey,
         
         .presentCamera: .presentCameraKey,
         .updatePeerTitle: .updatePeerTitleKey,
@@ -64,7 +65,7 @@ struct PeerCommunicationHelper {
 // MARK: - Message
 
 public enum MessageType: String, Codable {
-    
+    case hidePreviewMsg
     case startRecordingMsg
     case stopRecordingMsg
     

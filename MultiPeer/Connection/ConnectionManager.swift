@@ -263,7 +263,7 @@ extension ConnectionManager: MCSessionDelegate {
             
             switch messageType {
                 // no msg
-            case .startRecordingMsg, .stopRecordingMsg:
+            case .startRecordingMsg, .stopRecordingMsg, .hidePreviewMsg:
                 NotificationCenter.default.post(name: notificationName, object: nil)
                 // detail info
             case .presentCamera,

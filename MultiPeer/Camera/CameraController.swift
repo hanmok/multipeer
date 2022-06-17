@@ -157,8 +157,6 @@ class CameraController: UIViewController {
         }
     }
     
-    
-    
     // MARK: - UI Funcs
     private func updateNameLabel() {
         print("updateNameLabel triggered!!")
@@ -188,6 +186,12 @@ class CameraController: UIViewController {
         
         NotificationCenter.default.addObserver(
             self,
+            selector: #selector(hidePreviewNoti(_:)),
+            name: .hidePreviewKey, object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
             selector: #selector(stopRecordingNoti(_:)),
             name: .stopRecordingKey, object: nil
         )
@@ -208,6 +212,8 @@ class CameraController: UIViewController {
             selector: #selector(updatePeerTitleNoti(_:)),
             name: .updatePeerTitleKey, object: nil
         )
+        
+//        NotificationCenter.default.addobser
     }
     
     @objc func updatePeerTitleNoti(_ notification: Notification) {
@@ -259,7 +265,10 @@ class CameraController: UIViewController {
         }
     }
     
-    
+    @objc func hidePreviewNoti(_ notification: Notification) {
+        hidePreview()
+        resetTimer()
+    }
     
     @objc func startRecordingNowNoti(_ notification: Notification) {
         print("startRecording has been triggered by observer. ")
@@ -294,6 +303,7 @@ class CameraController: UIViewController {
         
         stopRecording()
         changeBtnLookForPreparing(animation: false)
+        stopTimer()
     }
     
     // this one called!!
@@ -387,6 +397,10 @@ class CameraController: UIViewController {
             } else { print("variation is invalid !!" ) }
             
             hideCompleteMsgView()
+            
+            connectionManager.send(PeerInfo(msgType: .hidePreviewMsg, info: Info()))
+            
+            
         }
     }
     
@@ -398,6 +412,7 @@ class CameraController: UIViewController {
     
     @objc func retryTapped(_ sender: UIButton) {
         retryAction()
+        connectionManager.send(PeerInfo(msgType: .hidePreviewMsg, info: Info()))
     }
     
     
@@ -727,6 +742,7 @@ class CameraController: UIViewController {
             self.isRecording = false
             stopTimer()
         }
+        stopTimer()
     }
 
     private func triggerDurationTimer() {
@@ -1318,7 +1334,10 @@ extension CameraController: ConnectionManagerDelegate {
 //            fatalError()
             return
         }
-        previewVC.view.isHidden = true
+        DispatchQueue.main.async {
+            previewVC.view.isHidden = true
+        }
+
     }
 }
 
@@ -1393,7 +1412,7 @@ extension CameraController: ScoreControllerDelegate {
     
     // TODO: Fix if necessary
     func deleteAction() {
-
+        connectionManager.send(PeerInfo(msgType: .hidePreviewMsg, info: Info()))
 //        guard let validVideoUrl = videoUrl else { fatalError() }
         if let videoUrl = videoUrl {
             deleteVideo(with: videoUrl)
