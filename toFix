@@ -157,7 +157,9 @@ Connect -> Disconnect :  Fine!
 CameraController 내에서 Connection 끊기면 상대 앱이 튕김. 고침 (deleteAction)
 
 Disconnect 시, Connectionmanager.cameraDirectionDic Update !!
-완료.
+일부 완료.
+(모든 Connection 이 끊겨졌을 때 완료. 3개 폰이 연결된 상태에서 하나만 끊어졌을 경우에는 아직 처리 안됨 )
+
 
 CameraController 에서 disconnect 되었어도 MovementController 로 돌아오면 아직 남아있는 것 처럼 보임.
 

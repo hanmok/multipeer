@@ -43,6 +43,7 @@ class MovementListController: UIViewController {
     //    var selectedTrialCore: TrialCore?
     
     var rank: Rank?
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         print("viewWillAppear triggered")
