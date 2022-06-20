@@ -512,12 +512,10 @@ class MovementListController: UIViewController {
         view.backgroundColor = .lavenderGray50
     }
     
-//    private func updateConnectionState(connectedAmount: Int) {
+    //    private func updateConnectionState(connectedAmount: Int) {
     private func updateConnectionState() {
-//        Dispatchque
-//        print("updateConnectionState called, connectedAmount: \(connectedAmount)")
+        
         DispatchQueue.main.async {
-//            switch connectedAmount {
             switch self.connectionManager.numOfPeers {
             case 1:
                 DispatchQueue.main.async {
@@ -536,8 +534,8 @@ class MovementListController: UIViewController {
                     self.rightConnectionStateView.backgroundColor = .lavenderGray300
                 }
             }
-            }
         }
+    }
 }
 
 
@@ -642,37 +640,14 @@ extension MovementListController: ConnectionManagerDelegate {
     
     // TODO: Update Connection Indicator on the right top (next to connect btn)
     func updateState(state: ConnectionState, connectedAmount: Int) {
+        print("updateState called, connectedAmount: \(connectedAmount)")
         switch state {
         case .connected:
-//            self.connectedAmount = connectedAmount
             self.connectionManager.numOfPeers = connectedAmount
             
-//            switch connectedAmount {
-//            switch conenc
-//
-//            case 1:
-//                DispatchQueue.main.async {
-//                    self.leftConnectionStateView.backgroundColor = .red
-//                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
-//                }
-//
-//            case 2:
-//                DispatchQueue.main.async {
-//                    self.rightConnectionStateView.backgroundColor = .red
-//                    self.leftConnectionStateView.backgroundColor = .red
-//                }
-//            default:
-//                DispatchQueue.main.async {
-//                    self.leftConnectionStateView.backgroundColor = .lavenderGray300
-//                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
-//                }
-//            }
-//            updateConnectionState(connectedAmount: connectedAmount)
-//            updateConnectionState(connectedAmount: self.connectionManager.numOfPeers)
             updateConnectionState()
             
         case .disconnected:
-//            self.connectedAmount = 0
             self.connectionManager.numOfPeers = 0
             DispatchQueue.main.async {
                 self.leftConnectionStateView.backgroundColor = .lavenderGray300

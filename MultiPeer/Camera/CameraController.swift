@@ -282,15 +282,10 @@ class CameraController: UIViewController {
         // original
 //        let recordingTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
+        resetTimer()
+        
         updatingDurationTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
-        //            DispatchQueue.main.async {
-        //                self.recordingTimerBtn.setTitle("\(milliTime)", for: .normal)
-        //
-        //            }
-        
-        // original
-//        RunLoop.main.add(recordingTimer, forMode: .common)
         RunLoop.main.add(updatingDurationTimer, forMode: .common)
         
         //        startRecording()
