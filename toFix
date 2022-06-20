@@ -163,6 +163,8 @@ Disconnect 시, Connectionmanager.cameraDirectionDic Update !!
 
 CameraController 에서 disconnect 되었어도 MovementController 로 돌아오면 아직 남아있는 것 처럼 보임.
 
+현재, 연결된 peer 의 수를 출력하는 변수가 여러개 있음.
+하나로 통일 시켜야함.
 
 *********************************
 
@@ -185,15 +187,33 @@ retry 하고 다시 recording 했을 때 저장이 왜 안됨 ? 고침
 delete 눌렀을 때 scoreView 가 들어가지 않음 ;; 고침
 
 delete 눌렀을 때 Peer 에서 영상 보이지 않음. (preview 없애야함) 고침
-*********************************
 
+왜.. Variation 할 때 .. CountUp 이 멈추지 않는거지 ?? 고침
 
 
 전반적으로.. preview 안닫는게 문제구나.// 언제닫아 ?
 
-글쎄... delete 눌리거나, retry 눌렸을 때.
+글쎄... delete 눌리거나, retry 눌렸을 때. 고침
+
+*********************************
 
 
-왜.. Variation 할 때 .. CountUp 이 멈추지 않는거지 ??
+
+
+
+*********************************
+그...뭐지 MovementListController 내에서 Connection State update
+6.20 이것부터 하면 좋을 것 같다.
+
+영상 촬영이 끝난 직후 Action
+Preview,
+ScoreController 띄우기.
+
+그 후  Crop asynchronously, and then replace current preview item with the one cropped
+
+*********************************
+
+
+
 
 

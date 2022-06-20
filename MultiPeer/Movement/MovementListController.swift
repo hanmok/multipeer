@@ -28,7 +28,7 @@ class MovementListController: UIViewController {
     
     var subject: Subject?
     
-    var connectedAmount: Int = 0
+//    var connectedAmount: Int = 0
     // TODO: change to false after some updates..
     // TODO: false -> 정상 작동 ;;
     //    var testMode = false
@@ -402,8 +402,9 @@ class MovementListController: UIViewController {
                 connectionManager: self.connectionManager,
                 //                screen: screen,
                 trialCore: trialCore,
-                rank: rank,
-                connectedAmount: self.connectedAmount
+                rank: rank
+//                connectedAmount: self.connectedAmount
+//                ,connectedAmount: self.connectionManager.numOfPeers
             )
             
             guard self.cameraVC != nil else { return }
@@ -511,7 +512,32 @@ class MovementListController: UIViewController {
         view.backgroundColor = .lavenderGray50
     }
     
-    
+//    private func updateConnectionState(connectedAmount: Int) {
+    private func updateConnectionState() {
+//        Dispatchque
+//        print("updateConnectionState called, connectedAmount: \(connectedAmount)")
+        DispatchQueue.main.async {
+//            switch connectedAmount {
+            switch self.connectionManager.numOfPeers {
+            case 1:
+                DispatchQueue.main.async {
+                    self.leftConnectionStateView.backgroundColor = .red
+                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
+                }
+                
+            case 2:
+                DispatchQueue.main.async {
+                    self.rightConnectionStateView.backgroundColor = .red
+                    self.leftConnectionStateView.backgroundColor = .red
+                }
+            default:
+                DispatchQueue.main.async {
+                    self.leftConnectionStateView.backgroundColor = .lavenderGray300
+                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
+                }
+            }
+            }
+        }
 }
 
 
@@ -593,10 +619,21 @@ extension MovementListController: CameraControllerDelegate {
                         vc.removeFromParent()
                     }
                 }
+                
+                self.updateScoreLabels()
+                
+//                self.updateConnectionState(connectedAmount: self.connectedAmount)
+//                self.updateConnectionState(connectedAmount: self.connectionManager.numOfPeers)
+                self.updateConnectionState()
+
             }
         }
-        updateScoreLabels()
+//        updateScoreLabels()
+////        updatestate
+//        updateConnectionState()
     }
+    
+
 }
 
 
@@ -607,30 +644,36 @@ extension MovementListController: ConnectionManagerDelegate {
     func updateState(state: ConnectionState, connectedAmount: Int) {
         switch state {
         case .connected:
-            self.connectedAmount = connectedAmount
+//            self.connectedAmount = connectedAmount
+            self.connectionManager.numOfPeers = connectedAmount
             
-            switch connectedAmount {
-                
-            case 1:
-                DispatchQueue.main.async {
-                    self.leftConnectionStateView.backgroundColor = .red
-                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
-                }
-                
-            case 2:
-                DispatchQueue.main.async {
-                    self.rightConnectionStateView.backgroundColor = .red
-                    self.leftConnectionStateView.backgroundColor = .red
-                }
-            default:
-                DispatchQueue.main.async {
-                    self.leftConnectionStateView.backgroundColor = .lavenderGray300
-                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
-                }
-            }
+//            switch connectedAmount {
+//            switch conenc
+//
+//            case 1:
+//                DispatchQueue.main.async {
+//                    self.leftConnectionStateView.backgroundColor = .red
+//                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
+//                }
+//
+//            case 2:
+//                DispatchQueue.main.async {
+//                    self.rightConnectionStateView.backgroundColor = .red
+//                    self.leftConnectionStateView.backgroundColor = .red
+//                }
+//            default:
+//                DispatchQueue.main.async {
+//                    self.leftConnectionStateView.backgroundColor = .lavenderGray300
+//                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
+//                }
+//            }
+//            updateConnectionState(connectedAmount: connectedAmount)
+//            updateConnectionState(connectedAmount: self.connectionManager.numOfPeers)
+            updateConnectionState()
             
         case .disconnected:
-            self.connectedAmount = 0
+//            self.connectedAmount = 0
+            self.connectionManager.numOfPeers = 0
             DispatchQueue.main.async {
                 self.leftConnectionStateView.backgroundColor = .lavenderGray300
                 self.rightConnectionStateView.backgroundColor = .lavenderGray300

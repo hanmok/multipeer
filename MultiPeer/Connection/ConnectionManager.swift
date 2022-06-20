@@ -308,6 +308,7 @@ extension ConnectionManager: MCSessionDelegate {
     }
     
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+        print("session delegate called")
         switch state {
         case .connected:
             print("connectionFlag, case: connected")
@@ -316,14 +317,16 @@ extension ConnectionManager: MCSessionDelegate {
             }
             
             
-            let connectedNum = ConnectionManager.peers.count
-            print("connectedNum: \(connectedNum)")
+//            let connectedNum = ConnectionManager.peers.count
+            self.numOfPeers = ConnectionManager.peers.count
+//            print("connectedNum: \(connectedNum)")
             self.connectionState = .connected
             print("state: connected !")
             startTime = Date()
             
-            delegate?.updateState(state: .connected, connectedAmount: connectedNum)
-            numOfPeers = connectedNum
+//            delegate?.updateState(state: .connected, connectedAmount: connectedNum)
+            delegate?.updateState(state: .connected, connectedAmount: self.numOfPeers)
+//            numOfPeers = connectedNum
             self.startDurationTimer()
             
         case .notConnected:
@@ -334,10 +337,11 @@ extension ConnectionManager: MCSessionDelegate {
             if ConnectionManager.peers.isEmpty && !self.isHosting {
                 ConnectionManager.connectedToChat = false
             }
+            self.numOfPeers = 0
             self.connectionState = .disconnected
             endTime = Date()
             
-            delegate?.updateState(state: .disconnected, connectedAmount: 0)
+            delegate?.updateState(state: .disconnected, connectedAmount: self.numOfPeers)
             // TODO: initialize peers' direction
 //            self.cameraDirectionDic
             for (someId, _ ) in self.cameraDirectionDic {

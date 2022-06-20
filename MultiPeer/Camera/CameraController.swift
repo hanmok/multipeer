@@ -37,7 +37,7 @@ class CameraController: UIViewController {
     
     var cameraDirection: CameraDirection?
     
-    var connectedAmount: Int = 0
+//    var connectedAmount: Int = 0
     
     var trialCore: TrialCore
     
@@ -80,7 +80,9 @@ class CameraController: UIViewController {
     init(
         connectionManager: ConnectionManager,
         trialCore: TrialCore,
-        rank: Rank, connectedAmount: Int = 0) {
+        rank: Rank
+//        , connectedAmount: Int = 0
+    ) {
             
             self.connectionManager = connectionManager
             
@@ -93,12 +95,12 @@ class CameraController: UIViewController {
             scoreVC = ScoreController(positionTitle: trialCore.title, direction: trialCore.direction)
             
             self.rank = rank
-            self.connectedAmount = connectedAmount
+//            self.connectedAmount = connectedAmount
             super.init(nibName: nil, bundle: nil)
             connectionManager.delegate = self
             scoreVC.delegate = self
             scoreVC.parentController = self
-            
+//            self.connectionManager.numOfPeers = connectedAmount
             setupTrialDetail(with: trialCore)
             changeBtnLookForPreparing(animation: false)
         }
@@ -111,6 +113,7 @@ class CameraController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        connectionManager.numOfPeers =
         print("CameraController viewdidLoad triggered")
         updateNameLabel()
         
@@ -314,7 +317,6 @@ class CameraController: UIViewController {
         switch state {
         case .disconnected:
             DispatchQueue.main.async {
-//                self.connectionStateLabel.text = "Disconnected!"
                 if self.connectionManager.isHost == false {
                     self.showReconnectionGuideAction()
                 }
@@ -498,7 +500,8 @@ class CameraController: UIViewController {
                 self.innerShape.layer.cornerRadius = 6
                 self.recordingBtn.setTitleColor(.gray900, for: .normal)
                 
-                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
+//                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
+                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .stop)
                 //                self.leftShape.layer.cornerRadius = 2
                 //                self.leftShape.backgroundColor = .lavenderGray400
             }
@@ -510,7 +513,8 @@ class CameraController: UIViewController {
                 
                 //                self.leftShape.layer.cornerRadius = 2
                 //                self.leftShape.backgroundColor = .lavenderGray400
-                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
+//                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
+                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .stop)
             }
         }
     }
@@ -522,7 +526,8 @@ class CameraController: UIViewController {
                 self.innerShape.layer.cornerRadius = 18
                 self.recordingBtn.setTitleColor(.red, for: .normal)
                 
-                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
+//                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
+                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
             }
         } else {
             DispatchQueue.main.async {
@@ -530,7 +535,8 @@ class CameraController: UIViewController {
                 self.innerShape.layer.cornerRadius = 18
                 self.recordingBtn.setTitleColor(.red, for: .normal)
                 
-                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
+//                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
+                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
             }
         }
     }
@@ -1291,6 +1297,8 @@ extension CameraController: ConnectionManagerDelegate {
     func updateState(state: ConnectionState, connectedAmount: Int) {
         switch state {
         case .disconnected:
+            print("disconnected!")
+            connectionManager.numOfPeers = 0
             DispatchQueue.main.async {
 
 //                self.connectionStateLabel.text = "Disconnected!"
@@ -1309,8 +1317,11 @@ extension CameraController: ConnectionManagerDelegate {
             resetRecording()
             print("disconnect flag 6")
         case .connected:
-            self.connectedAmount = connectedAmount
-            switch connectedAmount {
+            print("connected!")
+//            self.connectedAmount = connectedAmount
+            self.connectionManager.numOfPeers = connectedAmount
+//            switch connectedAmount {
+            switch self.connectionManager.numOfPeers {
             case 1: self.changeMode(target: .left, mode: .stop)
             case 2: self.changeMode(target: .both, mode: .stop)
             default: break
@@ -1389,6 +1400,7 @@ extension CameraController: ScoreControllerDelegate {
     func retryAction() {
         //
         //TODO:  Upload to the Server, and Redo
+        
         resetTimer()
         removeChildrenVC()
         prepareScoreView()
