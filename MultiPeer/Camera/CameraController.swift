@@ -131,6 +131,7 @@ class CameraController: UIViewController {
         
         setupInitialDirectionBtn()
     }
+    
     private func setupInitialDirectionBtn() {
         if connectionManager.latestDirection != nil {
             let title = connectionManager.latestDirection!.rawValue
@@ -1031,6 +1032,8 @@ class CameraController: UIViewController {
         actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
             self.connectionManager.host()
             self.connectionManager.isHost = true
+            self.connectionManager.numOfPeers = 0
+            self.connectionManager.delegate?.updateState(state: .disconnected, connectedAmount: 0)
 //            self.connectionManager.update
         }))
         
