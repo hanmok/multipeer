@@ -75,12 +75,43 @@ class MovementListController: UIViewController {
         return collectionView
     }()
     
-    private let completeBtn = UIButton().then {
-        $0.setTitle("Complete Screen", for: .normal)
-        $0.setTitleColor(.gray400, for: .normal)
-        $0.backgroundColor = .lavenderGray100
-        $0.layer.cornerRadius = 8
-    }
+//    private let completeBtn = UIButton().then {
+////        $0.setTitle("Complete Screen", for: .normal)
+////        $0.setattribteds
+//        let paragraph = NSMutableParagraphStyle()
+//        paragraph.alignment = .center
+//
+//        let attrText = NSMutableAttributedString(string: "Upload Completed\n", attributes: [
+//            .font: UIFont.systemFont(ofSize: 24, weight: .bold),
+////            .foregroundColor: UIColor.gray900,
+//            .foregroundColor: UIColor.white,
+//            .paragraphStyle: paragraph]
+//
+//        $0.attributedTitle = attrText
+//        $0.setTitleColor(.gray400, for: .normal)
+//        $0.backgroundColor = .lavenderGray100
+//        $0.layer.cornerRadius = 8
+//    }
+                                                 
+        private let completeBtn: UIButton = {
+            let btn = UIButton()
+            
+            let paragraph = NSMutableParagraphStyle()
+            paragraph.alignment = .center
+            
+            let attrText = NSMutableAttributedString(string: "Complete Screen\n", attributes: [
+//                .font: UIFont.systemFont(ofSize: 24, weight: .bold),
+                .font: UIFont.systemFont(ofSize: 17),
+                .foregroundColor: UIColor.white,
+                .paragraphStyle: paragraph])
+            
+//            btn.attributedTitle = attrText
+            btn.setAttributedTitle(attrText, for: .normal)
+            btn.setTitleColor(.gray400, for: .normal)
+            btn.backgroundColor = .lavenderGray100
+            btn.layer.cornerRadius = 8
+            return btn
+        }()
     
     private let finishBtn = UIButton().then {
         $0.setTitle("Finish Later", for: .normal)

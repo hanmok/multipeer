@@ -383,6 +383,7 @@ class ScoreController: UIViewController {
         } else {
             delegate?.navigateToSecondView(withNextTitle: false)
         }
+        
 //        connectionmanager
 //        ConnectionManager.send()
         
