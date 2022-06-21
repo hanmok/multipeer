@@ -288,7 +288,6 @@ class ScoreController: UIViewController {
         
 
         if painTestName == nil {
-            //TODO: Change ScoreController to not have pain for unnecessary cases
 
 //            painBtnStackView.backgroundColor = .lavenderGray100
             saveBtn.backgroundColor = .red500
@@ -298,6 +297,11 @@ class ScoreController: UIViewController {
             if painBtnStackView.selectedBtnIndex != nil {
                 saveBtn.backgroundColor = .red500
                 saveBtn.isUserInteractionEnabled = true
+            } else {
+                if score == .Value.hold {
+                    saveBtn.backgroundColor = .red500
+                    saveBtn.isUserInteractionEnabled = true
+                }
             }
         }
     }

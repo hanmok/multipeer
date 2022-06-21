@@ -37,7 +37,7 @@ class CropController {
         
     }
     
-    func exportVideo(shouldSave: Bool = true, closure: @escaping (_ CroppedUrl: URL) -> Void ) {
+    func exportVideo(shouldSave: Bool = true, fileName: String = "default fileName", closure: @escaping (_ CroppedUrl: URL) -> Void ) {
         print("export Video Triggered! ffffflllllaaaagggg")
         // MARK: - Asset To Export
         guard let assetToExport = self.player?.currentItem?.asset else { fatalError() }
@@ -53,8 +53,11 @@ class CropController {
         let fileUUID = UUID()
         //        guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("exported.mov") else { fatalError() }
         
-        guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("\(fileUUID).mov") else { fatalError() }
+//        guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("\(fileUUID).mov") else { fatalError() }
+        guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("\(fileName).mov") else { fatalError() }
         
+//        guard let outputMovieURL = URL(string: "hi2.mov") else { fatalError() }
+                
 //        export(assetToExport, to: outputMovieURL, startTime: self.startTime, endTime: self.endTime, composition: composition)
         
         let timeRange = CMTimeRangeFromTimeToTime(start: self.startTime, end: self.endTime)

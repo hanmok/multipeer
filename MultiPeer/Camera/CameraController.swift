@@ -908,10 +908,8 @@ class CameraController: UIViewController {
         
         topView.addSubview(dismissBtn)
         dismissBtn.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(90)
             make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
             make.leading.equalToSuperview().inset(16)
-//            make.height.width.equalTo(20)
             make.height.width.equalTo(24)
         }
         
@@ -1058,9 +1056,12 @@ class CameraController: UIViewController {
     
     // MARK: - UI Properties
     
-    private let bottomView = UIView().then { $0.backgroundColor = .white }
+//    private let bottomView = UIView().then { $0.backgroundColor = .white }
+    private let bottomView = UIView().then { $0.backgroundColor = .clear }
     
-    private let topView = UIView().then { $0.backgroundColor = .white }
+//    private let topView = UIView().then { $0.backgroundColor = .white }
+    private let topView = UIView().then { $0.backgroundColor = .clear }
+        
     
     private let frontBtn = SelectableButton(title: "Front").then {
         $0.layer.cornerRadius = 4
@@ -1269,12 +1270,14 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
         print("save success !")
         // Save Video To Photos Album
-        UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
+//        UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
+            UISaveVideoAtPathToSavedPhotosAlbum("hi", self, nil, nil)
+        
         
         videoUrl = url
         
         guard let validUrl = videoUrl else { fatalError() }
-        
+        saveVideoToLocal(with: validUrl)
         let cropController = CropController(url: validUrl, vc: self)
         
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
