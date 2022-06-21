@@ -84,8 +84,6 @@ class CropController {
                 }
             }
         })
-        
-        
     }
     
     func setupCropRect(item: AVPlayerItem) -> CGRect {
@@ -114,7 +112,8 @@ class CropController {
         
 //        let eachSize: CGFloat = 1300 // 500 -> 400
         let preferredSize: CGFloat = 1000
-        let sizeTobeUsed = preferredSize * 1.25
+//        let sizeTobeUsed = preferredSize * 1.25
+        let sizeTobeUsed = preferredSize * 1
         // 1000 -> 800 x 800
         // 1200 -> 960 x 960
         // 1300 -> 1040
@@ -123,7 +122,7 @@ class CropController {
         
 //        var cropRect = CGRect(x: 0, y: 0, width: size, height: size)
 //        var cropRect = CGRect(x: 0, y: 0, width: 500, height: 500)
-        var cropRect = CGRect(x: 0, y: 0, width: sizeTobeUsed, height: sizeTobeUsed)
+        let cropRect = CGRect(x: 0, y: 0, width: sizeTobeUsed, height: sizeTobeUsed)
         
         //        let originFlipTransform = CGAffineTransform(scaleX: 1, y: -1)
         //        let frameTranslateTransform = CGAffineTransform(translationX: 0, y: renderingSize.height)
@@ -156,6 +155,14 @@ class CropController {
             
             //        let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: -cropRect.origin.x, y: -cropRect.origin.y))
             
+            let preferredSize: CGFloat = 1000
+//            let sizeTobeUsed = preferredSize * 1.25
+            
+//            let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: 0, y: -200 ))
+            
+//            let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: 0, y: -500 ))
+//            let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: 0, y: -200 ))
+            
             let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: 0, y: 0 ))
             
             request.finish(with: imageAtOrigin, context: nil)
@@ -165,7 +172,9 @@ class CropController {
         //        cropScaleComposition.renderScale = 1.5
         // modified
         
-        cropScaleComposition.renderSize = CGSize(width: cropRect.width * 0.8, height: cropRect.height * 0.8)
+//        cropScaleComposition.renderSize = CGSize(width: cropRect.width * 0.8, height: cropRect.height * 0.8)
+        
+        cropScaleComposition.renderSize = CGSize(width: cropRect.width, height: cropRect.height)
         
         item.videoComposition = cropScaleComposition
         self.cropScaleComposition = cropScaleComposition

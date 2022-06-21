@@ -62,11 +62,15 @@ class ConnectionManager: NSObject {
     
      var sessionTimer: Timer?
 
+    var latestDirection: CameraDirection?
+    
     static let shared = ConnectionManager()
     
     private static let service = "jobmanager-chat"
     
     weak var delegate: ConnectionManagerDelegate?
+    
+    
     
     static var peers: [MCPeerID] = [] {
         didSet {
@@ -343,12 +347,13 @@ extension ConnectionManager: MCSessionDelegate {
             
             delegate?.updateState(state: .disconnected, connectedAmount: self.numOfPeers)
             // TODO: initialize peers' direction
-//            self.cameraDirectionDic
-            for (someId, _ ) in self.cameraDirectionDic {
-                if someId != myId {
-                    cameraDirectionDic[someId] = nil
-                }
-            }
+            
+//            for (someId, _ ) in self.cameraDirectionDic {
+//                if someId != myId {
+//                    cameraDirectionDic[someId] = nil
+//                }
+//            }
+            
             
             
             numOfPeers = 0

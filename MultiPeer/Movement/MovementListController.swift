@@ -142,6 +142,7 @@ class MovementListController: UIViewController {
     // call if no screen assigned
     func fetchDefaultScreen() {
         print("fetchDefaultScreen called")
+        // false -> error !
         if testMode {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate")}
             
@@ -157,15 +158,15 @@ class MovementListController: UIViewController {
                 if !fetchedSubjects.isEmpty {
                     subject = fetchedSubjects.first!
                 }
+                
                 guard let subject = subject else {
+                    // no subject
                     fatalError(" empty subject ")
                 }
                 
-                if !subject.screens.isEmpty {
+                if subject.screens.isEmpty == false {
                     screen = subject.screens.sorted{$0.date < $1.date}.first
                     
-                    printFlag(type: .updatingTrialCore, count: 2)
-                    // 여기에서 에러남 ;; 왜 ?
                     updateTrialCores(screen: screen)
                     print("updateTrialCores called")
                 } else {
@@ -398,27 +399,84 @@ class MovementListController: UIViewController {
         
         DispatchQueue.main.async {
             
-            self.cameraVC = CameraController(
-                connectionManager: self.connectionManager,
-                //                screen: screen,
-                trialCore: trialCore,
-                rank: rank
-//                connectedAmount: self.connectedAmount
-//                ,connectedAmount: self.connectionManager.numOfPeers
-            )
+//            self.cameraVC = CameraController(
+//                connectionManager: self.connectionManager,
+//                //                screen: screen,
+//                trialCore: trialCore,
+//                rank: rank
+//            )
             
-            guard self.cameraVC != nil else { return }
-            self.cameraVC!.delegate = self
-            self.addChild(self.cameraVC!)
-            // 왜 Nav 말고 child 로 했었을까? ConnectionManager 때문에 ?
-            // 이게 child 라서, 뭐.. 문제가 되나?
-            self.view.addSubview(self.cameraVC!.view)
-            //  self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-            self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
+
+                
+//                self.cameraVC = CameraController(
+//                    connectionManager: self.connectionManager,
+//                    //                screen: screen,
+//                    trialCore: trialCore,
+//                    rank: rank
+//                )
+//
+//                guard self.cameraVC != nil else { return }
+//                self.cameraVC!.delegate = self
+//                self.addChild(self.cameraVC!)
+//
+//                self.view.addSubview(self.cameraVC!.view)
+//
+//                self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
+//
+//                UIView.animate(withDuration: 0.3) {
+//                    self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+//                }
+            var hasCameraAlready = false
             
-            UIView.animate(withDuration: 0.3) {
-                self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+            let children = self.children
+            print("list of children : \(children)")
+            for child2 in children {
+                if child2 is CameraController {
+                    hasCameraAlready = true
+                    
+                    break
+                }
             }
+            
+            if hasCameraAlready == false {
+                self.cameraVC = CameraController(
+                    connectionManager: self.connectionManager,
+                    //                screen: screen,
+                    trialCore: trialCore,
+                    rank: rank
+                )
+                
+                guard self.cameraVC != nil else { return }
+                self.cameraVC!.delegate = self
+                self.addChild(self.cameraVC!)
+                
+                self.view.addSubview(self.cameraVC!.view)
+                
+                self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
+                
+                UIView.animate(withDuration: 0.3) {
+                    self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+                }
+            } else {
+            // TODO: ORDER: remove preview from cameracontroller
+//                cameraVC?.hidePreview()
+                
+                self.cameraVC?.hidePreview()
+//                self.cameraVC?.stopDurationTimer()
+                self.cameraVC?.resetTimer()
+                self.cameraVC?.invalidateTimer()
+            }
+//            guard self.cameraVC != nil else { return }
+//            self.cameraVC!.delegate = self
+//            self.addChild(self.cameraVC!)
+//
+//            self.view.addSubview(self.cameraVC!.view)
+//
+//            self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
+//
+//            UIView.animate(withDuration: 0.3) {
+//                self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+//            }
         }
     }
     
@@ -445,7 +503,7 @@ class MovementListController: UIViewController {
         sessionBtn.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
 //            make.top.equalTo(view.safeAreaLayoutGuide).offset(-15)
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
 //            make.top.equalToSuperview().offset(70)
             make.width.equalTo(100)
             make.height.equalTo(30)
@@ -480,9 +538,7 @@ class MovementListController: UIViewController {
         self.view.addSubview(movementCollectionView)
         movementCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
-//            make.top.equalTo(view.safeAreaLayoutGuide).inset(30)
             make.top.equalTo(sessionBtn.snp.bottom).offset(15)
-//            make.bottom.equalTo(view.snp.bottom).offset(-120)
             make.bottom.equalTo(view.snp.bottom).offset(-100)
         }
         
@@ -606,8 +662,8 @@ extension MovementListController: CameraControllerDelegate {
         UIView.animate(withDuration: 0.3) {
             cameraVC.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
         } completion: { done in
-            //
-            //            // TODO: remove cameraController after animation
+            
+            // TODO: remove cameraController after animation
             if done {
                 if self.children.count > 0 {
                     let viewControllers: [UIViewController] = self.children

@@ -44,6 +44,7 @@ struct PeerCommunicationHelper {
         .stopRecordingMsg: .stopRecordingKey,
         .hidePreviewMsg: .hidePreviewKey,
         
+        
         .presentCamera: .presentCameraKey,
         .updatePeerTitle: .updatePeerTitleKey,
         .requestPostMsg: .requestPostKey,

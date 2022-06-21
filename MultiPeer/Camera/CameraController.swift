@@ -29,7 +29,7 @@ class CameraController: UIViewController {
     var shouldShowScoreView = true
     // TODO: Handle inside ConnectionManager
     // TODO: duplicate check, send msg if direction assigned.
-//    var idToCameraDirectionDic: [String: CameraDirection] = [:]
+
     
     var positionTitle: String
     
@@ -113,10 +113,10 @@ class CameraController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        connectionManager.numOfPeers =
+
         print("CameraController viewdidLoad triggered")
         updateNameLabel()
-        
+
         setupLayout()
         setupAddTargets()
         addNotificationObservers()
@@ -127,6 +127,14 @@ class CameraController: UIViewController {
         
         if let myDirection = connectionManager.mydirection {
             directionStackView.selectBtnAction(with: myDirection.rawValue)
+        }
+        
+        setupInitialDirectionBtn()
+    }
+    private func setupInitialDirectionBtn() {
+        if connectionManager.latestDirection != nil {
+            let title = connectionManager.latestDirection!.rawValue
+            directionStackView.selectBtnAction(with: title)
         }
     }
     
@@ -174,9 +182,15 @@ class CameraController: UIViewController {
         }
     }
     
-    private func resetTimer() {
+    public func resetTimer() {
         count = 0
+        updatingDurationTimer.invalidate()
+//        updatingDurationTimer = Timer()
         updateDurationLabel()
+    }
+    public func invalidateTimer() {
+        print("invalidateTimer Called")
+        updatingDurationTimer.invalidate()
     }
     
     // MARK: - Notification
@@ -288,12 +302,15 @@ class CameraController: UIViewController {
         
         RunLoop.main.add(updatingDurationTimer, forMode: .common)
         
-        //        startRecording()
         changeBtnLookForRecording(animation: false)
         
         triggerDurationTimer()
         
     }
+    public func stopDurationTimer() {
+        updatingDurationTimer.invalidate()
+    }
+//    public func rese
     
     
     @objc func stopRecordingNoti(_ notification: Notification) {
@@ -343,10 +360,16 @@ class CameraController: UIViewController {
     }
     
     @objc func directionTapped(_ sender: SelectableButton) {
+        
         directionStackView.selectBtnAction(selected: sender.id)
+        
+        
+        guard let selectedDirection = CameraDirection(rawValue: sender.title) else { fatalError() }
+        connectionManager.latestDirection = selectedDirection
         
         cameraDirection = CameraDirection(rawValue: sender.title)
 
+        
         guard let cameraDirection = cameraDirection else {
             fatalError("invalid camera direction")
         }
@@ -801,9 +824,6 @@ class CameraController: UIViewController {
         self.present(actionSheet, animated: true, completion: nil)
     }
     
-    
-    
-    
     // TODO: For now, it's ratio not accurate so that it looks weird.
     // TODO: Don't need to change for now.
     
@@ -878,7 +898,8 @@ class CameraController: UIViewController {
         
         topView.addSubview(dismissBtn)
         dismissBtn.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(90)
+//            make.top.equalToSuperview().offset(90)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
             make.leading.equalToSuperview().inset(16)
 //            make.height.width.equalTo(20)
             make.height.width.equalTo(24)
@@ -1010,6 +1031,7 @@ class CameraController: UIViewController {
         actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
             self.connectionManager.host()
             self.connectionManager.isHost = true
+//            self.connectionManager.update
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
@@ -1335,7 +1357,7 @@ extension CameraController: ConnectionManagerDelegate {
     }
     
     
-    private func hidePreview() {
+    public func hidePreview() {
         guard let previewVC = previewVC else {
 //            fatalError()
             return
@@ -1345,6 +1367,7 @@ extension CameraController: ConnectionManagerDelegate {
         }
 
     }
+    
 }
 
 
@@ -1414,7 +1437,6 @@ extension CameraController: ScoreControllerDelegate {
         deleteAction()
         // TODO: DismissPreview
 //        hidePreview()
-        
     }
     
     // TODO: Fix if necessary
