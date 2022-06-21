@@ -30,6 +30,7 @@ class CameraController: UIViewController {
     // TODO: Handle inside ConnectionManager
     // TODO: duplicate check, send msg if direction assigned.
 
+    var croppedUrl: URL?
     
     var positionTitle: String
     
@@ -258,6 +259,14 @@ class CameraController: UIViewController {
     
     
     @objc func requestPostNoti(_ notification: Notification) {
+        
+        if croppedUrl != nil {
+            print("croppedUrl is valid")
+            self.saveVideoToLocal(with: croppedUrl!)
+        } else {
+            print("croppedUrl is nil")
+        }
+        
         printFlag(type: .peerRequest, count: 4)
         guard let title = notification.userInfo?["title"] as? String,
               let direction = notification.userInfo?["direction"] as? MovementDirection,
@@ -1246,7 +1255,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
+        print("imagePickerController didFinishPickingMedia called!")
         //        var videoUrl: URL?
         if shouldShowScoreView {
         guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
@@ -1270,13 +1279,30 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             
-        cropController.exportVideo { CroppedUrl in
-            DispatchQueue.main.async {
-                self.presentPreview(with: CroppedUrl)
-                self.prepareScoreView()
-                self.showScoreView(size: size)
+            
+//            DispatchQueue.main.async {
+//                self.presentPreview(with: validUrl)
+//                self.prepareScoreView()
+//                self.showScoreView(size: size)
+//            }
+            
+            
+//        cropController.exportVideo { CroppedUrl in
+//            DispatchQueue.main.async {
+//                self.presentPreview(with: CroppedUrl)
+//                self.prepareScoreView()
+//                self.showScoreView(size: size)
+//            }
+//        }
+            
+            cropController.exportVideo(shouldSave: false) { CroppedUrl in
+                DispatchQueue.main.async {
+                    self.presentPreview(with: CroppedUrl)
+                    self.prepareScoreView()
+                    self.showScoreView(size: size)
+                    self.croppedUrl = CroppedUrl
+                }
             }
-        }
         
         print("url: \(url.path)")
         
@@ -1295,7 +1321,6 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             shouldShowScoreView.toggle()
         }
     }
-    
 }
 
 // MARK: - Connection Manager Delegate
@@ -1473,10 +1498,31 @@ extension CameraController: ScoreControllerDelegate {
         }
     }
     
+    func saveVideoToLocal(with url: URL) {
+        //        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        //        let documentsDirectoryURL = paths[0]
+//        print("duration: \(self.testDuration)")
+        PHPhotoLibrary.shared().performChanges {
+            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+        }
+    }
     
     func saveAction(core: TrialCore, detail: TrialDetail) {
         
         guard let validVideoUrl = videoUrl else { return }
+        
+//        let cropController = CropController(url: validVideoUrl, vc: self)
+
+        if croppedUrl != nil {
+            print("croppedUrl is valid")
+            self.saveVideoToLocal(with: croppedUrl!)
+        } else {
+            print("croppedUrl is nil")
+        }
+        
+//        cropController.exportVideo { CroppedUrl in
+//
+//        }
         
         let trialId = UUID()
         guard let direction = MovementDirection(rawValue: core.direction) else { return }

@@ -69,6 +69,7 @@ public enum MessageType: String, Codable {
     case hidePreviewMsg
     case startRecordingMsg
     case stopRecordingMsg
+//    case saveMsg
     
     case presentCamera
     case requestPostMsg

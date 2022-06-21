@@ -269,7 +269,8 @@ extension ConnectionManager: MCSessionDelegate {
                 // no msg
             case .startRecordingMsg, .stopRecordingMsg, .hidePreviewMsg:
                 NotificationCenter.default.post(name: notificationName, object: nil)
-                // detail info
+            // detail info
+                
             case .presentCamera,
                     .requestPostMsg, .updatePeerTitle:
 

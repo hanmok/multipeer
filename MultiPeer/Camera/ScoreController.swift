@@ -353,9 +353,8 @@ class ScoreController: UIViewController {
             setScore(title: trialCore.title, to: trialDetail, score: score, pain: pain)
             
             delegate?.saveAction(core: trialCore, detail: trialDetail)
-            printFlag(type: .peerRequest, count: -1)
             delegate?.orderRequest(core: trialCore, detail: trialDetail)
-            printFlag(type: .peerRequest, count: -2)
+
             trialCore.updateLatestScore()
 
             // 어떤게 invalid 일까 ?? 둘다일 수 있다.
@@ -367,12 +366,14 @@ class ScoreController: UIViewController {
                 // 버튼 선택에 따라 Clearing 값이 업데이트 되지 않음.
                 
                 // scoreController Delegate
-                print("fClearingDetail Pain: \(fClearingDetail?.isPainful)")
+
                 delegate?.saveAction(core: fClearingCore!, detail: fClearingDetail!)
+                
                 delegate?.orderRequest(core: fClearingCore!, detail: fClearingDetail!)
                 
                 fClearingCore!.updateLatestScore()
-            } else { print("fClearingCore or fClearingDetail is invalid ") }
+            } else { print("fClearingCore or fClearingDetail is invalid ")
+            }
             
         } else { print("save Condition not satisfied.") }
         
@@ -382,6 +383,8 @@ class ScoreController: UIViewController {
         } else {
             delegate?.navigateToSecondView(withNextTitle: false)
         }
+//        connectionmanager
+//        ConnectionManager.send()
         
 //        delegate?.navigateToSecondView()
     }

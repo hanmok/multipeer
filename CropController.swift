@@ -37,7 +37,7 @@ class CropController {
         
     }
     
-    func exportVideo(closure: @escaping (_ CroppedUrl: URL) -> Void ) {
+    func exportVideo(shouldSave: Bool = true, closure: @escaping (_ CroppedUrl: URL) -> Void ) {
         print("export Video Triggered! ffffflllllaaaagggg")
         // MARK: - Asset To Export
         guard let assetToExport = self.player?.currentItem?.asset else { fatalError() }
@@ -79,7 +79,9 @@ class CropController {
                     print("failed \(error.localizedDescription)")
                     fatalError()
                 } else {
+                    if shouldSave {
                     self.saveVideoToLocal(with: outputMovieURL)
+                    }
                     closure(outputMovieURL)
                 }
             }
@@ -242,3 +244,4 @@ class CropController {
         }
     }
 }
+
