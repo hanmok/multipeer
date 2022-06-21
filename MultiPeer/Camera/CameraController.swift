@@ -906,27 +906,31 @@ class CameraController: UIViewController {
         }
         
         
-        topView.addSubview(dismissBtn)
-        dismissBtn.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
-            make.leading.equalToSuperview().inset(16)
-            make.height.width.equalTo(24)
-        }
+//        topView.addSubview(dismissBtn)
+//        dismissBtn.snp.makeConstraints { make in
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
+//            make.leading.equalToSuperview().inset(16)
+//            make.height.width.equalTo(24)
+//        }
         
         
-        topView.addSubview(movementNameLabel)
-        movementNameLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(90)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(250)
-            make.height.equalTo(25)
-        }
+//        topView.addSubview(movementNameLabel)
+//        movementNameLabel.snp.makeConstraints { make in
+//            make.top.equalToSuperview().offset(90)
+//            make.centerX.equalToSuperview()
+//            make.width.equalTo(250)
+//            make.height.equalTo(25)
+//        }
         
         
         topView.addSubview(durationLabel)
         durationLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().inset(30)
+            
+//            make.bottom.equalToSuperview().inset(30)
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
+            
+            make.top.equalToSuperview().offset(40)
             make.height.equalTo(40)
             make.width.equalTo(200)
         }
@@ -934,16 +938,17 @@ class CameraController: UIViewController {
         view.addSubview(bottomView)
         
         
-        self.bottomView.addSubview(countDownLottieView)
-        self.countDownLottieView.snp.makeConstraints { make in
-            make.leading.top.equalToSuperview().offset(30)
-            make.width.equalTo(50)
-            make.height.equalTo(50)
-        }
+
+        
+
         
         bottomView.addSubview(neighborLongBar)
         neighborLongBar.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+//            make.center.equalToSuperview()
+            
+            make.centerY.equalToSuperview().offset(5)
+            make.centerX.equalToSuperview()
+            
             make.width.equalToSuperview().dividedBy(2)
             make.height.equalTo(48)
         }
@@ -965,13 +970,21 @@ class CameraController: UIViewController {
 //        bottomView.addSubview(directionStackView)
         stackViewContainer.addSubview(directionStackView)
         directionStackView.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(20)
-//            make.trailing.equalToSuperview().inset(20)
-//
-//            make.width.equalTo(230)
-//            make.height.equalTo(40)
-            make.leading.top.trailing.bottom.equalToSuperview().inset(2)
+//            make.leading.top.trailing.bottom.equalToSuperview().inset(2)
+            make.leading.trailing.bottom.equalToSuperview().inset(2)
+            make.top.equalToSuperview()
         }
+        
+        
+        self.bottomView.addSubview(countDownLottieView)
+        self.countDownLottieView.snp.makeConstraints { make in
+//            make.leading.top.equalToSuperview().offset(30)
+            make.centerY.equalTo(directionStackView.snp.centerY)
+            make.leading.equalToSuperview().offset(40)
+            make.width.equalTo(50)
+            make.height.equalTo(50)
+        }
+        
         
 //        directionStackView.addSubview(<#T##view: UIView##UIView#>)
 //        [leftLine, rightLine].forEach { self.directionStackView.addSubview($0)}
@@ -1015,18 +1028,41 @@ class CameraController: UIViewController {
         outerRecCircle.addSubview(recordingBtn)
         
         self.outerRecCircle.snp.makeConstraints { make in
-            make.center.equalTo(self.bottomView.snp.center)
+//            make.center.equalTo(self.bottomView.snp.center)
+            make.centerY.equalToSuperview().offset(5)
+            make.centerX.equalToSuperview()
             make.height.width.equalTo(72)
         }
         
         self.innerShape.snp.makeConstraints { make in
             make.center.equalToSuperview()
+            
+//            make.centerY.equalToSuperview().offset(5)
+//            make.centerX.equalToSuperview()
             make.width.height.equalTo(36)
         }
         
         self.recordingBtn.snp.makeConstraints { make in
             make.center.equalToSuperview()
+            
+//            make.centerY.equalToSuperview().offset(5)
+//            make.centerX.equalToSuperview()
             make.width.height.equalTo(36)
+        }
+        
+        self.bottomView.addSubview(movementNameLabel)
+        self.movementNameLabel.snp.makeConstraints { make in
+//            make.centerX.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(outerRecCircle.snp.bottom).offset(10)
+            make.height.equalTo(30)
+        }
+        
+        self.bottomView.addSubview(dismissBtn)
+        self.dismissBtn.snp.makeConstraints { make in
+            make.centerY.equalTo(outerRecCircle.snp.centerY)
+            make.leading.equalToSuperview().inset(16)
+            make.height.width.equalTo(24)
         }
         
     }
@@ -1077,7 +1113,10 @@ class CameraController: UIViewController {
     
 //    private let
     
-    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
+//    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
+    
+    private let directionStackView = SelectableButtonStackView(selectedBGColor: .transPurple500, defaultBGColor: UIColor(white: 0.9, alpha: 0.6), selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
+    
 //        .then {
         //        $0.backgroundColor = .magenta
 //        $0.layer.borderWidth = 1
@@ -1093,7 +1132,8 @@ class CameraController: UIViewController {
     }
     
     private let movementNameLabel = UILabel().then {
-        $0.textColor = .black
+//        $0.textColor = .black
+        $0.textColor = .white
         $0.textAlignment = .center
         $0.font = UIFont.systemFont(ofSize: 20)
         //        $0.numberOfLines = 0
@@ -1118,7 +1158,8 @@ class CameraController: UIViewController {
     private let dismissBtn: UIButton = {
         let btn = UIButton()
         let innerImage = UIImageView(image: UIImage(systemName: "chevron.left"))
-        innerImage.tintColor = .black
+//        innerImage.tintColor = .black
+        innerImage.tintColor = .white
         btn.addSubview(innerImage)
         
         innerImage.snp.makeConstraints { make in
