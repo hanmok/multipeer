@@ -847,13 +847,17 @@ class CameraController: UIViewController {
         addChild(previewVC)
         view.addSubview(previewVC.view)
         previewVC.view.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
+            
+//            make.centerX.equalToSuperview()
+//            make.bottom.equalTo(bottomView.snp.top)
+//            make.width.height.equalTo(view.snp.width)
+
+            make.top.equalToSuperview()
             make.bottom.equalTo(bottomView.snp.top)
-            make.width.height.equalTo(view.snp.width)
+            make.leading.trailing.equalToSuperview()
         }
     }
-    
-    
+
     private func removeChildrenVC() {
         DispatchQueue.main.async {
             guard let previewVC = self.previewVC else {
@@ -967,18 +971,16 @@ class CameraController: UIViewController {
             make.height.equalTo(40)
         }
         
-//        bottomView.addSubview(directionStackView)
+        
         stackViewContainer.addSubview(directionStackView)
         directionStackView.snp.makeConstraints { make in
-//            make.leading.top.trailing.bottom.equalToSuperview().inset(2)
-            make.leading.trailing.bottom.equalToSuperview().inset(2)
-            make.top.equalToSuperview()
+            make.leading.top.trailing.bottom.equalToSuperview().inset(2)
+//            make.top.equalToSuperview()
         }
         
         
         self.bottomView.addSubview(countDownLottieView)
         self.countDownLottieView.snp.makeConstraints { make in
-//            make.leading.top.equalToSuperview().offset(30)
             make.centerY.equalTo(directionStackView.snp.centerY)
             make.leading.equalToSuperview().offset(40)
             make.width.equalTo(50)
@@ -1006,6 +1008,7 @@ class CameraController: UIViewController {
             make.height.equalToSuperview().dividedBy(2)
             make.width.equalTo(1)
         }
+//        picker.
         
         
         
@@ -1266,7 +1269,6 @@ class CameraController: UIViewController {
         let attrText = NSMutableAttributedString(string: "Upload Completed\n", attributes: [
             .font: UIFont.systemFont(ofSize: 24, weight: .bold),
             .foregroundColor: UIColor.gray900,
-//            .foregroundColor: UIColor.white,
             .paragraphStyle: paragraph]
         )
         
@@ -1312,17 +1314,24 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         print("save success !")
         // Save Video To Photos Album
 //        UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
-            UISaveVideoAtPathToSavedPhotosAlbum("hi", self, nil, nil)
-        
+
+        UISaveVideoAtPathToSavedPhotosAlbum("hi", self, nil, nil)
+
         
         videoUrl = url
         
         guard let validUrl = videoUrl else { fatalError() }
         saveVideoToLocal(with: validUrl)
+            
         let cropController = CropController(url: validUrl, vc: self)
         
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             
+            DispatchQueue.main.async {
+                self.presentPreview(with: validUrl)
+                self.prepareScoreView()
+                self.showScoreView(size: size)
+            }
             
 //            DispatchQueue.main.async {
 //                self.presentPreview(with: validUrl)
@@ -1339,14 +1348,14 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
 //            }
 //        }
             
-            cropController.exportVideo(shouldSave: false) { CroppedUrl in
-                DispatchQueue.main.async {
-                    self.presentPreview(with: CroppedUrl)
-                    self.prepareScoreView()
-                    self.showScoreView(size: size)
-                    self.croppedUrl = CroppedUrl
-                }
-            }
+//            cropController.exportVideo(shouldSave: false) { CroppedUrl in
+//                DispatchQueue.main.async {
+//                    self.presentPreview(with: CroppedUrl)
+//                    self.prepareScoreView()
+//                    self.showScoreView(size: size)
+//                    self.croppedUrl = CroppedUrl
+//                }
+//            }
         
         print("url: \(url.path)")
         
@@ -1548,13 +1557,15 @@ extension CameraController: ScoreControllerDelegate {
 //        print("duration: \(self.testDuration)")
         PHPhotoLibrary.shared().performChanges {
             PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+//            PHAssetChangeRequest.
         }
     }
     
     func saveAction(core: TrialCore, detail: TrialDetail) {
         
         guard let validVideoUrl = videoUrl else { return }
-        
+        print("------------------------------------------")
+        print("trial : \(core.title), \(core.direction), \(detail.trialNo)")
 //        let cropController = CropController(url: validVideoUrl, vc: self)
 
         if croppedUrl != nil {
