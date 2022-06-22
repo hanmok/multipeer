@@ -47,10 +47,12 @@ enum MovementListWithoutVars: String, CaseIterable {
 //    MovementList.shoulderClearing: 2,
 //    movement
 //]
+
 let clearingTitleWithOneDirection: [MovementList] = [.extensionClearing, .flexionClearing]
 
 
 // Make positionList accessable using Index
+
 extension CaseIterable where Self: Equatable {
     var index: Self.AllCases.Index? {
         return Self.allCases.firstIndex { self == $0 }

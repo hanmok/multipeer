@@ -342,12 +342,9 @@ class ScoreController: UIViewController {
         
             printFlag(type: .rsBug, count: 1)
             guard let score = score else { fatalError("score is nil") }
-            print("save Condition satisfied.")
             
             setupFTrialCoreIfNeeded()
             
-            // setup Detail both trial and fclearing
-            // Ankle 에서 Nil 나옴..
             setupTrialDetail()
             
             guard let trialCore = trialCore else { fatalError("trialCore is nil") }
@@ -357,6 +354,8 @@ class ScoreController: UIViewController {
             setScore(title: trialCore.title, to: trialDetail, score: score, pain: pain)
             
             delegate?.saveAction(core: trialCore, detail: trialDetail)
+            print("------------ scoreController saveAction------------")
+            print("trialNo: \(trialDetail.trialNo)")
             delegate?.orderRequest(core: trialCore, detail: trialDetail)
 
             trialCore.updateLatestScore()
@@ -483,10 +482,11 @@ class ScoreController: UIViewController {
             return true // if score is selected -> true. or -> false
         }
     }
-    
+    // 왜 두번 생성하고 ㅈㄹ..
     func setupTrialDetail() {
         
         guard let trialCore = trialCore else { fatalError("trialCore is nil") }
+        
         trialDetail = trialCore.returnFreshTrialDetail()
         
         guard let fClearingCore = fClearingCore else { return }

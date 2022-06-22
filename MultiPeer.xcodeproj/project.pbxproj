@@ -277,11 +277,11 @@
 			isa = PBXGroup;
 			children = (
 				22795079282BA58600B675A1 /* Model.xcdatamodeld */,
+				22315E3E282E38D40093079B /* TrialCore+Helper.swift */,
 				227648CD2831E75900214EBF /* TrialDetail+Helper.swift */,
 				227950B1282BB8F900B675A1 /* Subject+Helper.swift */,
 				227950B6282BBF8500B675A1 /* Screen+Helper.swift */,
 				227950B8282BBF8F00B675A1 /* PositionTitleCore+Helper.swift */,
-				22315E3E282E38D40093079B /* TrialCore+Helper.swift */,
 				226D87662834E07600E3F547 /* RemovableProtocol.swift */,
 				22795067282B929A00B675A1 /* MovementModels.swift */,
 				22795071282B939B00B675A1 /* MovementLists.swift */,

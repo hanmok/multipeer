@@ -15,6 +15,7 @@ extension TrialDetail {
     
     @discardableResult
     static func save(belongTo trialCore: TrialCore, trialNo: Int = 0) -> TrialDetail {
+        print("trialDetail has been made !!!")
         print("creating trialdetail with trialNo: \(trialNo)")
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {

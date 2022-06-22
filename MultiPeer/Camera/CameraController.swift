@@ -69,7 +69,7 @@ class CameraController: UIViewController {
     private var isRecording = false
     
     //    private let shouldRecordLater = false
-    private let shouldRecordLater = true
+    private let shouldRecordLater = false
     
     var variationName: String?
     
@@ -101,15 +101,14 @@ class CameraController: UIViewController {
             connectionManager.delegate = self
             scoreVC.delegate = self
             scoreVC.parentController = self
-//            self.connectionManager.numOfPeers = connectedAmount
-            setupTrialDetail(with: trialCore)
+//            setupTrialDetail()
             changeBtnLookForPreparing(animation: false)
         }
     
-    
-    private func setupTrialDetail(with core: TrialCore) {
-        trialDetail = trialCore.returnFreshTrialDetail()
-    }
+    // 왜 두번 생성하고 ㅈㄹ.. 필요 없어보임.
+//    private func setupTrialDetail() {
+//        trialDetail = trialCore.returnFreshTrialDetail()
+//    }
     
     
     override func viewDidLoad() {
@@ -1503,7 +1502,7 @@ extension CameraController: ScoreControllerDelegate {
         resetTimer()
         removeChildrenVC()
         prepareScoreView()
-        makeTrialDetail()
+//        makeTrialDetail()
         hideCompleteMsgView()
         scoreVC.changeSaveBtnColor()
 //        self.updateTrialDetail()
@@ -1564,7 +1563,7 @@ extension CameraController: ScoreControllerDelegate {
     func saveAction(core: TrialCore, detail: TrialDetail) {
         
         guard let validVideoUrl = videoUrl else { return }
-        print("------------------------------------------")
+        print("-----------CameraController trialCore Details -----------")
         print("trial : \(core.title), \(core.direction), \(detail.trialNo)")
 //        let cropController = CropController(url: validVideoUrl, vc: self)
 
