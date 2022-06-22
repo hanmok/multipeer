@@ -50,6 +50,7 @@ class ScoreController: UIViewController {
             // if it has variation following,
             // toggle visibility of Clearing Test depening on score value ( Hold -> Hide )
             // -1 represent 'Hold'
+            
             if varTestName != nil {
                 // convert to -1 -> hide!
                 if newValue == -1 && score != -1 {
@@ -355,6 +356,7 @@ class ScoreController: UIViewController {
             
             delegate?.saveAction(core: trialCore, detail: trialDetail)
             print("------------ scoreController saveAction------------")
+            print("title: \(trialCore.title), direction: \(trialCore.direction)")
             print("trialNo: \(trialDetail.trialNo)")
             delegate?.orderRequest(core: trialCore, detail: trialDetail)
 

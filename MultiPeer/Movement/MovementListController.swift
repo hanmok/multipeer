@@ -221,8 +221,18 @@ class MovementListController: UIViewController {
     private func setupAddTargets() {
         sessionBtn.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
         
+//        subjectSettingBtn.addTarget(self, action: #selector(moveToSubjectController), for: .touchUpInside)
+        finishBtn.addTarget(self, action: #selector(finishBtnTapped), for: .touchUpInside)
+        
+        
         subjectSettingBtn.addTarget(self, action: #selector(subjectBtnTapped), for: .touchUpInside)
+        
+//        subjectSettingBtn.addTarget(self, action: #selector(moveToSubjectController), for: .touchUpInside)
+        
+        completeBtn.addTarget(self, action: #selector(completeBtnTapped), for: .touchUpInside)
     }
+    
+    
     
     // TODO: Host 인 경우, 어떤 값을 설정해주기.
     @objc func showConnectivityAction(_ sender: UIButton) {
@@ -249,6 +259,15 @@ class MovementListController: UIViewController {
     @objc func subjectBtnTapped(_ sender: UIButton) {
         moveToSubjectController()
     }
+    
+    @objc func completeBtnTapped(_ sender: UIButton) {
+        moveToSubjectController()
+    }
+    
+    @objc func finishBtnTapped(_ sender: UIButton) {
+        moveToSubjectController()
+    }
+    
     
     
     
@@ -430,35 +449,9 @@ class MovementListController: UIViewController {
     
     private func presentUsingChild(trialCore: TrialCore, rank: Rank) {
         
+//        guard let screen = screen else { fatalError() }
+        
         DispatchQueue.main.async {
-            
-//            self.cameraVC = CameraController(
-//                connectionManager: self.connectionManager,
-//                //                screen: screen,
-//                trialCore: trialCore,
-//                rank: rank
-//            )
-            
-
-                
-//                self.cameraVC = CameraController(
-//                    connectionManager: self.connectionManager,
-//                    //                screen: screen,
-//                    trialCore: trialCore,
-//                    rank: rank
-//                )
-//
-//                guard self.cameraVC != nil else { return }
-//                self.cameraVC!.delegate = self
-//                self.addChild(self.cameraVC!)
-//
-//                self.view.addSubview(self.cameraVC!.view)
-//
-//                self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
-//
-//                UIView.animate(withDuration: 0.3) {
-//                    self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
-//                }
             var hasCameraAlready = false
             
             let children = self.children
@@ -466,17 +459,18 @@ class MovementListController: UIViewController {
             for child2 in children {
                 if child2 is CameraController {
                     hasCameraAlready = true
-                    
                     break
                 }
             }
             
+
             if hasCameraAlready == false {
                 self.cameraVC = CameraController(
                     connectionManager: self.connectionManager,
                     //                screen: screen,
                     trialCore: trialCore,
-                    rank: rank
+                    rank: rank,
+                    screen: self.screen
                 )
                 
                 guard self.cameraVC != nil else { return }

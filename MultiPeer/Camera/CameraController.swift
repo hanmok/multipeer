@@ -75,26 +75,26 @@ class CameraController: UIViewController {
     
     var trialDetail: TrialDetail?
     
+    var screen: Screen?
     
     // MARK: - Life Cycle
     
     init(
         connectionManager: ConnectionManager,
         trialCore: TrialCore,
-        rank: Rank
-//        , connectedAmount: Int = 0
+        rank: Rank,
+        screen: Screen?
     ) {
-            
             self.connectionManager = connectionManager
             
             self.trialCore = trialCore
             self.positionTitle = trialCore.title
             
-            
             self.direction = MovementDirection(rawValue: trialCore.direction)!
             
             scoreVC = ScoreController(positionTitle: trialCore.title, direction: trialCore.direction)
-            
+        self.screen = screen
+        
             self.rank = rank
 //            self.connectedAmount = connectedAmount
             super.init(nibName: nil, bundle: nil)
@@ -414,6 +414,15 @@ class CameraController: UIViewController {
             
             if variationName != nil {
                 
+                // TODO: Update Core to Variation
+                
+                guard let screen = screen else { fatalError() }
+                
+                let nextCore = screen.trialCores.filter { $0.title == variationName! }.first!
+                
+                trialCore = nextCore
+                
+                
                 self.positionTitle = variationName!
                 updateNameLabel()
                 
@@ -423,7 +432,7 @@ class CameraController: UIViewController {
                 
                 updatePeerTitle()
                 
-            } else { print("variation is invalid !!" ) }
+            } else { print("no variation name exist !!") }
             
             hideCompleteMsgView()
             
@@ -1546,7 +1555,7 @@ extension CameraController: ScoreControllerDelegate {
         guard let validVideoUrl = videoUrl else { return }
         print("-----------CameraController trialCore Details -----------")
         print("trial : \(core.title), \(core.direction), \(detail.trialNo)")
-//        let cropController = CropController(url: validVideoUrl, vc: self)
+        
 
         if croppedUrl != nil {
             print("croppedUrl is valid")
@@ -1555,10 +1564,6 @@ extension CameraController: ScoreControllerDelegate {
             print("croppedUrl is nil")
         }
     
-//        cropController.exportVideo { CroppedUrl in
-//
-//        }
-        
         let trialId = UUID()
         guard let direction = MovementDirection(rawValue: core.direction) else { return }
         
