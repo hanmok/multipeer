@@ -40,6 +40,8 @@ enum MovementListWithoutVars: String, CaseIterable {
     case flexionClearing = "Flexion Clearing"
 }
 
+
+
 //let ClearingTitleHasNoDirection: [MovementList: Int] = [
 //    MovementList.ankleClearing: 2,
 //    MovementList.shoulderClearing: 2,
@@ -77,6 +79,22 @@ struct Dummy {
         
         return painTest
     }
+    
+    static let shortForFileName: [String: String] = [
+        MovementList.deepSquat.rawValue: "ds",
+        MovementList.deepSquatVar.rawValue: "dsv",
+        MovementList.hurdleStep.rawValue: "hs",
+        MovementList.inlineLunge.rawValue: "il",
+        MovementList.ankleClearing.rawValue: "ac",
+        MovementList.shoulderMobility.rawValue: "sm",
+        MovementList.shoulderClearing.rawValue: "sc",
+        MovementList.activeStraightLegRaise.rawValue: "aslr",
+        MovementList.trunkStabilityPushUp.rawValue: "tspu",
+        MovementList.trunkStabilityPushUpVar.rawValue: "tspuv",
+        MovementList.extensionClearing.rawValue: "ec",
+        MovementList.rotaryStability.rawValue: "rs",
+        MovementList.flexionClearing.rawValue: "fc"
+    ]
     
     
     

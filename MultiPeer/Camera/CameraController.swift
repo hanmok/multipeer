@@ -1574,7 +1574,7 @@ extension CameraController: ScoreControllerDelegate {
         } else {
             print("croppedUrl is nil")
         }
-        
+    
 //        cropController.exportVideo { CroppedUrl in
 //
 //        }

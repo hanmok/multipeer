@@ -67,7 +67,7 @@ extension TrialCore {
         // 여기 어딘가에서 에러 발생
         for (idx, each) in MovementList.allCases.enumerated() {
 
-            if each.rawValue.contains("Var") { continue }
+//            if each.rawValue.contains("Var") { continue } // Variation
             // 여기에서 발생.
             TrialCore.save(title: each.rawValue, parent: parent, tag: Int64(idx))
         }
