@@ -16,7 +16,8 @@ protocol ScoreControllerDelegate: AnyObject {
     
     func deleteAction() // don't need to update trials
 
-    func saveAction(core: TrialCore, detail: TrialDetail)
+//    func postAction(core: TrialCore, detail: TrialDetail)
+    func postAction(postReqInfo: PostReqInfo)
     
     func updatePressedBtnTitle(with btnTitle: String)
     
@@ -32,7 +33,7 @@ class ScoreController: UIViewController {
 
     // MARK: - Properties
     var hasPainField: Bool = false
-    
+    var screen: Screen
     var positionTitle: String
     var direction: MovementDirection
 
@@ -153,31 +154,18 @@ class ScoreController: UIViewController {
     
      // MARK: - Life Cyle
     
-    init(positionTitle: String, direction: String) {
+    init(positionTitle: String, direction: String, screen: Screen) {
         self.positionTitle = positionTitle
         
         guard let direction = MovementDirection(rawValue: direction) else {fatalError()}
         
         self.direction = direction
         self.scoreType = movementNameToScoreType[positionTitle] ?? .zeroToThree
-        // 이거 하나로 판별 못함.
-        // 조건 하나 더 필요해. 아래에 있네.
-//        self.painTestName = (movementWithPainTestTitle[positionTitle])
-        
-//        print("init, painTestName: \(painTestName), positionTitle: \(positionTitle), direction: \(direction.rawValue)")
-        
-        
-        
-//        if positionTitle == MovementList.rotaryStability.rawValue && direction.rawValue == MovementDirectionList.left.rawValue {
-//            print("title, direction: \(positionTitle), \(direction), rsbug, count: 11")
-//            self.painTestName = nil
-//        }
         
         self.painTestName = Dummy.getPainTestName(from: positionTitle, direction: direction)
         
-        
-        
         self.varTestName = (movementWithVariation[positionTitle])
+        self.screen = screen
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -190,8 +178,6 @@ class ScoreController: UIViewController {
         setupAddtargets()
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor(white: 0.8, alpha: 1).cgColor
-        
-        
     }
     
     // MARK: - Helper Functions
@@ -335,6 +321,16 @@ class ScoreController: UIViewController {
         
     }
     
+    private func makePostReqInfo(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> PostReqInfo {
+        
+        let optionalScore = trialDetail.score.scoreToInt()
+        let trialNo = trialDetail.trialNo
+        
+        let postReqInfo = PostReqInfo(subjectName: screen.parentSubject!.name, currentDate: Date(), screenId: screen.id, title: trialCore.title, direction: trialCore.direction, score: Int(trialDetail.score), pain: Int(trialDetail.isPainful), trialNo: Int(trialDetail.trialNo), additionalInfo: "additional info")
+        
+        return postReqInfo
+    }
+    
     @objc func saveTapped() {
         // if tapped Button is "Hold" then send it back to CameraController
         printFlag(type: .rsBug, count: 0)
@@ -354,12 +350,17 @@ class ScoreController: UIViewController {
             
             setScore(title: trialCore.title, to: trialDetail, score: score, pain: pain)
             
-            delegate?.saveAction(core: trialCore, detail: trialDetail)
-            print("------------ scoreController saveAction------------")
-            print("title: \(trialCore.title), direction: \(trialCore.direction)")
-            print("trialNo: \(trialDetail.trialNo)")
-            delegate?.orderRequest(core: trialCore, detail: trialDetail)
+            
+            print("------------ scoreController saveAction ------------")
+            print("title: \(trialCore.title), direction: \(trialCore.direction), trialNo: \(trialDetail.trialNo)")
 
+            let postReqInfo = makePostReqInfo(trialCore: trialCore, trialDetail: trialDetail)
+            
+//            delegate?.postAction(core: trialCore, detail: trialDetail)
+            delegate?.postAction(postReqInfo: postReqInfo)
+            
+//            delegate?.orderRequest(core: trialCore, detail: trialDetail)
+            
             trialCore.updateLatestScore()
 
             // 어떤게 invalid 일까 ?? 둘다일 수 있다.
@@ -371,10 +372,11 @@ class ScoreController: UIViewController {
                 // 버튼 선택에 따라 Clearing 값이 업데이트 되지 않음.
                 
                 // scoreController Delegate
-
-                delegate?.saveAction(core: fClearingCore!, detail: fClearingDetail!)
+                let postReqInfo2 = makePostReqInfo(trialCore: fClearingCore!, trialDetail: fClearingDetail!)
+//                delegate?.postAction(postReqInfo: <#PostReqInfo#>, core: fClearingCore!, detail: fClearingDetail!)
+                delegate?.postAction(postReqInfo: postReqInfo2)
                 
-                delegate?.orderRequest(core: fClearingCore!, detail: fClearingDetail!)
+//                delegate?.orderRequest(core: fClearingCore!, detail: fClearingDetail!)
                 
                 fClearingCore!.updateLatestScore()
             } else { print("fClearingCore or fClearingDetail is invalid ")
@@ -645,7 +647,3 @@ class ScoreController: UIViewController {
 }
 
 
-enum ScoreViewSize {
-    case small
-    case large
-}

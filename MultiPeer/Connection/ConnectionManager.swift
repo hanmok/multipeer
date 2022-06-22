@@ -267,25 +267,55 @@ extension ConnectionManager: MCSessionDelegate {
             
             switch messageType {
                 // no msg
-            case .startRecordingMsg, .stopRecordingMsg, .hidePreviewMsg:
+            case .startRecordingMsg,
+                    .stopRecordingMsg,
+                    .hidePreviewMsg:
                 NotificationCenter.default.post(name: notificationName, object: nil)
             // detail info
                 
-            case .presentCamera,
-                    .requestPostMsg, .updatePeerTitle:
-
-                guard let detailInfo = receivedData.info.movementDetail else { fatalError() }
+            case .presentCameraMsg,
+                    .updatePeerTitleMsg:
+                guard let titleDirectionInfo = receivedData.info.movementTitleDirection else { fatalError() }
                 
-                let detailInfoDic: [AnyHashable: Any] = [
-                    "title": detailInfo.title,
-                    "direction": detailInfo.direction,
-                    "score": detailInfo.score ?? -1,
-                    "pain": detailInfo.pain ?? false
+                let titleDirectionDic: [AnyHashable: Any] = [
+                    "title": titleDirectionInfo.title,
+                    "direction": titleDirectionInfo.direction
                 ]
-    
-                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: detailInfoDic)
                 
-            case .updatePeerCameraDirection:
+                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: titleDirectionDic)
+                
+//            case .presentCameraMsg,
+//                    .requestPostMsg,
+//                    .updatePeerTitleMsg:
+            case .requestPostMsg:
+
+//                guard let detailInfo = receivedData.info.movementDetail else { fatalError() }
+//
+//                let detailInfoDic: [AnyHashable: Any] = [
+//                    "title": detailInfo.title,
+//                    "direction": detailInfo.direction,
+//                    "score": detailInfo.score ?? -1,
+//                    "pain": detailInfo.pain ?? false
+//                ]
+                
+                guard let reqInfoDic = receivedData.info.postReqInfo else { fatalError() }
+                
+                let requestInfoDic: [AnyHashable: Any] = [
+                    "subjectName": reqInfoDic.subjectName,
+                    "currentDate": reqInfoDic.currentDate,
+                    "screenId": reqInfoDic.screenId,
+                    "title": reqInfoDic.title,
+                    "direction": reqInfoDic.direction,
+                    "score": reqInfoDic.score,
+                    "pain": reqInfoDic.pain,
+                    "trialNo": reqInfoDic.trialNo,
+                    "additionalInfo": reqInfoDic.additionalInfo
+                ]
+                
+//                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: detailInfoDic)
+                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: requestInfoDic)
+                
+            case .updatePeerCameraDirectionMsg:
                 // CameraDirection Used
                 guard let idWithCamera = receivedData.info.idWithDirection else { fatalError() }
                 

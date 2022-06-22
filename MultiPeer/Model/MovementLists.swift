@@ -40,6 +40,12 @@ enum MovementListWithoutVars: String, CaseIterable {
     case flexionClearing = "Flexion Clearing"
 }
 
+enum ScoreViewSize {
+    case small
+    case large
+    case none
+}
+
 
 
 //let ClearingTitleHasNoDirection: [MovementList: Int] = [
@@ -344,3 +350,18 @@ enum Mode {
 }
 
 let countToSideDic: [Int: Side?] = [0: nil, 1: .left, 2: .both]
+
+
+struct PostReqInfo: Codable {
+    var subjectName: String
+    var currentDate: Date
+    var screenId: UUID
+    var title: String
+    var direction: String
+    var score: Int?
+    var pain: Int?
+//    var videoUrl: URL
+    var trialNo: Int
+    var additionalInfo: String
+//    var cameraDirection: Int
+}
