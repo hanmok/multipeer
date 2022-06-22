@@ -368,11 +368,13 @@ class MovementListController: UIViewController {
         
         // TODO: Filter ! using MovementImgsDictionary
         trialCoresToShow = [[]]
+        
         for eachCore in trialCores {
             if MovementImgsDictionary[eachCore.first!.title] != nil {
                 trialCoresToShow.append(eachCore)
             }
         }
+        
         trialCoresToShow.removeFirst()
         printCurrentState()
         

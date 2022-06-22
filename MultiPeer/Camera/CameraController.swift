@@ -782,9 +782,9 @@ class CameraController: UIViewController {
             }
             
             self.isRecording = false
-            stopTimer()
+//            stopTimer()
         }
-        stopTimer()
+//        stopTimer()
     }
 
     private func triggerDurationTimer() {
@@ -1339,10 +1339,15 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             
-            DispatchQueue.main.async {
-                self.presentPreview(with: validUrl, size: size)
-                self.prepareScoreView()
-                self.showScoreView(size: size)
+//            DispatchQueue.main.async {
+//                self.presentPreview(with: validUrl, size: size)
+//                self.prepareScoreView()
+//                self.showScoreView(size: size)
+//            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                self.presentPreview(with: validUrl, size: size)
+                                self.prepareScoreView()
+                                self.showScoreView(size: size)
             }
             
         
