@@ -836,23 +836,27 @@ class CameraController: UIViewController {
     // TODO: For now, it's ratio not accurate so that it looks weird.
     // TODO: Don't need to change for now.
     
-    private func presentPreview(with videoURL: URL) {
+    private func presentPreview(with videoURL: URL, size: ScoreViewSize = .large) {
         
         previewVC = PreviewController(videoURL: videoURL)
         guard let previewVC = previewVC else {
             return
         }
+        let insetSize: CGFloat = size == .large ? 324 : 219
         
         addChild(previewVC)
         view.addSubview(previewVC.view)
         previewVC.view.snp.makeConstraints { make in
-            
+        
 //            make.centerX.equalToSuperview()
 //            make.bottom.equalTo(bottomView.snp.top)
 //            make.width.height.equalTo(view.snp.width)
 
             make.top.equalToSuperview()
-            make.bottom.equalTo(bottomView.snp.top)
+//            make.bottom.equalTo(bottomView.snp.top)
+            // TODO: resize it depending on size of ScoreVC
+            make.bottom.equalTo(view.snp.bottom).inset(insetSize)
+            
             make.leading.trailing.equalToSuperview()
         }
     }
@@ -1327,34 +1331,11 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             
             DispatchQueue.main.async {
-                self.presentPreview(with: validUrl)
+                self.presentPreview(with: validUrl, size: size)
                 self.prepareScoreView()
                 self.showScoreView(size: size)
             }
             
-//            DispatchQueue.main.async {
-//                self.presentPreview(with: validUrl)
-//                self.prepareScoreView()
-//                self.showScoreView(size: size)
-//            }
-            
-            
-//        cropController.exportVideo { CroppedUrl in
-//            DispatchQueue.main.async {
-//                self.presentPreview(with: CroppedUrl)
-//                self.prepareScoreView()
-//                self.showScoreView(size: size)
-//            }
-//        }
-            
-//            cropController.exportVideo(shouldSave: false) { CroppedUrl in
-//                DispatchQueue.main.async {
-//                    self.presentPreview(with: CroppedUrl)
-//                    self.prepareScoreView()
-//                    self.showScoreView(size: size)
-//                    self.croppedUrl = CroppedUrl
-//                }
-//            }
         
         print("url: \(url.path)")
         
