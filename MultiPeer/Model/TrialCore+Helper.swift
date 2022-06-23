@@ -67,7 +67,7 @@ extension TrialCore {
         // 여기 어딘가에서 에러 발생
         for (idx, each) in MovementList.allCases.enumerated() {
 
-            if each.rawValue.contains("Var") { continue }
+//            if each.rawValue.contains("Var") { continue } // Variation
             // 여기에서 발생.
             TrialCore.save(title: each.rawValue, parent: parent, tag: Int64(idx))
         }
@@ -192,6 +192,7 @@ extension TrialCore {
      func returnFreshTrialDetail() -> TrialDetail {
          
          let sortedDetails = self.trialDetails.sorted { $0.trialNo < $1.trialNo }
+         var detailToCreate: TrialDetail
          
          if sortedDetails.count != 0 {
              guard let lastDetailElement = sortedDetails.last else { fatalError() }
@@ -200,20 +201,28 @@ extension TrialCore {
              switch positionTitle {
              
              case .ankleClearing:
-                 return returnAvailableDetail(
-                     condition: lastDetailElement.isPainful == .DefaultValue.trialPain || lastDetailElement.score == .DefaultValue.trialScore,
-                     lastElement: lastDetailElement, to: self)
-             
+                 detailToCreate = returnAvailableDetail(
+                    condition: lastDetailElement.isPainful == .DefaultValue.trialPain || lastDetailElement.score == .DefaultValue.trialScore,
+                    lastElement: lastDetailElement, to: self)
+                 
              case .flexionClearing, .shoulderClearing, .extensionClearing :
-                 return returnAvailableDetail(condition: lastDetailElement.isPainful == .DefaultValue.trialPain,
-                              lastElement: lastDetailElement, to: self)
+                 detailToCreate = returnAvailableDetail(condition: lastDetailElement.isPainful == .DefaultValue.trialPain,
+                                                        lastElement: lastDetailElement, to: self)
+                 
              
              default:
-                 return returnAvailableDetail(condition: lastDetailElement.score == .DefaultValue.trialScore, lastElement: lastDetailElement, to: self)
+                 detailToCreate = returnAvailableDetail(condition: lastDetailElement.score == .DefaultValue.trialScore, lastElement: lastDetailElement, to: self)
+                 
              }
          } else {
-             return createDetail(core: self)
+             detailToCreate = createDetail(core: self)
          }
+         
+         print("------- returnFreshTrialDetail ----- ")
+         print("numOfTrials: \(self.trialDetails.count)")
+         // 여긴 정상적으로 출력 ..
+         self.trialDetails.update(with: detailToCreate)
+         return detailToCreate
     }
     
     func returnAvailableDetail(condition:Bool, lastElement: TrialDetail, to trialCore: TrialCore) -> TrialDetail {
@@ -222,6 +231,8 @@ extension TrialCore {
     
     func createDetail(core: TrialCore) -> TrialDetail{
         let numOfDetails = core.trialDetails.count
+        print("---------- createDetail ----------")
+        print("core: \(core.title), trialNo: \(numOfDetails)")
         return TrialDetail.save(belongTo: core, trialNo: numOfDetails)
     }
     

@@ -41,7 +41,7 @@ extension UIColor {
     static let purple300 = UIColor(redInt: 201, greenInt: 196, blueInt: 229)
     /// 120, 106, 189
     static let purple500 = UIColor(redInt: 120, greenInt: 106, blueInt: 189)
-    
+    static let transPurple500 = UIColor(red: 120.0 / 255.0, green: 106.0 / 255.0, blue: 189.0 / 255.0, alpha: 0.6)
     /// 227, 42, 47
     static let red500 = UIColor(redInt: 227, greenInt: 42, blueInt: 47)
     /// 187, 187, 187

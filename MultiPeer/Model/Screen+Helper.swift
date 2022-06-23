@@ -10,6 +10,7 @@ import UIKit
 
 
 extension Screen: RemovableProtocol {}
+
 extension Screen {
     public var id: UUID {
         get {

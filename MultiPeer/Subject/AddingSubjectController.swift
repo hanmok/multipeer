@@ -24,16 +24,36 @@ class AddingSubjectController: UIViewController {
     var appDelegate: AppDelegate?
     var context: NSManagedObjectContext?
     
-    private let nameLabel = UILabel().then { $0.text = "Name : "}
-    private let nameTF = UITextField().then { $0.placeholder = "Enter Name"}
+    private let nameTF: UITextField = {
+        let tf = UITextField()
+
+        let attrText = NSMutableAttributedString(string: "Enter Name\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 17),
+            .foregroundColor: UIColor.gray])
+                                                 
+        tf.attributedPlaceholder = attrText
     
-    private let maleBtn = SelectableButton(title: "Male")
-    private let femaleBtn = SelectableButton(title: "Female")
-    private let genderStackView = SelectableButtonStackView(selectedBGColor: .green, defaultBGColor: .gray, spacing: 40).then {
+        tf.textColor = .white
+        tf.backgroundColor = UIColor(white: 0.4, alpha: 0.4)
+        tf.layer.cornerRadius = 10
+        return tf
+    }()
+    
+    
+    private let maleBtn = SelectableButton(title: "Male").then {
+        $0.layer.cornerRadius = 20
+    }
+    
+    private let femaleBtn = SelectableButton(title: "Female").then {
+        $0.layer.cornerRadius = 20
+    }
+    
+    private let genderStackView = SelectableButtonStackView(selectedBGColor: .green, defaultBGColor: .gray, selectedTitleColor: .black, defaultTitleColor: .white, spacing: 10, cornerRadius: 15).then {
         $0.distribution = .fillEqually
-        $0.spacing = 10
         $0.axis = .horizontal
     }
+    
+    
     
     var name: String = ""
     var phoneNumber = ""
@@ -46,41 +66,131 @@ class AddingSubjectController: UIViewController {
         context = appDelegate.persistentContainer.viewContext
     }
     
-    private let birthDayLabel = UILabel().then { $0.text = "Birth Day"}
-    private let birthDayPicker = UIDatePicker()
-    
-    private let emailTF = UITextField().then { $0.placeholder = "Enter Email Address"}
-    private let phoneTF = UITextField().then {
-        $0.placeholder = "Enter Phone Number"
-        $0.keyboardType = .numberPad
+    private let birthDayLabel = UILabel().then {
+        $0.text = "Birth Day"
+        $0.textColor = .white
     }
+    
+//    private let birthDayPicker = UIDatePicker().then {
+//        $0.tintColor = .white
+//        $0.backgroundColor = .gray
+//    }
+    
+    private let birthDayPicker : UIDatePicker = {
+        let picker = UIDatePicker()
+        
+        picker.tintColor = .white
+        picker.backgroundColor = .gray
+        picker.layer.cornerRadius = 10
+        picker.clipsToBounds = true
+        return picker
+    }()
+    
+//    private let emailTF = UITextField().then { $0.placeholder = "Enter Email Address"}
+//    private let phoneTF = UITextField().then {
+//        $0.placeholder = "Enter Phone Number"
+//        $0.keyboardType = .numberPad
+//    }
+    
+    private let emailTF: UITextField = {
+        let tf = UITextField()
+        let attrText = NSMutableAttributedString(string: "Enter Email Address\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 17),
+            .foregroundColor: UIColor.gray])
+//        tf.placeholder = "Enter Email Address"
+        tf.attributedPlaceholder = attrText
+        tf.textColor = .white
+        
+        tf.textColor = .white
+        tf.backgroundColor = UIColor(white: 0.4, alpha: 0.4)
+        tf.layer.cornerRadius = 10
+        
+        return tf
+    }()
+    
+    private let phoneTF : UITextField = {
+        let tf = UITextField()
+        let attrText = NSMutableAttributedString(string: "Enter Phone Number\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 17),
+            .foregroundColor: UIColor.gray])
+        tf.attributedPlaceholder = attrText
+        
+        tf.keyboardType = .numberPad
+        tf.textColor = .white
+        
+        tf.textColor = .white
+        tf.backgroundColor = UIColor(white: 0.4, alpha: 0.4)
+        tf.layer.cornerRadius = 10
+        
+        return tf
+    }()
+    
+    private let kneeTF : UITextField = {
+        let tf = UITextField()
+        let attrText = NSMutableAttributedString(string: "Enter Knee Length\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 17),
+            .foregroundColor: UIColor.gray])
+        tf.attributedPlaceholder = attrText
+        
+//        tf.keyboardType = .numberPad
+        tf.keyboardType = .decimalPad
+        tf.textColor = .white
+        
+        tf.textColor = .white
+        tf.backgroundColor = UIColor(white: 0.4, alpha: 0.4)
+        tf.layer.cornerRadius = 10
+        
+        return tf
+    }()
+    
+    private let palmTF : UITextField = {
+        let tf = UITextField()
+        let attrText = NSMutableAttributedString(string: "Enter palm Length\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 17),
+            .foregroundColor: UIColor.gray])
+        tf.attributedPlaceholder = attrText
+        
+//        tf.keyboardType = .numberPad
+        tf.keyboardType = .decimalPad
+        tf.textColor = .white
+        
+        tf.textColor = .white
+        tf.backgroundColor = UIColor(white: 0.4, alpha: 0.4)
+        tf.layer.cornerRadius = 10
+        
+        return tf
+    }()
+    
     
     private let completeBtn = UIButton().then {
         $0.setTitle("Complete", for: .normal)
-        $0.setTitleColor(.blue, for: .normal)
+        $0.setTitleColor(.green, for: .normal)
         $0.layer.borderColor = .init(gray: 0.5, alpha: 1)
         $0.layer.borderWidth = 1
         $0.backgroundColor = .gray
+        $0.layer.cornerRadius = 15
+        $0.isUserInteractionEnabled = false
     }
     
     
     private func toggleCompleteBtnState() {
         // date not considered yet for simplicity
-        if name != "" && phoneNumber.count == 11 && genderStackView.selectedBtnIndex != nil {
+        if name != "" && phoneNumber.count == 11 && genderStackView.selectedBtnIndex != nil && kneeTF.text! != "" && palmTF.text! != "" {
+            self.completeBtn.isUserInteractionEnabled = true
             DispatchQueue.main.async {
                 self.completeBtn.backgroundColor = .green
+                self.completeBtn.setTitleColor(.black, for: .normal)
             }
         } else {
+            self.completeBtn.isUserInteractionEnabled = false
             DispatchQueue.main.async {
                 self.completeBtn.backgroundColor = .gray
+                self.completeBtn.setTitleColor(.green, for: .normal)
             }
         }
     }
     
     @objc func completeBtnTapped(_ sender: UIButton) {
-        //        if name != "" && // valid condition
-        
-        //        print("selectedIndex State: \(genderStackView.selectedBtnIndex)")
         
         guard name != "",
               genderStackView.selectedBtnIndex != nil,
@@ -92,7 +202,14 @@ class AddingSubjectController: UIViewController {
             fatalError("context is nil")
         }
         
-        Subject.save(name: name, phoneNumber: phoneNumber, isMale: genderStackView.selectedBtnIndex! == 0, birthday: birthday)
+        
+        let isMale = genderStackView.selectedBtnIndex! == 0
+
+        let kneeLength = Double(kneeTF.text!)!
+        let palmLength = Double(palmTF.text!)!
+        
+        //        Subject.save(name: name, phoneNumber: phoneNumber, isMale: genderStackView.selectedBtnIndex! == 0, birthday: birthday)
+        Subject.save(name: name, phoneNumber: phoneNumber, isMale: isMale, birthday: birthday, kneeLength: kneeLength, palmLength: palmLength)
         
         delegate?.updateAfterAdded()
     }
@@ -108,7 +225,13 @@ class AddingSubjectController: UIViewController {
         setupDelegate()
         setupLayout()
         setupTargets()
+        // not working fine ..
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
     }
+    
+    
     
     private func setupTargets() {
         for btn in genderStackView.buttons {
@@ -120,10 +243,13 @@ class AddingSubjectController: UIViewController {
         
         phoneTF.addTarget(self, action: #selector(textChanged), for: .editingChanged)
         
+        kneeTF.addTarget(self, action: #selector(textChanged), for: .editingChanged)
+        
+        palmTF.addTarget(self, action: #selector(textChanged), for: .editingChanged)
+        
         phoneTF.addTarget(self, action: #selector(textEditingEnd), for: .editingDidEnd)
         
         birthDayPicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-        
     }
     
     @objc func textEditingEnd(_ sender: UITextField) {
@@ -137,6 +263,7 @@ class AddingSubjectController: UIViewController {
             
             print("phoneNumber: \(phoneNumber)")
         }
+        
         toggleCompleteBtnState()
         view.endEditing(true)
         
@@ -158,8 +285,11 @@ class AddingSubjectController: UIViewController {
             if phoneNumber.count == 11 {
                 view.endEditing(true)
             }
-            
-            print("phoneNumber: \(phoneNumber)")
+
+        } else  if sender == kneeTF || sender == palmTF {
+            if kneeTF.text!.count == 4 || palmTF.text!.count == 4 {
+                view.endEditing(true)
+            }
         }
         toggleCompleteBtnState()
     }
@@ -181,64 +311,89 @@ class AddingSubjectController: UIViewController {
         
         [maleBtn, femaleBtn].forEach { self.genderStackView.addArrangedButton($0)}
         
-        [nameLabel, nameTF,
+        [
+//            nameLabel,
+            nameTF,
          genderStackView,
          birthDayLabel, birthDayPicker,
          emailTF,
          phoneTF,
+            kneeTF, palmTF,
          completeBtn
         ].forEach { self.view.addSubview($0)}
         
         print("genderStackView's button: \(genderStackView.buttons.count)")
         
-        nameLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(20)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(40)
-            make.width.equalTo(100)
-            make.height.equalTo(30)
-        }
-        
         nameTF.delegate = self
         nameTF.snp.makeConstraints { make in
-            make.leading.equalTo(nameLabel.snp.trailing).offset(10)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(40)
-            make.height.equalTo(30)
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(40)
+            make.height.equalTo(40)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(60)
         }
         
         genderStackView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.top.equalTo(nameLabel.snp.bottom).offset(60)
-            make.height.equalTo(40)
+
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(40)
+            make.top.equalTo(nameTF.snp.bottom).offset(40)
+            make.height.equalTo(45)
         }
         
         birthDayLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.top.equalTo(genderStackView.snp.bottom).offset(60)
+            make.leading.equalToSuperview().inset(20)
+            make.width.equalTo(120)
+            make.top.equalTo(genderStackView.snp.bottom).offset(40)
             make.height.equalTo(20)
         }
         
         birthDayPicker.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.top.equalTo(birthDayLabel.snp.bottom).offset(10)
+            make.trailing.equalToSuperview().inset(40)
+            make.leading.equalTo(birthDayLabel.snp.trailing).offset(20)
+            make.centerY.equalTo(birthDayLabel.snp.centerY)
             make.height.equalTo(40)
         }
+        
         emailTF.delegate = self
         emailTF.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
+
+            
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(40)
+            make.height.equalTo(40)
+            
             make.top.equalTo(birthDayPicker.snp.bottom).offset(60)
-            make.height.equalTo(20)
+//            make.height.equalTo(20)
         }
         phoneTF.delegate = self
         phoneTF.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
+//            make.leading.trailing.equalToSuperview().inset(20)
             make.top.equalTo(emailTF.snp.bottom).offset(20)
-            make.height.equalTo(30)
+//            make.height.equalTo(30)
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(40)
+            make.height.equalTo(40)
+        }
+        kneeTF.delegate = self
+        kneeTF.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(20)
+            make.height.equalTo(40)
+            make.top.equalTo(phoneTF.snp.bottom).offset(20)
+            make.width.equalTo(150)
+        }
+        palmTF.delegate = self
+        palmTF.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(40)
+            make.height.equalTo(40)
+            make.top.equalTo(phoneTF.snp.bottom).offset(20)
+            make.width.equalTo(150)
         }
         
         completeBtn.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.equalTo(200)
-            make.top.equalTo(phoneTF.snp.bottom).offset(50)
+//            make.top.equalTo(phoneTF.snp.bottom).offset(50)
+            make.top.equalTo(palmTF.snp.bottom).offset(50)
             make.height.equalTo(50)
         }
     }

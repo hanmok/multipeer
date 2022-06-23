@@ -40,15 +40,25 @@ enum MovementListWithoutVars: String, CaseIterable {
     case flexionClearing = "Flexion Clearing"
 }
 
+enum ScoreViewSize {
+    case small
+    case large
+    case none
+}
+
+
+
 //let ClearingTitleHasNoDirection: [MovementList: Int] = [
 //    MovementList.ankleClearing: 2,
 //    MovementList.shoulderClearing: 2,
 //    movement
 //]
+
 let clearingTitleWithOneDirection: [MovementList] = [.extensionClearing, .flexionClearing]
 
 
 // Make positionList accessable using Index
+
 extension CaseIterable where Self: Equatable {
     var index: Self.AllCases.Index? {
         return Self.allCases.firstIndex { self == $0 }
@@ -77,6 +87,22 @@ struct Dummy {
         
         return painTest
     }
+    
+    static let shortForFileName: [String: String] = [
+        MovementList.deepSquat.rawValue: "ds",
+        MovementList.deepSquatVar.rawValue: "dsv",
+        MovementList.hurdleStep.rawValue: "hs",
+        MovementList.inlineLunge.rawValue: "il",
+        MovementList.ankleClearing.rawValue: "ac",
+        MovementList.shoulderMobility.rawValue: "sm",
+        MovementList.shoulderClearing.rawValue: "sc",
+        MovementList.activeStraightLegRaise.rawValue: "aslr",
+        MovementList.trunkStabilityPushUp.rawValue: "tspu",
+        MovementList.trunkStabilityPushUpVar.rawValue: "tspuv",
+        MovementList.extensionClearing.rawValue: "ec",
+        MovementList.rotaryStability.rawValue: "rs",
+        MovementList.flexionClearing.rawValue: "fc"
+    ]
     
     
     
@@ -324,3 +350,79 @@ enum Mode {
 }
 
 let countToSideDic: [Int: Side?] = [0: nil, 1: .left, 2: .both]
+
+
+struct PostReqInfo: Codable {
+    var subjectName: String
+
+    var screenId: UUID
+    var title: String
+    var direction: String
+    var score: Int
+    var pain: Int
+
+    var trialNo: Int
+    var currentDate: Date
+    var additionalInfo: String
+    //    var videoUrl: URL
+    //    var cameraDirection: Int
+}
+
+struct FTPInfo: Codable {
+    var date: Date
+    var inspectorName: String
+    var subjectName: String
+    var screenIndex: Int
+    
+    var title: String
+    var direction: String
+    var trialNo: Int
+    
+    var phoneNumber: String
+    var gender: Int
+    var birth: Int
+    var kneeLength: Double
+    var palmLength: Double
+
+    var cameraAngle: Int = 1
+    
+    static let someFileName = """
+    currentDate(2022.06.16_16.35.36)_
+    inspectoerName(배익준)_
+    subjectName(이한목)_
+    screenIndex(2)_
+    title(ac)direction(r)trialNo(2)_
+    phoneNumber(01090417421)_
+    gender(1: male, 2: female)_
+    birth(1969)_
+    kneeLength(0042)_
+    palmLength(0018)_
+    cameraAngle(1: front, 2: side, 3: 45 degree)
+    """
+}
+
+struct Inspector: Codable {
+    let name: String
+    let phoneNumber: String
+}
+
+/*
+ 
+func postRequest(
+    movementTitle: String,
+    direction: String,
+    score: Int,
+    pain: Int, trialCount: Int,
+    videoURL: URL,
+    cameraDirection: String,
+    screenKey: UUID,
+    closure: @escaping () -> Void ) {
+    
+    print("---------------- post request!! ----------------")
+    
+    print("title: \(movementTitle), direction: \(direction), scroe: \(score), pain: \(pain), trialCount: \(trialCount), cameraDirection: \(cameraDirection), screenKey: \(screenKey) ")
+    print("videoURL: \(videoURL)")
+    print("---------------- post request ended!! ----------------\n\n\n")
+}
+ 
+*/

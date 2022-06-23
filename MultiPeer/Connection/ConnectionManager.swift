@@ -62,11 +62,15 @@ class ConnectionManager: NSObject {
     
      var sessionTimer: Timer?
 
+    var latestDirection: CameraDirection?
+    
     static let shared = ConnectionManager()
     
     private static let service = "jobmanager-chat"
     
     weak var delegate: ConnectionManagerDelegate?
+    
+    
     
     static var peers: [MCPeerID] = [] {
         didSet {
@@ -263,35 +267,62 @@ extension ConnectionManager: MCSessionDelegate {
             
             switch messageType {
                 // no msg
-            case .startRecordingMsg, .stopRecordingMsg, .hidePreviewMsg:
+            case .startRecordingMsg,
+                    .stopRecordingMsg,
+                    .hidePreviewMsg:
                 NotificationCenter.default.post(name: notificationName, object: nil)
-                // detail info
-            case .presentCamera,
-                    .requestPostMsg, .updatePeerTitle:
-
-                guard let detailInfo = receivedData.info.movementDetail else { fatalError() }
+            // detail info
                 
-                let detailInfoDic: [AnyHashable: Any] = [
-                    "title": detailInfo.title,
-                    "direction": detailInfo.direction,
-                    "score": detailInfo.score ?? -1,
-                    "pain": detailInfo.pain ?? false
+            case .presentCameraMsg
+                , .updatePeerTitleMsg: // fatalError!!
+                guard let titleDirectionInfo = receivedData.info.movementTitleDirection else { fatalError() }
+                
+                let titleDirectionDic: [AnyHashable: Any] = [
+                    "title": titleDirectionInfo.title,
+                    "direction": titleDirectionInfo.direction
                 ]
-    
-                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: detailInfoDic)
                 
-            case .updatePeerCameraDirection:
+                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: titleDirectionDic)
+                
+//            case .presentCameraMsg,
+//                    .requestPostMsg,
+//                    .updatePeerTitleMsg:
+            case .requestPostMsg:
+                
+//                guard let reqInfoDic = receivedData.info.ftpInfo else { fatalError() }
+//
+//                let requestInfoDic: [AnyHashable: Any] = [
+//                    "date": reqInfoDic.date,
+//                    "inspectorName": reqInfoDic.inspectorName,
+//                    "subjectName": reqInfoDic.subjectName,
+//                    "screenIndex": reqInfoDic.screenIndex,
+//
+//                    "title": reqInfoDic.title,
+//                    "direction": reqInfoDic.direction,
+//                    "trialNo": reqInfoDic.trialNo,
+//
+//                    "phoneNumber": reqInfoDic.phoneNumber,
+//                    "gender": reqInfoDic.gender,
+//                    "birth": reqInfoDic.birth,
+//                    "kneeLength": reqInfoDic.kneeLength,
+//                    "palmLength": reqInfoDic.palmLength,
+//                    "cameraAngle": reqInfoDic.cameraAngle
+//                ]
+                
+                guard let reqInfoDic = receivedData.info.ftpInfoString else { fatalError() }
+                
+                let requestInfoDic: [AnyHashable: Any] = [
+                    "fileName": reqInfoDic.fileName
+                ]
+                
+                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: requestInfoDic)
+                
+            case .updatePeerCameraDirectionMsg:
                 // CameraDirection Used
                 guard let idWithCamera = receivedData.info.idWithDirection else { fatalError() }
                 
-//                let peerCameraDic: [AnyHashable: Any] = [
-//                    "peerId": idWithCamera.peerId,
-//                    "cameraDirection": idWithCamera.cameraDirection
-//                ]
-                
                 let peerId = idWithCamera.peerId
                 let cameraDirection = idWithCamera.cameraDirection
-//                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: peerCameraDic)
                 
                 cameraDirectionDic[peerId] = cameraDirection
                 
@@ -299,6 +330,7 @@ extension ConnectionManager: MCSessionDelegate {
                 //
 //                showalert 처리는 여기서 못함.. notification post 로 가서 처리하자. 아냐 ;; 버튼 누를 때 이미 처리했어 ㅠㅠ
                 //
+             default: print("default case !")
             }
             
             
@@ -315,18 +347,14 @@ extension ConnectionManager: MCSessionDelegate {
             if !ConnectionManager.peers.contains(peerID) {
                 ConnectionManager.peers.insert(peerID, at: 0)
             }
-            
-            
-//            let connectedNum = ConnectionManager.peers.count
+                        
             self.numOfPeers = ConnectionManager.peers.count
-//            print("connectedNum: \(connectedNum)")
             self.connectionState = .connected
             print("state: connected !")
             startTime = Date()
             
-//            delegate?.updateState(state: .connected, connectedAmount: connectedNum)
             delegate?.updateState(state: .connected, connectedAmount: self.numOfPeers)
-//            numOfPeers = connectedNum
+            
             self.startDurationTimer()
             
         case .notConnected:
@@ -342,15 +370,7 @@ extension ConnectionManager: MCSessionDelegate {
             endTime = Date()
             
             delegate?.updateState(state: .disconnected, connectedAmount: self.numOfPeers)
-            // TODO: initialize peers' direction
-//            self.cameraDirectionDic
-            for (someId, _ ) in self.cameraDirectionDic {
-                if someId != myId {
-                    cameraDirectionDic[someId] = nil
-                }
-            }
-            
-            
+        
             numOfPeers = 0
             
             print("disconnected!!")
@@ -408,3 +428,18 @@ extension ConnectionManager: MCNearbyServiceAdvertiserDelegate {
         invitationHandler(true, session)
     }
 }
+
+
+/*
+static let msgToKeyDic: [MessageType: Notification.Name] = [
+    .startRecordingMsg: .startRecordingKey,
+    .stopRecordingMsg: .stopRecordingKey,
+    .hidePreviewMsg: .hidePreviewKey,
+    
+    .presentCameraMsg: .presentCameraKey,
+    .updatePeerTitleMsg: .updatePeerTitleKey,
+    .requestPostMsg: .requestPostKey,
+    
+    .updatePeerCameraDirectionMsg: .updatePeerCameraDirectionKey
+]
+*/

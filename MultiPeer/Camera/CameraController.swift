@@ -24,12 +24,14 @@ protocol CameraControllerDelegate: AnyObject {
 class CameraController: UIViewController {
     
     // MARK: - Properties
-
+    let sampleInspector = Inspector(name: "hanmok", phoneNumber: "01090417421")
+    
     private var videoUrl: URL?
     var shouldShowScoreView = true
     // TODO: Handle inside ConnectionManager
     // TODO: duplicate check, send msg if direction assigned.
-//    var idToCameraDirectionDic: [String: CameraDirection] = [:]
+
+    var croppedUrl: URL?
     
     var positionTitle: String
     
@@ -39,7 +41,7 @@ class CameraController: UIViewController {
     
 //    var connectedAmount: Int = 0
     
-    var trialCore: TrialCore
+    var trialCore: TrialCore?
     
     var systemSoundID: SystemSoundID = 1057
 // TODO: Cut Clip from the front as much as recording time diff
@@ -63,60 +65,73 @@ class CameraController: UIViewController {
     
     var previewVC: PreviewController?
     
-    private var scoreVC: ScoreController
+    private var scoreVC: ScoreController?
     
     private var isRecording = false
     
     //    private let shouldRecordLater = false
-    private let shouldRecordLater = true
+    private let shouldRecordLater = false
     
     var variationName: String?
     
     var trialDetail: TrialDetail?
     
+    var screen: Screen?
     
     // MARK: - Life Cycle
     
     init(
         connectionManager: ConnectionManager,
-        trialCore: TrialCore,
+        screen: Screen?,
+        trialCore: TrialCore?,
+        
+        positionTitle: String,
+        direction: MovementDirection,
+        
         rank: Rank
-//        , connectedAmount: Int = 0
+
     ) {
-            
             self.connectionManager = connectionManager
             
             self.trialCore = trialCore
-            self.positionTitle = trialCore.title
-            
-            
-            self.direction = MovementDirection(rawValue: trialCore.direction)!
-            
-            scoreVC = ScoreController(positionTitle: trialCore.title, direction: trialCore.direction)
-            
+        self.direction = direction
+            // scoreVC 는, boss 에게만 필요함 ..
+        if rank == .boss {
+            scoreVC = ScoreController(positionTitle: trialCore!.title, direction: trialCore!.direction, screen: screen!)
+            print("-----------------received screen-----------------\n \(screen!)") // parentScreen is nil;
+            print("subject: \(screen!.parentSubject)")
+        }
+        
+        self.screen = screen
+        self.positionTitle = positionTitle
             self.rank = rank
 //            self.connectedAmount = connectedAmount
             super.init(nibName: nil, bundle: nil)
+        
+
+        self.direction = direction
+        
             connectionManager.delegate = self
-            scoreVC.delegate = self
-            scoreVC.parentController = self
-//            self.connectionManager.numOfPeers = connectedAmount
-            setupTrialDetail(with: trialCore)
-            changeBtnLookForPreparing(animation: false)
+        if rank == .boss {
+            scoreVC!.delegate = self
+            scoreVC!.parentController = self
+        }
+
+        changeBtnLookForPreparing(animation: false)
         }
     
-    
-    private func setupTrialDetail(with core: TrialCore) {
-        trialDetail = trialCore.returnFreshTrialDetail()
-    }
+    // 왜 두번 생성하고 ㅈㄹ.. 필요 없어보임.
+//    private func setupTrialDetail() {
+//        trialDetail = trialCore.returnFreshTrialDetail()
+//    }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        connectionManager.numOfPeers =
+
         print("CameraController viewdidLoad triggered")
         updateNameLabel()
-        
+
         setupLayout()
         setupAddTargets()
         addNotificationObservers()
@@ -128,16 +143,29 @@ class CameraController: UIViewController {
         if let myDirection = connectionManager.mydirection {
             directionStackView.selectBtnAction(with: myDirection.rawValue)
         }
+        
+        setupInitialDirectionBtn()
     }
     
+    private func setupInitialDirectionBtn() {
+        if connectionManager.latestDirection != nil {
+            let title = connectionManager.latestDirection!.rawValue
+            directionStackView.selectBtnAction(with: title)
+        }
+    }
     
+    // 처음 동작 띄울 때, Variation 으로 이동할 때 호출.
     private func updatePeerTitle() {
         
-        let direction = MovementDirection(rawValue: trialCore.direction)!
+        
+//        let direction = MovementDirection(rawValue: trialCore.direction)!
         
 //        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction)))
         
-        connectionManager.send(PeerInfo(msgType: .updatePeerTitle, info: Info(movementDetail: MovementDirectionScoreInfo(title: positionTitle, direction: direction))))
+//        connectionManager.send(PeerInfo(msgType: .updatePeerTitleMsg, info: Info(movementDetail: MovementDirectionScoreInfo(title: positionTitle, direction: direction))))
+        connectionManager.send(PeerInfo(msgType: .updatePeerTitleMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: positionTitle, direction: direction))))
+
+//        connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: positionTitle, direction: direction))))
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -174,9 +202,15 @@ class CameraController: UIViewController {
         }
     }
     
-    private func resetTimer() {
+    public func resetTimer() {
         count = 0
+        updatingDurationTimer.invalidate()
+//        updatingDurationTimer = Timer()
         updateDurationLabel()
+    }
+    public func invalidateTimer() {
+        print("invalidateTimer Called")
+        updatingDurationTimer.invalidate()
     }
     
     // MARK: - Notification
@@ -233,6 +267,12 @@ class CameraController: UIViewController {
         }
     }
     
+    @objc func requestPostNoti(_ notification: Notification) {
+        
+        let fileName = (notification.userInfo?["fileName"])! as! String
+        makeFileNameThenPost(fileName: fileName)
+    }
+    
     private let leftLine = UIView().then {
         $0.backgroundColor = UIColor(redInt: 225, greenInt: 225, blueInt: 230)
     }
@@ -241,32 +281,6 @@ class CameraController: UIViewController {
         $0.backgroundColor = UIColor(redInt: 225, greenInt: 225, blueInt: 230)
     }
     
-    
-    @objc func requestPostNoti(_ notification: Notification) {
-        printFlag(type: .peerRequest, count: 4)
-        guard let title = notification.userInfo?["title"] as? String,
-              let direction = notification.userInfo?["direction"] as? MovementDirection,
-              let score = notification.userInfo?["score"] as? Int?,
-              let pain = notification.userInfo?["pain"] as? Bool?,
-//              let pain = notification
-              let validVideoUrl = videoUrl else { return }
-        printFlag(type: .peerRequest, count: 5)
-        //TODO: 여기에서 막힘
-        guard let cameraDirection = cameraDirection else {
-            return
-        }
-
-        printFlag(type: .peerRequest, count: 6)
-//        let tempPain: Bool? = nil
-        let tempTrialCount = 0
-        let tempTrialId = UUID()
-        
-
-        APIManager.shared.postRequest(movementDirectionScoreInfo: MovementDirectionScoreInfo(title: title, direction: direction, score: score, pain: pain), trialCount: tempTrialCount, trialId: tempTrialId, videoUrl: validVideoUrl, angle: cameraDirection) {
-            self.printFlag(type: .peerRequest, count: 7)
-            print("closure called after post request")
-        }
-    }
     
     @objc func hidePreviewNoti(_ notification: Notification) {
         hidePreview()
@@ -288,12 +302,15 @@ class CameraController: UIViewController {
         
         RunLoop.main.add(updatingDurationTimer, forMode: .common)
         
-        //        startRecording()
         changeBtnLookForRecording(animation: false)
         
         triggerDurationTimer()
         
     }
+    public func stopDurationTimer() {
+        updatingDurationTimer.invalidate()
+    }
+//    public func rese
     
     
     @objc func stopRecordingNoti(_ notification: Notification) {
@@ -343,10 +360,16 @@ class CameraController: UIViewController {
     }
     
     @objc func directionTapped(_ sender: SelectableButton) {
+        
         directionStackView.selectBtnAction(selected: sender.id)
+        
+        
+        guard let selectedDirection = CameraDirection(rawValue: sender.title) else { fatalError() }
+        connectionManager.latestDirection = selectedDirection
         
         cameraDirection = CameraDirection(rawValue: sender.title)
 
+        
         guard let cameraDirection = cameraDirection else {
             fatalError("invalid camera direction")
         }
@@ -355,7 +378,7 @@ class CameraController: UIViewController {
         
         connectionManager.mydirection = cameraDirection
         
-        connectionManager.send(PeerInfo(msgType: .updatePeerCameraDirection, info: Info( idWithDirection: PeerIdWithCameraDirection(peerId: UIDevice.current.name, cameraDirection: cameraDirection))))
+        connectionManager.send(PeerInfo(msgType: .updatePeerCameraDirectionMsg, info: Info( idWithDirection: DeviceNameWithCameraDirection(peerId: UIDevice.current.name, cameraDirection: cameraDirection))))
         
         // TODO: CameraDirection Check,
         // TODO: Show Alert If exist.
@@ -382,21 +405,29 @@ class CameraController: UIViewController {
             
             if variationName != nil {
                 
+                // TODO: Update Core to Variation
+                
+                guard let screen = screen else { fatalError() }
+                
+                let nextCore = screen.trialCores.filter { $0.title == variationName! }.first!
+                
+                trialCore = nextCore
+                
+                
                 self.positionTitle = variationName!
                 updateNameLabel()
                 
                 resetTimer()
                 
-                scoreVC.setupAgain(positionTitle: self.positionTitle, direction: direction)
+                scoreVC!.setupAgain(positionTitle: self.positionTitle, direction: direction)
                 
                 updatePeerTitle()
                 
-            } else { print("variation is invalid !!" ) }
+            } else { print("no variation name exist !!") }
             
             hideCompleteMsgView()
             
             connectionManager.send(PeerInfo(msgType: .hidePreviewMsg, info: Info()))
-            
             
         }
     }
@@ -664,35 +695,50 @@ class CameraController: UIViewController {
     @objc func prepareScoreView() {
         
         if rank == .boss {
+            guard let scoreVC = scoreVC else {
+                fatalError()
+            }
+
             addChild(scoreVC)
             view.addSubview(scoreVC.view)
             scoreVC.view.layer.cornerRadius = 10
             
-            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+//            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+            scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+            
+            // 점수 초기화 !
+            scoreVC.scoreBtnStackView.setSelectedBtnNone()
+            scoreVC.painBtnStackView.setSelectedBtnNone()
+            
         }
         
-        // 점수 초기화 !
-        scoreVC.scoreBtnStackView.setSelectedBtnNone()
-        scoreVC.painBtnStackView.setSelectedBtnNone()
+
     }
     
     // TODO: need to change trialCore of scoreVC here (why ?
     private func showScoreView(size: ScoreViewSize = .large) {
         if rank == .boss {
-            
+            guard let trialCore = trialCore else {
+                return
+            }
+            guard let scoreVC = scoreVC else {
+                return
+            }
+
+
             scoreVC.setupTrialCore(with: trialCore )
             
             if size == .large {
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 0.4) {
-                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 324, width: screenWidth, height: screenHeight)
+                        self.scoreVC!.view.frame = CGRect(x: 0, y: screenHeight - 324, width: screenWidth, height: screenHeight)
                     }
                 }
 
             } else {
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 0.4) {
-                        self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight - 219, width: screenWidth, height: screenHeight)
+                        self.scoreVC!.view.frame = CGRect(x: 0, y: screenHeight - 219, width: screenWidth, height: screenHeight)
                     }
                 }
             }
@@ -701,9 +747,10 @@ class CameraController: UIViewController {
     
     private func hideScoreView() {
 //        if rank == .boss {
+//        Thread 1: Fatal error: Unexpectedly found nil while unwrapping an Optional value
             DispatchQueue.main.async {
                 UIView.animate(withDuration: 0.4) {
-                    self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+                    self.scoreVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
                 }
             }
 //        }
@@ -741,9 +788,9 @@ class CameraController: UIViewController {
             }
             
             self.isRecording = false
-            stopTimer()
+//            stopTimer()
         }
-        stopTimer()
+//        stopTimer()
     }
 
     private func triggerDurationTimer() {
@@ -801,29 +848,41 @@ class CameraController: UIViewController {
         self.present(actionSheet, animated: true, completion: nil)
     }
     
-    
-    
-    
     // TODO: For now, it's ratio not accurate so that it looks weird.
     // TODO: Don't need to change for now.
     
-    private func presentPreview(with videoURL: URL) {
+    private func presentPreview(with videoURL: URL, size: ScoreViewSize = .large) {
         
         previewVC = PreviewController(videoURL: videoURL)
         guard let previewVC = previewVC else {
             return
         }
         
+        var insetSize: CGFloat
+        
+//        if size != nil {
+//            insetSize = size == .large ? 324 : 219
+//        }
+        
         addChild(previewVC)
         view.addSubview(previewVC.view)
+        
+        
+        switch size {
+        case .none: insetSize = 0
+        case .small: insetSize = 219
+        case .large: insetSize = 324
+        }
+        
+        stopTimer()
+        
         previewVC.view.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(bottomView.snp.top)
-            make.width.height.equalTo(view.snp.width)
+            make.top.equalToSuperview()
+            make.bottom.equalTo(view.snp.bottom).inset(insetSize)
+            make.leading.trailing.equalToSuperview()
         }
     }
-    
-    
+
     private func removeChildrenVC() {
         DispatchQueue.main.async {
             guard let previewVC = self.previewVC else {
@@ -835,7 +894,6 @@ class CameraController: UIViewController {
                 
                 let viewcontrollers: [UIViewController] = self.children
                 for vc in viewcontrollers {
-                    
                     if vc != self.scoreVC {
                         vc.willMove(toParent: nil)
                         vc.view.removeFromSuperview()
@@ -876,28 +934,27 @@ class CameraController: UIViewController {
         }
         
         
-        topView.addSubview(dismissBtn)
-        dismissBtn.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(90)
-            make.leading.equalToSuperview().inset(16)
-//            make.height.width.equalTo(20)
-            make.height.width.equalTo(24)
-        }
+//        topView.addSubview(dismissBtn)
+//        dismissBtn.snp.makeConstraints { make in
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
+//            make.leading.equalToSuperview().inset(16)
+//            make.height.width.equalTo(24)
+//        }
         
         
-        topView.addSubview(movementNameLabel)
-        movementNameLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(90)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(250)
-            make.height.equalTo(25)
-        }
+//        topView.addSubview(movementNameLabel)
+//        movementNameLabel.snp.makeConstraints { make in
+//            make.top.equalToSuperview().offset(90)
+//            make.centerX.equalToSuperview()
+//            make.width.equalTo(250)
+//            make.height.equalTo(25)
+//        }
         
         
         topView.addSubview(durationLabel)
         durationLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().inset(30)
+            make.top.equalToSuperview().offset(40)
             make.height.equalTo(40)
             make.width.equalTo(200)
         }
@@ -905,16 +962,17 @@ class CameraController: UIViewController {
         view.addSubview(bottomView)
         
         
-        self.bottomView.addSubview(countDownLottieView)
-        self.countDownLottieView.snp.makeConstraints { make in
-            make.leading.top.equalToSuperview().offset(30)
-            make.width.equalTo(50)
-            make.height.equalTo(50)
-        }
+
+        
+
         
         bottomView.addSubview(neighborLongBar)
         neighborLongBar.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+//            make.center.equalToSuperview()
+            
+            make.centerY.equalToSuperview().offset(5)
+            make.centerX.equalToSuperview()
+            
             make.width.equalToSuperview().dividedBy(2)
             make.height.equalTo(48)
         }
@@ -928,21 +986,26 @@ class CameraController: UIViewController {
         stackViewContainer.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().inset(20)
-            
             make.width.equalTo(230)
             make.height.equalTo(40)
         }
         
-//        bottomView.addSubview(directionStackView)
+        
         stackViewContainer.addSubview(directionStackView)
         directionStackView.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(20)
-//            make.trailing.equalToSuperview().inset(20)
-//
-//            make.width.equalTo(230)
-//            make.height.equalTo(40)
             make.leading.top.trailing.bottom.equalToSuperview().inset(2)
+//            make.top.equalToSuperview()
         }
+        
+        
+        self.bottomView.addSubview(countDownLottieView)
+        self.countDownLottieView.snp.makeConstraints { make in
+            make.centerY.equalTo(directionStackView.snp.centerY)
+            make.leading.equalToSuperview().offset(40)
+            make.width.equalTo(50)
+            make.height.equalTo(50)
+        }
+        
         
 //        directionStackView.addSubview(<#T##view: UIView##UIView#>)
 //        [leftLine, rightLine].forEach { self.directionStackView.addSubview($0)}
@@ -964,6 +1027,7 @@ class CameraController: UIViewController {
             make.height.equalToSuperview().dividedBy(2)
             make.width.equalTo(1)
         }
+//        picker.
         
         
         
@@ -986,18 +1050,41 @@ class CameraController: UIViewController {
         outerRecCircle.addSubview(recordingBtn)
         
         self.outerRecCircle.snp.makeConstraints { make in
-            make.center.equalTo(self.bottomView.snp.center)
+//            make.center.equalTo(self.bottomView.snp.center)
+            make.centerY.equalToSuperview().offset(5)
+            make.centerX.equalToSuperview()
             make.height.width.equalTo(72)
         }
         
         self.innerShape.snp.makeConstraints { make in
             make.center.equalToSuperview()
+            
+//            make.centerY.equalToSuperview().offset(5)
+//            make.centerX.equalToSuperview()
             make.width.height.equalTo(36)
         }
         
         self.recordingBtn.snp.makeConstraints { make in
             make.center.equalToSuperview()
+            
+//            make.centerY.equalToSuperview().offset(5)
+//            make.centerX.equalToSuperview()
             make.width.height.equalTo(36)
+        }
+        
+        self.bottomView.addSubview(movementNameLabel)
+        self.movementNameLabel.snp.makeConstraints { make in
+//            make.centerX.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(outerRecCircle.snp.bottom).offset(10)
+            make.height.equalTo(30)
+        }
+        
+        self.bottomView.addSubview(dismissBtn)
+        self.dismissBtn.snp.makeConstraints { make in
+            make.centerY.equalTo(outerRecCircle.snp.centerY)
+            make.leading.equalToSuperview().inset(16)
+            make.height.width.equalTo(24)
         }
         
     }
@@ -1010,6 +1097,9 @@ class CameraController: UIViewController {
         actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
             self.connectionManager.host()
             self.connectionManager.isHost = true
+            self.connectionManager.numOfPeers = 0
+            self.connectionManager.delegate?.updateState(state: .disconnected, connectedAmount: 0)
+//            self.connectionManager.update
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
@@ -1024,9 +1114,12 @@ class CameraController: UIViewController {
     
     // MARK: - UI Properties
     
-    private let bottomView = UIView().then { $0.backgroundColor = .white }
+//    private let bottomView = UIView().then { $0.backgroundColor = .white }
+    private let bottomView = UIView().then { $0.backgroundColor = .clear }
     
-    private let topView = UIView().then { $0.backgroundColor = .white }
+//    private let topView = UIView().then { $0.backgroundColor = .white }
+    private let topView = UIView().then { $0.backgroundColor = .clear }
+        
     
     private let frontBtn = SelectableButton(title: "Front").then {
         $0.layer.cornerRadius = 4
@@ -1042,7 +1135,10 @@ class CameraController: UIViewController {
     
 //    private let
     
-    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
+//    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
+    
+    private let directionStackView = SelectableButtonStackView(selectedBGColor: .transPurple500, defaultBGColor: UIColor(white: 0.9, alpha: 0.6), selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
+    
 //        .then {
         //        $0.backgroundColor = .magenta
 //        $0.layer.borderWidth = 1
@@ -1058,7 +1154,8 @@ class CameraController: UIViewController {
     }
     
     private let movementNameLabel = UILabel().then {
-        $0.textColor = .black
+//        $0.textColor = .black
+        $0.textColor = .white
         $0.textAlignment = .center
         $0.font = UIFont.systemFont(ofSize: 20)
         //        $0.numberOfLines = 0
@@ -1083,7 +1180,8 @@ class CameraController: UIViewController {
     private let dismissBtn: UIButton = {
         let btn = UIButton()
         let innerImage = UIImageView(image: UIImage(systemName: "chevron.left"))
-        innerImage.tintColor = .black
+//        innerImage.tintColor = .black
+        innerImage.tintColor = .white
         btn.addSubview(innerImage)
         
         innerImage.snp.makeConstraints { make in
@@ -1190,7 +1288,6 @@ class CameraController: UIViewController {
         let attrText = NSMutableAttributedString(string: "Upload Completed\n", attributes: [
             .font: UIFont.systemFont(ofSize: 24, weight: .bold),
             .foregroundColor: UIColor.gray900,
-//            .foregroundColor: UIColor.white,
             .paragraphStyle: paragraph]
         )
         
@@ -1221,7 +1318,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
+        print("imagePickerController didFinishPickingMedia called!")
         //        var videoUrl: URL?
         if shouldShowScoreView {
         guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
@@ -1235,42 +1332,38 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         
         print("save success !")
         // Save Video To Photos Album
-        UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
+//        UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
+
+        UISaveVideoAtPathToSavedPhotosAlbum("hi", self, nil, nil)
         
         videoUrl = url
         
         guard let validUrl = videoUrl else { fatalError() }
-        
+        saveVideoToLocal(with: validUrl)
+            
         let cropController = CropController(url: validUrl, vc: self)
         
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             
-        cropController.exportVideo { CroppedUrl in
-            DispatchQueue.main.async {
-                self.presentPreview(with: CroppedUrl)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                if self.rank == .boss {
+                    self.presentPreview(with: validUrl, size: size)
+                } else {
+                    self.presentPreview(with: validUrl, size: .none)
+                }
                 self.prepareScoreView()
                 self.showScoreView(size: size)
             }
-        }
-        
-        print("url: \(url.path)")
-        
-        
-        // TODO: Present Preview In a second
-        
-//        let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//            self.presentPreview(with: url)
-//            self.prepareScoreView()
-//
-//            self.showScoreView(size: size)
-        }
+            
+            
+            print("url: \(url.path)")
+            
+            // TODO: Present Preview In a second
+            
         } else {
             shouldShowScoreView.toggle()
         }
     }
-    
 }
 
 // MARK: - Connection Manager Delegate
@@ -1335,7 +1428,7 @@ extension CameraController: ConnectionManagerDelegate {
     }
     
     
-    private func hidePreview() {
+    public func hidePreview() {
         guard let previewVC = previewVC else {
 //            fatalError()
             return
@@ -1345,35 +1438,60 @@ extension CameraController: ConnectionManagerDelegate {
         }
 
     }
+    
+    private func makeFileNameThenPost(fileName: String) {
+        
+        guard let validVideoURL = videoUrl else { return }
+        
+        var cameraDirectionInt: Int
+        switch cameraDirection {
+        case .front: cameraDirectionInt = 1
+        case .side: cameraDirectionInt = 2
+        case .between: cameraDirectionInt = 3
+        case .none: cameraDirectionInt = 0
+        }
+        
+        let videoFileName = fileName + "_\(cameraDirectionInt)"
+        
+        // TODO: change videoUrl' fileName to `videoFileName`
+        FTPManager.shared.postRequest(videoURL: validVideoURL) {
+            print("--------------- fileName ---------------\n \(videoFileName)")
+        }
+        
+    }
+    
 }
 
 
 extension CameraController: ScoreControllerDelegate {
+    func postAction(ftpInfoString: FtpInfoString) {
+        
+        guard let validVideoURL = videoUrl else { return }
+        let receivedFileName = ftpInfoString.fileName
+        
+        
+        makeFileNameThenPost(fileName: receivedFileName)
+    }
+
+    func orderRequest(ftpInfoString: FtpInfoString) {
+        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(ftpInfoString: ftpInfoString)))
+    }
+    
+    
+    
     
     func presentCompleteMsgView(shouldShowNext: Bool) {
         
     }
     
     // TODO: Currently not being called ;; why ?
-    func orderRequest(core: TrialCore, detail: TrialDetail) {
-        
-        printFlag(type: .peerRequest, count: 1)
-        
-        let title = core.title
-        guard let direction = MovementDirection(rawValue: core.direction) else { fatalError() }
-        
-        let optionalScore = detail.score.scoreToInt()
-        let optionalPain = detail.isPainful .painToBool()
-        
-        printFlag(type: .peerRequest, count: 2)
-        // TODO: type 이 달라야함.
-        
-        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(movementDetail: MovementDirectionScoreInfo(title: title, direction: direction, score: optionalScore, pain: optionalPain))))
-    
-        printFlag(type: .peerRequest, count: 3)
-
+    func orderRequest(ftpInfo: FTPInfo) {
+        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(ftpInfo: ftpInfo)))
     }
     
+    func orderRequest(url: URL) {
+        
+    }
 
     func navigateToSecondView(withNextTitle: Bool) {
         print("navigateToSecondView Triggered")
@@ -1399,13 +1517,14 @@ extension CameraController: ScoreControllerDelegate {
         resetTimer()
         removeChildrenVC()
         prepareScoreView()
-        makeTrialDetail()
+//        makeTrialDetail()
         hideCompleteMsgView()
-        scoreVC.changeSaveBtnColor()
+        scoreVC!.changeSaveBtnColor()
 //        self.updateTrialDetail()
     }
     
     private func makeTrialDetail() {
+        guard let trialCore = trialCore else {fatalError()}
         TrialDetail.save(belongTo: trialCore)
     }
     
@@ -1414,7 +1533,6 @@ extension CameraController: ScoreControllerDelegate {
         deleteAction()
         // TODO: DismissPreview
 //        hidePreview()
-        
     }
     
     // TODO: Fix if necessary
@@ -1448,28 +1566,42 @@ extension CameraController: ScoreControllerDelegate {
         }
     }
     
+    func saveVideoToLocal(with url: URL) {
+        //        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        //        let documentsDirectoryURL = paths[0]
+//        print("duration: \(self.testDuration)")
+        PHPhotoLibrary.shared().performChanges {
+            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+//            PHAssetChangeRequest.
+        }
+    }
+    // TODO: post, makePeersPost
+
+    func postAction(ftpInfo: FTPInfo) {
     
-    func saveAction(core: TrialCore, detail: TrialDetail) {
-        
         guard let validVideoUrl = videoUrl else { return }
         
-        let trialId = UUID()
-        guard let direction = MovementDirection(rawValue: core.direction) else { return }
+        print("-----------CameraController trialCore Details -----------")
         
-        let optionalScore = detail.score.scoreToInt()
-        let optionalPain = detail.isPainful .painToBool()
+//        self.post(postReqInfo: ftpInfo)
         
-        guard let cameraDirection = cameraDirection else { return }
-        APIManager.shared.postRequest(
-            movementDirectionScoreInfo:
-                MovementDirectionScoreInfo(
-                title: core.title, direction: direction, score: optionalScore, pain: optionalPain),
-            trialCount: Int(detail.trialNo), trialId: trialId,
-            videoUrl: validVideoUrl, angle: cameraDirection) {
-                print("closure called after post request")
-            }
+//        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(postReqInfo: ftpInfo)))
+        
+        
+        
+        
     }
     
+    private func convert() {
+        
+    }
+    
+
+    
+    private func makeCall(title: String, direction: String, score: Int, pain: Int, trialCount: Int, videoURL: URL, cameraDirection: String, screenKey: UUID ) {
+        
+//        APIManager.shared.postRequest(movementTitle: <#T##String#>, direction: <#T##String#>, score: <#T##Int#>, pain: <#T##Int#>, trialCount: <#T##Int#>, videoURL: <#T##URL#>, cameraDirection: <#T##String#>, screenKey: <#T##UUID#>, closure: <#T##() -> Void#>)
+    }
     
     /// merge Position Title + Direction  into Unique Key
     private func mergeKeys(title: String, direction: String) -> String {
@@ -1487,3 +1619,5 @@ extension CameraController: ScoreControllerDelegate {
 //        hidePreview2()
     }
 }
+
+

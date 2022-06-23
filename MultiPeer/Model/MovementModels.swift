@@ -56,6 +56,11 @@ struct MovementDirectionScoreInfo: Codable {
     var pain: Bool?
 }
 
+struct MovementTitleDirectionInfo: Codable {
+    var title: String
+    var direction: MovementDirection
+}
+
 
 
 

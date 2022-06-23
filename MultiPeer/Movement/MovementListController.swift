@@ -28,6 +28,8 @@ class MovementListController: UIViewController {
     
     var subject: Subject?
     
+    var selectedTrialCore: TrialCore?
+    
 //    var connectedAmount: Int = 0
     // TODO: change to false after some updates..
     // TODO: false -> 정상 작동 ;;
@@ -75,12 +77,43 @@ class MovementListController: UIViewController {
         return collectionView
     }()
     
-    private let completeBtn = UIButton().then {
-        $0.setTitle("Complete Screen", for: .normal)
-        $0.setTitleColor(.gray400, for: .normal)
-        $0.backgroundColor = .lavenderGray100
-        $0.layer.cornerRadius = 8
-    }
+//    private let completeBtn = UIButton().then {
+////        $0.setTitle("Complete Screen", for: .normal)
+////        $0.setattribteds
+//        let paragraph = NSMutableParagraphStyle()
+//        paragraph.alignment = .center
+//
+//        let attrText = NSMutableAttributedString(string: "Upload Completed\n", attributes: [
+//            .font: UIFont.systemFont(ofSize: 24, weight: .bold),
+////            .foregroundColor: UIColor.gray900,
+//            .foregroundColor: UIColor.white,
+//            .paragraphStyle: paragraph]
+//
+//        $0.attributedTitle = attrText
+//        $0.setTitleColor(.gray400, for: .normal)
+//        $0.backgroundColor = .lavenderGray100
+//        $0.layer.cornerRadius = 8
+//    }
+                                                 
+        private let completeBtn: UIButton = {
+            let btn = UIButton()
+            
+            let paragraph = NSMutableParagraphStyle()
+            paragraph.alignment = .center
+            
+            let attrText = NSMutableAttributedString(string: "Complete Screen\n", attributes: [
+//                .font: UIFont.systemFont(ofSize: 24, weight: .bold),
+                .font: UIFont.systemFont(ofSize: 17),
+                .foregroundColor: UIColor.white,
+                .paragraphStyle: paragraph])
+            
+//            btn.attributedTitle = attrText
+            btn.setAttributedTitle(attrText, for: .normal)
+            btn.setTitleColor(.gray400, for: .normal)
+            btn.backgroundColor = .lavenderGray100
+            btn.layer.cornerRadius = 8
+            return btn
+        }()
     
     private let finishBtn = UIButton().then {
         $0.setTitle("Finish Later", for: .normal)
@@ -140,8 +173,10 @@ class MovementListController: UIViewController {
     }
     
     // call if no screen assigned
+
     func fetchDefaultScreen() {
         print("fetchDefaultScreen called")
+        // false -> error !
         if testMode {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate")}
             
@@ -157,15 +192,16 @@ class MovementListController: UIViewController {
                 if !fetchedSubjects.isEmpty {
                     subject = fetchedSubjects.first!
                 }
+                
                 guard let subject = subject else {
+                    // no subject
+
                     fatalError(" empty subject ")
                 }
                 
-                if !subject.screens.isEmpty {
+                if subject.screens.isEmpty == false {
                     screen = subject.screens.sorted{$0.date < $1.date}.first
                     
-                    printFlag(type: .updatingTrialCore, count: 2)
-                    // 여기에서 에러남 ;; 왜 ?
                     updateTrialCores(screen: screen)
                     print("updateTrialCores called")
                 } else {
@@ -189,7 +225,11 @@ class MovementListController: UIViewController {
     private func setupAddTargets() {
         sessionBtn.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
         
-        subjectSettingBtn.addTarget(self, action: #selector(subjectBtnTapped), for: .touchUpInside)
+        finishBtn.addTarget(self, action: #selector(moveToSubjectController), for: .touchUpInside)
+        
+        subjectSettingBtn.addTarget(self, action: #selector(moveToSubjectController), for: .touchUpInside)
+        
+        completeBtn.addTarget(self, action: #selector(moveToSubjectController), for: .touchUpInside)
     }
     
     // TODO: Host 인 경우, 어떤 값을 설정해주기.
@@ -200,6 +240,8 @@ class MovementListController: UIViewController {
         actionSheet.addAction(UIAlertAction(title: "Host Session", style: .default, handler: { (action: UIAlertAction) in
             self.connectionManager.host()
             self.connectionManager.isHost = true
+            self.connectionManager.numOfPeers = 0
+            self.connectionManager.delegate?.updateState(state: .disconnected, connectedAmount: 0)
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
@@ -215,6 +257,15 @@ class MovementListController: UIViewController {
     @objc func subjectBtnTapped(_ sender: UIButton) {
         moveToSubjectController()
     }
+    
+    @objc func completeBtnTapped(_ sender: UIButton) {
+        moveToSubjectController()
+    }
+    
+    @objc func finishBtnTapped(_ sender: UIButton) {
+        moveToSubjectController()
+    }
+    
     
     
     
@@ -250,7 +301,7 @@ class MovementListController: UIViewController {
                 $0.title == title && $0.direction == direction.rawValue
             }.first!
             
-            presentUsingChild(trialCore: trialCore, rank: .follower)
+            presentCameraAsChild(rank: .follower, title: title, direction: direction)
         } else {
             // update peer's camera title
         }
@@ -315,11 +366,13 @@ class MovementListController: UIViewController {
         
         // TODO: Filter ! using MovementImgsDictionary
         trialCoresToShow = [[]]
+        
         for eachCore in trialCores {
             if MovementImgsDictionary[eachCore.first!.title] != nil {
                 trialCoresToShow.append(eachCore)
             }
         }
+        
         trialCoresToShow.removeFirst()
         printCurrentState()
         
@@ -341,7 +394,7 @@ class MovementListController: UIViewController {
     
     // MARK: - UI, Navigation Functions
     
-    private func moveToSubjectController() {
+    @objc func moveToSubjectController() {
         let subjectSettingVC = SubjectController()
         subjectSettingVC.basicDelegate = self
         
@@ -351,7 +404,9 @@ class MovementListController: UIViewController {
     // present camera look like NavigationView does.
     // message 를 전혀 안보냄 ;;
     private func presentCamera(with selectedTrial: TrialCore) {
+//        self.selectedTrialCore = selectedTrial
         
+
         rank = .boss
         guard let rank = rank else { fatalError() }
         
@@ -359,65 +414,59 @@ class MovementListController: UIViewController {
             self.moveToSubjectController()
             return
         }
-        
-        print("trialCore passed to cameracontroller : \(selectedTrial.title) \(selectedTrial.direction)")
-        
-        //        DispatchQueue.main.async {
-        //
-        //            self.cameraVC = CameraController(
-        //                connectionManager: self.connectionManager,
-        ////                screen: screen,
-        //                trialCore: selectedTrial,
-        //                rank: rank
-        //            )
-        //
-        //            guard self.cameraVC != nil else { return }
-        //            self.cameraVC!.delegate = self
-        //            self.addChild(self.cameraVC!) // 왜 Nav 말고 child 로 했었을까? ConnectionManager 때문에 ?
-        //            self.view.addSubview(self.cameraVC!.view)
-        ////            self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-        //            self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
-        //
-        //            UIView.animate(withDuration: 0.3) {
-        //                self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
-        //            }
-        //        }
-        
-        presentUsingChild(trialCore: selectedTrial, rank: rank)
-        
-        
+//        guard let direction = MovementDirection(rawValue: selectedTrial.direction) else { return }
         let direction: MovementDirection = MovementDirection(rawValue: selectedTrial.direction) ?? .neutral
         
-        //        connectionManager.send(.presentCamera)
-//        connectionManager.send(MsgWithMovementDetail(message: .presentCamera, detailInfo: MovementDirectionScoreInfo(title: selectedTrial.title, direction: direction)))
+        print("trialCore passed to cameracontroller : \(selectedTrial.title) \(selectedTrial.direction)")
+        // send rank as boss
+//        presentCameraAsChild(trialCore: selectedTrial, rank: rank)
+        presentCameraAsChild(trialCore: selectedTrial, rank: rank, title: selectedTrial.title, direction: direction)
         
-        connectionManager.send(PeerInfo(msgType: .presentCamera, info: Info(movementDetail: MovementDirectionScoreInfo(title: selectedTrial.title, direction: direction))))
+        
+//        let direction: MovementDirection = MovementDirection(rawValue: selectedTrial.direction) ?? .neutral
+        
+        connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: selectedTrial.title, direction: direction))))
     }
     
-    private func presentUsingChild(trialCore: TrialCore, rank: Rank) {
+    private func presentCameraAsChild(trialCore: TrialCore? = nil, rank: Rank, title: String, direction: MovementDirection) {
+        
+//        guard let screen = screen else { fatalError() }
         
         DispatchQueue.main.async {
+            var hasCameraAlready = false
             
-            self.cameraVC = CameraController(
-                connectionManager: self.connectionManager,
-                //                screen: screen,
-                trialCore: trialCore,
-                rank: rank
-//                connectedAmount: self.connectedAmount
-//                ,connectedAmount: self.connectionManager.numOfPeers
-            )
+            let children = self.children
+            print("list of children : \(children)")
+            for child2 in children {
+                if child2 is CameraController {
+                    hasCameraAlready = true
+                    break
+                }
+            }
             
-            guard self.cameraVC != nil else { return }
-            self.cameraVC!.delegate = self
-            self.addChild(self.cameraVC!)
-            // 왜 Nav 말고 child 로 했었을까? ConnectionManager 때문에 ?
-            // 이게 child 라서, 뭐.. 문제가 되나?
-            self.view.addSubview(self.cameraVC!.view)
-            //  self.cameraVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-            self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
-            
-            UIView.animate(withDuration: 0.3) {
-                self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+            if hasCameraAlready == false {
+                if rank == .boss {
+                    self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: self.screen, trialCore: trialCore!, positionTitle: title, direction: direction, rank: rank)
+                
+                } else {
+                    self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: nil, trialCore: nil, positionTitle: title, direction: direction, rank: rank)
+                }
+                
+                guard self.cameraVC != nil else { return }
+                self.cameraVC!.delegate = self
+                self.addChild(self.cameraVC!)
+                
+                self.view.addSubview(self.cameraVC!.view)
+                
+                self.cameraVC!.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
+                
+                UIView.animate(withDuration: 0.3) {
+                    self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+                }
+            } else {
+                self.cameraVC?.hidePreview()
+                self.cameraVC?.resetTimer()
+                self.cameraVC?.invalidateTimer()
             }
         }
     }
@@ -445,7 +494,7 @@ class MovementListController: UIViewController {
         sessionBtn.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
 //            make.top.equalTo(view.safeAreaLayoutGuide).offset(-15)
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
 //            make.top.equalToSuperview().offset(70)
             make.width.equalTo(100)
             make.height.equalTo(30)
@@ -480,9 +529,7 @@ class MovementListController: UIViewController {
         self.view.addSubview(movementCollectionView)
         movementCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
-//            make.top.equalTo(view.safeAreaLayoutGuide).inset(30)
             make.top.equalTo(sessionBtn.snp.bottom).offset(15)
-//            make.bottom.equalTo(view.snp.bottom).offset(-120)
             make.bottom.equalTo(view.snp.bottom).offset(-100)
         }
         
@@ -606,8 +653,8 @@ extension MovementListController: CameraControllerDelegate {
         UIView.animate(withDuration: 0.3) {
             cameraVC.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
         } completion: { done in
-            //
-            //            // TODO: remove cameraController after animation
+            
+            // TODO: remove cameraController after animation
             if done {
                 if self.children.count > 0 {
                     let viewControllers: [UIViewController] = self.children

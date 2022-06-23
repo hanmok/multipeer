@@ -24,11 +24,18 @@ struct PeerInfo: Codable {
 
 struct Info: Codable {
     var movementDetail: MovementDirectionScoreInfo?
-//    var cameraDirection: CameraDirection?
-    var idWithDirection: PeerIdWithCameraDirection?
+    var idWithDirection: DeviceNameWithCameraDirection?
+    var movementTitleDirection: MovementTitleDirectionInfo?
+//    var postReqInfo: PostReqInfo?
+    var ftpInfo: FTPInfo?
+    var ftpInfoString: FtpInfoString?
 }
 
-struct PeerIdWithCameraDirection: Codable {
+struct FtpInfoString: Codable {
+    var fileName: String
+}
+
+struct DeviceNameWithCameraDirection: Codable {
     var peerId: String
     var cameraDirection: CameraDirection
 }
@@ -44,21 +51,13 @@ struct PeerCommunicationHelper {
         .stopRecordingMsg: .stopRecordingKey,
         .hidePreviewMsg: .hidePreviewKey,
         
-        .presentCamera: .presentCameraKey,
-        .updatePeerTitle: .updatePeerTitleKey,
+        .presentCameraMsg: .presentCameraKey,
+        .updatePeerTitleMsg: .updatePeerTitleKey,
         .requestPostMsg: .requestPostKey,
         
-        .updatePeerCameraDirection: .updatePeerCameraDirectionKey
+        .updatePeerCameraDirectionMsg: .updatePeerCameraDirectionKey
     ]
 }
-
-
-
-
-//struct MessageWithInfo {
-//    var date: Date
-//    var messageType: OrderMessageTypes
-//}
 
 
 
@@ -69,11 +68,13 @@ public enum MessageType: String, Codable {
     case startRecordingMsg
     case stopRecordingMsg
     
-    case presentCamera
+    case presentCameraMsg
+    case updatePeerTitleMsg
+
     case requestPostMsg
-    case updatePeerTitle
     
-    case updatePeerCameraDirection
+    case updatePeerCameraDirectionMsg
+    case none
 }
 
 
@@ -83,5 +84,47 @@ public enum ConnectionState: String, Codable {
     case connected
     case disconnected
 }
+
+
+
+
+
+/*
+ connectionManager.send(PeerInfo(msgType: .presentCamera, info: Info(movementDetail: MovementDirectionScoreInfo(title: selectedTrial.title, direction: direction))))
+
+ 
+ public enum MessageType: String, Codable {
+     case hidePreviewMsg
+     case startRecordingMsg
+     case stopRecordingMsg
+     
+     case presentCameraMsg
+     case requestPostMsg
+     case updatePeerTitleMsg
+     
+     case updatePeerCameraDirectionMsg
+ }
+
+ hidePreviewMsg -> Msg Only
+ startRecordingMsg -> Msg Only
+ stopRecordingMsg -> Msg Only
+ 
+ // postMsg : Score Needed
+ 
+ presentCamera -> Title, Direction, Msg
+ updatePeerTitleMsg -> Title, Direction, Msg
+ 
+ requestPostMsg -> title, Direction, score, pain
+ 
+ 
+ updatePeerCameraDirectionMsg -> Device's name, cameraDirection
+ 
+ // 또.. 필요한게 뭐가 있나... ??
+ peer 는 Trial Core, Detail, Screen 에 대한 정보 모를 수 잇음.
+ 
+ */
+
+//
+
 
 

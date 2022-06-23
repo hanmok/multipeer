@@ -16,13 +16,17 @@ protocol ScoreControllerDelegate: AnyObject {
     
     func deleteAction() // don't need to update trials
 
-    func saveAction(core: TrialCore, detail: TrialDetail)
+//    func postAction(core: TrialCore, detail: TrialDetail)
+    func postAction(ftpInfo: FTPInfo)
+    func postAction(ftpInfoString: FtpInfoString)
     
     func updatePressedBtnTitle(with btnTitle: String)
     
     func navigateToSecondView(withNextTitle: Bool)
     
-    func orderRequest(core: TrialCore, detail: TrialDetail)
+//    func orderRequest(core: TrialCore, detail: TrialDetail)
+    func orderRequest(ftpInfo: FTPInfo)
+    func orderRequest(ftpInfoString: FtpInfoString)
     
 }
 
@@ -32,13 +36,14 @@ class ScoreController: UIViewController {
 
     // MARK: - Properties
     var hasPainField: Bool = false
-    
+    var screen: Screen // 있는데.. ㅠㅠ
     var positionTitle: String
     var direction: MovementDirection
-
+    
     var trialCore: TrialCore?
     var trialDetail: TrialDetail?
     
+//    var cameraAngle:
     /// follwing Clearing Test
     var fClearingCore: TrialCore?
     var fClearingDetail: TrialDetail?
@@ -50,6 +55,7 @@ class ScoreController: UIViewController {
             // if it has variation following,
             // toggle visibility of Clearing Test depening on score value ( Hold -> Hide )
             // -1 represent 'Hold'
+            
             if varTestName != nil {
                 // convert to -1 -> hide!
                 if newValue == -1 && score != -1 {
@@ -152,31 +158,18 @@ class ScoreController: UIViewController {
     
      // MARK: - Life Cyle
     
-    init(positionTitle: String, direction: String) {
+    init(positionTitle: String, direction: String, screen: Screen) {
         self.positionTitle = positionTitle
         
         guard let direction = MovementDirection(rawValue: direction) else {fatalError()}
         
         self.direction = direction
         self.scoreType = movementNameToScoreType[positionTitle] ?? .zeroToThree
-        // 이거 하나로 판별 못함.
-        // 조건 하나 더 필요해. 아래에 있네.
-//        self.painTestName = (movementWithPainTestTitle[positionTitle])
-        
-//        print("init, painTestName: \(painTestName), positionTitle: \(positionTitle), direction: \(direction.rawValue)")
-        
-        
-        
-//        if positionTitle == MovementList.rotaryStability.rawValue && direction.rawValue == MovementDirectionList.left.rawValue {
-//            print("title, direction: \(positionTitle), \(direction), rsbug, count: 11")
-//            self.painTestName = nil
-//        }
         
         self.painTestName = Dummy.getPainTestName(from: positionTitle, direction: direction)
         
-        
-        
         self.varTestName = (movementWithVariation[positionTitle])
+        self.screen = screen
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -189,8 +182,6 @@ class ScoreController: UIViewController {
         setupAddtargets()
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor(white: 0.8, alpha: 1).cgColor
-        
-        
     }
     
     // MARK: - Helper Functions
@@ -288,7 +279,6 @@ class ScoreController: UIViewController {
         
 
         if painTestName == nil {
-            //TODO: Change ScoreController to not have pain for unnecessary cases
 
 //            painBtnStackView.backgroundColor = .lavenderGray100
             saveBtn.backgroundColor = .red500
@@ -298,6 +288,11 @@ class ScoreController: UIViewController {
             if painBtnStackView.selectedBtnIndex != nil {
                 saveBtn.backgroundColor = .red500
                 saveBtn.isUserInteractionEnabled = true
+            } else {
+                if score == .Value.hold {
+                    saveBtn.backgroundColor = .red500
+                    saveBtn.isUserInteractionEnabled = true
+                }
             }
         }
     }
@@ -318,7 +313,6 @@ class ScoreController: UIViewController {
             saveBtn.backgroundColor = .red500
             saveBtn.isUserInteractionEnabled = true
         }
-        
     }
 
     
@@ -330,6 +324,62 @@ class ScoreController: UIViewController {
         
     }
     
+//    private func makeFTPInfo(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FTPInfo {
+//
+//        guard let subject = screen.parentSubject else { fatalError() }
+//
+//        let genderInt = subject.isMale ? 1 : 2
+//        let calendar = Calendar.current
+//        let components = calendar.dateComponents([.year], from: subject.birthday)
+//        guard let birthYear = components.year else { fatalError() }
+//
+//
+//        let ftpInfo = FTPInfo(date: Date(), inspectorName: "someone", subjectName: subject.name, screenIndex: Int(screen.screenIndex), title: trialCore.title, direction: trialCore.direction, trialNo: Int(trialDetail.trialNo), phoneNumber: subject.phoneNumber, gender: genderInt, birth: birthYear, kneeLength: subject.kneeLength, palmLength: subject.palmLength)
+//
+//        // cameraAngle 은 우선 기본 값 1,
+//        // CameraController 가서 값 새로 설정 후 넣어주기.
+//
+//        return ftpInfo
+//    }
+    
+    private func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
+                
+        guard let subject = screen.parentSubject else {fatalError() } // parentSubject 가 없나?
+        
+        let date = Date()
+        let inspectorName = "someName"
+    
+        let subjectName = subject.name
+        
+        let screenIndex = screen.screenIndex
+        
+        let titleShort = Dummy.shortForFileName[trialCore.title]!
+        
+        let directionShort: String
+        switch trialCore.direction {
+        case "Left": directionShort = "l"
+        case "Right": directionShort = "r"
+        default: directionShort = ""
+        }
+        
+        let trialNo = trialDetail.trialNo
+        let phoneNumber = subject.phoneNumber
+        let genderInt = subject.isMale ? 1 : 2
+        
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year], from: subject.birthday)
+        
+        guard let birthYear = components.year else { fatalError() }
+    
+        let kneeLength = subject.kneeLength
+        let palmLength = subject.palmLength
+        
+        let fileName = "\(date)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
+        
+        let ftpInfoString = FtpInfoString(fileName: fileName)
+        return ftpInfoString
+    }
+//    YYYY.MM.DD_HH.MM.SS_검사자명_피험자명_1_ds1_01012341234_성별_탄생년도_무릅길이_손바닥길이_앵글
     @objc func saveTapped() {
         // if tapped Button is "Hold" then send it back to CameraController
         printFlag(type: .rsBug, count: 0)
@@ -338,12 +388,9 @@ class ScoreController: UIViewController {
         
             printFlag(type: .rsBug, count: 1)
             guard let score = score else { fatalError("score is nil") }
-            print("save Condition satisfied.")
             
             setupFTrialCoreIfNeeded()
             
-            // setup Detail both trial and fclearing
-            // Ankle 에서 Nil 나옴..
             setupTrialDetail()
             
             guard let trialCore = trialCore else { fatalError("trialCore is nil") }
@@ -352,10 +399,22 @@ class ScoreController: UIViewController {
             
             setScore(title: trialCore.title, to: trialDetail, score: score, pain: pain)
             
-            delegate?.saveAction(core: trialCore, detail: trialDetail)
-            printFlag(type: .peerRequest, count: -1)
-            delegate?.orderRequest(core: trialCore, detail: trialDetail)
-            printFlag(type: .peerRequest, count: -2)
+
+            print("------------ scoreController saveAction ------------")
+            print("title: \(trialCore.title), direction: \(trialCore.direction), trialNo: \(trialDetail.trialNo)")
+
+//            let ftpInfo = makeFTPInfo(trialCore: trialCore, trialDetail: trialDetail)
+            
+//            let ftpInfoStr = makeftpinfo
+            let ftpInfoStr = makeFTPInfoString(trialCore: trialCore, trialDetail: trialDetail)
+//            delegate?.postAction(postReqInfo: postReqInfo)
+//            delegate?.postAction(ftpInfo: ftpInfo)
+//            delegate?.orderRequest(ftpInfo: ftpInfo)
+//            delegate
+            
+            delegate?.postAction(ftpInfoString: ftpInfoStr)
+            delegate?.orderRequest(ftpInfoString: ftpInfoStr)
+            
             trialCore.updateLatestScore()
 
             // 어떤게 invalid 일까 ?? 둘다일 수 있다.
@@ -367,21 +426,24 @@ class ScoreController: UIViewController {
                 // 버튼 선택에 따라 Clearing 값이 업데이트 되지 않음.
                 
                 // scoreController Delegate
-                print("fClearingDetail Pain: \(fClearingDetail?.isPainful)")
-                delegate?.saveAction(core: fClearingCore!, detail: fClearingDetail!)
-                delegate?.orderRequest(core: fClearingCore!, detail: fClearingDetail!)
-                
+//                let postReqInfo2 = makeFTPInfo(trialCore: fClearingCore!, trialDetail: fClearingDetail!)
+
+//                delegate?.postAction(postReqInfo: postReqInfo2)
+                                
                 fClearingCore!.updateLatestScore()
-            } else { print("fClearingCore or fClearingDetail is invalid ") }
+            } else { print("fClearingCore or fClearingDetail is invalid ")
+            }
             
         } else { print("save Condition not satisfied.") }
         
-//        scoreBtnStackView.selectedBtnTitle == .Value.hold.
         if score == .Value.hold {
             delegate?.navigateToSecondView(withNextTitle: true)
         } else {
             delegate?.navigateToSecondView(withNextTitle: false)
         }
+        
+//        connectionmanager
+//        ConnectionManager.send()
         
 //        delegate?.navigateToSecondView()
     }
@@ -475,10 +537,11 @@ class ScoreController: UIViewController {
             return true // if score is selected -> true. or -> false
         }
     }
-    
+    // 왜 두번 생성하고 ㅈㄹ..
     func setupTrialDetail() {
         
         guard let trialCore = trialCore else { fatalError("trialCore is nil") }
+        
         trialDetail = trialCore.returnFreshTrialDetail()
         
         guard let fClearingCore = fClearingCore else { return }
@@ -635,7 +698,3 @@ class ScoreController: UIViewController {
 }
 
 
-enum ScoreViewSize {
-    case small
-    case large
-}
