@@ -26,7 +26,13 @@ struct Info: Codable {
     var movementDetail: MovementDirectionScoreInfo?
     var idWithDirection: DeviceNameWithCameraDirection?
     var movementTitleDirection: MovementTitleDirectionInfo?
-    var postReqInfo: PostReqInfo?
+//    var postReqInfo: PostReqInfo?
+    var ftpInfo: FTPInfo?
+    var ftpInfoString: FtpInfoString?
+}
+
+struct FtpInfoString: Codable {
+    var fileName: String
 }
 
 struct DeviceNameWithCameraDirection: Codable {
@@ -68,6 +74,7 @@ public enum MessageType: String, Codable {
     case requestPostMsg
     
     case updatePeerCameraDirectionMsg
+    case none
 }
 
 

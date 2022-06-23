@@ -34,6 +34,24 @@ extension Subject {
             self.name_ = newValue
         }
     }
+
+//    public var palmLength: Double {
+//        get {
+//            return self.palmLength_
+//        }
+//        set {
+//            self.palmLength_ = newValue
+//        }
+//    }
+//
+//    public var kneeLength: Double {
+//        get {
+//            return self.kneeLength_
+//        }
+//        set {
+//            self.kneeLength_ = newValue
+//        }
+//    }
     
     public var birthday: Date {
         get {

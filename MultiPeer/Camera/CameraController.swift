@@ -24,7 +24,8 @@ protocol CameraControllerDelegate: AnyObject {
 class CameraController: UIViewController {
     
     // MARK: - Properties
-
+    let sampleInspector = Inspector(name: "hanmok", phoneNumber: "01090417421")
+    
     private var videoUrl: URL?
     var shouldShowScoreView = true
     // TODO: Handle inside ConnectionManager
@@ -97,6 +98,8 @@ class CameraController: UIViewController {
             // scoreVC 는, boss 에게만 필요함 ..
         if rank == .boss {
             scoreVC = ScoreController(positionTitle: trialCore!.title, direction: trialCore!.direction, screen: screen!)
+            print("-----------------received screen-----------------\n \(screen!)") // parentScreen is nil;
+            print("subject: \(screen!.parentSubject)")
         }
         
         self.screen = screen
@@ -159,7 +162,8 @@ class CameraController: UIViewController {
         
 //        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction)))
         
-        connectionManager.send(PeerInfo(msgType: .updatePeerTitleMsg, info: Info(movementDetail: MovementDirectionScoreInfo(title: positionTitle, direction: direction))))
+//        connectionManager.send(PeerInfo(msgType: .updatePeerTitleMsg, info: Info(movementDetail: MovementDirectionScoreInfo(title: positionTitle, direction: direction))))
+        connectionManager.send(PeerInfo(msgType: .updatePeerTitleMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: positionTitle, direction: direction))))
 
 //        connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: positionTitle, direction: direction))))
     }
@@ -263,6 +267,12 @@ class CameraController: UIViewController {
         }
     }
     
+    @objc func requestPostNoti(_ notification: Notification) {
+        
+        let fileName = (notification.userInfo?["fileName"])! as! String
+        makeFileNameThenPost(fileName: fileName)
+    }
+    
     private let leftLine = UIView().then {
         $0.backgroundColor = UIColor(redInt: 225, greenInt: 225, blueInt: 230)
     }
@@ -271,15 +281,6 @@ class CameraController: UIViewController {
         $0.backgroundColor = UIColor(redInt: 225, greenInt: 225, blueInt: 230)
     }
     
-    
-    @objc func requestPostNoti(_ notification: Notification? = nil) {
-        
-        if notification != nil {
-                
-        }
-        
-//        makeCall(title: <#T##String#>, direction: <#T##String#>, score: <#T##Int#>, pain: <#T##Int#>, trialCount: <#T##Int#>, videoURL: <#T##URL#>, cameraDirection: <#T##String#>, screenKey: <#T##UUID#>)
-    }
     
     @objc func hidePreviewNoti(_ notification: Notification) {
         hidePreview()
@@ -746,6 +747,7 @@ class CameraController: UIViewController {
     
     private func hideScoreView() {
 //        if rank == .boss {
+//        Thread 1: Fatal error: Unexpectedly found nil while unwrapping an Optional value
             DispatchQueue.main.async {
                 UIView.animate(withDuration: 0.4) {
                     self.scoreVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
@@ -1437,27 +1439,59 @@ extension CameraController: ConnectionManagerDelegate {
 
     }
     
+    private func makeFileNameThenPost(fileName: String) {
+        
+        guard let validVideoURL = videoUrl else { return }
+        
+        var cameraDirectionInt: Int
+        switch cameraDirection {
+        case .front: cameraDirectionInt = 1
+        case .side: cameraDirectionInt = 2
+        case .between: cameraDirectionInt = 3
+        case .none: cameraDirectionInt = 0
+        }
+        
+        let videoFileName = fileName + "_\(cameraDirectionInt)"
+        
+        // TODO: change videoUrl' fileName to `videoFileName`
+        FTPManager.shared.postRequest(videoURL: validVideoURL) {
+            print("--------------- fileName ---------------\n \(videoFileName)")
+        }
+        
+    }
+    
 }
 
 
 extension CameraController: ScoreControllerDelegate {
+    func postAction(ftpInfoString: FtpInfoString) {
+        
+        guard let validVideoURL = videoUrl else { return }
+        let receivedFileName = ftpInfoString.fileName
+        
+        
+        makeFileNameThenPost(fileName: receivedFileName)
+    }
+
+    func orderRequest(ftpInfoString: FtpInfoString) {
+        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(ftpInfoString: ftpInfoString)))
+    }
+    
+    
+    
     
     func presentCompleteMsgView(shouldShowNext: Bool) {
         
     }
     
     // TODO: Currently not being called ;; why ?
-    func orderRequest(core: TrialCore, detail: TrialDetail) {
-        
-        let title = core.title
-        guard let direction = MovementDirection(rawValue: core.direction) else { fatalError() }
-        
-        let optionalScore = detail.score.scoreToInt()
-        let optionalPain = detail.isPainful .painToBool()
-        
-//        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(movementDetail: MovementDirectionScoreInfo(title: title, direction: direction, score: optionalScore, pain: optionalPain))))
+    func orderRequest(ftpInfo: FTPInfo) {
+        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(ftpInfo: ftpInfo)))
     }
     
+    func orderRequest(url: URL) {
+        
+    }
 
     func navigateToSecondView(withNextTitle: Bool) {
         print("navigateToSecondView Triggered")
@@ -1542,28 +1576,19 @@ extension CameraController: ScoreControllerDelegate {
         }
     }
     // TODO: post, makePeersPost
-//    func postAction(core: TrialCore, detail: TrialDetail) {
-    func postAction(postReqInfo: PostReqInfo) {
-        
+
+    func postAction(ftpInfo: FTPInfo) {
     
-        
         guard let validVideoUrl = videoUrl else { return }
         
         print("-----------CameraController trialCore Details -----------")
-       
         
-//        let optionalScore = detail.score.scoreToInt()
-//        let optionalPain = detail.isPainful.painToBool()
-//
-//        guard let cameraDirection = cameraDirection else { return }
-//
-//        let title = postReqInfo.title
-//        let direction = postReqInfo.direction
-//        let score = postReqInfo.score
+//        self.post(postReqInfo: ftpInfo)
         
-        self.post(postReqInfo: postReqInfo)
+//        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(postReqInfo: ftpInfo)))
         
-        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(postReqInfo: postReqInfo)))
+        
+        
         
     }
     
@@ -1571,9 +1596,7 @@ extension CameraController: ScoreControllerDelegate {
         
     }
     
-    private func post(postReqInfo: PostReqInfo) {
-        
-    }
+
     
     private func makeCall(title: String, direction: String, score: Int, pain: Int, trialCount: Int, videoURL: URL, cameraDirection: String, screenKey: UUID ) {
         
@@ -1596,3 +1619,5 @@ extension CameraController: ScoreControllerDelegate {
 //        hidePreview2()
     }
 }
+
+

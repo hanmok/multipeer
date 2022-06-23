@@ -24,20 +24,35 @@ class APIManager {
 //    }
     
     func postRequest(
-        movementTitle: String,
+        subjectName: String,
+        screenId: UUID,
+        title: String,
         direction: String,
         score: Int,
-        pain: Int, trialCount: Int,
+        pain: Int,
+        
+        trialNo: Int,
+        currentDate: Date,
+        
         videoURL: URL,
         cameraDirection: String,
-        screenKey: UUID,
         closure: @escaping () -> Void ) {
         
         print("---------------- post request!! ----------------")
         
-        print("title: \(movementTitle), direction: \(direction), scroe: \(score), pain: \(pain), trialCount: \(trialCount), cameraDirection: \(cameraDirection), screenKey: \(screenKey) ")
+        print("title: \(title), direction: \(direction), scroe: \(score), pain: \(pain), trialCount: \(trialNo), cameraDirection: \(cameraDirection), screenKey: \(screenId) ")
         print("videoURL: \(videoURL)")
         print("---------------- post request ended!! ----------------\n\n\n")
     }
 }
 
+class FTPManager {
+    
+    static let shared = FTPManager()
+    
+    func postRequest(
+        videoURL: URL,
+        closure: @escaping () -> Void ) {
+        closure()
+    }
+}
