@@ -79,7 +79,7 @@ extension Subject {
 
 extension Subject {
     
-    static func save(name: String, phoneNumber: String, isMale: Bool, birthday: Date) {
+    static func save(name: String, phoneNumber: String, isMale: Bool, birthday: Date, kneeLength: Double, palmLength: Double) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -93,6 +93,8 @@ extension Subject {
         subject.setValue(phoneNumber, forKey: "phoneNumber_")
         subject.setValue(isMale, forKey: "isMale")
         subject.setValue(birthday, forKey: "birthday_")
+        subject.setValue(kneeLength, forKey: "kneeLength")
+        subject.setValue(palmLength, forKey: "palmLength")
         
         subject.provideInitialScreen()
         
