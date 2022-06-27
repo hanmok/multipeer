@@ -379,7 +379,7 @@ class ScoreController: UIViewController {
         let ftpInfoString = FtpInfoString(fileName: fileName)
         return ftpInfoString
     }
-//    YYYY.MM.DD_HH.MM.SS_검사자명_피험자명_1_ds1_01012341234_성별_탄생년도_무릅길이_손바닥길이_앵글
+//    YYYY.MM.DD_HH.MM.SS_검사자명_피험자명_1_ds1_01012341234_성별_탄생년도_무릎길이_손바닥길이_앵글
     @objc func saveTapped() {
         // if tapped Button is "Hold" then send it back to CameraController
         printFlag(type: .rsBug, count: 0)

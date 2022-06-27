@@ -11,15 +11,11 @@ import CoreData
 import SnapKit
 import Then
 
-protocol SubjectDetailDelegate: AnyObject {
-    func sendback(_ subject: Subject, with screen: Screen) // 없으면 새로 생성해야지 뭐 ..
-}
-
 
 class SubjectDetailController: UIViewController {
+        
+    // MARK: - Properties
     
-    
-    weak var detailDelegate: SubjectDetailDelegate?
     let subject: Subject
     
     var screens: [Screen] = [] {
@@ -36,6 +32,13 @@ class SubjectDetailController: UIViewController {
     
     let reuseId = "ScreenCellId"
     
+     // MARK: - UI Properties
+    
+    private let btnStackView = UIStackView().then {
+        $0.distribution = .fillEqually
+        $0.spacing = 10
+    }
+    
     private let screenCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -45,20 +48,6 @@ class SubjectDetailController: UIViewController {
     }()
     
     private let screenTableView = UITableView()
-    
-    
-    private func registerTableView() {
-        screenTableView.register(ScreenTableCell.self, forCellReuseIdentifier: ScreenTableCell.identifier)
-        screenTableView.delegate = self
-        screenTableView.dataSource = self
-        screenTableView.rowHeight = 60
-    }
-    
-    private func registerCollectionView(customCollectionView: UICollectionView) {
-        customCollectionView.register(ScreenCollectionCell.self, forCellWithReuseIdentifier: reuseId)
-        customCollectionView.delegate = self
-        customCollectionView.dataSource = self
-    }
     
     private let nameLabel = UILabel().then { $0.backgroundColor = .brown }
     
@@ -82,18 +71,12 @@ class SubjectDetailController: UIViewController {
     }
     
     private let makeBtn = UIButton().then {
-        //        $0.setTitle("Create", for: .normal)
-        //        $0.setTitleColor(.cyan, for: .normal)
-        //        $0.layer.borderColor = UIColor.blue.cgColor
-        //        $0.layer.borderWidth = 1
         
         let someImage = UIImageView(image: UIImage(systemName: "plus.circle.fill"))
         $0.addSubview(someImage)
         someImage.snp.makeConstraints { make in
             make.leading.top.trailing.bottom.equalToSuperview()
         }
-        
-        $0.addTarget(self, action: #selector(makeBtnTapped), for: .touchUpInside)
     }
     
     private let detailBtn = UIButton().then {
@@ -102,78 +85,13 @@ class SubjectDetailController: UIViewController {
         $0.layer.borderColor = UIColor.blue.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 5
-        $0.addTarget(self, action: #selector(detailBtnTapped), for: .touchUpInside)
     }
     
-    //    private let deleteBtn = UIButton().then {
-    //        $0.setTitle("Delete", for: .normal)
-    //        $0.setTitleColor(.red, for: .normal)
-    //        $0.layer.borderColor = UIColor.red.cgColor
-    //        $0.layer.borderWidth = 1
-    //        $0.addTarget(self, action: #selector(deleteBtnTapped), for: .touchUpInside)
-    //    }
-    
-    @objc func makeBtnTapped(_ sender: UIButton) {
-        print("makeBtnTapped!")
-        Screen.save(belongTo: subject)
-        selectedIndex = IndexPath(row: -1, section: 0)
+    private func setupAddTargets() {
+        detailBtn.addTarget(self, action: #selector(detailBtnTapped(_:)), for: .touchUpInside)
         
-        
-        fetchAndReloadScreens()
+        makeBtn.addTarget(self, action: #selector(makeBtnTapped(_:)), for: .touchUpInside)
     }
-    
-    
-    @objc func continueBtnTapped(_ sender: UIButton) {
-        print("continueBtnTapped!")
-        print("numofScreens: \(subject.screens.count)")
-        
-        if selectedScreen == nil {
-            selectedScreen = screens.sorted { $0.date < $1.date}.last
-        }
-        
-        guard let selectedScreen = selectedScreen else {
-            fatalError("selected screen is nil", file: #function)
-        }
-        selectedIndex = IndexPath(row: -1, section: 0)
-        
-        
-        
-        
-        detailDelegate?.sendback(subject, with: selectedScreen)
-        
-        self.navigationController?.popViewController(animated: true)
-        
-    }
-    
-    @objc func detailBtnTapped(_ sender: UIButton) {
-        print("detail Tapped!")
-        guard let selectedScreen = selectedScreen else {
-            return
-        }
-        selectedIndex = IndexPath(row: -1, section: 0)
-        
-        
-        let trialDetailController = TrialDetailController(screen: selectedScreen)
-        print("passing screen id: \(selectedScreen.id)")
-        self.navigationController?.pushViewController(trialDetailController, animated: true)
-    }
-    
-    //    @objc func deleteBtnTapped(_ sender: UIButton) {
-    //        print("deleteBtn Tapped!")
-    //        guard let selectedScreen = selectedScreen else {
-    //            print("none is selected")
-    //            return
-    //        }
-    //
-    ////        Screen.delete(selectedScreen)
-    //        Screen.deleteSelf(selectedScreen)
-    //        selectedIndex = IndexPath(row: -1, section: 0)
-    //        print("deleted !")
-    //        fetchAndReloadScreens()
-    //        print("fetched!")
-    //    }
-    
-    
     
     init(subject: Subject, frame: CGRect = .zero) {
         self.subject = subject
@@ -222,45 +140,89 @@ class SubjectDetailController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .black
         fetchAndReloadScreens()
         registerCollectionView(customCollectionView: screenCollectionView)
         registerTableView()
         screenCollectionView.reloadData()
         setupLayout()
         configureLayout()
-        
+            setupAddTargets()
     }
     
-    private let btnStackView = UIStackView().then {
-        $0.distribution = .fillEqually
-        $0.spacing = 10
+    private func registerTableView() {
+        screenTableView.register(ScreenTableCell.self, forCellReuseIdentifier: ScreenTableCell.identifier)
+        screenTableView.delegate = self
+        screenTableView.dataSource = self
+        screenTableView.rowHeight = 60
     }
+    
+    private func registerCollectionView(customCollectionView: UICollectionView) {
+        customCollectionView.register(ScreenCollectionCell.self, forCellWithReuseIdentifier: reuseId)
+        customCollectionView.delegate = self
+        customCollectionView.dataSource = self
+    }
+    
+    
+    @objc func makeBtnTapped(_ sender: UIButton) {
+        print("makeBtnTapped!")
+        Screen.save(belongTo: subject)
+        selectedIndex = IndexPath(row: -1, section: 0)
+        
+        fetchAndReloadScreens()
+    }
+    
+    
+    @objc func continueBtnTapped(_ sender: UIButton) {
+        print("continueBtnTapped!")
+        print("numofScreens: \(subject.screens.count)")
+        
+        if selectedScreen == nil {
+            selectedScreen = screens.sorted { $0.date < $1.date}.last
+        }
+        
+        guard let selectedScreen = selectedScreen else {
+            fatalError("selected screen is nil", file: #function)
+        }
+        selectedIndex = IndexPath(row: -1, section: 0)
+        
+        print("navigation 0")
+        DispatchQueue.main.async {
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+        let screenInfo: [AnyHashable: Any] = [
+            "screen": selectedScreen
+        ]
+        
+        NotificationCenter.default.post(name: .screenSettingKey, object: nil, userInfo: screenInfo)
+    }
+    
+    @objc func detailBtnTapped(_ sender: UIButton) {
+        print("detail Tapped!")
+        guard let selectedScreen = selectedScreen else {
+            return
+        }
+        selectedIndex = IndexPath(row: -1, section: 0)
+        
+        
+        let trialDetailController = TrialDetailController(screen: selectedScreen)
+        print("passing screen id: \(selectedScreen.id)")
+        self.navigationController?.pushViewController(trialDetailController, animated: true)
+    }
+
     
     private func setupLayout() {
         
-        //        let btnStackView = UIStackView(arrangedSubviews: [makeBtn, continueBtn, detailBtn, deleteBtn]).then {
-        //        }
-        //        btnstackview
-        
-        //        btnStackView.arrangedSubviews = [makeBtn, continueBtn, detailBtn, deleteBtn]
-        //        [makeBtn, ]
-        
-        [
-            //            makeBtn,
-            continueBtn, detailBtn
-            //         , deleteBtn
-        ].forEach {
+        [continueBtn, detailBtn].forEach {
             btnStackView.addArrangedSubview($0)
         }
         
         [imageView, nameLabel, detailInfoLabel, phoneLabel,
-         //         makeBtn, continueBtn, detailBtn, deleteBtn,
          btnStackView,
-         //         screenCollectionView
          screenTableView,
          makeBtn
-        ].forEach { self.view.addSubview($0)
-        }
+        ].forEach { self.view.addSubview($0) }
         
         
         imageView.snp.makeConstraints { make in
@@ -290,14 +252,6 @@ class SubjectDetailController: UIViewController {
             make.height.equalTo(20)
         }
         
-        
-        
-        //        continueBtn.snp.makeConstraints { make in
-        //            make.centerX.equalToSuperview()
-        //            make.bottom.equalTo(view.snp.bottom).offset(-60)
-        //            make.width.equalTo(200)
-        //            make.height.equalTo(50)
-        //        }
         btnStackView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalTo(view.snp.bottom).offset(-60)
@@ -310,13 +264,6 @@ class SubjectDetailController: UIViewController {
             make.trailing.equalToSuperview().offset(-20)
             make.bottom.equalTo(continueBtn.snp.top).offset(-20)
         }
-        
-        //        screenCollectionView.snp.makeConstraints { make in
-        //            make.leading.equalToSuperview().offset(20)
-        //            make.top.equalTo(imageView.snp.bottom).offset(30)
-        //            make.trailing.equalToSuperview().offset(-20)
-        //            make.bottom.equalTo(continueBtn.snp.top).offset(-20)
-        //        }
         
         makeBtn.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(20)
@@ -348,10 +295,8 @@ extension SubjectDetailController: UICollectionViewDelegateFlowLayout, UICollect
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! ScreenCollectionCell
-        //        cell.delegate = self
         
         cell.viewModel = ScreenViewModel(screen: screens[indexPath.row], index: indexPath.row)
-        //        cell.tag = indexPath.row
         
         if selectedIndex == indexPath { cell.backgroundColor = .red } else { cell.backgroundColor = .clear }
         
@@ -393,8 +338,9 @@ extension SubjectDetailController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: ScreenTableCell.identifier, for: indexPath) as! ScreenTableCell
         
         cell.viewModel = ScreenViewModel(screen: screens[indexPath.row], index: indexPath.row)
-        // set selected Color green
-        if selectedIndex == indexPath { cell.backgroundColor = .green } else { cell.backgroundColor = .clear }
+        
+//        if selectedIndex == indexPath { cell.backgroundColor = .green } else { cell.backgroundColor = .clear }
+        if selectedIndex == indexPath { cell.backgroundColor = .green } else { cell.backgroundColor = .white }
         
         return cell
     }
@@ -412,16 +358,13 @@ extension SubjectDetailController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .normal, title: "") { action, view, completionhandler in
             
-            
-            
-            //            tableView.deleteRows(at: [indexPath], with: .fade)
             let screenToDelete = self.screens[indexPath.row]
-            //            Screen.deleteSelf(self.screens[indexPath.row])
+            
             Screen.deleteSelf(screenToDelete)
-            //            self.screens.remove(at: indexPath.row)
+            
             self.subject.screens.remove(screenToDelete)
             self.fetchAndReloadScreens()
-            //            tableView.reloadData()
+
             completionhandler(true)
         }
         
@@ -432,6 +375,4 @@ extension SubjectDetailController: UITableViewDataSource, UITableViewDelegate {
         let rightSwipe = UISwipeActionsConfiguration(actions: [delete])
         return rightSwipe
     }
-    
-    
 }

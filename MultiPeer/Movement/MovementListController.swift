@@ -13,6 +13,7 @@ import CoreData
 import MobileCoreServices
 import AVFoundation
 
+
 class MovementListController: UIViewController {
     
     // MARK: - Properties
@@ -30,10 +31,8 @@ class MovementListController: UIViewController {
     
     var selectedTrialCore: TrialCore?
     
-//    var connectedAmount: Int = 0
     // TODO: change to false after some updates..
     // TODO: false -> 정상 작동 ;;
-    //    var testMode = false
     
     var testMode = false
 //    var testMode = true
@@ -42,16 +41,24 @@ class MovementListController: UIViewController {
     /// 화면에 나타날 trialCores
     var trialCoresToShow: [[TrialCore]] = [[]]
     
-    //    var selectedTrialCore: TrialCore?
-    
     var rank: Rank?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         print("viewWillAppear triggered")
+        // TODO: update !
+
     }
     
     // MARK: - UI Properties
+    
+    private let inspectorLabel = UILabel().then {
+        $0.textColor = .black
+    }
+    
+    private let subjectLabel = UILabel().then {
+        $0.textColor = .black
+    }
     
     private let sessionBtn = UIButton().then {
         let attributedTitle = NSMutableAttributedString(string: "Connect", attributes: [.font: UIFont.systemFont(ofSize: 20)])
@@ -77,24 +84,6 @@ class MovementListController: UIViewController {
         return collectionView
     }()
     
-//    private let completeBtn = UIButton().then {
-////        $0.setTitle("Complete Screen", for: .normal)
-////        $0.setattribteds
-//        let paragraph = NSMutableParagraphStyle()
-//        paragraph.alignment = .center
-//
-//        let attrText = NSMutableAttributedString(string: "Upload Completed\n", attributes: [
-//            .font: UIFont.systemFont(ofSize: 24, weight: .bold),
-////            .foregroundColor: UIColor.gray900,
-//            .foregroundColor: UIColor.white,
-//            .paragraphStyle: paragraph]
-//
-//        $0.attributedTitle = attrText
-//        $0.setTitleColor(.gray400, for: .normal)
-//        $0.backgroundColor = .lavenderGray100
-//        $0.layer.cornerRadius = 8
-//    }
-                                                 
         private let completeBtn: UIButton = {
             let btn = UIButton()
             
@@ -102,12 +91,11 @@ class MovementListController: UIViewController {
             paragraph.alignment = .center
             
             let attrText = NSMutableAttributedString(string: "Complete Screen\n", attributes: [
-//                .font: UIFont.systemFont(ofSize: 24, weight: .bold),
                 .font: UIFont.systemFont(ofSize: 17),
                 .foregroundColor: UIColor.white,
-                .paragraphStyle: paragraph])
+                .paragraphStyle: paragraph
+            ])
             
-//            btn.attributedTitle = attrText
             btn.setAttributedTitle(attrText, for: .normal)
             btn.setTitleColor(.gray400, for: .normal)
             btn.backgroundColor = .lavenderGray100
@@ -139,33 +127,26 @@ class MovementListController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         print("viewDidDisappear Triggered ")
     }
+//    viewwillappear
+    
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.insetsLayoutMarginsFromSafeArea = false
         print("viewDidLoad in MovementListController called")
-        // FIXME: updatingTrialCore 버그 출현 지역 ;; 왜 ... 버그가.. 발생할까.. ?
-        //        printFlag(type: .updatingTrialCore, count: 0)
-        //        printFlag(type: .updatingTrialCore, count: 1)
-        //        printFlag(type: .printingSequence, count: 0)
-        registerCollectionView()
-        //        printFlag(type: .printingSequence, count: 1)
-        connectionManager.delegate = self
-        //        printFlag(type: .printingSequence, count: 2)
-        // 여기에서 에러
-        fetchDefaultScreen()
         
-        printFlag(type: .printingSequence, count: 3)
+        registerCollectionView()
+        connectionManager.delegate = self
+
+        // 여기에서 에러
+        fetchDefaultScreen() // 이거... Peer 한테 필요한거야? 아마도 ?
+        
         updateTrialCores(screen: screen)
-        printFlag(type: .printingSequence, count: 4)
         setupLayout()
-        printFlag(type: .printingSequence, count: 5)
         setupAddTargets()
-        printFlag(type: .printingSequence, count: 6)
         addNotificationObservers()
-        printFlag(type: .printingSequence, count: 7)
-        printCurrentState()
+
     }
     
     deinit {
@@ -256,6 +237,7 @@ class MovementListController: UIViewController {
     
     @objc func subjectBtnTapped(_ sender: UIButton) {
         moveToSubjectController()
+        
     }
     
     @objc func completeBtnTapped(_ sender: UIButton) {
@@ -276,11 +258,35 @@ class MovementListController: UIViewController {
             self,
             selector: #selector(presentCameraNoti(_:)),
             name: .presentCameraKey, object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(setScreen(_:)),
+            name: .screenSettingKey, object: nil)
+    }
+    
+    @objc func setScreen(_ notification: Notification) {
+        
+        guard let receivedScreen = notification.userInfo?["screen"] as? Screen else { fatalError() }
+        
+        screen = receivedScreen
+
+        self.updatePeopleInfo(with: screen!)
+        self.updateTrialCores(screen: screen)
+        
+        dismiss(animated: true)
+    }
+    
+    private func updatePeopleInfo(with screen: Screen) {
+        guard let subject = screen.parentSubject,
+              let inspector = subject.inspector else { fatalError() }
+        
+        inspectorLabel.text = inspector.name
+        subjectLabel.text = subject.name
     }
     
     // 여기서 Crash 발생. Why ??
     @objc func presentCameraNoti(_ notification: Notification) {
-        print("presentCamera triggered by observing notification")
         
         if !isCameraOn {
             printFlag(type: .defaultSubjectScreen, count: 0)
@@ -309,15 +315,13 @@ class MovementListController: UIViewController {
     
     // MARK: - Helper Functions
     
-    
-    
     private func updateScoreLabels() {
         // TODO: Update if score has changed using MovementCollectionCell
         print("updateScoreLabels Called ")
         updateTrialCores(screen: screen)
     }
     
-    
+
 
     private func updateTrialCores(screen: Screen? = nil) {
         print("screen is nil? \(screen == nil)")
@@ -338,16 +342,6 @@ class MovementListController: UIViewController {
                 return $0.direction.count < $1.direction.count
             }
         }
-        
-        
-        // FIXME: unwrapping fatal error
-        printFlag(type: .updatingTrialCore, count: 0)
-        print("sortedCores: \(sortedCores)")
-        print("screen 을 가져온게 맞아..? ") // 아마.. 맞는데 비어있는 느낌 ??
-        // screen 이 비었어.
-        //        guard let screen = screen else {
-        //            fatalError("screen empty")
-        //        }
         
         var prev = sortedCores.first!
         
@@ -374,39 +368,26 @@ class MovementListController: UIViewController {
         }
         
         trialCoresToShow.removeFirst()
-        printCurrentState()
         
         DispatchQueue.main.async {
             self.movementCollectionView.reloadData()
         }
     }
     
-    private func printCurrentState() {
-        print("Current State: \n\n")
-        for eachCores in trialCores {
-            for eachCore in eachCores {
-                print("\(eachCore.title) , \(eachCore.direction), \(eachCore.latestScore)")
-            }
-        }
-        print("End of Printing Current State")
-    }
-    
-    
     // MARK: - UI, Navigation Functions
     
     @objc func moveToSubjectController() {
-        let subjectSettingVC = SubjectController()
-        subjectSettingVC.basicDelegate = self
+
         
-        self.navigationController?.pushViewController(subjectSettingVC, animated: true)
+        let inspectorVC = InspectorController()
+        
+        let uinavController = UINavigationController(rootViewController: inspectorVC)
+
+        self.present(uinavController, animated: true)
     }
     
-    // present camera look like NavigationView does.
-    // message 를 전혀 안보냄 ;;
     private func presentCamera(with selectedTrial: TrialCore) {
-//        self.selectedTrialCore = selectedTrial
         
-
         rank = .boss
         guard let rank = rank else { fatalError() }
         
@@ -414,16 +395,13 @@ class MovementListController: UIViewController {
             self.moveToSubjectController()
             return
         }
-//        guard let direction = MovementDirection(rawValue: selectedTrial.direction) else { return }
+        
         let direction: MovementDirection = MovementDirection(rawValue: selectedTrial.direction) ?? .neutral
         
         print("trialCore passed to cameracontroller : \(selectedTrial.title) \(selectedTrial.direction)")
-        // send rank as boss
-//        presentCameraAsChild(trialCore: selectedTrial, rank: rank)
+        
         presentCameraAsChild(trialCore: selectedTrial, rank: rank, title: selectedTrial.title, direction: direction)
-        
-        
-//        let direction: MovementDirection = MovementDirection(rawValue: selectedTrial.direction) ?? .neutral
+    
         
         connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: selectedTrial.title, direction: direction))))
     }
@@ -493,9 +471,7 @@ class MovementListController: UIViewController {
         view.addSubview(sessionBtn)
         sessionBtn.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
-//            make.top.equalTo(view.safeAreaLayoutGuide).offset(-15)
             make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
-//            make.top.equalToSuperview().offset(70)
             make.width.equalTo(100)
             make.height.equalTo(30)
         }
@@ -519,11 +495,26 @@ class MovementListController: UIViewController {
         view.addSubview(subjectSettingBtn)
         subjectSettingBtn.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(16)
-//            make.top.equalTo(view.safeAreaLayoutGuide).offset(-15)
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.height.width.equalTo(40)
         }
         
+        view.addSubview(inspectorLabel)
+        inspectorLabel.snp.makeConstraints { make in
+            make.leading.equalTo(subjectSettingBtn.snp.trailing).offset(5)
+            make.height.equalTo(16)
+            make.width.equalTo(150)
+            make.top.equalTo(subjectSettingBtn.snp.top)
+        }
+        
+        
+        view.addSubview(subjectLabel)
+        subjectLabel.snp.makeConstraints { make in
+            make.leading.equalTo(subjectSettingBtn.snp.trailing).offset(5)
+            make.width.equalTo(150)
+            make.height.equalTo(14)
+            make.bottom.equalTo(subjectSettingBtn.snp.bottom)
+        }
         
         
         self.view.addSubview(movementCollectionView)
@@ -559,11 +550,11 @@ class MovementListController: UIViewController {
         view.backgroundColor = .lavenderGray50
     }
     
-    //    private func updateConnectionState(connectedAmount: Int) {
     private func updateConnectionState() {
         
         DispatchQueue.main.async {
             switch self.connectionManager.numOfPeers {
+                
             case 1:
                 DispatchQueue.main.async {
                     self.leftConnectionStateView.backgroundColor = .red
@@ -604,11 +595,11 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         print("cell index: \(indexPath.row)")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovementCell.cellId, for: indexPath) as! MovementCell
-        //        print("")
+
         cell.delegate = self
-        //        print("num of trialsToShow: \(trialCoresToShow[indexPath.row].count)")
+
         cell.viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
-        // RenderingBug: 여기서 문제가 있어보이지는 않는데 ...
+        
         print("cell : \(cell.viewModel?.title)")
         return cell
     }
@@ -620,26 +611,9 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
     }
 }
 
-// 점수 처리는 대체 어디서 되는거야 ?
-
-// MARK: - SubjectController Delegate
-extension MovementListController: SubjectControllerDelegate {
-    func updateCurrentScreen(from subject: Subject, with screen: Screen, closure: () -> Void) {
-        //        updateTrialCores(subject: subject, screen: screen)
-        printFlag(type: .updatingTrialCore, count: 3)
-        updateTrialCores(screen: screen)
-        // when currentSubject set, it calls setupSubjectInfo()
-        updateScoreLabels()
-        closure()
-    }
-}
-
 
 // MARK: - CameraController Delegate
 extension MovementListController: CameraControllerDelegate {
-    //    func dismissCamera() {
-    //        <#code#>
-    //    }
     
     func makeSound() {
         // FIXME: make sound 보류.
@@ -667,18 +641,11 @@ extension MovementListController: CameraControllerDelegate {
                 
                 self.updateScoreLabels()
                 
-//                self.updateConnectionState(connectedAmount: self.connectedAmount)
-//                self.updateConnectionState(connectedAmount: self.connectionManager.numOfPeers)
                 self.updateConnectionState()
 
             }
         }
-//        updateScoreLabels()
-////        updatestate
-//        updateConnectionState()
     }
-    
-
 }
 
 

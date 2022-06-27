@@ -31,10 +31,8 @@ class CropController {
     init(url: URL, vc: UIViewController) {
         self.player = AVPlayer(url: url)
         self.parentVC = vc
-//        testDuration
         let asset = AVURLAsset(url: url)
         testDuration = asset.duration.seconds
-        
     }
     
     func exportVideo(shouldSave: Bool = true, fileName: String = "default fileName", closure: @escaping (_ CroppedUrl: URL) -> Void ) {

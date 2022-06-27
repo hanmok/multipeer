@@ -24,7 +24,7 @@ protocol CameraControllerDelegate: AnyObject {
 class CameraController: UIViewController {
     
     // MARK: - Properties
-    let sampleInspector = Inspector(name: "hanmok", phoneNumber: "01090417421")
+//    let sampleInspector = Inspector(name: "hanmok", phoneNumber: "01090417421")
     
     private var videoUrl: URL?
     var shouldShowScoreView = true

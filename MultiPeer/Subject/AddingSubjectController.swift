@@ -19,8 +19,8 @@ class AddingSubjectController: UIViewController {
     
     // MARK: - Properties
     
-    weak var delegate: AddingSubjectDelegate?
-    
+    weak var delegate: AddingInspectorDelegate?
+    var inspector: Inspector
     var appDelegate: AppDelegate?
     var context: NSManagedObjectContext?
     
@@ -172,7 +172,15 @@ class AddingSubjectController: UIViewController {
         $0.isUserInteractionEnabled = false
     }
     
+    init(inspector: Inspector) {
+        self.inspector = inspector
+        super.init(nibName: nil, bundle: nil)
+    }
     
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     private func toggleCompleteBtnState() {
         // date not considered yet for simplicity
         if name != "" && phoneNumber.count == 11 && genderStackView.selectedBtnIndex != nil && kneeTF.text! != "" && palmTF.text! != "" {
@@ -209,7 +217,7 @@ class AddingSubjectController: UIViewController {
         let palmLength = Double(palmTF.text!)!
         
         //        Subject.save(name: name, phoneNumber: phoneNumber, isMale: genderStackView.selectedBtnIndex! == 0, birthday: birthday)
-        Subject.save(name: name, phoneNumber: phoneNumber, isMale: isMale, birthday: birthday, kneeLength: kneeLength, palmLength: palmLength)
+        Subject.save(name: name, phoneNumber: phoneNumber, isMale: isMale, birthday: birthday, kneeLength: kneeLength, palmLength: palmLength, inspector: inspector)
         
         delegate?.updateAfterAdded()
     }

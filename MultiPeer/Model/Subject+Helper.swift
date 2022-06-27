@@ -34,24 +34,6 @@ extension Subject {
             self.name_ = newValue
         }
     }
-
-//    public var palmLength: Double {
-//        get {
-//            return self.palmLength_
-//        }
-//        set {
-//            self.palmLength_ = newValue
-//        }
-//    }
-//
-//    public var kneeLength: Double {
-//        get {
-//            return self.kneeLength_
-//        }
-//        set {
-//            self.kneeLength_ = newValue
-//        }
-//    }
     
     public var birthday: Date {
         get {
@@ -73,17 +55,15 @@ extension Subject {
         get { screens_ as? Set<Screen> ?? []}
         set { screens_ = newValue as NSSet}
     }
-    
-    
 }
 
 extension Subject {
     
-    static func save(name: String, phoneNumber: String, isMale: Bool, birthday: Date, kneeLength: Double, palmLength: Double) {
+    static func save(name: String, phoneNumber: String, isMale: Bool, birthday: Date, kneeLength: Double, palmLength: Double, inspector: Inspector) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
-//        let entity = NSEntityDescription.entity(forEntityName: "Subject", in: managedContext)!
+
         guard let entity = NSEntityDescription.entity(forEntityName: "Subject", in: managedContext) else { fatalError("failed to get entity from subject ")}
         guard let subject = NSManagedObject(entity: entity, insertInto: managedContext) as? Subject else {
             fatalError("failed to case to Subject during saving ")
@@ -95,6 +75,7 @@ extension Subject {
         subject.setValue(birthday, forKey: "birthday_")
         subject.setValue(kneeLength, forKey: "kneeLength")
         subject.setValue(palmLength, forKey: "palmLength")
+        subject.setValue(inspector, forKey: "inspector")
         
         subject.provideInitialScreen()
         
