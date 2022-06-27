@@ -51,12 +51,6 @@ class MovementCell: UICollectionViewCell {
         imgBtnRight.addTarget(self, action: #selector(imgBtnTapped(_:))  , for: .touchUpInside)
     }
     
-//    private func changeColor(when condition: Bool, closure: () -> Void ) {
-//        if condition {
-//            closure()
-////            targetView.backgroundColor = UIColor.purple500
-//        }
-//    }
     
     @objc func imgBtnTapped(_ sender: ButtonWIthTrialCore) {
 

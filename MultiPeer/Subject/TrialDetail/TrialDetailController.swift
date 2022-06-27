@@ -70,7 +70,7 @@ class TrialDetailController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        view.backgroundColor = .black
         self.trialCores = screen.trialCores.sorted {
             if $0.tag != $1.tag {
                 return $0.tag < $1.tag
@@ -91,9 +91,6 @@ class TrialDetailController: UIViewController {
             make.bottom.equalToSuperview()
         }
     }
-    
-//    static public func < <A : Comparable, B : Comparable>(lhs: (A, B), rhs: (A, B)) -> Bool
-    
 }
 
 extension TrialDetailController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
@@ -138,8 +135,3 @@ extension TrialDetailController: UICollectionViewDelegateFlowLayout, UICollectio
         return CGSize(width: screenWidth, height: 60)
     }
 }
-
-
-
-
-

@@ -16,8 +16,9 @@ extension String {
         static let screen = "Screen"
         static let Subject = "Subject"
         static let trialDetail = "TrialDetail"
+        static let inspector = "Inspector"
     }
-
+    
     struct ScreenStr {
         static let id = "id_"
         static let date = "date_"
@@ -26,6 +27,12 @@ extension String {
         static let totalScore = "totalScore"
     }
 
+    struct InspectorStr {
+        static let id = "id_"
+        static let name = "name_"
+        static let phoneNumber = "phoneNumber_"
+    }
+    
     struct SubjectStr {
         static let birthday = "birthday_"
         static let lastUpdateDate = "lastUpdateDate"

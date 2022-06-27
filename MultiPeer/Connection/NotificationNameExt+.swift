@@ -22,4 +22,6 @@ extension Notification.Name {
     static let updatePeerCameraDirectionKey = Notification.Name(rawValue: "updatePeerCameraDirection")
     
     static let hidePreviewKey = Notification.Name(rawValue: "hidePreview")
+    
+    static let screenSettingKey = Notification.Name(rawValue: "popAll")
 }

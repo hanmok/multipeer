@@ -401,10 +401,10 @@ struct FTPInfo: Codable {
     """
 }
 
-struct Inspector: Codable {
-    let name: String
-    let phoneNumber: String
-}
+//struct Inspector: Codable {
+//    let name: String
+//    let phoneNumber: String
+//}
 
 /*
  

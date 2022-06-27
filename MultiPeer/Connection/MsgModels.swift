@@ -47,6 +47,8 @@ struct MsgWithTime: Codable {
 
 struct PeerCommunicationHelper {
     static let msgToKeyDic: [MessageType: Notification.Name] = [
+        .setScreenMsg: .screenSettingKey,
+        
         .startRecordingMsg: .startRecordingKey,
         .stopRecordingMsg: .stopRecordingKey,
         .hidePreviewMsg: .hidePreviewKey,
@@ -60,10 +62,12 @@ struct PeerCommunicationHelper {
 }
 
 
-
 // MARK: - Message
 
 public enum MessageType: String, Codable {
+    
+    case setScreenMsg
+    
     case hidePreviewMsg
     case startRecordingMsg
     case stopRecordingMsg
