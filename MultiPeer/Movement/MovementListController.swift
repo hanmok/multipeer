@@ -20,6 +20,8 @@ class MovementListController: UIViewController {
     
     var connectionManager = ConnectionManager()
     
+    private var isCameraVisible = false
+    private var isCameraPresented = false
     var screen: Screen?
     
     var cameraVC: CameraController?
@@ -133,6 +135,7 @@ class MovementListController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.insetsLayoutMarginsFromSafeArea = false
         print("viewDidLoad in MovementListController called")
         
@@ -411,18 +414,7 @@ class MovementListController: UIViewController {
 //        guard let screen = screen else { fatalError() }
         
         DispatchQueue.main.async {
-            var hasCameraAlready = false
-            
-            let children = self.children
-            print("list of children : \(children)")
-            for child2 in children {
-                if child2 is CameraController {
-                    hasCameraAlready = true
-                    break
-                }
-            }
-            
-            if hasCameraAlready == false {
+            if self.isCameraPresented == false {
                 if rank == .boss {
                     self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: self.screen, trialCore: trialCore!, positionTitle: title, direction: direction, rank: rank)
                 
@@ -441,11 +433,27 @@ class MovementListController: UIViewController {
                 UIView.animate(withDuration: 0.3) {
                     self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
                 }
+                self.isCameraPresented = true
             } else {
+
+                self.showUpCamera()
+
                 self.cameraVC?.hidePreview()
                 self.cameraVC?.resetTimer()
                 self.cameraVC?.invalidateTimer()
             }
+        }
+    }
+    
+    private func showUpCamera() {
+        print("showUpCamera!")
+        
+        guard let cameraVC = cameraVC else {
+            fatalError()
+        }
+
+        UIView.animate(withDuration: 0.3) {
+            cameraVC.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
         }
     }
     
@@ -620,6 +628,7 @@ extension MovementListController: CameraControllerDelegate {
     }
     
     func dismissCamera(closure: () -> Void) {
+        isCameraVisible = false
         guard let cameraVC = cameraVC else {
             print("cameraVC is nil!", #file, #function, #line)
             return }
@@ -629,15 +638,16 @@ extension MovementListController: CameraControllerDelegate {
         } completion: { done in
             
             // TODO: remove cameraController after animation
+            
             if done {
-                if self.children.count > 0 {
-                    let viewControllers: [UIViewController] = self.children
-                    for vc in viewControllers {
-                        vc.willMove(toParent: nil)
-                        vc.view.removeFromSuperview()
-                        vc.removeFromParent()
-                    }
-                }
+//                if self.children.count > 0 {
+//                    let viewControllers: [UIViewController] = self.children
+//                    for vc in viewControllers {
+//                        vc.willMove(toParent: nil)
+//                        vc.view.removeFromSuperview()
+//                        vc.removeFromParent()
+//                    }
+//                }
                 
                 self.updateScoreLabels()
                 
