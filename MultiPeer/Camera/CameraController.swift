@@ -595,7 +595,7 @@ class CameraController: UIViewController {
         self.dismiss(animated: true)
         // 왜 dismiss 가 안되지?
         delegate?.dismissCamera() {
-            self.dismiss(animated: true)
+//            self.dismiss(animated: true)
         }
     }
     
@@ -1436,7 +1436,6 @@ extension CameraController: ConnectionManagerDelegate {
         DispatchQueue.main.async {
             previewVC.view.isHidden = true
         }
-
     }
     
     private func makeFileNameThenPost(fileName: String) {
@@ -1553,6 +1552,7 @@ extension CameraController: ScoreControllerDelegate {
         
         self.shouldShowScoreView = false
     }
+    
     
     
     private func deleteVideo(with url: URL) {
