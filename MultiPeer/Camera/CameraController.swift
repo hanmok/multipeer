@@ -921,7 +921,7 @@ class CameraController: UIViewController {
         self.picker.cameraOverlayView = self.bottomView
         self.picker.showsCameraControls = false
         self.picker.videoQuality = .typeHigh // 1080 1920
-        
+        self.picker.cameraFlashMode = .off
         self.view.addSubview(self.picker.view)
         self.picker.view.snp.makeConstraints { make in
             make.leading.top.trailing.bottom.equalToSuperview()

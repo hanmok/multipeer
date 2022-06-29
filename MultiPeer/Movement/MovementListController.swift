@@ -640,6 +640,7 @@ extension MovementListController: CameraControllerDelegate {
             // TODO: remove cameraController after animation
             
             if done {
+                
 //                if self.children.count > 0 {
 //                    let viewControllers: [UIViewController] = self.children
 //                    for vc in viewControllers {
