@@ -370,12 +370,21 @@ class MovementListController: UIViewController {
             }
             prev = eachCore
         }
-        
+        print("--------- sortedCores: ---------")
+        for eachCore in sortedCores {
+            print("title: \(eachCore.title), direction: \(eachCore.direction)")
+        }
         self.trialCores.removeFirst()
         
         // initialize
         trialCoresToShow = [[]]
         
+        print("----------------- trialCores: -----------------")
+        for eachCoreArray in trialCores {
+            for eachCore in eachCoreArray {
+                print("title: \(eachCore.title), direction: \(eachCore.direction)")
+            }
+        }
         
         for (index, eachCore) in trialCores.enumerated() {
             // hanmok, 여기 잘못됨. 애초에, 받는 애가.. 잘못됐음.. ??
@@ -384,24 +393,34 @@ class MovementListController: UIViewController {
             
             // basic moves
             if MovementImgsDictionary[eachCore.first!.title] != nil {
-//                if let variationCoreName = movementWithVariation[eachCore.first!.title] {
-//                    let matchedVariationCore = trialCores[index + 1]
-//                    if !(eachCore.first!.date >= matchedVariationCore.first!.date) {
-//                        trialCoresToShow.append(matchedVariationCore)
-//                        continue
-//                    }
-//                }
                 
                 trialCoresToShow.append(eachCore)
+                if let variationCoreName = movementWithVariation[eachCore.first!.title] {
+                    
+                    let matchedVariationCore = trialCores[index + 1]
+                    if !(eachCore.first!.date >= matchedVariationCore.first!.date) {
+                        trialCoresToShow[trialCoresToShow.count - 1].append(matchedVariationCore.first!)
+                    }
+                }
             }
         }
+        
         
         trialCoresToShow.removeFirst()
         
         print("----------------- trialCoresToShow: -----------------")
-        for eachCore in trialCoresToShow {
-            print("title: \(eachCore.first?.title), direction: \(eachCore.first?.direction)")
+        for (index, eachCoreArray) in trialCoresToShow.enumerated() {
+            print("index: \(index)")
+            for eachCore in eachCoreArray {
+                print("title: \(eachCore.title), direction: \(eachCore.direction)")
+            }
+            
         }
+        
+//        print("----------------- trialCoresToShow: -----------------")
+//        for eachCore in trialCoresToShow {
+//            print("title: \(eachCore.first?.title), direction: \(eachCore.first?.direction)")
+//        }
         
         
 
@@ -428,17 +447,8 @@ class MovementListController: UIViewController {
         rank = .boss
         guard let rank = rank else { fatalError() }
         
-//        guard let screen = screen else {
-//            self.moveToSubjectController()
-//            return
-//        }
-        
-//        if screen == nil {
-//            self.moveToSubjectController()
-//            return
-//        }
-        
         // boss 는 반드시 default가 아닌 Screen 이 있어야 Camera 로 이동
+        
         guard screen?.parentSubject != nil else {
             self.moveToSubjectController()
             return
@@ -461,6 +471,7 @@ class MovementListController: UIViewController {
         
         DispatchQueue.main.async {
             if self.isCameraPresented == false {
+                
                 if rank == .boss {
                     print("screen from MovementListController: \(self.screen)")
                     self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: self.screen, trialCore: trialCore!, positionTitle: title, direction: direction, rank: rank)
@@ -484,7 +495,7 @@ class MovementListController: UIViewController {
             } else {
 
                 self.showUpCamera()
-
+                self.cameraVC?.updateTrialCore(with: trialCore!)
                 self.cameraVC?.hidePreview()
                 self.cameraVC?.resetTimer()
                 self.cameraVC?.invalidateTimer()

@@ -23,6 +23,7 @@ class MovementCell: UICollectionViewCell {
             assignTrialCore()
             addTargets()
             printReceivedData()
+//            print("viewModel.title: \(oldValue!.)")
         }
     }
     
@@ -32,13 +33,19 @@ class MovementCell: UICollectionViewCell {
         guard let viewModel = viewModel else {
             return
         }
-        let trialCores = viewModel.trialCores
+//        let trialCores = viewModel.trialCores
+        let trialCores = viewModel.filteredTrialCores
 
         if trialCores.count == 1 {
             imgBtnLeft.trialCore = trialCores.first!
         } else if trialCores.count == 2 {
             imgBtnLeft.trialCore = trialCores.first!
             imgBtnRight.trialCore = trialCores.last!
+        }
+        print("----- assigned trialCore to images: -----")
+//        print("trialCores: \(trialCores)")
+        for trialCore in trialCores {
+            print("title: \(trialCore.title), direction: \(trialCore.direction)")
         }
     }
     
@@ -47,16 +54,13 @@ class MovementCell: UICollectionViewCell {
             fatalError()
         }
         
-        imgBtnLeft.addTarget(self, action: #selector(imgBtnTapped(_:))  , for: .touchUpInside)
-        imgBtnRight.addTarget(self, action: #selector(imgBtnTapped(_:))  , for: .touchUpInside)
+        imgBtnLeft.addTarget(self, action: #selector(imgBtnTapped(_:)), for: .touchUpInside)
+        imgBtnRight.addTarget(self, action: #selector(imgBtnTapped(_:)), for: .touchUpInside)
     }
     
     
     @objc func imgBtnTapped(_ sender: ButtonWIthTrialCore) {
 
-        
-//        guard let vm = viewModel else { return }
-        
         print("triggerBtnTapped!")
         guard let sentTrialCore = sender.trialCore else {fatalError()}
         delegate?.cell(navToCameraWith: sentTrialCore)
@@ -307,10 +311,13 @@ class MovementCell: UICollectionViewCell {
     private func printReceivedData() {
         
         guard let viewModel = viewModel else { fatalError() } // 왜 이 점수가 아니지 ?
-        print("numOfTrialCore: \(viewModel.trialCores.count)") // 점수 안나옴 . 어디서 나오는거지.. ?
-        print("trial title: \(viewModel.trialCores.first!.title)")
+//        print("numOfTrialCore: \(viewModel.trialCores.count)") // 점수 안나옴 . 어디서 나오는거지.. ?
+        print("numOfTrialCore: \(viewModel.filteredTrialCores.count)") // 점수 안나옴 . 어디서 나오는거지.. ?
+//        print("trial title: \(viewModel.trialCores.first!.title)")
+        print("trial title: \(viewModel.filteredTrialCores.first!.title)")
         
-        for eachTrial in viewModel.trialCores {
+//        for eachTrial in viewModel.trialCores {
+        for eachTrial in viewModel.filteredTrialCores {
             print("directions: \(eachTrial.direction)")
             print("score: \(eachTrial.latestScore)")
         }

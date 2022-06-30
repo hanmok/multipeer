@@ -352,7 +352,7 @@ class CameraController: UIViewController {
         
         recordingBtn.addTarget(self, action: #selector(recordingBtnTapped(_:)), for: .touchUpInside)
         
-        homeBtn.addTarget(self, action: #selector(nextTapped(_:)), for: .touchUpInside)
+        homeBtn.addTarget(self, action: #selector(homeOrNextTapped(_:)), for: .touchUpInside)
         
         retryBtn.addTarget(self, action: #selector(retryTapped(_:)), for: .touchUpInside)
         
@@ -391,16 +391,18 @@ class CameraController: UIViewController {
         }
     }
     
-    @objc func nextTapped(_ sender: UIButton) {
+    @objc func homeOrNextTapped(_ sender: UIButton) {
         // if pressedBtn is "Hold", update self.trialCore with Variation
         
         if pressedBtnTitle != "Hold" {
+            
+                hideCompleteMsgView()
+            
             delegate?.dismissCamera() {
-                
                 self.dismiss(animated: true)
             }
             // CameraController Delegate
-        } else {
+        } else { // pressedBtnTitle == "Hold"
             // TODO: update Position for Variation
             
             variationName = movementWithVariation[positionTitle]
@@ -1522,6 +1524,13 @@ extension CameraController: ScoreControllerDelegate {
         hideCompleteMsgView()
         scoreVC!.changeSaveBtnColor()
 //        self.updateTrialDetail()
+    }
+    
+    public func updateTrialCore(with trialCore: TrialCore) {
+        self.trialCore = trialCore
+        self.positionTitle = trialCore.title
+        self.direction = MovementDirection(rawValue: trialCore.direction) ?? .neutral
+        updateNameLabel()
     }
     
     private func makeTrialDetail() {

@@ -14,17 +14,28 @@ struct MovementViewModel {
     public init(trialCores: [TrialCore]) {
         self.trialCores = trialCores
         print(trialCores.count)
-        self.title = trialCores.first!.title
+//        self.title = trialCores.first!.title
     }
     
-    var title: String
+    var title: String { return filteredTrialCores.first!.title }
 
     var trialCores: [TrialCore]
     
+    var filteredTrialCores: [TrialCore] {
+        let result = trialCores.filter { !$0.title.lowercased().contains("var") }
+
+        print("----------------- filteredTrialCoresToShow: -----------------")
+
+        for eachCore in result {
+            print("title: \(eachCore.title), direction: \(eachCore.direction)")
+        }
+        return result
+    }
     // indicator whether it has one or two directions. 이건 또 뭐야 ... ??
     
 //    var imageName: [String] { return MovementImgsDictionary[trialCores.first!.title]! }
-    var imageName: [String] { return MovementImgsDictionaryWithVars[trialCores.first!.title]! }
+//    var imageName: [String] { return MovementImgsDictionaryWithVars[trialCores.first!.title]! }
+    var imageName: [String] { return MovementImgsDictionaryWithVars[filteredTrialCores.first!.title]! }
     
     var shortTitleLabel: String { return Dummy.shortName[title]! + addClearingSuffix(to : title) }
     
@@ -45,7 +56,7 @@ struct MovementViewModel {
                 temp.append(String(trialCores.first!.latestScore))
             }
             // Has Left & Right
-        } else if trialCores.count == 2 {
+        } else if trialCores.count == 2 && !(trialCores.first?.direction.lowercased().contains("neutral"))!{
 
             if -52 ... -50 ~= trialCores.first!.latestScore {
                 temp.append(convertScoreToColor(score: trialCores.first!.latestScore))
@@ -57,7 +68,6 @@ struct MovementViewModel {
                 temp.append(String(trialCores.first!.latestScore))
             }
             
-
             if -52 ... -50 ~= trialCores.last!.latestScore {
                 temp.append(convertScoreToColor(score: trialCores.last!.latestScore))
             }
@@ -70,13 +80,28 @@ struct MovementViewModel {
             
             print("viewmodel title: \(title)")
             print("viewmodel temp: \(temp)")
+            
             return temp
+        } else if trialCores.count == 2 {
+            if trialCores.first!.date >= trialCores.last!.date {
+                if trialCores.first!.latestScore < 0 {
+                    temp.append("N")
+                } else {
+                    temp.append(String(trialCores.first!.latestScore))
+                }
+            } else {
+                if trialCores.last!.latestScore < 0 {
+                    temp.append("N")
+                } else {
+                    temp.append(String(trialCores.last!.latestScore))
+                }
+            }
         }
-        
         else {
             fatalError("numOfTrialCore: \(trialCores.count)")
         }
         
+        print("temp Score: \(temp)")
         return temp
     }
     
