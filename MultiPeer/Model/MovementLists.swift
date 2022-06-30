@@ -126,12 +126,14 @@ struct Dummy {
     
     static let shortName: [String: String] = [
         MovementList.deepSquat.rawValue: "DS",
+        MovementList.deepSquatVar.rawValue: "DS",
         MovementList.hurdleStep.rawValue: "HS",
         MovementList.inlineLunge.rawValue: "IL",
         MovementList.ankleClearing.rawValue: "AC",
         MovementList.shoulderMobility.rawValue: "SM",
         MovementList.activeStraightLegRaise.rawValue: "ASLR",
         MovementList.trunkStabilityPushUp.rawValue: "TSPU",
+        MovementList.trunkStabilityPushUpVar.rawValue: "TSPU",
         MovementList.rotaryStability.rawValue: "RS"
     ]
     
@@ -225,7 +227,21 @@ let  MovementImgsDictionary: [String: [String]] = [
     MovementList.activeStraightLegRaise.rawValue: ["activeStraightLegRaiseLeft", "activeStraightLegRaiseRight"],
     MovementList.trunkStabilityPushUp.rawValue: ["trunkStabilityPushup"],
     MovementList.rotaryStability.rawValue: ["rotaryStabilityLeft","rotaryStabilityRight"]
-                                     ]
+]
+
+let  MovementImgsDictionaryWithVars: [String: [String]] = [
+    MovementList.deepSquat.rawValue: ["deepSquat"],
+    MovementList.deepSquatVar.rawValue: ["deepSquat"],
+    MovementList.hurdleStep.rawValue: ["hurdleStepLeft", "hurdleStepRight"],
+    MovementList.inlineLunge.rawValue: ["inlineLungeLeft","inlineLungeRight"],
+    MovementList.ankleClearing.rawValue: ["ankleClearingLeft","ankleClearingRight"],
+    MovementList.shoulderMobility.rawValue: ["shoulderMobilityLeft", "shoulderMobilityRight"],
+    MovementList.activeStraightLegRaise.rawValue: ["activeStraightLegRaiseLeft", "activeStraightLegRaiseRight"],
+    MovementList.trunkStabilityPushUp.rawValue: ["trunkStabilityPushup"],
+    MovementList.trunkStabilityPushUpVar.rawValue: ["trunkStabilityPushup"],
+    MovementList.rotaryStability.rawValue: ["rotaryStabilityLeft","rotaryStabilityRight"]
+    
+]
 
 
 

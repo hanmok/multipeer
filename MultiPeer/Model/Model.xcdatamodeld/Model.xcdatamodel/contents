@@ -30,6 +30,7 @@
         <relationship name="screens_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Screen" inverseName="parentSubject" inverseEntity="Screen"/>
     </entity>
     <entity name="TrialCore" representedClassName="TrialCore" syncable="YES" codeGenerationType="class">
+        <attribute name="date_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="direction_" optional="YES" attributeType="String"/>
         <attribute name="finalResult_" optional="YES" attributeType="String"/>
         <attribute name="latestScore" optional="YES" attributeType="Integer 64" defaultValueString="-100" usesScalarValueType="YES"/>
@@ -40,6 +41,7 @@
         <relationship name="trialDetails_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrialDetail" inverseName="parentTrialCore_" inverseEntity="TrialDetail"/>
     </entity>
     <entity name="TrialDetail" representedClassName="TrialDetail" syncable="YES" codeGenerationType="class">
+        <attribute name="date_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="isPainful_" optional="YES" attributeType="Integer 64" defaultValueString="-200" usesScalarValueType="YES"/>
         <attribute name="score_" optional="YES" attributeType="Integer 64" defaultValueString="-100" usesScalarValueType="YES"/>
         <attribute name="trialNo" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -49,7 +51,7 @@
         <element name="Inspector" positionX="-189" positionY="288" width="128" height="14"/>
         <element name="Screen" positionX="-65.186279296875" positionY="261.2911987304688" width="128" height="134"/>
         <element name="Subject" positionX="-323.895751953125" positionY="235.299560546875" width="128" height="209"/>
-        <element name="TrialCore" positionX="-171" positionY="243" width="128" height="149"/>
-        <element name="TrialDetail" positionX="-271.5946044921875" positionY="134.26513671875" width="128" height="89"/>
+        <element name="TrialCore" positionX="-171" positionY="243" width="128" height="164"/>
+        <element name="TrialDetail" positionX="-271.5946044921875" positionY="134.26513671875" width="128" height="104"/>
     </elements>
 </model>

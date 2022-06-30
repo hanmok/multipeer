@@ -42,6 +42,20 @@ extension TrialCore {
 //        }
 //    }
     
+    public var date: Date {
+        get {
+            if self.date_ != nil {
+                return self.date_!
+            } else {
+                self.date_ = Date()
+                return self.date_!
+            }
+        }
+        set {
+            self.date_ = newValue
+        }
+    }
+    
     public var direction: String {
         get {
             return self.direction_ ?? "some"

@@ -85,6 +85,7 @@ class SubjectDetailController: UIViewController {
         $0.layer.borderColor = UIColor.blue.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 5
+        $0.isHidden = true
     }
     
     private func setupAddTargets() {

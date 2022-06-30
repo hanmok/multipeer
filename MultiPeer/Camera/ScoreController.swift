@@ -344,7 +344,7 @@ class ScoreController: UIViewController {
     
     private func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
                 
-        guard let subject = screen.parentSubject else {fatalError() } // parentSubject 가 없나?
+        guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
         
         let date = Date()
         let inspectorName = "someName"
@@ -463,15 +463,20 @@ class ScoreController: UIViewController {
         if movementWithPain.contains(title) && pain != nil {
             converted = pain! ? .Value.painFul : .Value.notPainful
         }
-        //TODO: AnkleClearing 의 경우에 대해 PAIN 값 정해주기 .
+        
+        // TODO: AnkleClearing 의 경우에 대해 PAIN 값 정해주기 .
         
         trialDetail.setValue(score, forKey: .TrialDetailStr.score)
         trialDetail.setValue(converted, forKey: .TrialDetailStr.isPainful)
+        trialDetail.setValue(Date(), forKey: .TrialDetailStr.date)
+        
+        trialDetail.parentTrialCore.setValue(Date(), forKey: .TrialCoreStr.date)
+        
         print("ffff title: \(title), score: \(score), pain: \(converted)")
         trialDetail.saveChanges()
     }
 
-    
+
     @discardableResult
     private func setupFTrialCoreIfNeeded() -> Bool {
 

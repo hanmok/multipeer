@@ -67,6 +67,8 @@
 		22A0343028572462005FDF0F /* DirectionBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0342F28572462005FDF0F /* DirectionBtnView.swift */; };
 		22A034322857246B005FDF0F /* DirectionBtnStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A034312857246B005FDF0F /* DirectionBtnStackView.swift */; };
 		22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACAF5428094ACF007277A7 /* DateExt+.swift */; };
+		22EE6528286D419100AFAC77 /* Debugging History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE6527286D419100AFAC77 /* Debugging History.swift */; };
+		22EE652A286D41A300AFAC77 /* Debugging History in Resources */ = {isa = PBXBuildFile; fileRef = 22EE6529286D41A300AFAC77 /* Debugging History */; };
 		22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* EditorService.swift */; };
 		22F65DFE283F75A100646FCD /* CropController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* CropController.swift */; };
 		22F65E672840C72500646FCD /* TrimmerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E662840C72500646FCD /* TrimmerController.swift */; };
@@ -151,6 +153,8 @@
 		22A0342F28572462005FDF0F /* DirectionBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionBtnView.swift; sourceTree = "<group>"; };
 		22A034312857246B005FDF0F /* DirectionBtnStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionBtnStackView.swift; sourceTree = "<group>"; };
 		22ACAF5428094ACF007277A7 /* DateExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateExt+.swift"; sourceTree = "<group>"; };
+		22EE6527286D419100AFAC77 /* Debugging History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Debugging History.swift"; sourceTree = "<group>"; };
+		22EE6529286D41A300AFAC77 /* Debugging History */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Debugging History"; sourceTree = "<group>"; };
 		22F65DF1283E2DFB00646FCD /* EditorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorService.swift; sourceTree = "<group>"; };
 		22F65DFD283F75A100646FCD /* CropController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropController.swift; sourceTree = "<group>"; };
 		22F65E662840C72500646FCD /* TrimmerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerController.swift; sourceTree = "<group>"; };
@@ -330,6 +334,8 @@
 				22315E40282E4CA30093079B /* MemoForCoreData */,
 				227E7C922833A5C800084BA2 /* CameraWithCoreData */,
 				226D87682834FE7B00E3F547 /* TODO */,
+				22EE6529286D41A300AFAC77 /* Debugging History */,
+				22EE6527286D419100AFAC77 /* Debugging History.swift */,
 				22244D1E28586AC900B3D03C /* toFix */,
 				22F65DFD283F75A100646FCD /* CropController.swift */,
 				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
@@ -466,6 +472,7 @@
 				227E7C932833A5C800084BA2 /* CameraWithCoreData in Resources */,
 				22244D322859C2EE00B3D03C /* loadingLottie.json in Resources */,
 				228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */,
+				22EE652A286D41A300AFAC77 /* Debugging History in Resources */,
 				22244D332859C2EE00B3D03C /* countDown.json in Resources */,
 				22315E41282E4CA40093079B /* MemoForCoreData in Resources */,
 				22244D292859C2CC00B3D03C /* Assets.xcassets in Resources */,
@@ -573,6 +580,7 @@
 				2280DCDB28334BEE0036632E /* TrialHeader.swift in Sources */,
 				22F65EB8284EDCA200646FCD /* SelectableButton.swift in Sources */,
 				22889EFD2820CA96002A9C4F /* PreviewController.swift in Sources */,
+				22EE6528286D419100AFAC77 /* Debugging History.swift in Sources */,
 				2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */,
 				22244D69286561E300B3D03C /* InspectorTableCell.swift in Sources */,
 				227DA6C22828F5C20097F8F1 /* APIManager.swift in Sources */,

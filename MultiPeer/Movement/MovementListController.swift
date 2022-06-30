@@ -37,10 +37,12 @@ class MovementListController: UIViewController {
     // TODO: false -> 정상 작동 ;;
     
     var testMode = false
-//    var testMode = true
-    
+
+    /// trialCoresToShow 만드는 재료
     var trialCores: [[TrialCore]] = [[]]
-    /// 화면에 나타날 trialCores
+    
+    /// [ [DeepSquat], [Hurdle Step Left, Hurdle Step Right], ... ]
+    /// MovementViewModel 에 사용
     var trialCoresToShow: [[TrialCore]] = [[]]
     
     var rank: Rank?
@@ -296,7 +298,7 @@ class MovementListController: UIViewController {
             
             //        guard let subject = subject else { fatalError("fail to get subject ")}
             
-            guard let screen = screen else { fatalError(" fail to get screen")}
+//            guard let screen = screen else { fatalError(" fail to get screen")}
             
             
             guard let title = notification.userInfo?["title"] as? String,
@@ -306,9 +308,9 @@ class MovementListController: UIViewController {
                 print("failed to converting userInfo back.")
                 return }
             
-            let trialCore = screen.trialCores.filter {
-                $0.title == title && $0.direction == direction.rawValue
-            }.first!
+//            let trialCore = screen.trialCores.filter {
+//                $0.title == title && $0.direction == direction.rawValue
+//            }.first!
             
             presentCameraAsChild(rank: .follower, title: title, direction: direction)
         } else {
@@ -331,14 +333,18 @@ class MovementListController: UIViewController {
         print("updateTrialCores Called ")
         self.trialCores = [[]] // initialize
         
-        if screen != nil { self.screen = screen! } else {
+        // screen 유효하면 self.screen 에 넣고 없으면 만들어서 넣기.
+        if screen != nil {
+            self.screen = screen!
+        } else {
             self.screen = Screen.save() // default Screen
         }
-        //        guard let screen = screen else { fatalError("empty screen")}
-        //        guard screen.trialCores.count != 0 else { fatalError("empty trialCore")}
-        // 여기서 터짐.
         
-        let sortedCores = self.screen!.trialCores.sorted {
+        guard let screen = self.screen else { fatalError() }
+
+//        let sortedCores = self.screen!.trialCores.sorted {
+        // 먼저 운동 순서대로, 같은 운동의 경우 좌우 순서로 넣기.
+        let sortedCores = screen.trialCores.sorted {
             if $0.tag != $1.tag {
                 return $0.tag < $1.tag
             } else {
@@ -346,8 +352,14 @@ class MovementListController: UIViewController {
             }
         }
         
+        print("---------- sorted Cores: ----------")
+        
+        // sortedCores: [Deep Squat, Deep Squat Var, Hurdle Step Left, Hurdle Step Right, ... ]
+        
+        // trialCores 에 잘 분류해서 넣기 위해 선언한 이전 sortedCore 값
         var prev = sortedCores.first!
         
+        // TODO: 이건 또 뭐야 ??
         self.trialCores.append([])
         
         for eachCore in sortedCores {
@@ -361,16 +373,38 @@ class MovementListController: UIViewController {
         
         self.trialCores.removeFirst()
         
-        // TODO: Filter ! using MovementImgsDictionary
+        // initialize
         trialCoresToShow = [[]]
         
-        for eachCore in trialCores {
+        
+        for (index, eachCore) in trialCores.enumerated() {
+            // hanmok, 여기 잘못됨. 애초에, 받는 애가.. 잘못됐음.. ??
+            // 음.. deep squat 의 경우, Deep Squat 과 Variation 을 비교해서,
+            // Variation 의 trialNo 가 Deep Squat 과 '같을 시' Variation 의 점수 반영해야함.
+            
+            // basic moves
             if MovementImgsDictionary[eachCore.first!.title] != nil {
+//                if let variationCoreName = movementWithVariation[eachCore.first!.title] {
+//                    let matchedVariationCore = trialCores[index + 1]
+//                    if !(eachCore.first!.date >= matchedVariationCore.first!.date) {
+//                        trialCoresToShow.append(matchedVariationCore)
+//                        continue
+//                    }
+//                }
+                
                 trialCoresToShow.append(eachCore)
             }
         }
         
         trialCoresToShow.removeFirst()
+        
+        print("----------------- trialCoresToShow: -----------------")
+        for eachCore in trialCoresToShow {
+            print("title: \(eachCore.first?.title), direction: \(eachCore.first?.direction)")
+        }
+        
+        
+
         
         DispatchQueue.main.async {
             self.movementCollectionView.reloadData()
@@ -394,10 +428,22 @@ class MovementListController: UIViewController {
         rank = .boss
         guard let rank = rank else { fatalError() }
         
-        guard let screen = screen else {
+//        guard let screen = screen else {
+//            self.moveToSubjectController()
+//            return
+//        }
+        
+//        if screen == nil {
+//            self.moveToSubjectController()
+//            return
+//        }
+        
+        // boss 는 반드시 default가 아닌 Screen 이 있어야 Camera 로 이동
+        guard screen?.parentSubject != nil else {
             self.moveToSubjectController()
             return
         }
+
         
         let direction: MovementDirection = MovementDirection(rawValue: selectedTrial.direction) ?? .neutral
         
@@ -405,7 +451,7 @@ class MovementListController: UIViewController {
         
         presentCameraAsChild(trialCore: selectedTrial, rank: rank, title: selectedTrial.title, direction: direction)
     
-        
+
         connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: selectedTrial.title, direction: direction))))
     }
     
@@ -416,6 +462,7 @@ class MovementListController: UIViewController {
         DispatchQueue.main.async {
             if self.isCameraPresented == false {
                 if rank == .boss {
+                    print("screen from MovementListController: \(self.screen)")
                     self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: self.screen, trialCore: trialCore!, positionTitle: title, direction: direction, rank: rank)
                 
                 } else {
@@ -605,7 +652,7 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovementCell.cellId, for: indexPath) as! MovementCell
 
         cell.delegate = self
-
+        
         cell.viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
         
         print("cell : \(cell.viewModel?.title)")

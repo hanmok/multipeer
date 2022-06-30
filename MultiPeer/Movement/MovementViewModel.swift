@@ -7,26 +7,29 @@
 
 import Foundation
 
+// Variation 의 경우, 나머지는 다 기본 동작과 같게 하고, 점수만 Variation 의 것을 사용할 것.
 
 struct MovementViewModel {
     
     public init(trialCores: [TrialCore]) {
-        self.trialCore = trialCores
+        self.trialCores = trialCores
         print(trialCores.count)
         self.title = trialCores.first!.title
     }
     
     var title: String
 
-    var trialCore: [TrialCore]
+    var trialCores: [TrialCore]
     
     // indicator whether it has one or two directions. 이건 또 뭐야 ... ??
     
-    var imageName: [String] { return MovementImgsDictionary[trialCore.first!.title]! }
+//    var imageName: [String] { return MovementImgsDictionary[trialCores.first!.title]! }
+    var imageName: [String] { return MovementImgsDictionaryWithVars[trialCores.first!.title]! }
     
-    var shortTitleLabel: String { return Dummy.shortName[title]! + addSuffix(title: title) }
+    var shortTitleLabel: String { return Dummy.shortName[title]! + addClearingSuffix(to : title) }
     
     // 여기서는 제대로 나옴..
+    /// [score] or [score, score]
     var scoreLabel: [String] { return convertScoreToString() }
     
     // TODO: convert score var into scoreLabel, Not Complete yet
@@ -35,34 +38,34 @@ struct MovementViewModel {
         var temp: [String] = []
         
         // Neutral
-        if trialCore.count == 1 {
-            if trialCore.first!.latestScore < 0 {
+        if trialCores.count == 1 {
+            if trialCores.first!.latestScore < 0 {
                 temp.append("N")
             } else {
-                temp.append(String(trialCore.first!.latestScore))
+                temp.append(String(trialCores.first!.latestScore))
             }
             // Has Left & Right
-        } else if trialCore.count == 2 {
+        } else if trialCores.count == 2 {
 
-            if -52 ... -50 ~= trialCore.first!.latestScore {
-                temp.append(convertScoreToColor(score: trialCore.first!.latestScore))
+            if -52 ... -50 ~= trialCores.first!.latestScore {
+                temp.append(convertScoreToColor(score: trialCores.first!.latestScore))
             }
             
-            else if trialCore.first!.latestScore < 0 {
+            else if trialCores.first!.latestScore < 0 {
                 temp.append("L")
             } else {
-                temp.append( String(trialCore.first!.latestScore))
+                temp.append(String(trialCores.first!.latestScore))
             }
             
 
-            if -52 ... -50 ~= trialCore.last!.latestScore {
-                temp.append(convertScoreToColor(score: trialCore.last!.latestScore))
+            if -52 ... -50 ~= trialCores.last!.latestScore {
+                temp.append(convertScoreToColor(score: trialCores.last!.latestScore))
             }
             
-            else if trialCore.last!.latestScore < 0 {
+            else if trialCores.last!.latestScore < 0 {
                 temp.append("R")
             } else {
-                temp.append(String(trialCore.last!.latestScore))
+                temp.append(String(trialCores.last!.latestScore))
             }
             
             print("viewmodel title: \(title)")
@@ -71,13 +74,13 @@ struct MovementViewModel {
         }
         
         else {
-            fatalError("numOfTrialCore: \(trialCore.count)")
+            fatalError("numOfTrialCore: \(trialCores.count)")
         }
         
         return temp
     }
     
-    func addSuffix(title: String) -> String {
+    func addClearingSuffix(to title: String) -> String {
         if MovementsHasPain[title] != nil {
             print("title that has clearing: \(title)")
             if title != MovementList.ankleClearing.rawValue {
@@ -86,7 +89,7 @@ struct MovementViewModel {
         }
         return ""
     }
-    
+    /// convert Score To Red, Yellow, Green for ankle Clearing
     private func convertScoreToColor(score: Int64) -> String {
         print("convertScoreToColor triggered!!")
         switch score {

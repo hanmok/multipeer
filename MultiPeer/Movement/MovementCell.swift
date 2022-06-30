@@ -32,7 +32,7 @@ class MovementCell: UICollectionViewCell {
         guard let viewModel = viewModel else {
             return
         }
-        let trialCores = viewModel.trialCore
+        let trialCores = viewModel.trialCores
 
         if trialCores.count == 1 {
             imgBtnLeft.trialCore = trialCores.first!
@@ -55,29 +55,7 @@ class MovementCell: UICollectionViewCell {
     @objc func imgBtnTapped(_ sender: ButtonWIthTrialCore) {
 
         
-        guard let vm = viewModel else { return }
-        
-        // TODO: Implement Blink Animation
-        //        sender.blink()
-        
-//        if vm.trialCore.count == 2 {
-//            UIView.animate(withDuration: 0.4) {
-//                self.scoreView1.backgroundColor = .white
-//                self.scoreView2.backgroundColor = .white
-//                self.nameLabel.textColor = .white
-//                self.backgroundColor = UIColor.lavenderGray900
-//            } completion: { done in
-//                if done {
-//                    UIView.animate(withDuration: 0.4) {
-//
-//                        self.nameLabel.textColor = .black
-//                        self.backgroundColor = UIColor.clear
-//                    }
-//                }
-//            }
-//        } else {
-//
-//        }
+//        guard let vm = viewModel else { return }
         
         print("triggerBtnTapped!")
         guard let sentTrialCore = sender.trialCore else {fatalError()}
@@ -93,7 +71,6 @@ class MovementCell: UICollectionViewCell {
         $0.isUserInteractionEnabled = true
         $0.backgroundColor = .white
     }
-    
 
     var imgBtnLeft = ButtonWIthTrialCore()
     var imgBtnRight = ButtonWIthTrialCore()
@@ -330,10 +307,10 @@ class MovementCell: UICollectionViewCell {
     private func printReceivedData() {
         
         guard let viewModel = viewModel else { fatalError() } // 왜 이 점수가 아니지 ?
-        print("numOfTrialCore: \(viewModel.trialCore.count)") // 점수 안나옴 . 어디서 나오는거지.. ?
-        print("trial title: \(viewModel.trialCore.first!.title)")
+        print("numOfTrialCore: \(viewModel.trialCores.count)") // 점수 안나옴 . 어디서 나오는거지.. ?
+        print("trial title: \(viewModel.trialCores.first!.title)")
         
-        for eachTrial in viewModel.trialCore {
+        for eachTrial in viewModel.trialCores {
             print("directions: \(eachTrial.direction)")
             print("score: \(eachTrial.latestScore)")
         }

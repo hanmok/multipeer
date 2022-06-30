@@ -145,6 +145,8 @@ class CameraController: UIViewController {
         }
         
         setupInitialDirectionBtn()
+        
+        print("screen from CameraController: \(screen)")
     }
     
     private func setupInitialDirectionBtn() {

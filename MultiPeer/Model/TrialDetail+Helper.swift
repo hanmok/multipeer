@@ -32,6 +32,7 @@ extension TrialDetail {
 //        trialDetail.setValue(1, forKey: .TrialDetailStr.score)
         trialDetail.parentTrialCore = trialCore
         trialDetail.setValue(trialNo, forKey: .TrialDetailStr.trialNo)
+//        trialDetail.setValue(Date(), forKey: .TrialDetailStr.date)
         do {
             try managedContext.save()
             print("successfully saved trial : \(trialDetail)")
@@ -78,6 +79,20 @@ extension TrialDetail {
         let managedContext = appDelegate.persistentContainer.viewContext
 
         managedContext.saveCoreData()
+    }
+    
+    public var date: Date {
+        get {
+            if self.date_ != nil {
+                return self.date_!
+            } else {
+                self.date_ = Date()
+                return self.date_!
+            }
+        }
+        set {
+            self.date_ = newValue
+        }
     }
     
 }
