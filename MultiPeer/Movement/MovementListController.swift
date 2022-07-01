@@ -33,11 +33,13 @@ class MovementListController: UIViewController {
     
     var selectedTrialCore: TrialCore?
     
+    var completeConditionViewModels: [MovementViewModel] = []
+    
     // TODO: change to false after some updates..
     // TODO: false -> 정상 작동 ;;
     
     var testMode = false
-
+    
     /// trialCoresToShow 만드는 재료
     var trialCores: [[TrialCore]] = [[]]
     
@@ -51,8 +53,48 @@ class MovementListController: UIViewController {
         super.viewWillAppear(true)
         print("viewWillAppear triggered")
         // TODO: update !
-
+        
     }
+    
+    private func initializeViewModels() {
+        completeConditionViewModels = []
+    }
+    private func checkConditionForViewModels() {
+        var isCompleted = true
+        
+        for eachViewModel in completeConditionViewModels {
+            print("eachViewModel's title: \(eachViewModel.title)")
+            eachViewModel.scoreLabel.forEach {
+                if $0.contains("N") || $0.contains("L") || $0.contains("R") {
+                    print("scoreLabel: \($0)")
+                    isCompleted = false
+                }
+            }
+            
+            if isCompleted == false { break }
+        }
+        
+        if isCompleted {
+         
+            applyStyle(to: completeBtn, selectable: true)
+            applyStyle(to: finishBtn, selectable: false)
+        }
+    }
+    
+    private func applyStyle(to btn: UIButton, selectable: Bool) {
+        DispatchQueue.main.async {
+            if selectable {
+                btn.setTitleColor(.white, for: .normal)
+                btn.backgroundColor = .red500
+                btn.isUserInteractionEnabled = true
+            } else {
+                btn.setTitleColor(.gray400, for: .normal)
+                btn.backgroundColor = .lavenderGray100
+                btn.isUserInteractionEnabled = false
+            }
+        }
+    }
+    
     
     // MARK: - UI Properties
     
@@ -88,24 +130,24 @@ class MovementListController: UIViewController {
         return collectionView
     }()
     
-        private let completeBtn: UIButton = {
-            let btn = UIButton()
-            
-            let paragraph = NSMutableParagraphStyle()
-            paragraph.alignment = .center
-            
-            let attrText = NSMutableAttributedString(string: "Complete Screen\n", attributes: [
-                .font: UIFont.systemFont(ofSize: 17),
-                .foregroundColor: UIColor.white,
-                .paragraphStyle: paragraph
-            ])
-            
-            btn.setAttributedTitle(attrText, for: .normal)
-            btn.setTitleColor(.gray400, for: .normal)
-            btn.backgroundColor = .lavenderGray100
-            btn.layer.cornerRadius = 8
-            return btn
-        }()
+    private let completeBtn: UIButton = {
+        let btn = UIButton()
+        
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        
+        let attrText = NSMutableAttributedString(string: "Complete Screen\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 17),
+            .foregroundColor: UIColor.white,
+            .paragraphStyle: paragraph
+        ])
+        
+        btn.setAttributedTitle(attrText, for: .normal)
+        btn.setTitleColor(.gray400, for: .normal)
+        btn.backgroundColor = .lavenderGray100
+        btn.layer.cornerRadius = 8
+        return btn
+    }()
     
     private let finishBtn = UIButton().then {
         $0.setTitle("Finish Later", for: .normal)
@@ -131,7 +173,7 @@ class MovementListController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         print("viewDidDisappear Triggered ")
     }
-//    viewwillappear
+    //    viewwillappear
     
     // MARK: - LifeCycle
     
@@ -143,7 +185,7 @@ class MovementListController: UIViewController {
         
         registerCollectionView()
         connectionManager.delegate = self
-
+        
         // 여기에서 에러
         fetchDefaultScreen() // 이거... Peer 한테 필요한거야? 아마도 ?
         
@@ -151,7 +193,7 @@ class MovementListController: UIViewController {
         setupLayout()
         setupAddTargets()
         addNotificationObservers()
-
+        
     }
     
     deinit {
@@ -159,7 +201,7 @@ class MovementListController: UIViewController {
     }
     
     // call if no screen assigned
-
+    
     func fetchDefaultScreen() {
         print("fetchDefaultScreen called")
         // false -> error !
@@ -181,7 +223,7 @@ class MovementListController: UIViewController {
                 
                 guard let subject = subject else {
                     // no subject
-
+                    
                     fatalError(" empty subject ")
                 }
                 
@@ -275,7 +317,7 @@ class MovementListController: UIViewController {
         guard let receivedScreen = notification.userInfo?["screen"] as? Screen else { fatalError() }
         
         screen = receivedScreen
-
+        
         self.updatePeopleInfo(with: screen!)
         self.updateTrialCores(screen: screen)
         
@@ -298,7 +340,7 @@ class MovementListController: UIViewController {
             
             //        guard let subject = subject else { fatalError("fail to get subject ")}
             
-//            guard let screen = screen else { fatalError(" fail to get screen")}
+            //            guard let screen = screen else { fatalError(" fail to get screen")}
             
             
             guard let title = notification.userInfo?["title"] as? String,
@@ -308,9 +350,9 @@ class MovementListController: UIViewController {
                 print("failed to converting userInfo back.")
                 return }
             
-//            let trialCore = screen.trialCores.filter {
-//                $0.title == title && $0.direction == direction.rawValue
-//            }.first!
+            //            let trialCore = screen.trialCores.filter {
+            //                $0.title == title && $0.direction == direction.rawValue
+            //            }.first!
             
             presentCameraAsChild(rank: .follower, title: title, direction: direction)
         } else {
@@ -326,8 +368,8 @@ class MovementListController: UIViewController {
         updateTrialCores(screen: screen)
     }
     
-
-
+    
+    
     private func updateTrialCores(screen: Screen? = nil) {
         print("screen is nil? \(screen == nil)")
         print("updateTrialCores Called ")
@@ -341,8 +383,8 @@ class MovementListController: UIViewController {
         }
         
         guard let screen = self.screen else { fatalError() }
-
-//        let sortedCores = self.screen!.trialCores.sorted {
+        
+        //        let sortedCores = self.screen!.trialCores.sorted {
         // 먼저 운동 순서대로, 같은 운동의 경우 좌우 순서로 넣기.
         let sortedCores = screen.trialCores.sorted {
             if $0.tag != $1.tag {
@@ -417,14 +459,15 @@ class MovementListController: UIViewController {
             
         }
         
-//        print("----------------- trialCoresToShow: -----------------")
-//        for eachCore in trialCoresToShow {
-//            print("title: \(eachCore.first?.title), direction: \(eachCore.first?.direction)")
-//        }
+        //        print("----------------- trialCoresToShow: -----------------")
+        //        for eachCore in trialCoresToShow {
+        //            print("title: \(eachCore.first?.title), direction: \(eachCore.first?.direction)")
+        //        }
         
         
-
         
+//        completeConditionViewModels
+        initializeViewModels()
         DispatchQueue.main.async {
             self.movementCollectionView.reloadData()
         }
@@ -433,12 +476,12 @@ class MovementListController: UIViewController {
     // MARK: - UI, Navigation Functions
     
     @objc func moveToSubjectController() {
-
+        
         
         let inspectorVC = InspectorController()
         
         let uinavController = UINavigationController(rootViewController: inspectorVC)
-
+        
         self.present(uinavController, animated: true)
     }
     
@@ -453,21 +496,21 @@ class MovementListController: UIViewController {
             self.moveToSubjectController()
             return
         }
-
+        
         
         let direction: MovementDirection = MovementDirection(rawValue: selectedTrial.direction) ?? .neutral
         
         print("trialCore passed to cameracontroller : \(selectedTrial.title) \(selectedTrial.direction)")
         
         presentCameraAsChild(trialCore: selectedTrial, rank: rank, title: selectedTrial.title, direction: direction)
-    
-
+        
+        
         connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: selectedTrial.title, direction: direction))))
     }
     
     private func presentCameraAsChild(trialCore: TrialCore? = nil, rank: Rank, title: String, direction: MovementDirection) {
         
-//        guard let screen = screen else { fatalError() }
+        //        guard let screen = screen else { fatalError() }
         
         DispatchQueue.main.async {
             if self.isCameraPresented == false {
@@ -475,7 +518,7 @@ class MovementListController: UIViewController {
                 if rank == .boss {
                     print("screen from MovementListController: \(self.screen)")
                     self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: self.screen, trialCore: trialCore!, positionTitle: title, direction: direction, rank: rank)
-                
+                    
                 } else {
                     self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: nil, trialCore: nil, positionTitle: title, direction: direction, rank: rank)
                 }
@@ -493,9 +536,15 @@ class MovementListController: UIViewController {
                 }
                 self.isCameraPresented = true
             } else {
-
+                
                 self.showUpCamera()
-                self.cameraVC?.updateTrialCore(with: trialCore!)
+                if rank == .boss {
+                    self.cameraVC?.updateTrialCore(with: trialCore!)
+                    self.cameraVC?.prepareScoreController(trialCore: trialCore!, screen: self.screen!)
+                }
+                
+                self.cameraVC?.stopDurationTimer()
+                self.cameraVC?.updateLabel(title: title, direction: direction)
                 self.cameraVC?.hidePreview()
                 self.cameraVC?.resetTimer()
                 self.cameraVC?.invalidateTimer()
@@ -509,7 +558,7 @@ class MovementListController: UIViewController {
         guard let cameraVC = cameraVC else {
             fatalError()
         }
-
+        
         UIView.animate(withDuration: 0.3) {
             cameraVC.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
         }
@@ -661,10 +710,20 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         print("cell index: \(indexPath.row)")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovementCell.cellId, for: indexPath) as! MovementCell
-
-        cell.delegate = self
         
-        cell.viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
+        cell.delegate = self
+        let viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
+        
+        
+//        cell.viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
+        cell.viewModel = viewModel
+        
+//        completeConditionViewModels.append(trialCoresToShow[indexPath.row])
+        completeConditionViewModels.append(viewModel)
+        
+        if indexPath.row == trialCoresToShow.count - 1 {
+            checkConditionForViewModels()
+        }
         
         print("cell : \(cell.viewModel?.title)")
         return cell
@@ -693,25 +752,16 @@ extension MovementListController: CameraControllerDelegate {
         
         UIView.animate(withDuration: 0.3) {
             cameraVC.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight)
+            
         } completion: { done in
             
             // TODO: remove cameraController after animation
             
             if done {
-                
-//                if self.children.count > 0 {
-//                    let viewControllers: [UIViewController] = self.children
-//                    for vc in viewControllers {
-//                        vc.willMove(toParent: nil)
-//                        vc.view.removeFromSuperview()
-//                        vc.removeFromParent()
-//                    }
-//                }
-                
                 self.updateScoreLabels()
                 
                 self.updateConnectionState()
-
+                
             }
         }
     }

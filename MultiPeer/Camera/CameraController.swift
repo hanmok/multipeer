@@ -20,7 +20,11 @@ protocol CameraControllerDelegate: AnyObject {
     func makeSound()
 }
 
-// CameraController don't need to know 'score'
+extension CameraController: FileManagerDelegate {
+
+}
+
+//CameraController don't need to know 'score'
 class CameraController: UIViewController {
     
     // MARK: - Properties
@@ -80,6 +84,10 @@ class CameraController: UIViewController {
     
     // MARK: - Life Cycle
     
+    public func updateLabel(title: String, direction: MovementDirection) {
+        movementNameLabel.text = "\(title) \(direction.rawValue)"
+    }
+    
     init(
         connectionManager: ConnectionManager,
         screen: Screen?,
@@ -124,6 +132,13 @@ class CameraController: UIViewController {
 //    private func setupTrialDetail() {
 //        trialDetail = trialCore.returnFreshTrialDetail()
 //    }
+    
+    public func prepareScoreController(trialCore: TrialCore, screen: Screen) {
+        scoreVC = ScoreController(positionTitle: trialCore.title, direction: trialCore.direction, screen: screen)
+        scoreVC?.delegate = self
+        self.screen = screen
+        
+    }
     
     
     override func viewDidLoad() {
@@ -286,13 +301,15 @@ class CameraController: UIViewController {
     
     @objc func hidePreviewNoti(_ notification: Notification) {
         hidePreview()
+        stopTimer()
         resetTimer()
+        
     }
     
     @objc func startRecordingNowNoti(_ notification: Notification) {
         print("startRecording has been triggered by observer. ")
         
-        
+        stopTimer()
         // remove preview if master order recording
         removeChildrenVC()
         // original
@@ -321,6 +338,7 @@ class CameraController: UIViewController {
         stopRecording()
         changeBtnLookForPreparing(animation: false)
         stopTimer()
+        
     }
     
     // this one called!!
@@ -596,8 +614,12 @@ class CameraController: UIViewController {
     
     @objc func dismissBtnTapped(_ sender: UIButton) {
         print("dismiss btn tapped!")
-        self.dismiss(animated: true)
+        
+//        scoreVC = nil
+        
+//        self.dismiss(animated: true)
         // 왜 dismiss 가 안되지?
+        
         delegate?.dismissCamera() {
 //            self.dismiss(animated: true)
         }
@@ -1312,6 +1334,49 @@ class CameraController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func renameRecording(from:URL, to:URL) {
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+//        let toURL = documentsDirectory.URLByAppendingPathComponent(to.lastPathComponent!)
+        let toURL = documentsDirectory.appendingPathComponent(to.lastPathComponent)
+        
+        print("renaming file \(from.absoluteString) to \(to) url \(toURL)")
+//        let fileManager = FileManager.defaultManager()
+        let fileManager = FileManager.default.self
+        fileManager.delegate = self
+        do {
+            try fileManager.moveItem(at: from, to: toURL)
+
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        } catch {
+            print("error renaming recording")
+        }
+        
+        DispatchQueue.main.async {
+            self.listRecordings()
+        }
+    }
+
+    func listRecordings() {
+          
+//            let documentsDirectory = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]
+        let documentsDirectory = FileManager.default.urls(for: .documentationDirectory, in: .userDomainMask)[0]
+            do {
+//                let urls = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsDirectory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles)
+                let urls = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
+                
+//                self.arrayRecordingsURL = urls.filter( { (name: URL) -> Bool in
+//                    return name.lastPathComponent!.hasSuffix("m4a")
+//                })
+              
+            } catch let error as NSError {
+                print(error.localizedDescription)
+            } catch {
+                print("something went wrong listing recordings")
+            }
+        }
+
 }
 
 // MARK: - UIImagePickerController Delegate
@@ -1335,18 +1400,32 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         }
         
         print("save success !")
+            
         // Save Video To Photos Album
-//        UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
+        UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
 
-        UISaveVideoAtPathToSavedPhotosAlbum("hi", self, nil, nil)
-        
         videoUrl = url
         
         guard let validUrl = videoUrl else { fatalError() }
         saveVideoToLocal(with: validUrl)
-            
-        let cropController = CropController(url: validUrl, vc: self)
         
+//            guard let trialCore = trialCore,
+//                  let trialDetail = trialDetail else { fatalError() }
+            
+//            let ftpInfoStr = makeFTPInfoString(trialCore: trialCore, trialDetail: trialDetail, additionalInfo: "" )
+//            let fileName = ftpInfoStr.fileName
+            let fileName = "my some test Name"
+            let cropController = CropController(url: validUrl, vc: self)
+            
+//            cropController.exportVideo { CroppedUrl in
+//                print("url Name: \(CroppedUrl.absoluteString)")
+//            }
+        
+            
+            cropController.exportVideo(fileName: fileName) { CroppedUrl in
+                print("name: \(CroppedUrl.absoluteString)")
+            }
+            
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -1358,7 +1437,6 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
                 self.prepareScoreView()
                 self.showScoreView(size: size)
             }
-            
             
             print("url: \(url.path)")
             
@@ -1440,6 +1518,8 @@ extension CameraController: ConnectionManagerDelegate {
         DispatchQueue.main.async {
             previewVC.view.isHidden = true
         }
+        stopTimer()
+        resetTimer()
     }
     
     private func makeFileNameThenPost(fileName: String) {
@@ -1456,11 +1536,64 @@ extension CameraController: ConnectionManagerDelegate {
         
         let videoFileName = fileName + "_\(cameraDirectionInt)"
         
+        
+//        let cropController = CropController(url: validVideoURL, vc: self)
+        
+//        cropController.exportVideo { CroppedUrl in
+//            print("url Name: \(CroppedUrl.absoluteString)")
+//        }
+        
+//        cropController.exportVideo(fileName: videoFileName) { CroppedUrl in
+//            print("file Name: \(CroppedUrl.absoluteString)")
+//        }
+        
+        
+        
         // TODO: change videoUrl' fileName to `videoFileName`
         FTPManager.shared.postRequest(videoURL: validVideoURL) {
             print("--------------- fileName ---------------\n \(videoFileName)")
         }
         
+    }
+    
+    private func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
+                
+        guard let screen = screen else { fatalError() }
+        guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
+        
+        let date = Date()
+//        let inspectorName = "someName"
+        let inspectorName = screen.parentSubject?.inspector
+    
+        let subjectName = subject.name
+        
+        let screenIndex = screen.screenIndex
+        
+        let titleShort = Dummy.shortForFileName[trialCore.title]!
+        
+        let directionShort: String
+        switch trialCore.direction {
+        case "Left": directionShort = "l"
+        case "Right": directionShort = "r"
+        default: directionShort = ""
+        }
+        
+        let trialNo = trialDetail.trialNo
+        let phoneNumber = subject.phoneNumber
+        let genderInt = subject.isMale ? 1 : 2
+        
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year], from: subject.birthday)
+        
+        guard let birthYear = components.year else { fatalError() }
+    
+        let kneeLength = subject.kneeLength
+        let palmLength = subject.palmLength
+        
+        let fileName = "\(date)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
+        
+        let ftpInfoString = FtpInfoString(fileName: fileName)
+        return ftpInfoString
     }
     
 }
@@ -1472,19 +1605,12 @@ extension CameraController: ScoreControllerDelegate {
         guard let validVideoURL = videoUrl else { return }
         let receivedFileName = ftpInfoString.fileName
         
-        
         makeFileNameThenPost(fileName: receivedFileName)
     }
 
+    
     func orderRequest(ftpInfoString: FtpInfoString) {
         connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(ftpInfoString: ftpInfoString)))
-    }
-    
-    
-    
-    
-    func presentCompleteMsgView(shouldShowNext: Bool) {
-        
     }
     
     // TODO: Currently not being called ;; why ?
@@ -1492,10 +1618,6 @@ extension CameraController: ScoreControllerDelegate {
         connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(ftpInfo: ftpInfo)))
     }
     
-    func orderRequest(url: URL) {
-        
-    }
-
     func navigateToSecondView(withNextTitle: Bool) {
         print("navigateToSecondView Triggered")
         setupCompleteView(withNextTitle: withNextTitle)
@@ -1532,6 +1654,8 @@ extension CameraController: ScoreControllerDelegate {
         self.direction = MovementDirection(rawValue: trialCore.direction) ?? .neutral
         updateNameLabel()
     }
+    
+    
     
     private func makeTrialDetail() {
         guard let trialCore = trialCore else {fatalError()}
@@ -1594,6 +1718,12 @@ extension CameraController: ScoreControllerDelegate {
         
         print("-----------CameraController trialCore Details -----------")
         
+//        let cropController = CropController(url: validVideoUrl, vc: self)
+        
+//        cropController.exportVideo { CroppedUrl in
+//            print("url Name: \(CroppedUrl.absoluteString)")
+//        }
+//        cropController.exportVideo(fileName: ftpInfo, closure: <#T##(URL) -> Void##(URL) -> Void##(_ CroppedUrl: URL) -> Void#>)
 //        self.post(postReqInfo: ftpInfo)
         
 //        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(postReqInfo: ftpInfo)))

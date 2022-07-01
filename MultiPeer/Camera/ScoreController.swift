@@ -11,7 +11,6 @@ import Then
 import CoreData
 
 
-
 protocol ScoreControllerDelegate: AnyObject {
     
     func deleteAction() // don't need to update trials
@@ -43,7 +42,6 @@ class ScoreController: UIViewController {
     var trialCore: TrialCore?
     var trialDetail: TrialDetail?
     
-//    var cameraAngle:
     /// follwing Clearing Test
     var fClearingCore: TrialCore?
     var fClearingDetail: TrialDetail?
@@ -347,7 +345,8 @@ class ScoreController: UIViewController {
         guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
         
         let date = Date()
-        let inspectorName = "someName"
+//        let inspectorName = "someName"
+        let inspectorName = screen.parentSubject?.inspector
     
         let subjectName = subject.name
         
@@ -385,7 +384,7 @@ class ScoreController: UIViewController {
         printFlag(type: .rsBug, count: 0)
         
         if saveConditionSatisfied() {
-        
+
             printFlag(type: .rsBug, count: 1)
             guard let score = score else { fatalError("score is nil") }
             
@@ -403,14 +402,8 @@ class ScoreController: UIViewController {
             print("------------ scoreController saveAction ------------")
             print("title: \(trialCore.title), direction: \(trialCore.direction), trialNo: \(trialDetail.trialNo)")
 
-//            let ftpInfo = makeFTPInfo(trialCore: trialCore, trialDetail: trialDetail)
-            
-//            let ftpInfoStr = makeftpinfo
             let ftpInfoStr = makeFTPInfoString(trialCore: trialCore, trialDetail: trialDetail)
-//            delegate?.postAction(postReqInfo: postReqInfo)
-//            delegate?.postAction(ftpInfo: ftpInfo)
-//            delegate?.orderRequest(ftpInfo: ftpInfo)
-//            delegate
+            
             
             delegate?.postAction(ftpInfoString: ftpInfoStr)
             delegate?.orderRequest(ftpInfoString: ftpInfoStr)

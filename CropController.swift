@@ -36,19 +36,21 @@ class CropController {
     }
     
     func exportVideo(shouldSave: Bool = true, fileName: String = "default fileName", closure: @escaping (_ CroppedUrl: URL) -> Void ) {
-        print("export Video Triggered! ffffflllllaaaagggg")
+//        print("export Video Triggered! ffffflllllaaaagggg")
         // MARK: - Asset To Export
         guard let assetToExport = self.player?.currentItem?.asset else { fatalError() }
         
         // MARK: - Composition
         guard let playerItem = self.player?.currentItem else { fatalError() }
-        let cropRect = setupCropRect(item: playerItem)
-        self.setupCropScaleComposition(item: playerItem, cropRect: cropRect)
-        guard let composition = self.cropScaleComposition else { fatalError() }
+//        let cropRect = setupCropRect(item: playerItem)
+//        self.setupCropScaleComposition(item: playerItem, cropRect: cropRect)
+//        guard let composition = self.cropScaleComposition else { fatalError() }
         
         // MARK: - Output Movie URL
         // 음....
-        let fileUUID = UUID()
+//        let fileUUID = UUID()
+//        let fileName = "someName"
+        
         //        guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("exported.mov") else { fatalError() }
         
 //        guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("\(fileUUID).mov") else { fatalError() }
@@ -68,7 +70,7 @@ class CropController {
         
         let exporter = AVAssetExportSession(asset: assetToExport, presetName: AVAssetExportPresetHighestQuality)
         
-        exporter?.videoComposition = composition
+//        exporter?.videoComposition = composition
         exporter?.outputURL = outputMovieURL
         exporter?.outputFileType = .mov
         exporter?.timeRange = timeRange
