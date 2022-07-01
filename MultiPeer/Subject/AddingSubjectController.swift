@@ -25,7 +25,7 @@ class AddingSubjectController: UIViewController {
     var context: NSManagedObjectContext?
     
     private let nameTF: UITextField = {
-        let tf = UITextField()
+        let tf = UITextField(withPadding: true)
 
         let attrText = NSMutableAttributedString(string: "Enter Name\n", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
@@ -36,6 +36,7 @@ class AddingSubjectController: UIViewController {
         tf.textColor = .white
         tf.backgroundColor = UIColor(white: 0.4, alpha: 0.4)
         tf.layer.cornerRadius = 10
+        
         return tf
     }()
     
@@ -52,8 +53,6 @@ class AddingSubjectController: UIViewController {
         $0.distribution = .fillEqually
         $0.axis = .horizontal
     }
-    
-    
     
     var name: String = ""
     var phoneNumber = ""
@@ -93,7 +92,8 @@ class AddingSubjectController: UIViewController {
 //    }
     
     private let emailTF: UITextField = {
-        let tf = UITextField()
+//        let tf = UITextField()
+        let tf = UITextField(withPadding: true)
         let attrText = NSMutableAttributedString(string: "Enter Email Address\n", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
@@ -109,7 +109,8 @@ class AddingSubjectController: UIViewController {
     }()
     
     private let phoneTF : UITextField = {
-        let tf = UITextField()
+//        let tf = UITextField()
+        let tf = UITextField(withPadding: true)
         let attrText = NSMutableAttributedString(string: "Enter Phone Number\n", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
@@ -126,12 +127,13 @@ class AddingSubjectController: UIViewController {
     }()
     
     private let kneeTF : UITextField = {
-        let tf = UITextField()
+//        let tf = UITextField()
+        let tf = UITextField(withPadding: true)
         let attrText = NSMutableAttributedString(string: "Enter Knee Length\n", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
         tf.attributedPlaceholder = attrText
-        
+        tf.adjustsFontSizeToFitWidth = true
 //        tf.keyboardType = .numberPad
         tf.keyboardType = .decimalPad
         tf.textColor = .white
@@ -144,12 +146,13 @@ class AddingSubjectController: UIViewController {
     }()
     
     private let palmTF : UITextField = {
-        let tf = UITextField()
+        let tf = UITextField(withPadding: true)
         let attrText = NSMutableAttributedString(string: "Enter palm Length\n", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
         tf.attributedPlaceholder = attrText
-        
+//        tf.font = .
+        tf.adjustsFontSizeToFitWidth = true
 //        tf.keyboardType = .numberPad
         tf.keyboardType = .decimalPad
         tf.textColor = .white
