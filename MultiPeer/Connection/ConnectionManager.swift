@@ -289,25 +289,6 @@ extension ConnectionManager: MCSessionDelegate {
 //                    .updatePeerTitleMsg:
             case .requestPostMsg:
                 
-//                guard let reqInfoDic = receivedData.info.ftpInfo else { fatalError() }
-//
-//                let requestInfoDic: [AnyHashable: Any] = [
-//                    "date": reqInfoDic.date,
-//                    "inspectorName": reqInfoDic.inspectorName,
-//                    "subjectName": reqInfoDic.subjectName,
-//                    "screenIndex": reqInfoDic.screenIndex,
-//
-//                    "title": reqInfoDic.title,
-//                    "direction": reqInfoDic.direction,
-//                    "trialNo": reqInfoDic.trialNo,
-//
-//                    "phoneNumber": reqInfoDic.phoneNumber,
-//                    "gender": reqInfoDic.gender,
-//                    "birth": reqInfoDic.birth,
-//                    "kneeLength": reqInfoDic.kneeLength,
-//                    "palmLength": reqInfoDic.palmLength,
-//                    "cameraAngle": reqInfoDic.cameraAngle
-//                ]
                 
                 guard let reqInfoDic = receivedData.info.ftpInfoString else { fatalError() }
                 

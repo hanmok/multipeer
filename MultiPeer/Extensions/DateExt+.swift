@@ -27,6 +27,29 @@ extension Date {
 }
 
 
+extension Date {
+   func getFormattedDate(format: String = "yyyy.MM.dd_HH.mm.ss") -> String {
+
+//       let date = Date()
+//       let formatter = "yyyy.MM.dd_HH.mm.ss"
+//       print(date.getFormattedDate(format: formatter))
+
+        let dateformat = DateFormatter()
+        dateformat.dateFormat = format
+        return dateformat.string(from: self)
+    }
+}
+
+//let date = Date()
+
+//let format = date.getFormattedDate(format: "yyyy-MM-dd HH:mm:ss") // Set output format
+
+//print(date.getFormattedDate(format: "yyyyMM"))
+
+
+
+
+
 
 
 extension String {

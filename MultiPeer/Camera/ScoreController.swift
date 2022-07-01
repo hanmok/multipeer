@@ -14,8 +14,8 @@ import CoreData
 protocol ScoreControllerDelegate: AnyObject {
     
     func deleteAction() // don't need to update trials
-
-//    func postAction(core: TrialCore, detail: TrialDetail)
+    
+    //    func postAction(core: TrialCore, detail: TrialDetail)
     func postAction(ftpInfo: FTPInfo)
     func postAction(ftpInfoString: FtpInfoString)
     
@@ -23,7 +23,7 @@ protocol ScoreControllerDelegate: AnyObject {
     
     func navigateToSecondView(withNextTitle: Bool)
     
-//    func orderRequest(core: TrialCore, detail: TrialDetail)
+    //    func orderRequest(core: TrialCore, detail: TrialDetail)
     func orderRequest(ftpInfo: FTPInfo)
     func orderRequest(ftpInfoString: FtpInfoString)
     
@@ -32,7 +32,7 @@ protocol ScoreControllerDelegate: AnyObject {
 
 
 class ScoreController: UIViewController {
-
+    
     // MARK: - Properties
     var hasPainField: Bool = false
     var screen: Screen // 있는데.. ㅠㅠ
@@ -104,9 +104,9 @@ class ScoreController: UIViewController {
         $0.setTitleColor(.gray900, for: .normal)
     }
     
-//    public var scoreBtnStackView = SelectableButtonStackView().then {
-//        $0.spacing = 16
-//    }
+    //    public var scoreBtnStackView = SelectableButtonStackView().then {
+    //        $0.spacing = 16
+    //    }
     public var scoreBtnStackView = SelectableButtonStackView()
     
     private let painPlusBtn = ScoreButton("+").then {
@@ -147,14 +147,14 @@ class ScoreController: UIViewController {
     private let saveBtn = UIButton().then {
         $0.setTitle("Save", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-//        $0.backgroundColor = .red500
+        //        $0.backgroundColor = .red500
         $0.backgroundColor = UIColor(redInt: 196, greenInt: 196, blueInt: 196)
         $0.layer.cornerRadius = 8
         // additional code
         $0.isUserInteractionEnabled = false
     }
     
-     // MARK: - Life Cyle
+    // MARK: - Life Cyle
     
     init(positionTitle: String, direction: String, screen: Screen) {
         self.positionTitle = positionTitle
@@ -210,7 +210,7 @@ class ScoreController: UIViewController {
     /// called from CameraController
     public func setupAgain(positionTitle: String, direction: MovementDirection) {
         print("received positionTitle from scoreController: \(positionTitle)")
-                print("setupagain triggered")
+        print("setupagain triggered")
         
         self.positionTitle = positionTitle
         self.direction = direction
@@ -252,7 +252,7 @@ class ScoreController: UIViewController {
         saveBtn.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
     }
     
-
+    
     @objc func scoreBtnTapped(_ sender: SelectableButton) {
         scoreBtnStackView.selectBtnAction(selected: sender.id)
         selectedBtnTitle = scoreBtnStackView.selectedBtnTitle
@@ -263,26 +263,26 @@ class ScoreController: UIViewController {
             score = Int64(selectedScore)
         } else {
             switch scoreBtnStackView.selectedBtnTitle {
-            
+                
             case .ScoreStr.hold: score = .Value.hold
-
+                
             case .ScoreStr.red: score = .Value.red
             case .ScoreStr.yellow: score = .Value.yellow
             case .ScoreStr.green: score = .Value.green
-
+                
             default: score = nil
                 
             }
         }
         
-
+        
         if painTestName == nil {
-
-//            painBtnStackView.backgroundColor = .lavenderGray100
+            
+            //            painBtnStackView.backgroundColor = .lavenderGray100
             saveBtn.backgroundColor = .red500
             saveBtn.isUserInteractionEnabled = true
         } else {
-//            painBtnStackView.selectedBtnIndex
+            //            painBtnStackView.selectedBtnIndex
             if painBtnStackView.selectedBtnIndex != nil {
                 saveBtn.backgroundColor = .red500
                 saveBtn.isUserInteractionEnabled = true
@@ -312,7 +312,7 @@ class ScoreController: UIViewController {
             saveBtn.isUserInteractionEnabled = true
         }
     }
-
+    
     
     @objc func deleteTapped() {
         print("delete tapped!")
@@ -322,32 +322,33 @@ class ScoreController: UIViewController {
         
     }
     
-//    private func makeFTPInfo(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FTPInfo {
-//
-//        guard let subject = screen.parentSubject else { fatalError() }
-//
-//        let genderInt = subject.isMale ? 1 : 2
-//        let calendar = Calendar.current
-//        let components = calendar.dateComponents([.year], from: subject.birthday)
-//        guard let birthYear = components.year else { fatalError() }
-//
-//
-//        let ftpInfo = FTPInfo(date: Date(), inspectorName: "someone", subjectName: subject.name, screenIndex: Int(screen.screenIndex), title: trialCore.title, direction: trialCore.direction, trialNo: Int(trialDetail.trialNo), phoneNumber: subject.phoneNumber, gender: genderInt, birth: birthYear, kneeLength: subject.kneeLength, palmLength: subject.palmLength)
-//
-//        // cameraAngle 은 우선 기본 값 1,
-//        // CameraController 가서 값 새로 설정 후 넣어주기.
-//
-//        return ftpInfo
-//    }
+    //    private func makeFTPInfo(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FTPInfo {
+    //
+    //        guard let subject = screen.parentSubject else { fatalError() }
+    //
+    //        let genderInt = subject.isMale ? 1 : 2
+    //        let calendar = Calendar.current
+    //        let components = calendar.dateComponents([.year], from: subject.birthday)
+    //        guard let birthYear = components.year else { fatalError() }
+    //
+    //
+    //        let ftpInfo = FTPInfo(date: Date(), inspectorName: "someone", subjectName: subject.name, screenIndex: Int(screen.screenIndex), title: trialCore.title, direction: trialCore.direction, trialNo: Int(trialDetail.trialNo), phoneNumber: subject.phoneNumber, gender: genderInt, birth: birthYear, kneeLength: subject.kneeLength, palmLength: subject.palmLength)
+    //
+    //        // cameraAngle 은 우선 기본 값 1,
+    //        // CameraController 가서 값 새로 설정 후 넣어주기.
+    //
+    //        return ftpInfo
+    //    }
     
     private func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
-                
+        
         guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
         
         let date = Date()
-//        let inspectorName = "someName"
-        let inspectorName = screen.parentSubject?.inspector
-    
+        //        let inspectorName = "someName"
+        let formattedDateStr = date.getFormattedDate()
+        let inspectorName = screen.parentSubject!.inspector!.name
+        
         let subjectName = subject.name
         
         let screenIndex = screen.screenIndex
@@ -369,22 +370,22 @@ class ScoreController: UIViewController {
         let components = calendar.dateComponents([.year], from: subject.birthday)
         
         guard let birthYear = components.year else { fatalError() }
-    
+        
         let kneeLength = subject.kneeLength
         let palmLength = subject.palmLength
         
-        let fileName = "\(date)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
+        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
         
         let ftpInfoString = FtpInfoString(fileName: fileName)
         return ftpInfoString
     }
-//    YYYY.MM.DD_HH.MM.SS_검사자명_피험자명_1_ds1_01012341234_성별_탄생년도_무릎길이_손바닥길이_앵글
+    //    YYYY.MM.DD_HH.MM.SS_검사자명_피험자명_1_ds1_01012341234_성별_탄생년도_무릎길이_손바닥길이_앵글
     @objc func saveTapped() {
         // if tapped Button is "Hold" then send it back to CameraController
         printFlag(type: .rsBug, count: 0)
         
         if saveConditionSatisfied() {
-
+            
             printFlag(type: .rsBug, count: 1)
             guard let score = score else { fatalError("score is nil") }
             
@@ -398,10 +399,10 @@ class ScoreController: UIViewController {
             
             setScore(title: trialCore.title, to: trialDetail, score: score, pain: pain)
             
-
+            
             print("------------ scoreController saveAction ------------")
             print("title: \(trialCore.title), direction: \(trialCore.direction), trialNo: \(trialDetail.trialNo)")
-
+            
             let ftpInfoStr = makeFTPInfoString(trialCore: trialCore, trialDetail: trialDetail)
             
             
@@ -409,7 +410,7 @@ class ScoreController: UIViewController {
             delegate?.orderRequest(ftpInfoString: ftpInfoStr)
             
             trialCore.updateLatestScore()
-
+            
             // 어떤게 invalid 일까 ?? 둘다일 수 있다.
             if fClearingCore != nil && fClearingDetail != nil {
                 
@@ -419,10 +420,10 @@ class ScoreController: UIViewController {
                 // 버튼 선택에 따라 Clearing 값이 업데이트 되지 않음.
                 
                 // scoreController Delegate
-//                let postReqInfo2 = makeFTPInfo(trialCore: fClearingCore!, trialDetail: fClearingDetail!)
-
-//                delegate?.postAction(postReqInfo: postReqInfo2)
-                                
+                //                let postReqInfo2 = makeFTPInfo(trialCore: fClearingCore!, trialDetail: fClearingDetail!)
+                
+                //                delegate?.postAction(postReqInfo: postReqInfo2)
+                
                 fClearingCore!.updateLatestScore()
             } else { print("fClearingCore or fClearingDetail is invalid ")
             }
@@ -435,10 +436,10 @@ class ScoreController: UIViewController {
             delegate?.navigateToSecondView(withNextTitle: false)
         }
         
-//        connectionmanager
-//        ConnectionManager.send()
+        //        connectionmanager
+        //        ConnectionManager.send()
         
-//        delegate?.navigateToSecondView()
+        //        delegate?.navigateToSecondView()
     }
     
     
@@ -468,22 +469,22 @@ class ScoreController: UIViewController {
         print("ffff title: \(title), score: \(score), pain: \(converted)")
         trialDetail.saveChanges()
     }
-
-
+    
+    
     @discardableResult
     private func setupFTrialCoreIfNeeded() -> Bool {
-
+        
         guard let trialCore = trialCore else { fatalError("trialCore is nil") }
         
         guard let screen = trialCore.parentScreen else { fatalError() }
-
+        
         let currentDirection = trialCore.direction
-
+        
         if movementWithPainTestTitle[trialCore.title] != nil {
             let followingTestTitle = movementWithPainTestTitle[trialCore.title]!
             guard let currentMovementName = MovementList(rawValue: trialCore.title) else { fatalError() }
             
-
+            
             if currentMovementName == .shoulderMobility {
                 fClearingCore = screen.trialCores.filter { $0.title == followingTestTitle && $0.direction == currentDirection}.first!
                 return true
@@ -503,7 +504,7 @@ class ScoreController: UIViewController {
         return false
         
         
-
+        
         print("fClearingCore.title name0 :\(fClearingCore?.title)")
     }
     
@@ -584,7 +585,7 @@ class ScoreController: UIViewController {
             }
         }
         
-
+        
         view.addSubview(scoreLabel)
         scoreLabel.snp.makeConstraints { make in
             make.trailing.leading.equalToSuperview().inset(10)
@@ -592,7 +593,7 @@ class ScoreController: UIViewController {
             make.top.equalToSuperview().offset(24)
         }
         
-
+        
         [scoreBtn1, scoreBtn2, scoreBtn3].forEach {
             scoreBtnStackView.addArrangedButton($0)
         }
@@ -600,7 +601,7 @@ class ScoreController: UIViewController {
         print("scoreType: \(scoreType)")
         // Three Elements
         if scoreType == .zeroThreeHold || scoreType == .zeroToTwo || scoreType == .RYG{
-
+            
             if scoreType == .zeroThreeHold {
                 scoreBtn1.wrappedString = "0"
                 scoreBtn2.wrappedString = "3"
@@ -614,11 +615,11 @@ class ScoreController: UIViewController {
                 scoreBtn2.wrappedString = "Yellow"
                 scoreBtn3.wrappedString = "Green"
             }
-
+            
             // Four Elements
         } else if scoreType == .zeroToThree {
             scoreBtnStackView.addArrangedButton(scoreBtn4)
-
+            
             scoreBtn1.wrappedString = "0"
             scoreBtn2.wrappedString = "1"
             scoreBtn3.wrappedString = "2"
@@ -636,7 +637,7 @@ class ScoreController: UIViewController {
         painPlusBtn.wrappedString = "+"
         painMinusBtn.wrappedString = "-"
         
-
+        
         if painTestName != nil {
             view.addSubview(painPositionLabel)
             painPositionLabel.snp.makeConstraints { make in
@@ -644,12 +645,12 @@ class ScoreController: UIViewController {
                 make.leading.trailing.equalToSuperview().inset(10)
                 make.height.equalTo(25) // same as that of scoreLabel
             }
-
-
+            
+            
             [painPlusBtn, painMinusBtn].forEach {
                 painBtnStackView.addArrangedButton($0)
             }
-
+            
             view.addSubview(painBtnStackView)
             painBtnStackView.snp.makeConstraints { make in
                 make.top.equalTo(painPositionLabel.snp.bottom).offset(8)
@@ -666,7 +667,7 @@ class ScoreController: UIViewController {
             make.leading.equalToSuperview().inset(20)
             
             if painTestName != nil {
-            make.top.equalTo(painBtnStackView.snp.bottom).offset(32)
+                make.top.equalTo(painBtnStackView.snp.bottom).offset(32)
             } else {
                 make.top.equalTo(scoreBtnStackView.snp.bottom).offset(30)
             }
@@ -680,7 +681,7 @@ class ScoreController: UIViewController {
             make.trailing.equalToSuperview().inset(20)
             
             if painTestName != nil {
-            make.top.equalTo(painBtnStackView.snp.bottom).offset(32)
+                make.top.equalTo(painBtnStackView.snp.bottom).offset(32)
             } else {
                 make.top.equalTo(scoreBtnStackView.snp.bottom).offset(32)
             }
@@ -688,8 +689,6 @@ class ScoreController: UIViewController {
         }
     }
     
-    
-
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -75,7 +75,7 @@ class MovementListController: UIViewController {
         }
         
         if isCompleted {
-         
+            
             applyStyle(to: completeBtn, selectable: true)
             applyStyle(to: finishBtn, selectable: false)
         }
@@ -466,7 +466,7 @@ class MovementListController: UIViewController {
         
         
         
-//        completeConditionViewModels
+        //        completeConditionViewModels
         initializeViewModels()
         DispatchQueue.main.async {
             self.movementCollectionView.reloadData()
@@ -715,10 +715,10 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
         let viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
         
         
-//        cell.viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
+        //        cell.viewModel = MovementViewModel(trialCores: trialCoresToShow[indexPath.row])
         cell.viewModel = viewModel
         
-//        completeConditionViewModels.append(trialCoresToShow[indexPath.row])
+        //        completeConditionViewModels.append(trialCoresToShow[indexPath.row])
         completeConditionViewModels.append(viewModel)
         
         if indexPath.row == trialCoresToShow.count - 1 {

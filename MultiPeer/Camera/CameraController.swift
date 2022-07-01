@@ -21,20 +21,20 @@ protocol CameraControllerDelegate: AnyObject {
 }
 
 extension CameraController: FileManagerDelegate {
-
+    
 }
 
 //CameraController don't need to know 'score'
 class CameraController: UIViewController {
     
     // MARK: - Properties
-//    let sampleInspector = Inspector(name: "hanmok", phoneNumber: "01090417421")
+    //    let sampleInspector = Inspector(name: "hanmok", phoneNumber: "01090417421")
     
     private var videoUrl: URL?
     var shouldShowScoreView = true
     // TODO: Handle inside ConnectionManager
     // TODO: duplicate check, send msg if direction assigned.
-
+    
     var croppedUrl: URL?
     
     var positionTitle: String
@@ -43,12 +43,14 @@ class CameraController: UIViewController {
     
     var cameraDirection: CameraDirection?
     
-//    var connectedAmount: Int = 0
+    var cropController: CropController?
+    
+    //    var connectedAmount: Int = 0
     
     var trialCore: TrialCore?
     
     var systemSoundID: SystemSoundID = 1057
-// TODO: Cut Clip from the front as much as recording time diff
+    // TODO: Cut Clip from the front as much as recording time diff
     var timeDifference: CGFloat = 0 // or CMTime
     
     let rank: Rank
@@ -60,7 +62,7 @@ class CameraController: UIViewController {
     var count = 0
     
     var isRecordingEnded = false
-
+    
     weak var delegate: CameraControllerDelegate?
     
     var connectionManager: ConnectionManager
@@ -97,13 +99,13 @@ class CameraController: UIViewController {
         direction: MovementDirection,
         
         rank: Rank
-
+        
     ) {
-            self.connectionManager = connectionManager
-            
-            self.trialCore = trialCore
+        self.connectionManager = connectionManager
+        
+        self.trialCore = trialCore
         self.direction = direction
-            // scoreVC 는, boss 에게만 필요함 ..
+        // scoreVC 는, boss 에게만 필요함 ..
         if rank == .boss {
             scoreVC = ScoreController(positionTitle: trialCore!.title, direction: trialCore!.direction, screen: screen!)
             print("-----------------received screen-----------------\n \(screen!)") // parentScreen is nil;
@@ -112,26 +114,26 @@ class CameraController: UIViewController {
         
         self.screen = screen
         self.positionTitle = positionTitle
-            self.rank = rank
-//            self.connectedAmount = connectedAmount
-            super.init(nibName: nil, bundle: nil)
+        self.rank = rank
+        //            self.connectedAmount = connectedAmount
+        super.init(nibName: nil, bundle: nil)
         
-
+        
         self.direction = direction
         
-            connectionManager.delegate = self
+        connectionManager.delegate = self
         if rank == .boss {
             scoreVC!.delegate = self
             scoreVC!.parentController = self
         }
-
+        
         changeBtnLookForPreparing(animation: false)
-        }
+    }
     
     // 왜 두번 생성하고 ㅈㄹ.. 필요 없어보임.
-//    private func setupTrialDetail() {
-//        trialDetail = trialCore.returnFreshTrialDetail()
-//    }
+    //    private func setupTrialDetail() {
+    //        trialDetail = trialCore.returnFreshTrialDetail()
+    //    }
     
     public func prepareScoreController(trialCore: TrialCore, screen: Screen) {
         scoreVC = ScoreController(positionTitle: trialCore.title, direction: trialCore.direction, screen: screen)
@@ -143,14 +145,14 @@ class CameraController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         print("CameraController viewdidLoad triggered")
         updateNameLabel()
-
+        
         setupLayout()
         setupAddTargets()
         addNotificationObservers()
-
+        
         setupCompleteView()
         
         updatePeerTitle()
@@ -175,14 +177,14 @@ class CameraController: UIViewController {
     private func updatePeerTitle() {
         
         
-//        let direction = MovementDirection(rawValue: trialCore.direction)!
+        //        let direction = MovementDirection(rawValue: trialCore.direction)!
         
-//        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction)))
+        //        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction)))
         
-//        connectionManager.send(PeerInfo(msgType: .updatePeerTitleMsg, info: Info(movementDetail: MovementDirectionScoreInfo(title: positionTitle, direction: direction))))
+        //        connectionManager.send(PeerInfo(msgType: .updatePeerTitleMsg, info: Info(movementDetail: MovementDirectionScoreInfo(title: positionTitle, direction: direction))))
         connectionManager.send(PeerInfo(msgType: .updatePeerTitleMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: positionTitle, direction: direction))))
-
-//        connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: positionTitle, direction: direction))))
+        
+        //        connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: positionTitle, direction: direction))))
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -222,7 +224,7 @@ class CameraController: UIViewController {
     public func resetTimer() {
         count = 0
         updatingDurationTimer.invalidate()
-//        updatingDurationTimer = Timer()
+        //        updatingDurationTimer = Timer()
         updateDurationLabel()
     }
     public func invalidateTimer() {
@@ -267,7 +269,7 @@ class CameraController: UIViewController {
             name: .updatePeerTitleKey, object: nil
         )
         
-//        NotificationCenter.default.addobser
+        //        NotificationCenter.default.addobser
     }
     
     @objc func updatePeerTitleNoti(_ notification: Notification) {
@@ -287,6 +289,10 @@ class CameraController: UIViewController {
     @objc func requestPostNoti(_ notification: Notification) {
         
         let fileName = (notification.userInfo?["fileName"])! as! String
+        
+
+
+        
         makeFileNameThenPost(fileName: fileName)
     }
     
@@ -313,7 +319,7 @@ class CameraController: UIViewController {
         // remove preview if master order recording
         removeChildrenVC()
         // original
-//        let recordingTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+        //        let recordingTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
         resetTimer()
         
@@ -329,7 +335,7 @@ class CameraController: UIViewController {
     public func stopDurationTimer() {
         updatingDurationTimer.invalidate()
     }
-//    public func rese
+    //    public func rese
     
     
     @objc func stopRecordingNoti(_ notification: Notification) {
@@ -356,7 +362,7 @@ class CameraController: UIViewController {
             
         case .connected:
             DispatchQueue.main.async {
-//                self.connectionStateLabel.text = "Connected!"
+                //                self.connectionStateLabel.text = "Connected!"
             }
         }
     }
@@ -388,12 +394,12 @@ class CameraController: UIViewController {
         connectionManager.latestDirection = selectedDirection
         
         cameraDirection = CameraDirection(rawValue: sender.title)
-
+        
         
         guard let cameraDirection = cameraDirection else {
             fatalError("invalid camera direction")
         }
-
+        
         connectionManager.cameraDirectionDic[connectionManager.myId] = cameraDirection
         
         connectionManager.mydirection = cameraDirection
@@ -414,7 +420,7 @@ class CameraController: UIViewController {
         
         if pressedBtnTitle != "Hold" {
             
-                hideCompleteMsgView()
+            hideCompleteMsgView()
             
             delegate?.dismissCamera() {
                 self.dismiss(animated: true)
@@ -466,27 +472,27 @@ class CameraController: UIViewController {
     }
     
     
-//    @objc func recordingBtnTapped(_ sender: UIButton) {
-//
-//        recordingBtnAction()
-//
-//    }
+    //    @objc func recordingBtnTapped(_ sender: UIButton) {
+    //
+    //        recordingBtnAction()
+    //
+    //    }
     
     private func changeMode(target: Side?, mode: Mode) {
         printFlag(type: .peerConnectivity, count: -1, message: "changeMode triggered")
         guard let target = target else {
-
+            
             printFlag(type: .peerConnectivity, count: 0, message: "target is nil")
             DispatchQueue.main.async {
-            self.leftShape.layer.cornerRadius = 10
-            self.leftShape.backgroundColor = .lavenderGray400
-            
-            self.rightShape.layer.cornerRadius = 10
-            self.rightShape.backgroundColor = .lavenderGray400
+                self.leftShape.layer.cornerRadius = 10
+                self.leftShape.backgroundColor = .lavenderGray400
+                
+                self.rightShape.layer.cornerRadius = 10
+                self.rightShape.backgroundColor = .lavenderGray400
             }
             return
         }
-
+        
         switch mode {
         case .onRecording:
             switch target {
@@ -496,47 +502,47 @@ class CameraController: UIViewController {
                     self.leftShape.layer.cornerRadius = 10
                     self.leftShape.backgroundColor = .red
                 }
-
+                
             case .right:
                 DispatchQueue.main.async {
-                
-                self.rightShape.layer.cornerRadius = 10
-                self.rightShape.backgroundColor = .red
+                    
+                    self.rightShape.layer.cornerRadius = 10
+                    self.rightShape.backgroundColor = .red
                 }
             case .both:
                 DispatchQueue.main.async {
-                
-                self.leftShape.layer.cornerRadius = 10
-                self.leftShape.backgroundColor = .red
-                self.rightShape.layer.cornerRadius = 10
-                self.rightShape.backgroundColor = .red
-            }
+                    
+                    self.leftShape.layer.cornerRadius = 10
+                    self.leftShape.backgroundColor = .red
+                    self.rightShape.layer.cornerRadius = 10
+                    self.rightShape.backgroundColor = .red
+                }
             }
             
         case .stop:
             switch target {
             case .left:
                 DispatchQueue.main.async {
-                
-                self.leftShape.layer.cornerRadius = 2
-                self.leftShape.backgroundColor = .lavenderGray400
+                    
+                    self.leftShape.layer.cornerRadius = 2
+                    self.leftShape.backgroundColor = .lavenderGray400
                 }
             case .right:
                 DispatchQueue.main.async {
-                
-                self.rightShape.layer.cornerRadius = 2
-                self.rightShape.backgroundColor = .lavenderGray400
+                    
+                    self.rightShape.layer.cornerRadius = 2
+                    self.rightShape.backgroundColor = .lavenderGray400
                 }
             case .both:
                 DispatchQueue.main.async {
-                
-                self.leftShape.layer.cornerRadius = 2
-                self.leftShape.backgroundColor = .lavenderGray400
-                
-                self.rightShape.layer.cornerRadius = 2
-                self.rightShape.backgroundColor = .lavenderGray400
+                    
+                    self.leftShape.layer.cornerRadius = 2
+                    self.leftShape.backgroundColor = .lavenderGray400
+                    
+                    self.rightShape.layer.cornerRadius = 2
+                    self.rightShape.backgroundColor = .lavenderGray400
                 }
-                }
+            }
         }
     }
     
@@ -548,7 +554,7 @@ class CameraController: UIViewController {
                 self.innerShape.layer.cornerRadius = 6
                 self.recordingBtn.setTitleColor(.gray900, for: .normal)
                 
-//                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
+                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
                 self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .stop)
                 //                self.leftShape.layer.cornerRadius = 2
                 //                self.leftShape.backgroundColor = .lavenderGray400
@@ -561,7 +567,7 @@ class CameraController: UIViewController {
                 
                 //                self.leftShape.layer.cornerRadius = 2
                 //                self.leftShape.backgroundColor = .lavenderGray400
-//                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
+                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
                 self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .stop)
             }
         }
@@ -574,7 +580,7 @@ class CameraController: UIViewController {
                 self.innerShape.layer.cornerRadius = 18
                 self.recordingBtn.setTitleColor(.red, for: .normal)
                 
-//                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
+                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
                 self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
             }
         } else {
@@ -583,7 +589,7 @@ class CameraController: UIViewController {
                 self.innerShape.layer.cornerRadius = 18
                 self.recordingBtn.setTitleColor(.red, for: .normal)
                 
-//                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
+                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
                 self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
             }
         }
@@ -615,19 +621,19 @@ class CameraController: UIViewController {
     @objc func dismissBtnTapped(_ sender: UIButton) {
         print("dismiss btn tapped!")
         
-//        scoreVC = nil
+        //        scoreVC = nil
         
-//        self.dismiss(animated: true)
+        //        self.dismiss(animated: true)
         // 왜 dismiss 가 안되지?
         
         delegate?.dismissCamera() {
-//            self.dismiss(animated: true)
+            //            self.dismiss(animated: true)
         }
     }
     
     @objc func recordingBtnTapped(_ sender: UIButton) {
         // FIXME: Condition 이 약간 이상해보이는데. ?
-//        if connectionManager.cameraDirectionDic
+        //        if connectionManager.cameraDirectionDic
         
         // num of direction checked  ~ num of peers
         // cameraDirectionDic  은 최대 3개,
@@ -649,9 +655,9 @@ class CameraController: UIViewController {
             }
         }
         
-//        if connectionManager.mydirection == nil {
-//            showAlert(<#T##title: String##String#>, <#T##message: String##String#>)
-//        }
+        //        if connectionManager.mydirection == nil {
+        //            showAlert(<#T##title: String##String#>, <#T##message: String##String#>)
+        //        }
         
         
         
@@ -724,12 +730,12 @@ class CameraController: UIViewController {
             guard let scoreVC = scoreVC else {
                 fatalError()
             }
-
+            
             addChild(scoreVC)
             view.addSubview(scoreVC.view)
             scoreVC.view.layer.cornerRadius = 10
             
-//            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+            //            self.scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
             scoreVC.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
             
             // 점수 초기화 !
@@ -738,7 +744,7 @@ class CameraController: UIViewController {
             
         }
         
-
+        
     }
     
     // TODO: need to change trialCore of scoreVC here (why ?
@@ -750,8 +756,8 @@ class CameraController: UIViewController {
             guard let scoreVC = scoreVC else {
                 return
             }
-
-
+            
+            
             scoreVC.setupTrialCore(with: trialCore )
             
             if size == .large {
@@ -760,7 +766,7 @@ class CameraController: UIViewController {
                         self.scoreVC!.view.frame = CGRect(x: 0, y: screenHeight - 324, width: screenWidth, height: screenHeight)
                     }
                 }
-
+                
             } else {
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 0.4) {
@@ -772,14 +778,14 @@ class CameraController: UIViewController {
     }
     
     private func hideScoreView() {
-//        if rank == .boss {
-//        Thread 1: Fatal error: Unexpectedly found nil while unwrapping an Optional value
-            DispatchQueue.main.async {
-                UIView.animate(withDuration: 0.4) {
-                    self.scoreVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
-                }
+        //        if rank == .boss {
+        //        Thread 1: Fatal error: Unexpectedly found nil while unwrapping an Optional value
+        DispatchQueue.main.async {
+            UIView.animate(withDuration: 0.4) {
+                self.scoreVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
             }
-//        }
+        }
+        //        }
     }
     
     
@@ -814,11 +820,11 @@ class CameraController: UIViewController {
             }
             
             self.isRecording = false
-//            stopTimer()
+            //            stopTimer()
         }
-//        stopTimer()
+        //        stopTimer()
     }
-
+    
     private func triggerDurationTimer() {
         
         count = 0
@@ -886,9 +892,9 @@ class CameraController: UIViewController {
         
         var insetSize: CGFloat
         
-//        if size != nil {
-//            insetSize = size == .large ? 324 : 219
-//        }
+        //        if size != nil {
+        //            insetSize = size == .large ? 324 : 219
+        //        }
         
         addChild(previewVC)
         view.addSubview(previewVC.view)
@@ -908,7 +914,7 @@ class CameraController: UIViewController {
             make.leading.trailing.equalToSuperview()
         }
     }
-
+    
     private func removeChildrenVC() {
         DispatchQueue.main.async {
             guard let previewVC = self.previewVC else {
@@ -960,21 +966,21 @@ class CameraController: UIViewController {
         }
         
         
-//        topView.addSubview(dismissBtn)
-//        dismissBtn.snp.makeConstraints { make in
-//            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
-//            make.leading.equalToSuperview().inset(16)
-//            make.height.width.equalTo(24)
-//        }
+        //        topView.addSubview(dismissBtn)
+        //        dismissBtn.snp.makeConstraints { make in
+        //            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
+        //            make.leading.equalToSuperview().inset(16)
+        //            make.height.width.equalTo(24)
+        //        }
         
         
-//        topView.addSubview(movementNameLabel)
-//        movementNameLabel.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(90)
-//            make.centerX.equalToSuperview()
-//            make.width.equalTo(250)
-//            make.height.equalTo(25)
-//        }
+        //        topView.addSubview(movementNameLabel)
+        //        movementNameLabel.snp.makeConstraints { make in
+        //            make.top.equalToSuperview().offset(90)
+        //            make.centerX.equalToSuperview()
+        //            make.width.equalTo(250)
+        //            make.height.equalTo(25)
+        //        }
         
         
         topView.addSubview(durationLabel)
@@ -988,13 +994,13 @@ class CameraController: UIViewController {
         view.addSubview(bottomView)
         
         
-
         
-
+        
+        
         
         bottomView.addSubview(neighborLongBar)
         neighborLongBar.snp.makeConstraints { make in
-//            make.center.equalToSuperview()
+            //            make.center.equalToSuperview()
             
             make.centerY.equalToSuperview().offset(5)
             make.centerX.equalToSuperview()
@@ -1020,7 +1026,7 @@ class CameraController: UIViewController {
         stackViewContainer.addSubview(directionStackView)
         directionStackView.snp.makeConstraints { make in
             make.leading.top.trailing.bottom.equalToSuperview().inset(2)
-//            make.top.equalToSuperview()
+            //            make.top.equalToSuperview()
         }
         
         
@@ -1033,14 +1039,14 @@ class CameraController: UIViewController {
         }
         
         
-//        directionStackView.addSubview(<#T##view: UIView##UIView#>)
-//        [leftLine, rightLine].forEach { self.directionStackView.addSubview($0)}
+        //        directionStackView.addSubview(<#T##view: UIView##UIView#>)
+        //        [leftLine, rightLine].forEach { self.directionStackView.addSubview($0)}
         [leftLine, rightLine].forEach { self.stackViewContainer.addSubview($0)}
         
         
         leftLine.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(76)
-//            make.leading.equalToSuperview().offset(77)
+            //            make.leading.equalToSuperview().offset(77)
             make.centerY.equalToSuperview()
             make.height.equalToSuperview().dividedBy(2)
             make.width.equalTo(1)
@@ -1048,12 +1054,12 @@ class CameraController: UIViewController {
         
         rightLine.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-76)
-//            make.trailing.equalToSuperview().offset(-77)
+            //            make.trailing.equalToSuperview().offset(-77)
             make.centerY.equalToSuperview()
             make.height.equalToSuperview().dividedBy(2)
             make.width.equalTo(1)
         }
-//        picker.
+        //        picker.
         
         
         
@@ -1076,7 +1082,7 @@ class CameraController: UIViewController {
         outerRecCircle.addSubview(recordingBtn)
         
         self.outerRecCircle.snp.makeConstraints { make in
-//            make.center.equalTo(self.bottomView.snp.center)
+            //            make.center.equalTo(self.bottomView.snp.center)
             make.centerY.equalToSuperview().offset(5)
             make.centerX.equalToSuperview()
             make.height.width.equalTo(72)
@@ -1085,22 +1091,22 @@ class CameraController: UIViewController {
         self.innerShape.snp.makeConstraints { make in
             make.center.equalToSuperview()
             
-//            make.centerY.equalToSuperview().offset(5)
-//            make.centerX.equalToSuperview()
+            //            make.centerY.equalToSuperview().offset(5)
+            //            make.centerX.equalToSuperview()
             make.width.height.equalTo(36)
         }
         
         self.recordingBtn.snp.makeConstraints { make in
             make.center.equalToSuperview()
             
-//            make.centerY.equalToSuperview().offset(5)
-//            make.centerX.equalToSuperview()
+            //            make.centerY.equalToSuperview().offset(5)
+            //            make.centerX.equalToSuperview()
             make.width.height.equalTo(36)
         }
         
         self.bottomView.addSubview(movementNameLabel)
         self.movementNameLabel.snp.makeConstraints { make in
-//            make.centerX.equalToSuperview()
+            //            make.centerX.equalToSuperview()
             make.leading.trailing.equalToSuperview()
             make.top.equalTo(outerRecCircle.snp.bottom).offset(10)
             make.height.equalTo(30)
@@ -1125,7 +1131,7 @@ class CameraController: UIViewController {
             self.connectionManager.isHost = true
             self.connectionManager.numOfPeers = 0
             self.connectionManager.delegate?.updateState(state: .disconnected, connectedAmount: 0)
-//            self.connectionManager.update
+            //            self.connectionManager.update
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Join Session", style: .default, handler: { (action: UIAlertAction) in
@@ -1140,12 +1146,12 @@ class CameraController: UIViewController {
     
     // MARK: - UI Properties
     
-//    private let bottomView = UIView().then { $0.backgroundColor = .white }
+    //    private let bottomView = UIView().then { $0.backgroundColor = .white }
     private let bottomView = UIView().then { $0.backgroundColor = .clear }
     
-//    private let topView = UIView().then { $0.backgroundColor = .white }
+    //    private let topView = UIView().then { $0.backgroundColor = .white }
     private let topView = UIView().then { $0.backgroundColor = .clear }
-        
+    
     
     private let frontBtn = SelectableButton(title: "Front").then {
         $0.layer.cornerRadius = 4
@@ -1159,18 +1165,18 @@ class CameraController: UIViewController {
         
     }
     
-//    private let
+    //    private let
     
-//    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
+    //    private let directionStackView = SelectableButtonStackView(selectedBGColor: .purple500, defaultBGColor: .white, selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
     
     private let directionStackView = SelectableButtonStackView(selectedBGColor: .transPurple500, defaultBGColor: UIColor(white: 0.9, alpha: 0.6), selectedTitleColor: .white, defaultTitleColor: .gray600, spacing: 2, cornerRadius: 6)
     
-//        .then {
-        //        $0.backgroundColor = .magenta
-//        $0.layer.borderWidth = 1
-//        $0.layer.borderColor = UIColor.blueGray200.cgColor
-//        $0.clipsToBounds = true
-//    }
+    //        .then {
+    //        $0.backgroundColor = .magenta
+    //        $0.layer.borderWidth = 1
+    //        $0.layer.borderColor = UIColor.blueGray200.cgColor
+    //        $0.clipsToBounds = true
+    //    }
     
     private let stackViewContainer = UIView().then {
         $0.layer.borderWidth = 1
@@ -1180,7 +1186,7 @@ class CameraController: UIViewController {
     }
     
     private let movementNameLabel = UILabel().then {
-//        $0.textColor = .black
+        //        $0.textColor = .black
         $0.textColor = .white
         $0.textAlignment = .center
         $0.font = UIFont.systemFont(ofSize: 20)
@@ -1206,7 +1212,7 @@ class CameraController: UIViewController {
     private let dismissBtn: UIButton = {
         let btn = UIButton()
         let innerImage = UIImageView(image: UIImage(systemName: "chevron.left"))
-//        innerImage.tintColor = .black
+        //        innerImage.tintColor = .black
         innerImage.tintColor = .white
         btn.addSubview(innerImage)
         
@@ -1251,7 +1257,7 @@ class CameraController: UIViewController {
     }
     
     /// animation from Vikky
-//    private let countDownLottieView = AnimationView(name: "countDown").then {
+    //    private let countDownLottieView = AnimationView(name: "countDown").then {
     private let countDownLottieView = AnimationView(name: "countDownLottie").then {
         $0.contentMode = .scaleAspectFit
         $0.loopMode = .playOnce
@@ -1277,34 +1283,34 @@ class CameraController: UIViewController {
         $0.setTitleColor(.gray900, for: .normal)
     }
     
-//    private let checkmarkLottieView = AnimationView(name: "checkmark").then {
+    //    private let checkmarkLottieView = AnimationView(name: "checkmark").then {
     private let completeLottieView = AnimationView(name: "completeLottie2").then {
         $0.contentMode = .scaleAspectFit
         $0.loopMode = .playOnce
-//        $0.backgroundColor = .white
-//        $0.backgroundColor = .magenta
+        //        $0.backgroundColor = .white
+        //        $0.backgroundColor = .magenta
     }
     
-//    private let completeMsgLabel = UILabel().then {
-//        //    private let completeMsgLabel = UITextView().then {
-//        let paragraph = NSMutableParagraphStyle()
-//        paragraph.alignment = .center
-//
-//        let attrText = NSMutableAttributedString(string: "Upload Completed!\n hihi", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
-//
-//        attrText.append(NSAttributedString(string: "Contrats!\nYour video has been successfully uploaded.", attributes: [
-//            .font: UIFont.systemFont(ofSize: 17),
-//            .foregroundColor: UIColor.gray600,
-//            .paragraphStyle: paragraph]))
-//
-//        attrText.append(NSAttributedString(string: "Your video has been successfully uploaded", attributes: [
-//            .font: UIFont.systemFont(ofSize: 15),
-//            .paragraphStyle: paragraph
-//        ]))
-//
-//        $0.attributedText = attrText
-//        $0.numberOfLines = 0
-//    }
+    //    private let completeMsgLabel = UILabel().then {
+    //        //    private let completeMsgLabel = UITextView().then {
+    //        let paragraph = NSMutableParagraphStyle()
+    //        paragraph.alignment = .center
+    //
+    //        let attrText = NSMutableAttributedString(string: "Upload Completed!\n hihi", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
+    //
+    //        attrText.append(NSAttributedString(string: "Contrats!\nYour video has been successfully uploaded.", attributes: [
+    //            .font: UIFont.systemFont(ofSize: 17),
+    //            .foregroundColor: UIColor.gray600,
+    //            .paragraphStyle: paragraph]))
+    //
+    //        attrText.append(NSAttributedString(string: "Your video has been successfully uploaded", attributes: [
+    //            .font: UIFont.systemFont(ofSize: 15),
+    //            .paragraphStyle: paragraph
+    //        ]))
+    //
+    //        $0.attributedText = attrText
+    //        $0.numberOfLines = 0
+    //    }
     
     private let completeMsgLabel = UILabel().then {
         //    private let completeMsgLabel = UITextView().then {
@@ -1337,16 +1343,16 @@ class CameraController: UIViewController {
     
     func renameRecording(from:URL, to:URL) {
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-//        let toURL = documentsDirectory.URLByAppendingPathComponent(to.lastPathComponent!)
+        //        let toURL = documentsDirectory.URLByAppendingPathComponent(to.lastPathComponent!)
         let toURL = documentsDirectory.appendingPathComponent(to.lastPathComponent)
         
         print("renaming file \(from.absoluteString) to \(to) url \(toURL)")
-//        let fileManager = FileManager.defaultManager()
+        //        let fileManager = FileManager.defaultManager()
         let fileManager = FileManager.default.self
         fileManager.delegate = self
         do {
             try fileManager.moveItem(at: from, to: toURL)
-
+            
         } catch let error as NSError {
             print(error.localizedDescription)
         } catch {
@@ -1357,26 +1363,26 @@ class CameraController: UIViewController {
             self.listRecordings()
         }
     }
-
+    
     func listRecordings() {
-          
-//            let documentsDirectory = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]
+        
+        //            let documentsDirectory = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]
         let documentsDirectory = FileManager.default.urls(for: .documentationDirectory, in: .userDomainMask)[0]
-            do {
-//                let urls = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsDirectory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles)
-                let urls = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
-                
-//                self.arrayRecordingsURL = urls.filter( { (name: URL) -> Bool in
-//                    return name.lastPathComponent!.hasSuffix("m4a")
-//                })
-              
-            } catch let error as NSError {
-                print(error.localizedDescription)
-            } catch {
-                print("something went wrong listing recordings")
-            }
+        do {
+            //                let urls = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsDirectory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles)
+            let urls = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
+            
+            //                self.arrayRecordingsURL = urls.filter( { (name: URL) -> Bool in
+            //                    return name.lastPathComponent!.hasSuffix("m4a")
+            //                })
+            
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        } catch {
+            print("something went wrong listing recordings")
         }
-
+    }
+    
 }
 
 // MARK: - UIImagePickerController Delegate
@@ -1386,45 +1392,32 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
         self.dismiss(animated: true)
     }
     
+    /// 여기 함수 내에서 기다리게 할 수 있나..??
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         print("imagePickerController didFinishPickingMedia called!")
         //        var videoUrl: URL?
         if shouldShowScoreView {
-        guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
-              mediaType == (kUTTypeMovie as String),
-              let url = info[UIImagePickerController.InfoKey.mediaURL] as? URL,
-              UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(url.path)
-        else {
-            print("failed to get url Path!")
-            return
-        }
-        
-        print("save success !")
-            
-        // Save Video To Photos Album
-        UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
-
-        videoUrl = url
-        
-        guard let validUrl = videoUrl else { fatalError() }
-        saveVideoToLocal(with: validUrl)
-        
-//            guard let trialCore = trialCore,
-//                  let trialDetail = trialDetail else { fatalError() }
-            
-//            let ftpInfoStr = makeFTPInfoString(trialCore: trialCore, trialDetail: trialDetail, additionalInfo: "" )
-//            let fileName = ftpInfoStr.fileName
-            let fileName = "my some test Name"
-            let cropController = CropController(url: validUrl, vc: self)
-            
-//            cropController.exportVideo { CroppedUrl in
-//                print("url Name: \(CroppedUrl.absoluteString)")
-//            }
-        
-            
-            cropController.exportVideo(fileName: fileName) { CroppedUrl in
-                print("name: \(CroppedUrl.absoluteString)")
+            guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
+                  mediaType == (kUTTypeMovie as String),
+                  let url = info[UIImagePickerController.InfoKey.mediaURL] as? URL,
+                  UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(url.path)
+            else {
+                print("failed to get url Path!")
+                return
             }
+            
+            print("save success !")
+            
+            // Save Video To Photos Album
+            //        UISaveVideoAtPathToSavedPhotosAlbum(url.path, self, nil, nil)
+            
+            videoUrl = url
+            
+            guard let validUrl = videoUrl else { fatalError() }
+            
+            let fileName = "my some test Name"
+            
+            cropController = CropController(url: validUrl, vc: self)
             
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             
@@ -1446,6 +1439,8 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             shouldShowScoreView.toggle()
         }
     }
+    
+    
 }
 
 // MARK: - Connection Manager Delegate
@@ -1470,8 +1465,8 @@ extension CameraController: ConnectionManagerDelegate {
             print("disconnected!")
             connectionManager.numOfPeers = 0
             DispatchQueue.main.async {
-
-//                self.connectionStateLabel.text = "Disconnected!"
+                
+                //                self.connectionStateLabel.text = "Disconnected!"
                 //                self.showConnectivityAction()
                 if self.connectionManager.isHost == false {
                     print("disconnect flag 1")
@@ -1488,9 +1483,9 @@ extension CameraController: ConnectionManagerDelegate {
             print("disconnect flag 6")
         case .connected:
             print("connected!")
-//            self.connectedAmount = connectedAmount
+            //            self.connectedAmount = connectedAmount
             self.connectionManager.numOfPeers = connectedAmount
-//            switch connectedAmount {
+            //            switch connectedAmount {
             switch self.connectionManager.numOfPeers {
             case 1: self.changeMode(target: .left, mode: .stop)
             case 2: self.changeMode(target: .both, mode: .stop)
@@ -1512,7 +1507,6 @@ extension CameraController: ConnectionManagerDelegate {
     
     public func hidePreview() {
         guard let previewVC = previewVC else {
-//            fatalError()
             return
         }
         DispatchQueue.main.async {
@@ -1536,16 +1530,24 @@ extension CameraController: ConnectionManagerDelegate {
         
         let videoFileName = fileName + "_\(cameraDirectionInt)"
         
+        guard let cropController = cropController else {
+            fatalError()
+        }
         
-//        let cropController = CropController(url: validVideoURL, vc: self)
+        cropController.exportVideo(fileName: videoFileName) { CroppedUrl in
+            print("fileName flag2: \(fileName)")
+        }
         
-//        cropController.exportVideo { CroppedUrl in
-//            print("url Name: \(CroppedUrl.absoluteString)")
-//        }
         
-//        cropController.exportVideo(fileName: videoFileName) { CroppedUrl in
-//            print("file Name: \(CroppedUrl.absoluteString)")
-//        }
+        //        let cropController = CropController(url: validVideoURL, vc: self)
+        
+        //        cropController.exportVideo { CroppedUrl in
+        //            print("url Name: \(CroppedUrl.absoluteString)")
+        //        }
+        
+        //        cropController.exportVideo(fileName: videoFileName) { CroppedUrl in
+        //            print("file Name: \(CroppedUrl.absoluteString)")
+        //        }
         
         
         
@@ -1557,14 +1559,17 @@ extension CameraController: ConnectionManagerDelegate {
     }
     
     private func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
-                
+        
         guard let screen = screen else { fatalError() }
         guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
         
         let date = Date()
-//        let inspectorName = "someName"
-        let inspectorName = screen.parentSubject?.inspector
-    
+        let formattedDateStr = date.getFormattedDate()
+        //        let inspectorName = "someName"
+        
+        
+        let inspectorName = screen.parentSubject!.inspector!.name
+        
         let subjectName = subject.name
         
         let screenIndex = screen.screenIndex
@@ -1586,11 +1591,11 @@ extension CameraController: ConnectionManagerDelegate {
         let components = calendar.dateComponents([.year], from: subject.birthday)
         
         guard let birthYear = components.year else { fatalError() }
-    
+        
         let kneeLength = subject.kneeLength
         let palmLength = subject.palmLength
         
-        let fileName = "\(date)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
+        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
         
         let ftpInfoString = FtpInfoString(fileName: fileName)
         return ftpInfoString
@@ -1599,15 +1604,23 @@ extension CameraController: ConnectionManagerDelegate {
 }
 
 
+//YYYY.MM.DD_HH.MM.SS_검사자명_피험자명_1_ds1_01012341234_성별_탄생년도_무릅길이_손바닥길이_앵글
+
 extension CameraController: ScoreControllerDelegate {
     func postAction(ftpInfoString: FtpInfoString) {
         
-        guard let validVideoURL = videoUrl else { return }
+//        guard let validVideoURL = videoUrl else { return }
         let receivedFileName = ftpInfoString.fileName
+        
+//        guard let cropController = cropController else { fatalError() }
+//        cropController.exportVideo( fileName: receivedFileName) { CroppedUrl in
+//            print("fileName flag1: \(receivedFileName)")
+//        }
+        
         
         makeFileNameThenPost(fileName: receivedFileName)
     }
-
+    
     
     func orderRequest(ftpInfoString: FtpInfoString) {
         connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(ftpInfoString: ftpInfoString)))
@@ -1642,10 +1655,10 @@ extension CameraController: ScoreControllerDelegate {
         resetTimer()
         removeChildrenVC()
         prepareScoreView()
-//        makeTrialDetail()
+        //        makeTrialDetail()
         hideCompleteMsgView()
         scoreVC!.changeSaveBtnColor()
-//        self.updateTrialDetail()
+        //        self.updateTrialDetail()
     }
     
     public func updateTrialCore(with trialCore: TrialCore) {
@@ -1666,13 +1679,13 @@ extension CameraController: ScoreControllerDelegate {
         stopRecording()
         deleteAction()
         // TODO: DismissPreview
-//        hidePreview()
+        //        hidePreview()
     }
     
     // TODO: Fix if necessary
     func deleteAction() {
         connectionManager.send(PeerInfo(msgType: .hidePreviewMsg, info: Info()))
-//        guard let validVideoUrl = videoUrl else { fatalError() }
+        //        guard let validVideoUrl = videoUrl else { fatalError() }
         if let videoUrl = videoUrl {
             deleteVideo(with: videoUrl)
         }
@@ -1680,9 +1693,9 @@ extension CameraController: ScoreControllerDelegate {
         // initialize selected score
         
         prepareRecording()
-//        updateNameLabel()
-//        removeChildrenVC()
-//        resetTimer()
+        //        updateNameLabel()
+        //        removeChildrenVC()
+        //        resetTimer()
         hideScoreView()
         
         self.shouldShowScoreView = false
@@ -1693,40 +1706,40 @@ extension CameraController: ScoreControllerDelegate {
     private func deleteVideo(with url: URL) {
         do {
             try FileManager().removeItem(at: url)
-//            print("file exist ? 2 \(FileManager().fileExists(atPath: url.path))")
-//            print("successfully deleted video !") // ?? 삭제 안됐는데 ?
+            //            print("file exist ? 2 \(FileManager().fileExists(atPath: url.path))")
+            //            print("successfully deleted video !") // ?? 삭제 안됐는데 ?
         } catch {
-//            print("error: \(error.localizedDescription)")
-//            print("file exist ? 3 \(FileManager().fileExists(atPath: url.path))")
+            //            print("error: \(error.localizedDescription)")
+            //            print("file exist ? 3 \(FileManager().fileExists(atPath: url.path))")
         }
     }
     
     func saveVideoToLocal(with url: URL) {
         //        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         //        let documentsDirectoryURL = paths[0]
-//        print("duration: \(self.testDuration)")
+        //        print("duration: \(self.testDuration)")
         PHPhotoLibrary.shared().performChanges {
             PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-//            PHAssetChangeRequest.
+            //            PHAssetChangeRequest.
         }
     }
     // TODO: post, makePeersPost
-
-    func postAction(ftpInfo: FTPInfo) {
     
+    func postAction(ftpInfo: FTPInfo) {
+        
         guard let validVideoUrl = videoUrl else { return }
         
         print("-----------CameraController trialCore Details -----------")
         
-//        let cropController = CropController(url: validVideoUrl, vc: self)
+        //        let cropController = CropController(url: validVideoUrl, vc: self)
         
-//        cropController.exportVideo { CroppedUrl in
-//            print("url Name: \(CroppedUrl.absoluteString)")
-//        }
-//        cropController.exportVideo(fileName: ftpInfo, closure: <#T##(URL) -> Void##(URL) -> Void##(_ CroppedUrl: URL) -> Void#>)
-//        self.post(postReqInfo: ftpInfo)
+        //        cropController.exportVideo { CroppedUrl in
+        //            print("url Name: \(CroppedUrl.absoluteString)")
+        //        }
+        //        cropController.exportVideo(fileName: ftpInfo, closure: <#T##(URL) -> Void##(URL) -> Void##(_ CroppedUrl: URL) -> Void#>)
+        //        self.post(postReqInfo: ftpInfo)
         
-//        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(postReqInfo: ftpInfo)))
+        //        connectionManager.send(PeerInfo(msgType: .requestPostMsg, info: Info(postReqInfo: ftpInfo)))
         
         
         
@@ -1737,11 +1750,11 @@ extension CameraController: ScoreControllerDelegate {
         
     }
     
-
+    
     
     private func makeCall(title: String, direction: String, score: Int, pain: Int, trialCount: Int, videoURL: URL, cameraDirection: String, screenKey: UUID ) {
         
-//        APIManager.shared.postRequest(movementTitle: <#T##String#>, direction: <#T##String#>, score: <#T##Int#>, pain: <#T##Int#>, trialCount: <#T##Int#>, videoURL: <#T##URL#>, cameraDirection: <#T##String#>, screenKey: <#T##UUID#>, closure: <#T##() -> Void#>)
+        //        APIManager.shared.postRequest(movementTitle: <#T##String#>, direction: <#T##String#>, score: <#T##Int#>, pain: <#T##Int#>, trialCount: <#T##Int#>, videoURL: <#T##URL#>, cameraDirection: <#T##String#>, screenKey: <#T##UUID#>, closure: <#T##() -> Void#>)
     }
     
     /// merge Position Title + Direction  into Unique Key
@@ -1749,15 +1762,15 @@ extension CameraController: ScoreControllerDelegate {
         return title + direction
     }
     
-
+    
     
     func prepareRecording() {
         updateNameLabel()
         removeChildrenVC()
         resetTimer()
-//        hideScoreView()
-//        hidePreview()
-//        hidePreview2()
+        //        hideScoreView()
+        //        hidePreview()
+        //        hidePreview2()
     }
 }
 
