@@ -69,6 +69,7 @@
 		22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACAF5428094ACF007277A7 /* DateExt+.swift */; };
 		22EE6528286D419100AFAC77 /* Debugging History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE6527286D419100AFAC77 /* Debugging History.swift */; };
 		22EE652A286D41A300AFAC77 /* Debugging History in Resources */ = {isa = PBXBuildFile; fileRef = 22EE6529286D41A300AFAC77 /* Debugging History */; };
+		22EE6589286EF09B00AFAC77 /* UITextFieldExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */; };
 		22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* EditorService.swift */; };
 		22F65DFE283F75A100646FCD /* CropController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* CropController.swift */; };
 		22F65E672840C72500646FCD /* TrimmerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E662840C72500646FCD /* TrimmerController.swift */; };
@@ -155,6 +156,7 @@
 		22ACAF5428094ACF007277A7 /* DateExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateExt+.swift"; sourceTree = "<group>"; };
 		22EE6527286D419100AFAC77 /* Debugging History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Debugging History.swift"; sourceTree = "<group>"; };
 		22EE6529286D41A300AFAC77 /* Debugging History */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Debugging History"; sourceTree = "<group>"; };
+		22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextFieldExt+.swift"; sourceTree = "<group>"; };
 		22F65DF1283E2DFB00646FCD /* EditorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorService.swift; sourceTree = "<group>"; };
 		22F65DFD283F75A100646FCD /* CropController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropController.swift; sourceTree = "<group>"; };
 		22F65E662840C72500646FCD /* TrimmerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerController.swift; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 				22F65EB12849B0FA00646FCD /* UIView+Ext.swift */,
 				22F65EBB284EDDC600646FCD /* RemovableCell.swift */,
 				22244D352859D16A00B3D03C /* UIViewControllerExt+.swift */,
+				22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -559,6 +562,7 @@
 				22F65E692840D29700646FCD /* MovementListController.swift in Sources */,
 				227950B9282BBF8F00B675A1 /* PositionTitleCore+Helper.swift in Sources */,
 				E54927E5283B878A0049D00A /* SubjectTableCell.swift in Sources */,
+				22EE6589286EF09B00AFAC77 /* UITextFieldExt+.swift in Sources */,
 				2279507B282BA58600B675A1 /* Model.xcdatamodeld in Sources */,
 				2283BEC4281B8732007D74FC /* Util+.swift in Sources */,
 				2279505E282B87BC00B675A1 /* SubjectViewModel.swift in Sources */,

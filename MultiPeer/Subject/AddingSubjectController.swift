@@ -25,9 +25,9 @@ class AddingSubjectController: UIViewController {
     var context: NSManagedObjectContext?
     
     private let nameTF: UITextField = {
-        let tf = UITextField()
+        let tf = UITextField(withPadding: true)
 
-        let attrText = NSMutableAttributedString(string: "Enter Name\n", attributes: [
+        let attrText = NSMutableAttributedString(string: "Name", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
                                                  
@@ -36,6 +36,7 @@ class AddingSubjectController: UIViewController {
         tf.textColor = .white
         tf.backgroundColor = UIColor(white: 0.4, alpha: 0.4)
         tf.layer.cornerRadius = 10
+        
         return tf
     }()
     
@@ -48,12 +49,12 @@ class AddingSubjectController: UIViewController {
         $0.layer.cornerRadius = 20
     }
     
+    
+    
     private let genderStackView = SelectableButtonStackView(selectedBGColor: .green, defaultBGColor: .gray, selectedTitleColor: .black, defaultTitleColor: .white, spacing: 10, cornerRadius: 15).then {
         $0.distribution = .fillEqually
         $0.axis = .horizontal
     }
-    
-    
     
     var name: String = ""
     var phoneNumber = ""
@@ -93,8 +94,9 @@ class AddingSubjectController: UIViewController {
 //    }
     
     private let emailTF: UITextField = {
-        let tf = UITextField()
-        let attrText = NSMutableAttributedString(string: "Enter Email Address\n", attributes: [
+//        let tf = UITextField()
+        let tf = UITextField(withPadding: true)
+        let attrText = NSMutableAttributedString(string: "Email Address", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
 //        tf.placeholder = "Enter Email Address"
@@ -109,8 +111,9 @@ class AddingSubjectController: UIViewController {
     }()
     
     private let phoneTF : UITextField = {
-        let tf = UITextField()
-        let attrText = NSMutableAttributedString(string: "Enter Phone Number\n", attributes: [
+//        let tf = UITextField()
+        let tf = UITextField(withPadding: true)
+        let attrText = NSMutableAttributedString(string: "Phone Number", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
         tf.attributedPlaceholder = attrText
@@ -126,12 +129,13 @@ class AddingSubjectController: UIViewController {
     }()
     
     private let kneeTF : UITextField = {
-        let tf = UITextField()
-        let attrText = NSMutableAttributedString(string: "Enter Knee Length\n", attributes: [
+//        let tf = UITextField()
+        let tf = UITextField(withPadding: true)
+        let attrText = NSMutableAttributedString(string: " Knee Length\n", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
         tf.attributedPlaceholder = attrText
-        
+        tf.adjustsFontSizeToFitWidth = true
 //        tf.keyboardType = .numberPad
         tf.keyboardType = .decimalPad
         tf.textColor = .white
@@ -142,25 +146,33 @@ class AddingSubjectController: UIViewController {
         
         return tf
     }()
+    
+    private let kneeUnitLabel = UILabel().then {
+        $0.text = "cm"
+        $0.textColor = .black
+    }
     
     private let palmTF : UITextField = {
-        let tf = UITextField()
-        let attrText = NSMutableAttributedString(string: "Enter palm Length\n", attributes: [
+        let tf = UITextField(withPadding: true)
+        
+        let attrText = NSMutableAttributedString(string: " palm Length\n", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
         tf.attributedPlaceholder = attrText
-        
-//        tf.keyboardType = .numberPad
+        tf.adjustsFontSizeToFitWidth = true
         tf.keyboardType = .decimalPad
         tf.textColor = .white
         
-        tf.textColor = .white
         tf.backgroundColor = UIColor(white: 0.4, alpha: 0.4)
         tf.layer.cornerRadius = 10
         
         return tf
     }()
     
+    private let palmUnitLabel = UILabel().then {
+        $0.text = "cm"
+        $0.textColor = .black
+    }
     
     private let completeBtn = UIButton().then {
         $0.setTitle("Complete", for: .normal)
@@ -216,7 +228,6 @@ class AddingSubjectController: UIViewController {
         let kneeLength = Double(kneeTF.text!)!
         let palmLength = Double(palmTF.text!)!
         
-        //        Subject.save(name: name, phoneNumber: phoneNumber, isMale: genderStackView.selectedBtnIndex! == 0, birthday: birthday)
         Subject.save(name: name, phoneNumber: phoneNumber, isMale: isMale, birthday: birthday, kneeLength: kneeLength, palmLength: palmLength, inspector: inspector)
         
         delegate?.updateAfterAdded()
@@ -295,10 +306,17 @@ class AddingSubjectController: UIViewController {
                 view.endEditing(true)
             }
 
-        } else  if sender == kneeTF || sender == palmTF {
-            if kneeTF.text!.count == 4 || palmTF.text!.count == 4 {
-                view.endEditing(true)
-            }
+//        } else if sender == kneeTF || sender == palmTF {
+//            if kneeTF.text!.count == 4 || palmTF.text!.count == 4 {
+//                print("text.count is 4")
+//                view.endEditing(true)
+//            }
+//        }
+            
+        } else if sender == kneeTF && kneeTF.text!.count == 4 {
+            view.endEditing(true)
+        } else if sender == palmTF && palmTF.text!.count == 4 {
+            view.endEditing(true)
         }
         toggleCompleteBtnState()
     }
@@ -323,12 +341,13 @@ class AddingSubjectController: UIViewController {
         [
 //            nameLabel,
             nameTF,
-         genderStackView,
-         birthDayLabel, birthDayPicker,
-         emailTF,
-         phoneTF,
-            kneeTF, palmTF,
-         completeBtn
+            genderStackView,
+            birthDayLabel, birthDayPicker,
+            emailTF,
+            phoneTF,
+            kneeTF, kneeUnitLabel,
+            palmTF, palmUnitLabel,
+            completeBtn
         ].forEach { self.view.addSubview($0)}
         
         print("genderStackView's button: \(genderStackView.buttons.count)")
@@ -388,14 +407,34 @@ class AddingSubjectController: UIViewController {
             make.leading.equalToSuperview().inset(20)
             make.height.equalTo(40)
             make.top.equalTo(phoneTF.snp.bottom).offset(20)
-            make.width.equalTo(150)
+            make.width.equalTo(120)
         }
+        
+        kneeUnitLabel.snp.makeConstraints { make in
+            make.leading.equalTo(kneeTF.snp.trailing).offset(5)
+            make.height.equalTo(kneeTF.snp.height)
+            make.width.equalTo(25)
+            make.centerY.equalTo(kneeTF.snp.centerY)
+        }
+        
+        
+        
+
+        
+        palmUnitLabel.snp.makeConstraints { make in
+//            make.leading.equalTo(palmTF.snp.trailing).offset(5)
+            make.trailing.equalToSuperview().inset(40)
+            make.height.equalTo(palmTF.snp.height)
+            make.width.equalTo(25)
+            make.centerY.equalTo(kneeTF.snp.centerY)
+        }
+        
         palmTF.delegate = self
         palmTF.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(40)
+            make.trailing.equalTo(palmUnitLabel.snp.leading).offset(-5)
             make.height.equalTo(40)
             make.top.equalTo(phoneTF.snp.bottom).offset(20)
-            make.width.equalTo(150)
+            make.width.equalTo(120)
         }
         
         completeBtn.snp.makeConstraints { make in
