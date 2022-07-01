@@ -28,7 +28,7 @@ class AddingInspectorController: UIViewController {
 //        let tf = UITextField()
         let tf = UITextField(withPadding: true)
 
-        let attrText = NSMutableAttributedString(string: "Enter Name\n", attributes: [
+        let attrText = NSMutableAttributedString(string: "Name", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
                                                  
@@ -53,7 +53,7 @@ class AddingInspectorController: UIViewController {
     private let phoneTF : UITextField = {
 //        let tf = UITextField()
         let tf = UITextField(withPadding: true)
-        let attrText = NSMutableAttributedString(string: "Enter Phone Number\n", attributes: [
+        let attrText = NSMutableAttributedString(string: "Phone Number", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
         tf.attributedPlaceholder = attrText
