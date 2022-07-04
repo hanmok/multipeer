@@ -11,13 +11,14 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import Photos
 
-class CropController {
+class TrimmingController {
     
     var player: AVPlayer? {
         didSet {
             guard let duration = player?.currentItem?.duration else { return }
 //            let asset = AVURLAsset(url: <#T##NSURL#>)
             endTime = duration
+            print("endTime changed to \(endTime)")
         }
     }
     
@@ -26,11 +27,17 @@ class CropController {
     
     var startTime: CMTime = .zero
     var endTime: CMTime = .zero
+    
     var parentVC: UIViewController?
     
-    init(url: URL, vc: UIViewController) {
+    var timeDiff: CMTime
+    
+    init(url: URL, vc: UIViewController, timeDiff: Int64) {
         self.player = AVPlayer(url: url)
         self.parentVC = vc
+
+        self.timeDiff = timeDiff.convertIntoCMTime()
+        
         let asset = AVURLAsset(url: url)
         testDuration = asset.duration.seconds
     }
@@ -42,6 +49,7 @@ class CropController {
         
         // MARK: - Composition
         guard let playerItem = self.player?.currentItem else { fatalError() }
+        
 //        let cropRect = setupCropRect(item: playerItem)
 //        self.setupCropScaleComposition(item: playerItem, cropRect: cropRect)
 //        guard let composition = self.cropScaleComposition else { fatalError() }
@@ -54,13 +62,17 @@ class CropController {
         //        guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("exported.mov") else { fatalError() }
         
 //        guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("\(fileUUID).mov") else { fatalError() }
+        
+        
+        
         guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("\(fileName).mov") else { fatalError() }
         
 //        guard let outputMovieURL = URL(string: "hi2.mov") else { fatalError() }
                 
 //        export(assetToExport, to: outputMovieURL, startTime: self.startTime, endTime: self.endTime, composition: composition)
         
-        let timeRange = CMTimeRangeFromTimeToTime(start: self.startTime, end: self.endTime)
+//        let timeRange = CMTimeRangeFromTimeToTime(start: self.startTime, end: self.endTime)
+        let timeRange = CMTimeRangeFromTimeToTime(start: self.timeDiff, end: self.endTime)
         
         do {
             try FileManager.default.removeItem(at: outputMovieURL)
@@ -74,7 +86,10 @@ class CropController {
         exporter?.outputURL = outputMovieURL
         exporter?.outputFileType = .mov
         exporter?.timeRange = timeRange
-        
+        print("---------- trimming flag ----------")
+        print("startTime: \(startTime)")
+        print("endTime: \(endTime)")
+        print("timeDiff: \(self.timeDiff)")
         exporter?.exportAsynchronously(completionHandler: {
             [weak exporter] in
             DispatchQueue.main.async {
@@ -84,6 +99,7 @@ class CropController {
                 } else {
                     if shouldSave {
                     self.saveVideoToLocal(with: outputMovieURL)
+                        print("successfully saved video !!")
                     }
                     closure(outputMovieURL)
                 }

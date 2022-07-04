@@ -284,9 +284,6 @@ extension ConnectionManager: MCSessionDelegate {
                 
                 NotificationCenter.default.post(name: notificationName, object: nil, userInfo: titleDirectionDic)
                 
-//            case .presentCameraMsg,
-//                    .requestPostMsg,
-//                    .updatePeerTitleMsg:
             case .requestPostMsg:
                 
                 
@@ -307,10 +304,17 @@ extension ConnectionManager: MCSessionDelegate {
                 
                 cameraDirectionDic[peerId] = cameraDirection
                 
-                // TODO: 중복 체크.
-                //
-//                showalert 처리는 여기서 못함.. notification post 로 가서 처리하자. 아냐 ;; 버튼 누를 때 이미 처리했어 ㅠㅠ
-                //
+            case .sendCapturingStartedTime:
+                guard let peerStartedTime = receivedData.info.capturingTime else { fatalError() }
+                
+                let time = peerStartedTime.timeInInt64
+                
+                let timeInfoDic: [AnyHashable: Any] = [
+                    "peerStartedTime": time
+                ]
+                
+                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: timeInfoDic)
+                
              default: print("default case !")
             }
             

@@ -386,7 +386,6 @@ class ScoreController: UIViewController {
         
         if saveConditionSatisfied() {
             
-            printFlag(type: .rsBug, count: 1)
             guard let score = score else { fatalError("score is nil") }
             
             setupFTrialCoreIfNeeded()
@@ -405,6 +404,9 @@ class ScoreController: UIViewController {
             
             let ftpInfoStr = makeFTPInfoString(trialCore: trialCore, trialDetail: trialDetail)
             
+            trialCore.latestScore = trialDetail.score
+            trialCore.updatedDate = Date()
+            print("updatedDate: \(Date())") // 날짜, 시분초 까지 나옴
             
             delegate?.postAction(ftpInfoString: ftpInfoStr)
             delegate?.orderRequest(ftpInfoString: ftpInfoStr)
@@ -693,5 +695,6 @@ class ScoreController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
 
 

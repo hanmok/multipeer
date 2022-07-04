@@ -37,13 +37,15 @@ class CameraController: UIViewController {
     
     var croppedUrl: URL?
     
+    var currentDeviceStartedCapturingTime: Int64?
+    var timeDiff: Int64?
     var positionTitle: String
     
     var direction: MovementDirection
     
     var cameraDirection: CameraDirection?
     
-    var cropController: CropController?
+    var trimmingController: TrimmingController?
     
     //    var connectedAmount: Int = 0
     
@@ -269,7 +271,21 @@ class CameraController: UIViewController {
             name: .updatePeerTitleKey, object: nil
         )
         
+        NotificationCenter.default.addObserver(self, selector: #selector(calculateTimeDiff(_:)), name: .capturingStartedTime, object: nil)
+        
         //        NotificationCenter.default.addobser
+    }
+    
+    @objc func calculateTimeDiff(_ notification: Notification) {
+        let peerStartedTime = (notification.userInfo?["peerStartedTime"])! as! Int64
+        
+        guard let currentDeviceStartedCapturingTime = currentDeviceStartedCapturingTime else {
+            fatalError()
+        }
+
+        timeDiff = peerStartedTime - currentDeviceStartedCapturingTime
+        if timeDiff! < 0 { timeDiff = 0 }
+    
     }
     
     @objc func updatePeerTitleNoti(_ notification: Notification) {
@@ -322,16 +338,26 @@ class CameraController: UIViewController {
         //        let recordingTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
         resetTimer()
+        //FIXME: ?? 왜 updatingDurationTimer 에 recording 이 들어가있는거야?
         
         updatingDurationTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
         RunLoop.main.add(updatingDurationTimer, forMode: .common)
+        
+        if rank == .follower {
+            currentDeviceStartedCapturingTime = Date().millisecondsSince1970
+        }
+        
+        let peerStartedCapturingTime = Date().millisecondsSince1970
+        
+        connectionManager.send(PeerInfo(msgType: .sendCapturingStartedTime, info: Info(capturingTime: CapturingTime(timeInInt64: peerStartedCapturingTime))))
         
         changeBtnLookForRecording(animation: false)
         
         triggerDurationTimer()
         
     }
+    
     public func stopDurationTimer() {
         updatingDurationTimer.invalidate()
     }
@@ -599,6 +625,7 @@ class CameraController: UIViewController {
         // Start Recording!!
         
         removeChildrenVC()
+        
         if !isRecording {
             
             connectionManager.send(PeerInfo(msgType: .startRecordingMsg, info: Info()))
@@ -610,7 +637,6 @@ class CameraController: UIViewController {
         } else {
             
             stopRecording()
-            
             
             changeBtnLookForPreparing(animation: true)
             
@@ -638,6 +664,7 @@ class CameraController: UIViewController {
         // num of direction checked  ~ num of peers
         // cameraDirectionDic  은 최대 3개,
         // numOfPeers 는 최대 2 + 1 -> 3개
+        
         if connectionManager.cameraDirectionDic.count < connectionManager.numOfPeers + 1 {
             showAlert("Direction not determined", "Please check camera direction. ")
             return
@@ -654,25 +681,23 @@ class CameraController: UIViewController {
                 directionSet.update(with: direction)
             }
         }
-        
-        //        if connectionManager.mydirection == nil {
-        //            showAlert(<#T##title: String##String#>, <#T##message: String##String#>)
-        //        }
-        
-        
+
         
         if isRecording {
-            //            startRecording()
+
             recordingBtnAction()
+            
         } else {
-            // MARK: - Testing Mode
-            //             TODO: Uncomment after testing
+            // Start Recording !
+            //  -shouldRecordLater == false ==> Testing Mode
             if shouldRecordLater {
                 _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {  [weak self] _ in
                     self?.recordingBtnAction()
+                    self?.currentDeviceStartedCapturingTime = Date().millisecondsSince1970
                 }
                 playCountDownLottie()
             } else {
+                currentDeviceStartedCapturingTime = Date().millisecondsSince1970
                 self.recordingBtnAction()
             }
         }
@@ -785,7 +810,6 @@ class CameraController: UIViewController {
                 self.scoreVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
             }
         }
-        //        }
     }
     
     
@@ -1395,7 +1419,7 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
     /// 여기 함수 내에서 기다리게 할 수 있나..??
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         print("imagePickerController didFinishPickingMedia called!")
-        //        var videoUrl: URL?
+        
         if shouldShowScoreView {
             guard let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String,
                   mediaType == (kUTTypeMovie as String),
@@ -1417,7 +1441,12 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             
             let fileName = "my some test Name"
             
-            cropController = CropController(url: validUrl, vc: self)
+//            guard let timeDiff = timeDiff else { fatalError() }
+            if timeDiff == nil { timeDiff = 0 }
+            guard let timeDiff = timeDiff else { fatalError() }
+
+            
+            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff)
             
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             
@@ -1530,7 +1559,7 @@ extension CameraController: ConnectionManagerDelegate {
         
         let videoFileName = fileName + "_\(cameraDirectionInt)"
         
-        guard let cropController = cropController else {
+        guard let cropController = trimmingController else {
             fatalError()
         }
         

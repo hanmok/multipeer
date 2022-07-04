@@ -36,6 +36,15 @@ extension Screen {
         }
     }
     
+    public var isFinished: Bool {
+        get {
+            return self.isFinished_
+        }
+        set {
+            self.isFinished_ = newValue
+        }
+    }
+    
 //    public var positionTitleCores: Set<PositionTitleCore> {
 //        get {
 ////            return self.positionTitleCores_ as! Set<PositionTitleCore>
@@ -71,14 +80,17 @@ extension Screen {
         guard let validScreen = screen as? Screen else {
             fatalError("screen downcasting has failed!")
         }
-        
+        // 이게 맞을듯 .. ?
+        let numOfScreens = subject.screens.count
         validScreen.parentSubject = subject // 이거 빼고 모두 같음 .
         let currentDate = Date()
         let randomUUID = UUID()
         
+
         validScreen.setValue(currentDate, forKey: .ScreenStr.date)
         validScreen.setValue(randomUUID, forKey: "id_")
         validScreen.setValue(0, forKey: .ScreenStr.totalScore)
+        validScreen.setValue(numOfScreens, forKey: .ScreenStr.screenIndex)
         
         TrialCore.saveBundle(belongTo: validScreen)
         

@@ -70,8 +70,9 @@
 		22EE6528286D419100AFAC77 /* Debugging History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE6527286D419100AFAC77 /* Debugging History.swift */; };
 		22EE652A286D41A300AFAC77 /* Debugging History in Resources */ = {isa = PBXBuildFile; fileRef = 22EE6529286D41A300AFAC77 /* Debugging History */; };
 		22EE6589286EF09B00AFAC77 /* UITextFieldExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */; };
+		22EE65EA2872DB8700AFAC77 /* CMTimeExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65E92872DB8700AFAC77 /* CMTimeExt+.swift */; };
 		22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* EditorService.swift */; };
-		22F65DFE283F75A100646FCD /* CropController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* CropController.swift */; };
+		22F65DFE283F75A100646FCD /* TrimmingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* TrimmingController.swift */; };
 		22F65E672840C72500646FCD /* TrimmerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E662840C72500646FCD /* TrimmerController.swift */; };
 		22F65E692840D29700646FCD /* MovementListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E682840D29700646FCD /* MovementListController.swift */; };
 		22F65E6E2844770100646FCD /* MovementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E6D2844770100646FCD /* MovementCell.swift */; };
@@ -157,8 +158,9 @@
 		22EE6527286D419100AFAC77 /* Debugging History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Debugging History.swift"; sourceTree = "<group>"; };
 		22EE6529286D41A300AFAC77 /* Debugging History */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Debugging History"; sourceTree = "<group>"; };
 		22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextFieldExt+.swift"; sourceTree = "<group>"; };
+		22EE65E92872DB8700AFAC77 /* CMTimeExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CMTimeExt+.swift"; sourceTree = "<group>"; };
 		22F65DF1283E2DFB00646FCD /* EditorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorService.swift; sourceTree = "<group>"; };
-		22F65DFD283F75A100646FCD /* CropController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropController.swift; sourceTree = "<group>"; };
+		22F65DFD283F75A100646FCD /* TrimmingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingController.swift; sourceTree = "<group>"; };
 		22F65E662840C72500646FCD /* TrimmerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerController.swift; sourceTree = "<group>"; };
 		22F65E682840D29700646FCD /* MovementListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovementListController.swift; sourceTree = "<group>"; };
 		22F65E6D2844770100646FCD /* MovementCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovementCell.swift; sourceTree = "<group>"; };
@@ -339,7 +341,7 @@
 				22EE6529286D41A300AFAC77 /* Debugging History */,
 				22EE6527286D419100AFAC77 /* Debugging History.swift */,
 				22244D1E28586AC900B3D03C /* toFix */,
-				22F65DFD283F75A100646FCD /* CropController.swift */,
+				22F65DFD283F75A100646FCD /* TrimmingController.swift */,
 				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
@@ -391,6 +393,7 @@
 				22F65EBB284EDDC600646FCD /* RemovableCell.swift */,
 				22244D352859D16A00B3D03C /* UIViewControllerExt+.swift */,
 				22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */,
+				22EE65E92872DB8700AFAC77 /* CMTimeExt+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -584,6 +587,7 @@
 				2280DCDB28334BEE0036632E /* TrialHeader.swift in Sources */,
 				22F65EB8284EDCA200646FCD /* SelectableButton.swift in Sources */,
 				22889EFD2820CA96002A9C4F /* PreviewController.swift in Sources */,
+				22EE65EA2872DB8700AFAC77 /* CMTimeExt+.swift in Sources */,
 				22EE6528286D419100AFAC77 /* Debugging History.swift in Sources */,
 				2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */,
 				22244D69286561E300B3D03C /* InspectorTableCell.swift in Sources */,
@@ -602,7 +606,7 @@
 				22315E3D282E1FCB0093079B /* ScreenViewModel.swift in Sources */,
 				22F65EBE284EDF0F00646FCD /* ScoreBtnView.swift in Sources */,
 				22244D2128596BDE00B3D03C /* TestViewController.swift in Sources */,
-				22F65DFE283F75A100646FCD /* CropController.swift in Sources */,
+				22F65DFE283F75A100646FCD /* TrimmingController.swift in Sources */,
 				228B88392806577A007A6842 /* SceneDelegate.swift in Sources */,
 				22F65EBC284EDDC600646FCD /* RemovableCell.swift in Sources */,
 			);

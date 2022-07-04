@@ -35,15 +35,19 @@ class ScreenTableCell: UITableViewCell {
         $0.textColor = .cyan
         $0.backgroundColor = .gray
     }
+    
     private let dateLabel = UILabel().then {
         $0.textAlignment = .center
         $0.textColor = .cyan
         $0.backgroundColor = .gray
     }
+    
     private let scoreLabel = UILabel().then {
         $0.textColor = .red
         $0.textAlignment = .center
         $0.backgroundColor = .darkGray
+        $0.adjustsFontSizeToFitWidth = true
+        
     }
     
     static let identifier = "screenTableCell"
@@ -96,8 +100,8 @@ class ScreenTableCell: UITableViewCell {
         
         sequenceIndexLabel.text = vm.sequenceIndex
         print("sequenceIndex: \(vm.sequenceIndex)")
-        dateLabel.text = vm.date
-        scoreLabel.text = vm.score
+        dateLabel.text = " \(vm.date) "
+        scoreLabel.text = " \(vm.score) "
         print("vm.score: \(vm.score)")
     }
 }

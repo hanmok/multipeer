@@ -421,7 +421,6 @@ struct FTPInfo: Codable {
 //    let name: String
 //    let phoneNumber: String
 //}
-
 /*
  
 func postRequest(

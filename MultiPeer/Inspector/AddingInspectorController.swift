@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Then
 import CoreData
-
+//import CFNetwork
 
 protocol AddingInspectorDelegate: AnyObject {
     func updateAfterAdded()
@@ -22,6 +22,7 @@ class AddingInspectorController: UIViewController {
     weak var delegate: AddingInspectorDelegate?
     
     var appDelegate: AppDelegate?
+    
     var context: NSManagedObjectContext?
     
     private let nameTF: UITextField = {
@@ -31,7 +32,7 @@ class AddingInspectorController: UIViewController {
         let attrText = NSMutableAttributedString(string: "Name", attributes: [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: UIColor.gray])
-                                                 
+        
         tf.attributedPlaceholder = attrText
     
         tf.textColor = .white
