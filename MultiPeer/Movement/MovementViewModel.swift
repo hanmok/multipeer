@@ -83,7 +83,7 @@ struct MovementViewModel {
             
             return temp
         } else if trialCores.count == 2 {
-            if trialCores.first!.date >= trialCores.last!.date {
+            if trialCores.first!.updatedDate >= trialCores.last!.updatedDate {
                 if trialCores.first!.latestScore < 0 {
                     temp.append("N")
                 } else {

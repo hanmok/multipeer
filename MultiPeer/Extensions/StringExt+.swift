@@ -25,6 +25,7 @@ extension String {
         static let isFinished = "isFinished"
 
         static let totalScore = "totalScore"
+        static let screenIndex = "screenIndex"
     }
 
     struct InspectorStr {
@@ -54,7 +55,7 @@ extension String {
         static let latestScore = "latestScore"
         
         static let trials = "trialD" // what the hell is this ? master 에 있는 것을 공유.
-        static let date = "date_"
+        static let date = "updatedDate_"
         static let tag = "tag"
         static let parentScreen = "parentScreen"
         static let trialDetails = "trialDetails_"

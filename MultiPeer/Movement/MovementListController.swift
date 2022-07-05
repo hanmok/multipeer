@@ -60,12 +60,13 @@ class MovementListController: UIViewController {
         completeConditionViewModels = []
     }
     private func checkConditionForViewModels() {
+        print("checkConditionForViewModels called!!")
         var isCompleted = true
         
         for eachViewModel in completeConditionViewModels {
             print("eachViewModel's title: \(eachViewModel.title)")
             eachViewModel.scoreLabel.forEach {
-                if $0.contains("N") || $0.contains("L") || $0.contains("R") {
+                if $0 == "N" || $0 == "L" || $0 == "R" {
                     print("scoreLabel: \($0)")
                     isCompleted = false
                 }
@@ -77,6 +78,10 @@ class MovementListController: UIViewController {
         if isCompleted {
             
             applyStyle(to: completeBtn, selectable: true)
+            
+            guard let screen = screen else { fatalError() }
+            screen.isFinished = true
+            
             applyStyle(to: finishBtn, selectable: false)
         }
     }
@@ -181,7 +186,7 @@ class MovementListController: UIViewController {
         super.viewDidLoad()
         
         view.insetsLayoutMarginsFromSafeArea = false
-        print("viewDidLoad in MovementListController called")
+        print("viewDidLoad in MovementListController called") // not called..
         
         registerCollectionView()
         connectionManager.delegate = self
@@ -253,11 +258,11 @@ class MovementListController: UIViewController {
     private func setupAddTargets() {
         sessionBtn.addTarget(self, action: #selector(showConnectivityAction(_:)), for: .touchUpInside)
         
-        finishBtn.addTarget(self, action: #selector(moveToSubjectController), for: .touchUpInside)
+        finishBtn.addTarget(self, action: #selector(moveToInspectorController), for: .touchUpInside)
         
-        subjectSettingBtn.addTarget(self, action: #selector(moveToSubjectController), for: .touchUpInside)
+        subjectSettingBtn.addTarget(self, action: #selector(moveToInspectorController), for: .touchUpInside)
         
-        completeBtn.addTarget(self, action: #selector(moveToSubjectController), for: .touchUpInside)
+        completeBtn.addTarget(self, action: #selector(moveToInspectorController), for: .touchUpInside)
     }
     
     // TODO: Host 인 경우, 어떤 값을 설정해주기.
@@ -283,16 +288,16 @@ class MovementListController: UIViewController {
     
     
     @objc func subjectBtnTapped(_ sender: UIButton) {
-        moveToSubjectController()
+          moveToInspectorController()
         
     }
     
     @objc func completeBtnTapped(_ sender: UIButton) {
-        moveToSubjectController()
+          moveToInspectorController()
     }
     
     @objc func finishBtnTapped(_ sender: UIButton) {
-        moveToSubjectController()
+          moveToInspectorController()
     }
     
     
@@ -440,7 +445,7 @@ class MovementListController: UIViewController {
                 if let variationCoreName = movementWithVariation[eachCore.first!.title] {
                     
                     let matchedVariationCore = trialCores[index + 1]
-                    if !(eachCore.first!.date >= matchedVariationCore.first!.date) {
+                    if !(eachCore.first!.updatedDate >= matchedVariationCore.first!.updatedDate) {
                         trialCoresToShow[trialCoresToShow.count - 1].append(matchedVariationCore.first!)
                     }
                 }
@@ -459,15 +464,8 @@ class MovementListController: UIViewController {
             
         }
         
-        //        print("----------------- trialCoresToShow: -----------------")
-        //        for eachCore in trialCoresToShow {
-        //            print("title: \(eachCore.first?.title), direction: \(eachCore.first?.direction)")
-        //        }
-        
-        
-        
-        //        completeConditionViewModels
         initializeViewModels()
+        
         DispatchQueue.main.async {
             self.movementCollectionView.reloadData()
         }
@@ -475,14 +473,13 @@ class MovementListController: UIViewController {
     
     // MARK: - UI, Navigation Functions
     
-    @objc func moveToSubjectController() {
-        
+    @objc func moveToInspectorController() {
         
         let inspectorVC = InspectorController()
         
-        let uinavController = UINavigationController(rootViewController: inspectorVC)
+        let uiNavController = UINavigationController(rootViewController: inspectorVC)
         
-        self.present(uinavController, animated: true)
+        self.present(uiNavController, animated: true)
     }
     
     private func presentCamera(with selectedTrial: TrialCore) {
@@ -493,7 +490,7 @@ class MovementListController: UIViewController {
         // boss 는 반드시 default가 아닌 Screen 이 있어야 Camera 로 이동
         
         guard screen?.parentSubject != nil else {
-            self.moveToSubjectController()
+            self.moveToInspectorController()
             return
         }
         

@@ -42,17 +42,17 @@ extension TrialCore {
 //        }
 //    }
     
-    public var date: Date {
+    public var updatedDate: Date {
         get {
-            if self.date_ != nil {
-                return self.date_!
+            if self.updatedDate_ != nil {
+                return self.updatedDate_!
             } else {
-                self.date_ = Date()
-                return self.date_!
+                self.updatedDate_ = Date()
+                return self.updatedDate_!
             }
         }
         set {
-            self.date_ = newValue
+            self.updatedDate_ = newValue
         }
     }
     

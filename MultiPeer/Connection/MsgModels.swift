@@ -26,9 +26,11 @@ struct Info: Codable {
     var movementDetail: MovementDirectionScoreInfo?
     var idWithDirection: DeviceNameWithCameraDirection?
     var movementTitleDirection: MovementTitleDirectionInfo?
-//    var postReqInfo: PostReqInfo?
+    
     var ftpInfo: FTPInfo?
     var ftpInfoString: FtpInfoString?
+    
+    var capturingTime: CapturingTime?
 }
 
 struct FtpInfoString: Codable {
@@ -40,10 +42,16 @@ struct DeviceNameWithCameraDirection: Codable {
     var cameraDirection: CameraDirection
 }
 
+struct CapturingTime: Codable {
+    var timeInInt64: Int64
+}
+
 struct MsgWithTime: Codable {
     let msg: MessageType
     let timeInMilliSec: Int
 }
+
+
 
 struct PeerCommunicationHelper {
     static let msgToKeyDic: [MessageType: Notification.Name] = [
@@ -57,7 +65,8 @@ struct PeerCommunicationHelper {
         .updatePeerTitleMsg: .updatePeerTitleKey,
         .requestPostMsg: .requestPostKey,
         
-        .updatePeerCameraDirectionMsg: .updatePeerCameraDirectionKey
+        .updatePeerCameraDirectionMsg: .updatePeerCameraDirectionKey,
+        .sendCapturingStartedTime: .capturingStartedTime
     ]
 }
 
@@ -78,6 +87,8 @@ public enum MessageType: String, Codable {
     case requestPostMsg
     
     case updatePeerCameraDirectionMsg
+    
+    case sendCapturingStartedTime
     case none
 }
 

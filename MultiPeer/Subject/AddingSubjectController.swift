@@ -49,8 +49,6 @@ class AddingSubjectController: UIViewController {
         $0.layer.cornerRadius = 20
     }
     
-    
-    
     private let genderStackView = SelectableButtonStackView(selectedBGColor: .green, defaultBGColor: .gray, selectedTitleColor: .black, defaultTitleColor: .white, spacing: 10, cornerRadius: 15).then {
         $0.distribution = .fillEqually
         $0.axis = .horizontal
