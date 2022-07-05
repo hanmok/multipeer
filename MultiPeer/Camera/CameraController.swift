@@ -1743,17 +1743,63 @@ extension CameraController: ScoreControllerDelegate {
         }
     }
     
-    func saveVideoToLocal(with url: URL) {
-        //        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        //        let documentsDirectoryURL = paths[0]
-        //        print("duration: \(self.testDuration)")
+    func saveVideoToLocal(with videoURL: URL) {
+        
         PHPhotoLibrary.shared().performChanges {
-            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-            //            PHAssetChangeRequest.
+            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: videoURL) // url for a video file
+        }
+//        UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(<#T##videoPath: String##String#>)
+//        UISaveVideoAtPathToSavedPhotosAlbum("mymyTest", nil, nil, <#T##void?#>)
+    }
+   
+    func saveToAlbum(named: String, videoURL: URL) {
+//        let album = customalbum/
+    }
+    
+    func checkAuthorizationWithHandler(completion: @escaping (Result<Bool, Error>) -> ()) {
+        if PHPhotoLibrary.authorizationStatus() == .notDetermined {
+            PHPhotoLibrary.requestAuthorization({ (status) in
+                self.checkAuthorizationWithHandler(completion: completion)
+            })
+        }
+        else if PHPhotoLibrary.authorizationStatus() == .authorized {
+//            self.createAlbumIfNeeded { (success) in
+//                completion(success)
+//            }
+        }
+        else {
+//            completion(.failure(CustomAlbumError.notAuthorized))
         }
     }
-    // TODO: post, makePeersPost
     
+    private func createAlbumIfNotExist(albumName: String) {
+        let albumsPhoto:PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)
+        var albumNames = Set<String>()
+        albumsPhoto.enumerateObjects({(collection, index, object) in
+            let photoInAlbums = PHAsset.fetchAssets(in: collection, options: nil)
+//            print("print photoAlbum info")
+//            print(photoInAlbums.count)
+            print(collection.localizedTitle!)
+            albumNames.insert(collection.localizedTitle!)
+        })
+        // if given albumName not exist, create .
+        if albumNames.contains(albumName) == false {
+          // Create
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: albumName)
+            }) { success, error in
+                if success {
+                    print("successFully create file of name: \(albumName)")
+                } else {
+                    print("error: \(error?.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    
+    
+    // TODO: post, makePeersPost
     func postAction(ftpInfo: FTPInfo) {
         
         guard let validVideoUrl = videoUrl else { return }

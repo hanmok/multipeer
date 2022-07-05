@@ -237,22 +237,22 @@ class TrimmingController {
     }
     
     // not used .
-    func shareVideoFile(_ file:URL, presentOn vc: UIViewController) {
-        
-        //      updateControlStatus(enabled: true)
-        
-        // Create the Array which includes the files you want to share
-        var filesToShare = [Any]()
-        
-        // Add the path of the file to the Array
-        filesToShare.append(file)
-        
-        // Make the activityViewContoller which shows the share-view
-        let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
-        
-        // Show the share-view
-        vc.present(activityViewController, animated: true, completion: nil)
-    }
+//    func shareVideoFile(_ file:URL, presentOn vc: UIViewController) {
+//
+//        //      updateControlStatus(enabled: true)
+//
+//        // Create the Array which includes the files you want to share
+//        var filesToShare = [Any]()
+//
+//        // Add the path of the file to the Array
+//        filesToShare.append(file)
+//
+//        // Make the activityViewContoller which shows the share-view
+//        let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
+//
+//        // Show the share-view
+//        vc.present(activityViewController, animated: true, completion: nil)
+//    }
     
     func saveVideoToLocal(with url: URL) {
         //        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -262,5 +262,20 @@ class TrimmingController {
             PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
         }
     }
+    
+//    func save(video: URL, completion: (Result<Bool, Error>)) -> () {
+//
+//            PHPhotoLibrary.shared().performChanges({
+//                //                        let assetChangeRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
+//                let assetChangeRequest = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: video)
+//                let assetPlaceHolder = assetChangeRequest?.placeholderForCreatedAsset
+//                if let albumChangeRequest = PHAssetCollectionChangeRequest(for: self.assetCollection) {
+//                    let enumeration: NSArray = [assetPlaceHolder!]
+//                    albumChangeRequest.addAssets(enumeration)
+//                }
+//
+//
+//        })
+//    }
 }
 
