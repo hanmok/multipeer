@@ -86,6 +86,8 @@ class CameraController: UIViewController {
     
     var screen: Screen?
     
+    var subjectName: String?
+//    var subjectName: String
     // MARK: - Life Cycle
     
     public func updateLabel(title: String, direction: MovementDirection) {
@@ -101,7 +103,6 @@ class CameraController: UIViewController {
         direction: MovementDirection,
         
         rank: Rank
-        
     ) {
         self.connectionManager = connectionManager
         
@@ -117,7 +118,7 @@ class CameraController: UIViewController {
         self.screen = screen
         self.positionTitle = positionTitle
         self.rank = rank
-        //            self.connectedAmount = connectedAmount
+        
         super.init(nibName: nil, bundle: nil)
         
         
@@ -166,8 +167,14 @@ class CameraController: UIViewController {
         setupInitialDirectionBtn()
         
         print("screen from CameraController: \(screen)")
+        
+//        let screenIndex = 1
+        
+        guard let screen = screen else { fatalError() }
+        guard let subject = screen.parentSubject else { fatalError() }
+        createAlbumIfNotExist(albumName: "\(screen.screenIndex)_\(subject.name)")
     }
-    
+        
     private func setupInitialDirectionBtn() {
         if connectionManager.latestDirection != nil {
             let title = connectionManager.latestDirection!.rawValue
@@ -1446,8 +1453,12 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             if timeDiff == nil { timeDiff = 0 }
             guard let timeDiff = timeDiff else { fatalError() }
 
+//            guard let subjectName = subjectName else { fatalError() }
+//            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: subjectName)
             
-            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff)
+            guard let screen = screen else { fatalError() }
+            
+            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: connectionManager.subjectName, screenIndex: screen.screenIndex )
             
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             

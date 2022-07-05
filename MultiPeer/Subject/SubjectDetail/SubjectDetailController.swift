@@ -167,6 +167,7 @@ class SubjectDetailController: UIViewController {
     
     @objc func makeBtnTapped(_ sender: UIButton) {
         print("makeBtnTapped!")
+//        IncrementingIndex
         Screen.save(belongTo: subject)
         selectedIndex = IndexPath(row: -1, section: 0)
         
@@ -197,6 +198,8 @@ class SubjectDetailController: UIViewController {
         ]
         
         NotificationCenter.default.post(name: .screenSettingKey, object: nil, userInfo: screenInfo)
+        
+//        ConnectionManager
     }
     
     @objc func detailBtnTapped(_ sender: UIButton) {

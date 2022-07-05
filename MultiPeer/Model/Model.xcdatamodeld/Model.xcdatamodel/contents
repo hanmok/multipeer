@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21D62" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="IncrementingIndex" representedClassName="IncrementingIndex" syncable="YES" codeGenerationType="class">
+        <attribute name="index_" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <entity name="Inspector" representedClassName="Inspector" syncable="YES" codeGenerationType="class">
         <attribute name="id_" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name_" optional="YES" attributeType="String"/>
@@ -53,5 +56,6 @@
         <element name="Subject" positionX="-323.895751953125" positionY="235.299560546875" width="128" height="209"/>
         <element name="TrialCore" positionX="-171" positionY="243" width="128" height="164"/>
         <element name="TrialDetail" positionX="-271.5946044921875" positionY="134.26513671875" width="128" height="104"/>
+        <element name="IncrementingIndex" positionX="-198" positionY="279" width="128" height="44"/>
     </elements>
 </model>

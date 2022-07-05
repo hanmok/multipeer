@@ -36,8 +36,35 @@ class MyCustomAlbum: NSObject {
     
     static func saveToAlbum(named albumName: String, video: URL) {
         let album = MyCustomAlbum(name: albumName)
+        
         DispatchQueue.main.async {
+            createAlbumIfNotExist(albumName: albumName)
             album.save(video: video)
+        }
+    }
+    
+    static func createAlbumIfNotExist(albumName: String) {
+        let albumsPhoto:PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)
+        var albumNames = Set<String>()
+        albumsPhoto.enumerateObjects({(collection, index, object) in
+            let photoInAlbums = PHAsset.fetchAssets(in: collection, options: nil)
+//            print("print photoAlbum info")
+//            print(photoInAlbums.count)
+            print(collection.localizedTitle!)
+            albumNames.insert(collection.localizedTitle!)
+        })
+        // if given albumName not exist, create .
+        if albumNames.contains(albumName) == false {
+          // Create
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: albumName)
+            }) { success, error in
+                if success {
+                    print("successFully create file of name: \(albumName)")
+                } else {
+                    print("error: \(error?.localizedDescription)")
+                }
+            }
         }
     }
     

@@ -70,8 +70,6 @@ class ConnectionManager: NSObject {
     
     weak var delegate: ConnectionManagerDelegate?
     
-    
-    
     static var peers: [MCPeerID] = [] {
         didSet {
             print("current peers: \(oldValue.count)")
@@ -96,6 +94,7 @@ class ConnectionManager: NSObject {
     override init() {
         print("connectionManager initiated.")
     }
+    
     deinit {
         print("connectionManager deinitiated.")
     }
@@ -304,6 +303,7 @@ extension ConnectionManager: MCSessionDelegate {
                 
                 cameraDirectionDic[peerId] = cameraDirection
                 
+
             case .sendCapturingStartedTime:
                 guard let peerStartedTime = receivedData.info.capturingTime else { fatalError() }
                 
@@ -314,6 +314,17 @@ extension ConnectionManager: MCSessionDelegate {
                 ]
                 
                 NotificationCenter.default.post(name: notificationName, object: nil, userInfo: timeInfoDic)
+                
+            case .sendSubjectName:
+                guard let subjectName = receivedData.info.subjectName else { fatalError()}
+                
+                let name = subjectName.name
+                
+                let nameInfoDic: [AnyHashable: Any] = [
+                    "subjectName": name]
+                
+                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: nameInfoDic)
+                
                 
              default: print("default case !")
             }
@@ -335,6 +346,9 @@ extension ConnectionManager: MCSessionDelegate {
                         
             self.numOfPeers = ConnectionManager.peers.count
             self.connectionState = .connected
+                        
+            // how can i update subject name .. ??
+            
             print("state: connected !")
             startTime = Date()
             

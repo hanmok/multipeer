@@ -26,4 +26,6 @@ extension Notification.Name {
     static let screenSettingKey = Notification.Name(rawValue: "popAll")
     
     static let capturingStartedTime = Notification.Name(rawValue: "captureTime")
+    
+    static let sendSubjectNameKey = Notification.Name(rawValue: "sendSubjectName")
 }

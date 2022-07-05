@@ -118,7 +118,6 @@ class CustomAlbum: NSObject {
                 completion(.failure(err))
             }
         }
-        
     }
 }
 

@@ -32,15 +32,20 @@ class TrimmingController {
     var parentVC: UIViewController?
     
     var timeDiff: CMTime
+    var subjectName: String
+    var screenIndex: Int64
     
-    init(url: URL, vc: UIViewController, timeDiff: Int64) {
+    init(url: URL, vc: UIViewController, timeDiff: Int64, subjectName: String, screenIndex: Int64) {
         self.player = AVPlayer(url: url)
         self.parentVC = vc
 
         self.timeDiff = timeDiff.convertIntoCMTime()
+        self.screenIndex = screenIndex
         
         let asset = AVURLAsset(url: url)
+        
         testDuration = asset.duration.seconds
+        self.subjectName = subjectName
     }
     
     func exportVideo(shouldSave: Bool = true, fileName: String = "default fileName", closure: @escaping (_ CroppedUrl: URL) -> Void ) {
@@ -204,12 +209,17 @@ class TrimmingController {
     func saveVideoToLocal(with url: URL) {
         let formattedDate = Date().getFormattedDate(format: "yyyy.MM.dd")
         
-//        let myCustomAlbum = MyCustomAlbum(name: "subejct \(formattedDate)")
+        // 미리 만들어 놓아야하나.. ??
+//        let albumName = "subject5 \(formattedDate)"
+//        let albumName = "\(subjectName) \(formattedDate)"
         
-//        myCustomAlbum.createAlbumIfNeeded()
-        
-        let albumName = "subject \(formattedDate)"
-        createAlbumIfNotExist(albumName: albumName)
+//        createAlbumIfNotExist(albumName: albumName)
+// screen 값이 주어져야하는데 .. ??
+        let screenIndex = 1
+
+        let albumName = "\(screenIndex)_\(subjectName)"
+//        let userName = connec
+//        let albumName =
         
         MyCustomAlbum.saveToAlbum(named: albumName, video: url)
         
@@ -219,7 +229,6 @@ class TrimmingController {
 //        PHPhotoLibrary.shared().performChanges {
 //            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
 //        }
-        
         
     }
     

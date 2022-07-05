@@ -76,6 +76,7 @@
 		22EE65F02873E85600AFAC77 /* ErrorExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65EF2873E85600AFAC77 /* ErrorExt+.swift */; };
 		22EE65F22874004800AFAC77 /* DoubleExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F12874004800AFAC77 /* DoubleExt+.swift */; };
 		22EE65F42874170E00AFAC77 /* MyCustomAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */; };
+		22EE65F628743A9F00AFAC77 /* IncrementingIndex+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F528743A9F00AFAC77 /* IncrementingIndex+Helper.swift */; };
 		22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* EditorService.swift */; };
 		22F65DFE283F75A100646FCD /* TrimmingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* TrimmingController.swift */; };
 		22F65E672840C72500646FCD /* TrimmerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E662840C72500646FCD /* TrimmerController.swift */; };
@@ -169,6 +170,7 @@
 		22EE65EF2873E85600AFAC77 /* ErrorExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErrorExt+.swift"; sourceTree = "<group>"; };
 		22EE65F12874004800AFAC77 /* DoubleExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoubleExt+.swift"; sourceTree = "<group>"; };
 		22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCustomAlbum.swift; sourceTree = "<group>"; };
+		22EE65F528743A9F00AFAC77 /* IncrementingIndex+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IncrementingIndex+Helper.swift"; sourceTree = "<group>"; };
 		22F65DF1283E2DFB00646FCD /* EditorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorService.swift; sourceTree = "<group>"; };
 		22F65DFD283F75A100646FCD /* TrimmingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingController.swift; sourceTree = "<group>"; };
 		22F65E662840C72500646FCD /* TrimmerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerController.swift; sourceTree = "<group>"; };
@@ -317,6 +319,7 @@
 				227648CD2831E75900214EBF /* TrialDetail+Helper.swift */,
 				227950B1282BB8F900B675A1 /* Subject+Helper.swift */,
 				22244D6128655AD600B3D03C /* Inspector+Helper.swift */,
+				22EE65F528743A9F00AFAC77 /* IncrementingIndex+Helper.swift */,
 				227950B6282BBF8500B675A1 /* Screen+Helper.swift */,
 				227950B8282BBF8F00B675A1 /* PositionTitleCore+Helper.swift */,
 				226D87662834E07600E3F547 /* RemovableProtocol.swift */,
@@ -579,6 +582,7 @@
 				22315E3B282E1F8F0093079B /* ScreenCollectionCell.swift in Sources */,
 				22EE65F02873E85600AFAC77 /* ErrorExt+.swift in Sources */,
 				227648CE2831E75900214EBF /* TrialDetail+Helper.swift in Sources */,
+				22EE65F628743A9F00AFAC77 /* IncrementingIndex+Helper.swift in Sources */,
 				9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */,
 				22F65E692840D29700646FCD /* MovementListController.swift in Sources */,
 				227950B9282BBF8F00B675A1 /* PositionTitleCore+Helper.swift in Sources */,

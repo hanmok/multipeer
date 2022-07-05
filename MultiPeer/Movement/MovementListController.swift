@@ -192,13 +192,13 @@ class MovementListController: UIViewController {
         connectionManager.delegate = self
         
         // 여기에서 에러
-        fetchDefaultScreen() // 이거... Peer 한테 필요한거야? 아마도 ?
+//        fetchDefaultScreen() // 이거... Peer 한테 필요한거야? 아마도 ?
         
         updateTrialCores(screen: screen)
         setupLayout()
         setupAddTargets()
         addNotificationObservers()
-        testCode()
+//        testCode()
     }
     
     deinit {
@@ -210,7 +210,11 @@ class MovementListController: UIViewController {
         
 
 //        createAlbumIfNotExist(albumName: "mymyTest")
+        let formattedDate = Date().getFormattedDate(format: "yyyy.MM.dd")
         
+        let albumName = "subject4 \(formattedDate)"
+        createAlbumIfNotExist(albumName: albumName)
+
         
     }
     
@@ -242,45 +246,45 @@ class MovementListController: UIViewController {
     
     // call if no screen assigned
     
-    func fetchDefaultScreen() {
-        print("fetchDefaultScreen called")
-        // false -> error !
-        if testMode {
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate")}
-            
-            let subjectContext = appDelegate.persistentContainer.viewContext
-            
-            let subjectReq = NSFetchRequest<NSFetchRequestResult>(entityName: .CoreEntitiesStr.Subject)
-            subjectReq.returnsObjectsAsFaults = false
-            
-            do {
-                let result = try subjectContext.fetch(subjectReq)
-                guard let fetchedSubjects = result as? [Subject] else { fatalError("failed to cast result to [Subject]")}
-                
-                if !fetchedSubjects.isEmpty {
-                    subject = fetchedSubjects.first!
-                }
-                
-                guard let subject = subject else {
-                    // no subject
-                    
-                    fatalError(" empty subject ")
-                }
-                
-                if subject.screens.isEmpty == false {
-                    screen = subject.screens.sorted{$0.date < $1.date}.first
-                    
-                    updateTrialCores(screen: screen)
-                    print("updateTrialCores called")
-                } else {
-                    print("subject has no screen")
-                }
-                
-            } catch {
-                fatalError("failed to fetch subjects!")
-            }
-        }
-    }
+//    func fetchDefaultScreen() {
+//        print("fetchDefaultScreen called")
+//        // false -> error !
+//        if testMode {
+//            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate")}
+//
+//            let subjectContext = appDelegate.persistentContainer.viewContext
+//
+//            let subjectReq = NSFetchRequest<NSFetchRequestResult>(entityName: .CoreEntitiesStr.Subject)
+//            subjectReq.returnsObjectsAsFaults = false
+//
+//            do {
+//                let result = try subjectContext.fetch(subjectReq)
+//                guard let fetchedSubjects = result as? [Subject] else { fatalError("failed to cast result to [Subject]")}
+//
+//                if !fetchedSubjects.isEmpty {
+//                    subject = fetchedSubjects.first!
+//                }
+//
+//                guard let subject = subject else {
+//                    // no subject
+//
+//                    fatalError(" empty subject ")
+//                }
+//
+//                if subject.screens.isEmpty == false {
+//                    screen = subject.screens.sorted{$0.date < $1.date}.first
+//
+//                    updateTrialCores(screen: screen)
+//                    print("updateTrialCores called")
+//                } else {
+//                    print("subject has no screen")
+//                }
+//
+//            } catch {
+//                fatalError("failed to fetch subjects!")
+//            }
+//        }
+//    }
     
     private func registerCollectionView() {
         movementCollectionView.register(MovementCell.self, forCellWithReuseIdentifier: MovementCell.cellId)
@@ -357,9 +361,16 @@ class MovementListController: UIViewController {
         guard let receivedScreen = notification.userInfo?["screen"] as? Screen else { fatalError() }
         
         screen = receivedScreen
-        
-        self.updatePeopleInfo(with: screen!)
+        guard let screen = screen else {
+            fatalError()        }
+        guard let parentSubject = screen.parentSubject else { fatalError() }
+        let subjectName = SubjectName(name: parentSubject.name)
+        //        self.updatePeopleInfo(with: screen!)?
+        self.updatePeopleInfo(with: screen)
         self.updateTrialCores(screen: screen)
+        connectionManager.send(PeerInfo(msgType: .sendSubjectName, info: Info(subjectName: subjectName)))
+        
+        connectionManager.subjectName = subjectName.name
         
         dismiss(animated: true)
     }
@@ -375,13 +386,14 @@ class MovementListController: UIViewController {
     // 여기서 Crash 발생. Why ??
     @objc func presentCameraNoti(_ notification: Notification) {
         
-        if !isCameraOn {
+        if isCameraOn == false {
             printFlag(type: .defaultSubjectScreen, count: 0)
             
             //        guard let subject = subject else { fatalError("fail to get subject ")}
             
             //            guard let screen = screen else { fatalError(" fail to get screen")}
             
+//            createAlbumIfNotExist(albumName: <#T##String#>)
             
             guard let title = notification.userInfo?["title"] as? String,
                   let direction = notification.userInfo?["direction"] as? MovementDirection
@@ -395,6 +407,8 @@ class MovementListController: UIViewController {
             //            }.first!
             
             presentCameraAsChild(rank: .follower, title: title, direction: direction)
+            
+            
         } else {
             // update peer's camera title
         }
@@ -542,13 +556,16 @@ class MovementListController: UIViewController {
     
     private func presentCameraAsChild(trialCore: TrialCore? = nil, rank: Rank, title: String, direction: MovementDirection) {
         
-        //        guard let screen = screen else { fatalError() }
-        
         DispatchQueue.main.async {
             if self.isCameraPresented == false {
                 
                 if rank == .boss {
                     print("screen from MovementListController: \(self.screen)")
+                    guard let screen = self.screen,
+                          let subject = screen.parentSubject else {
+                        return
+                    }
+
                     self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: self.screen, trialCore: trialCore!, positionTitle: title, direction: direction, rank: rank)
                     
                 } else {
@@ -566,7 +583,9 @@ class MovementListController: UIViewController {
                 UIView.animate(withDuration: 0.3) {
                     self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
                 }
+                
                 self.isCameraPresented = true
+            
             } else {
                 
                 self.showUpCamera()
