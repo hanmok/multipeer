@@ -581,6 +581,7 @@ Red 도 R 에 걸리기 때문에 안됐었음..
 
 
 *********************************
-InspectorController 로 갔다 왔을 때, Finish Later, Complete Screen 이 초기화되지 않음. 
+InspectorController 로 갔다 왔을 때, Finish Later, Complete Screen 이 초기화되지 않음.
 
 *********************************
+
