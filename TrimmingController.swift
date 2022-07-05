@@ -11,6 +11,7 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import Photos
 
+// need subject Info
 class TrimmingController {
     
     var player: AVPlayer? {
@@ -80,7 +81,9 @@ class TrimmingController {
             print("Could not remove file \(error.localizedDescription)")
         }
         
-        let exporter = AVAssetExportSession(asset: assetToExport, presetName: AVAssetExportPresetHighestQuality)
+//        let exporter = AVAssetExportSession(asset: assetToExport, presetName: AVAssetExportPresetHighestQuality)
+        
+        let exporter = AVAssetExportSession(asset: assetToExport, presetName: AVAssetExportPreset960x540)
         
 //        exporter?.videoComposition = composition
         exporter?.outputURL = outputMovieURL
@@ -111,45 +114,15 @@ class TrimmingController {
         
         let renderingSize = item.presentationSize
         
-        //        let xFactor = renderingSize.width / playerView.bounds.size.width
-        //        let yFactor = renderingSize.height / playerView.bounds.size.height
-        
-        //        let newX = croppingView.frame.origin.x * xFactor
-        //        let newW = croppingView.frame.width * xFactor
-        //        let newY = croppingView.frame.origin.y * yFactor
-        //        let newH = croppingView.frame.height * yFactor
-        
-        //        let size: CGFloat = 500
         let size: CGFloat = screenWidth
         
         print("screenWidth: \(screenWidth), screenHeight: \(screenHeight)")
-        // 왜 400 이 뽑힙니까?
         
-        //        let yCoordinate: CGFloat = (screenHeight - screenWidth) / 2
-        //        let yCoordinate: CGFloat = 57
-        
-        // 이게.. 센터냐 ?
-        //        아니,
-        
-//        let eachSize: CGFloat = 1300 // 500 -> 400
         let preferredSize: CGFloat = 1000
-//        let sizeTobeUsed = preferredSize * 1.25
+
         let sizeTobeUsed = preferredSize * 1
-        // 1000 -> 800 x 800
-        // 1200 -> 960 x 960
-        // 1300 -> 1040
-        // 700 -> 560 x 560
-//        ??? 뭐지 ??
         
-//        var cropRect = CGRect(x: 0, y: 0, width: size, height: size)
-//        var cropRect = CGRect(x: 0, y: 0, width: 500, height: 500)
         let cropRect = CGRect(x: 0, y: 0, width: sizeTobeUsed, height: sizeTobeUsed)
-        
-        //        let originFlipTransform = CGAffineTransform(scaleX: 1, y: -1)
-        //        let frameTranslateTransform = CGAffineTransform(translationX: 0, y: renderingSize.height)
-        
-        //        cropRect = cropRect.applying(originFlipTransform)
-        //        cropRect = cropRect.applying(frameTranslateTransform)
         
         return cropRect
     }
@@ -157,43 +130,16 @@ class TrimmingController {
     func setupCropScaleComposition(item: AVPlayerItem, cropRect: CGRect) {
         
         let cropScaleComposition = AVMutableVideoComposition(asset: item.asset, applyingCIFiltersWithHandler: { [weak self] request in
-            
-            //        guard let self = self else { return }
-            
-            //        let sepiaToneFilter = CIFilter.sepiaTone()
-            
-            //        let currentTime = request.compositionTime
-            //        sepiaToneFilter.intensity = self.calculateFilterIntensity(self.endTime, currentTime)
-            
-            //          sepiaToneFilter.intensity = 0.5
-            //        sepiaToneFilter.inputImage = request.sourceImage
-            
+                        
             let cropFilter = CIFilter(name: "CICrop")!
-            //        cropFilter.setValue(sepiaToneFilter.outputImage!, forKey: kCIInputImageKey)
+            
             cropFilter.setValue(request.sourceImage, forKey: kCIInputImageKey)
             cropFilter.setValue(CIVector(cgRect: cropRect), forKey: "inputRectangle")
-            
-            
-            //        let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: -cropRect.origin.x, y: -cropRect.origin.y))
-            
-            let preferredSize: CGFloat = 1000
-//            let sizeTobeUsed = preferredSize * 1.25
-            
-//            let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: 0, y: -200 ))
-            
-//            let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: 0, y: -500 ))
-//            let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: 0, y: -200 ))
             
             let imageAtOrigin = cropFilter.outputImage!.transformed(by: CGAffineTransform(translationX: 0, y: 0 ))
             
             request.finish(with: imageAtOrigin, context: nil)
         })
-        
-        //        cropScaleComposition.renderSize = cropRect.size
-        //        cropScaleComposition.renderScale = 1.5
-        // modified
-        
-//        cropScaleComposition.renderSize = CGSize(width: cropRect.width * 0.8, height: cropRect.height * 0.8)
         
         cropScaleComposition.renderSize = CGSize(width: cropRect.width, height: cropRect.height)
         
@@ -215,7 +161,8 @@ class TrimmingController {
         }
         
         //create exporter
-        let exporter = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality)
+//        let exporter = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality)
+        let exporter = AVAssetExportSession(asset: asset, presetName: AVAssetExportPreset960x540)
         
         //configure exporter
         exporter?.videoComposition = composition
@@ -255,13 +202,27 @@ class TrimmingController {
 //    }
     
     func saveVideoToLocal(with url: URL) {
-        //        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        //        let documentsDirectoryURL = paths[0]
+        let formattedDate = Date().getFormattedDate(format: "yyyy.MM.dd")
+        
+//        let myCustomAlbum = MyCustomAlbum(name: "subejct \(formattedDate)")
+        
+//        myCustomAlbum.createAlbumIfNeeded()
+        
+        let albumName = "subject \(formattedDate)"
+        createAlbumIfNotExist(albumName: albumName)
+        
+        MyCustomAlbum.saveToAlbum(named: albumName, video: url)
+        
         print("duration: \(self.testDuration)")
-        PHPhotoLibrary.shared().performChanges {
-            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-        }
+        
+        // prev code
+//        PHPhotoLibrary.shared().performChanges {
+//            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+//        }
+        
+        
     }
+    
     
 //    func save(video: URL, completion: (Result<Bool, Error>)) -> () {
 //
@@ -277,5 +238,31 @@ class TrimmingController {
 //
 //        })
 //    }
+    
+    public func createAlbumIfNotExist(albumName: String) {
+        let albumsPhoto:PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)
+        var albumNames = Set<String>()
+        albumsPhoto.enumerateObjects({(collection, index, object) in
+            let photoInAlbums = PHAsset.fetchAssets(in: collection, options: nil)
+//            print("print photoAlbum info")
+//            print(photoInAlbums.count)
+            print(collection.localizedTitle!)
+            albumNames.insert(collection.localizedTitle!)
+        })
+        // if given albumName not exist, create .
+        if albumNames.contains(albumName) == false {
+          // Create
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: albumName)
+            }) { success, error in
+                if success {
+                    print("successFully create file of name: \(albumName)")
+                } else {
+                    print("error: \(error?.localizedDescription)")
+                }
+            }
+        }
+    }
+    
 }
 

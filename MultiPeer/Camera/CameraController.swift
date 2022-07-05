@@ -976,7 +976,8 @@ class CameraController: UIViewController {
         self.picker.mediaTypes = [kUTTypeMovie as String]
         self.picker.cameraOverlayView = self.bottomView
         self.picker.showsCameraControls = false
-        self.picker.videoQuality = .typeHigh // 1080 1920
+//        self.picker.videoQuality = .typeHigh // 1080 1920
+        self.picker.videoQuality = .typeIFrame960x540
         self.picker.cameraFlashMode = .off
         self.view.addSubview(self.picker.view)
         self.picker.view.snp.makeConstraints { make in
@@ -1623,13 +1624,14 @@ extension CameraController: ConnectionManagerDelegate {
         
         let kneeLength = subject.kneeLength
         let palmLength = subject.palmLength
+//        1.0
+//        let kneeStr =
         
         let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
         
         let ftpInfoString = FtpInfoString(fileName: fileName)
         return ftpInfoString
     }
-    
 }
 
 
@@ -1752,9 +1754,12 @@ extension CameraController: ScoreControllerDelegate {
 //        UISaveVideoAtPathToSavedPhotosAlbum("mymyTest", nil, nil, <#T##void?#>)
     }
    
-    func saveToAlbum(named: String, videoURL: URL) {
-//        let album = customalbum/
-    }
+//    func saveToAlbum(named: String, image: UIImage) {
+////        let album = customalbum/
+//        let album = CustomAlbum(name: named)
+////        album.save(video: image, completion: { (result) in })
+//        album.save(video: <#T##URL#>, completion: <#T##(Result<Bool, Error>)#>)
+//    }
     
     func checkAuthorizationWithHandler(completion: @escaping (Result<Bool, Error>) -> ()) {
         if PHPhotoLibrary.authorizationStatus() == .notDetermined {

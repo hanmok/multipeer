@@ -208,28 +208,12 @@ class MovementListController: UIViewController {
     private func testCode() {
         
         
-        // create Folder possibly making multiple folder with same name
-        // testCode 1
-        //                func createFolder(_ name: String) {
-        
-//        var placeholder: PHObjectPlaceholder?
-//
-//        PHPhotoLibrary.shared().performChanges({
-////            let changeRequest = PHCollectionListChangeRequest.creationRequestForCollectionList(withTitle: "TestFolderName")
-////            let changeRequest2 = PHPhotoLibra
-//
-//            placeholder = changeRequest.placeholderForCreatedCollectionList
-//        }) { (success, error) in
-//            guard let placeholder = placeholder else { return }
-//            let fetchResult = PHCollectionList.fetchCollectionLists(withLocalIdentifiers: [placeholder.localIdentifier], options: nil)
-//            guard let folder = fetchResult.firstObject else { return }
-//        }
-        
 
-        createAlbumIfNotExist(albumName: "mymyTest")
+//        createAlbumIfNotExist(albumName: "mymyTest")
         
         
     }
+    
     // success
     private func createAlbumIfNotExist(albumName: String) {
         let albumsPhoto:PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)

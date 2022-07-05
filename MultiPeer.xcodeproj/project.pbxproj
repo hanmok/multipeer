@@ -74,6 +74,8 @@
 		22EE65EC2873E1C500AFAC77 /* CustomAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65EB2873E1C500AFAC77 /* CustomAlbum.swift */; };
 		22EE65EE2873E81100AFAC77 /* CustomAlbum2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65ED2873E81100AFAC77 /* CustomAlbum2.swift */; };
 		22EE65F02873E85600AFAC77 /* ErrorExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65EF2873E85600AFAC77 /* ErrorExt+.swift */; };
+		22EE65F22874004800AFAC77 /* DoubleExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F12874004800AFAC77 /* DoubleExt+.swift */; };
+		22EE65F42874170E00AFAC77 /* MyCustomAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */; };
 		22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* EditorService.swift */; };
 		22F65DFE283F75A100646FCD /* TrimmingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* TrimmingController.swift */; };
 		22F65E672840C72500646FCD /* TrimmerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E662840C72500646FCD /* TrimmerController.swift */; };
@@ -165,6 +167,8 @@
 		22EE65EB2873E1C500AFAC77 /* CustomAlbum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlbum.swift; sourceTree = "<group>"; };
 		22EE65ED2873E81100AFAC77 /* CustomAlbum2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlbum2.swift; sourceTree = "<group>"; };
 		22EE65EF2873E85600AFAC77 /* ErrorExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErrorExt+.swift"; sourceTree = "<group>"; };
+		22EE65F12874004800AFAC77 /* DoubleExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoubleExt+.swift"; sourceTree = "<group>"; };
+		22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCustomAlbum.swift; sourceTree = "<group>"; };
 		22F65DF1283E2DFB00646FCD /* EditorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorService.swift; sourceTree = "<group>"; };
 		22F65DFD283F75A100646FCD /* TrimmingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingController.swift; sourceTree = "<group>"; };
 		22F65E662840C72500646FCD /* TrimmerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerController.swift; sourceTree = "<group>"; };
@@ -348,6 +352,7 @@
 				22EE6527286D419100AFAC77 /* Debugging History.swift */,
 				22244D1E28586AC900B3D03C /* toFix */,
 				22F65DFD283F75A100646FCD /* TrimmingController.swift */,
+				22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */,
 				22EE65EB2873E1C500AFAC77 /* CustomAlbum.swift */,
 				22EE65EF2873E85600AFAC77 /* ErrorExt+.swift */,
 				22EE65ED2873E81100AFAC77 /* CustomAlbum2.swift */,
@@ -399,6 +404,7 @@
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				22F65E7B2845F47900646FCD /* ColorExt.swift */,
 				22F65EB12849B0FA00646FCD /* UIView+Ext.swift */,
+				22EE65F12874004800AFAC77 /* DoubleExt+.swift */,
 				22F65EBB284EDDC600646FCD /* RemovableCell.swift */,
 				22244D352859D16A00B3D03C /* UIViewControllerExt+.swift */,
 				22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */,
@@ -551,7 +557,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22EE65F42874170E00AFAC77 /* MyCustomAlbum.swift in Sources */,
 				22A034322857246B005FDF0F /* DirectionBtnStackView.swift in Sources */,
+				22EE65F22874004800AFAC77 /* DoubleExt+.swift in Sources */,
 				22F65EB22849B0FA00646FCD /* UIView+Ext.swift in Sources */,
 				22F65E6E2844770100646FCD /* MovementCell.swift in Sources */,
 				22795075282B965D00B675A1 /* SubjectDetailController.swift in Sources */,
