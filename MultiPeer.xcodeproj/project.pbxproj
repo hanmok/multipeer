@@ -71,6 +71,13 @@
 		22EE652A286D41A300AFAC77 /* Debugging History in Resources */ = {isa = PBXBuildFile; fileRef = 22EE6529286D41A300AFAC77 /* Debugging History */; };
 		22EE6589286EF09B00AFAC77 /* UITextFieldExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */; };
 		22EE65EA2872DB8700AFAC77 /* CMTimeExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65E92872DB8700AFAC77 /* CMTimeExt+.swift */; };
+		22EE65EC2873E1C500AFAC77 /* CustomAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65EB2873E1C500AFAC77 /* CustomAlbum.swift */; };
+		22EE65EE2873E81100AFAC77 /* CustomAlbum2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65ED2873E81100AFAC77 /* CustomAlbum2.swift */; };
+		22EE65F02873E85600AFAC77 /* ErrorExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65EF2873E85600AFAC77 /* ErrorExt+.swift */; };
+		22EE65F22874004800AFAC77 /* DoubleExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F12874004800AFAC77 /* DoubleExt+.swift */; };
+		22EE65F42874170E00AFAC77 /* MyCustomAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */; };
+		22EE65F628743A9F00AFAC77 /* IncrementingIndex+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F528743A9F00AFAC77 /* IncrementingIndex+Helper.swift */; };
+		22EE66182875291900AFAC77 /* UserDefaultSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE66172875291900AFAC77 /* UserDefaultSetup.swift */; };
 		22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* EditorService.swift */; };
 		22F65DFE283F75A100646FCD /* TrimmingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* TrimmingController.swift */; };
 		22F65E672840C72500646FCD /* TrimmerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E662840C72500646FCD /* TrimmerController.swift */; };
@@ -159,6 +166,13 @@
 		22EE6529286D41A300AFAC77 /* Debugging History */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Debugging History"; sourceTree = "<group>"; };
 		22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextFieldExt+.swift"; sourceTree = "<group>"; };
 		22EE65E92872DB8700AFAC77 /* CMTimeExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CMTimeExt+.swift"; sourceTree = "<group>"; };
+		22EE65EB2873E1C500AFAC77 /* CustomAlbum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlbum.swift; sourceTree = "<group>"; };
+		22EE65ED2873E81100AFAC77 /* CustomAlbum2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlbum2.swift; sourceTree = "<group>"; };
+		22EE65EF2873E85600AFAC77 /* ErrorExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErrorExt+.swift"; sourceTree = "<group>"; };
+		22EE65F12874004800AFAC77 /* DoubleExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoubleExt+.swift"; sourceTree = "<group>"; };
+		22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCustomAlbum.swift; sourceTree = "<group>"; };
+		22EE65F528743A9F00AFAC77 /* IncrementingIndex+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IncrementingIndex+Helper.swift"; sourceTree = "<group>"; };
+		22EE66172875291900AFAC77 /* UserDefaultSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultSetup.swift; sourceTree = "<group>"; };
 		22F65DF1283E2DFB00646FCD /* EditorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorService.swift; sourceTree = "<group>"; };
 		22F65DFD283F75A100646FCD /* TrimmingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingController.swift; sourceTree = "<group>"; };
 		22F65E662840C72500646FCD /* TrimmerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerController.swift; sourceTree = "<group>"; };
@@ -307,12 +321,14 @@
 				227648CD2831E75900214EBF /* TrialDetail+Helper.swift */,
 				227950B1282BB8F900B675A1 /* Subject+Helper.swift */,
 				22244D6128655AD600B3D03C /* Inspector+Helper.swift */,
+				22EE65F528743A9F00AFAC77 /* IncrementingIndex+Helper.swift */,
 				227950B6282BBF8500B675A1 /* Screen+Helper.swift */,
 				227950B8282BBF8F00B675A1 /* PositionTitleCore+Helper.swift */,
 				226D87662834E07600E3F547 /* RemovableProtocol.swift */,
 				22795067282B929A00B675A1 /* MovementModels.swift */,
 				22795071282B939B00B675A1 /* MovementLists.swift */,
 				227950B4282BBE1600B675A1 /* PersistenceController.swift */,
+				22EE66172875291900AFAC77 /* UserDefaultSetup.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -342,6 +358,10 @@
 				22EE6527286D419100AFAC77 /* Debugging History.swift */,
 				22244D1E28586AC900B3D03C /* toFix */,
 				22F65DFD283F75A100646FCD /* TrimmingController.swift */,
+				22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */,
+				22EE65EB2873E1C500AFAC77 /* CustomAlbum.swift */,
+				22EE65EF2873E85600AFAC77 /* ErrorExt+.swift */,
+				22EE65ED2873E81100AFAC77 /* CustomAlbum2.swift */,
 				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
@@ -390,6 +410,7 @@
 				22ACAF5428094ACF007277A7 /* DateExt+.swift */,
 				22F65E7B2845F47900646FCD /* ColorExt.swift */,
 				22F65EB12849B0FA00646FCD /* UIView+Ext.swift */,
+				22EE65F12874004800AFAC77 /* DoubleExt+.swift */,
 				22F65EBB284EDDC600646FCD /* RemovableCell.swift */,
 				22244D352859D16A00B3D03C /* UIViewControllerExt+.swift */,
 				22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */,
@@ -542,7 +563,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22EE65F42874170E00AFAC77 /* MyCustomAlbum.swift in Sources */,
 				22A034322857246B005FDF0F /* DirectionBtnStackView.swift in Sources */,
+				22EE65F22874004800AFAC77 /* DoubleExt+.swift in Sources */,
 				22F65EB22849B0FA00646FCD /* UIView+Ext.swift in Sources */,
 				22F65E6E2844770100646FCD /* MovementCell.swift in Sources */,
 				22795075282B965D00B675A1 /* SubjectDetailController.swift in Sources */,
@@ -552,6 +575,7 @@
 				227DA6C8282B60180097F8F1 /* SubjectController.swift in Sources */,
 				22244D672865616400B3D03C /* AddingInspectorController.swift in Sources */,
 				22244D362859D16A00B3D03C /* UIViewControllerExt+.swift in Sources */,
+				22EE66182875291900AFAC77 /* UserDefaultSetup.swift in Sources */,
 				227950B2282BB8F900B675A1 /* Subject+Helper.swift in Sources */,
 				226D87672834E07600E3F547 /* RemovableProtocol.swift in Sources */,
 				22A0343028572462005FDF0F /* DirectionBtnView.swift in Sources */,
@@ -560,7 +584,9 @@
 				22795072282B939B00B675A1 /* MovementLists.swift in Sources */,
 				22795063282B8F8D00B675A1 /* AddingSubjectController.swift in Sources */,
 				22315E3B282E1F8F0093079B /* ScreenCollectionCell.swift in Sources */,
+				22EE65F02873E85600AFAC77 /* ErrorExt+.swift in Sources */,
 				227648CE2831E75900214EBF /* TrialDetail+Helper.swift in Sources */,
+				22EE65F628743A9F00AFAC77 /* IncrementingIndex+Helper.swift in Sources */,
 				9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */,
 				22F65E692840D29700646FCD /* MovementListController.swift in Sources */,
 				227950B9282BBF8F00B675A1 /* PositionTitleCore+Helper.swift in Sources */,
@@ -581,6 +607,7 @@
 				22795070282B937C00B675A1 /* MsgModels.swift in Sources */,
 				22F65EB6284EDC6100646FCD /* ScoreButton.swift in Sources */,
 				22795068282B929A00B675A1 /* MovementModels.swift in Sources */,
+				22EE65EE2873E81100AFAC77 /* CustomAlbum2.swift in Sources */,
 				226D20DF282DE6C6001D6019 /* StringExt+.swift in Sources */,
 				2279506A282B92DA00B675A1 /* Subject.swift in Sources */,
 				2283BEC2281A884F007D74FC /* NotificationNameExt+.swift in Sources */,
@@ -598,6 +625,7 @@
 				2283BEC7281FDFB6007D74FC /* ScoreController.swift in Sources */,
 				22F65EA228484AB900646FCD /* ImgBtnView.swift in Sources */,
 				22F65E672840C72500646FCD /* TrimmerController.swift in Sources */,
+				22EE65EC2873E1C500AFAC77 /* CustomAlbum.swift in Sources */,
 				227DA6C42829103D0097F8F1 /* SoundTestViewController.swift in Sources */,
 				22244D6B286562F700B3D03C /* InspectorViewModel.swift in Sources */,
 				2280DCD8283254100036632E /* TrialViewModel.swift in Sources */,

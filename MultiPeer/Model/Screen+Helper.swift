@@ -45,6 +45,24 @@ extension Screen {
         }
     }
     
+    public var screenIndex: Int64 {
+        get {
+            return self.screenIndex_
+        }
+        set {
+            self.screenIndex_ = newValue
+        }
+    }
+    
+    public var upperIndex: Int64 {
+        get {
+            return self.upperIndex_
+        }
+        set {
+            self.upperIndex_ = newValue
+        }
+    }
+    
 //    public var positionTitleCores: Set<PositionTitleCore> {
 //        get {
 ////            return self.positionTitleCores_ as! Set<PositionTitleCore>
@@ -67,6 +85,7 @@ extension Screen {
     
     @discardableResult
     static func save(belongTo subject: Subject) -> Screen {
+        
         print("screen save has called")
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             fatalError("fail to case to appDelegate")
@@ -81,7 +100,7 @@ extension Screen {
             fatalError("screen downcasting has failed!")
         }
         // 이게 맞을듯 .. ?
-        let numOfScreens = subject.screens.count
+//        let numOfScreens = subject.screens.count
         validScreen.parentSubject = subject // 이거 빼고 모두 같음 .
         let currentDate = Date()
         let randomUUID = UUID()
@@ -90,7 +109,7 @@ extension Screen {
         validScreen.setValue(currentDate, forKey: .ScreenStr.date)
         validScreen.setValue(randomUUID, forKey: "id_")
         validScreen.setValue(0, forKey: .ScreenStr.totalScore)
-        validScreen.setValue(numOfScreens, forKey: .ScreenStr.screenIndex)
+//        validScreen.setValue(numOfScreens, forKey: .ScreenStr.screenIndex)
         
         TrialCore.saveBundle(belongTo: validScreen)
         

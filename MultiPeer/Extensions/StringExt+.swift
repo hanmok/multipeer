@@ -22,10 +22,11 @@ extension String {
     struct ScreenStr {
         static let id = "id_"
         static let date = "date_"
-        static let isFinished = "isFinished"
+        static let isFinished = "isFinished_"
 
         static let totalScore = "totalScore"
-        static let screenIndex = "screenIndex"
+        static let screenIndex = "screenIndex_"
+        static let upperIndex = "upperIndex_"
     }
 
     struct InspectorStr {

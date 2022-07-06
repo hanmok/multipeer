@@ -86,6 +86,8 @@ class CameraController: UIViewController {
     
     var screen: Screen?
     
+    var subjectName: String?
+//    var subjectName: String
     // MARK: - Life Cycle
     
     public func updateLabel(title: String, direction: MovementDirection) {
@@ -101,7 +103,6 @@ class CameraController: UIViewController {
         direction: MovementDirection,
         
         rank: Rank
-        
     ) {
         self.connectionManager = connectionManager
         
@@ -117,7 +118,7 @@ class CameraController: UIViewController {
         self.screen = screen
         self.positionTitle = positionTitle
         self.rank = rank
-        //            self.connectedAmount = connectedAmount
+        
         super.init(nibName: nil, bundle: nil)
         
         
@@ -166,8 +167,15 @@ class CameraController: UIViewController {
         setupInitialDirectionBtn()
         
         print("screen from CameraController: \(screen)")
+        
+//        let screenIndex = 1
+        
+//        guard let screen = screen else { fatalError() }
+//        guard let subject = screen.parentSubject else { fatalError() }
+        
+//        createAlbumIfNotExist(albumName: "\(screen.screenIndex)_\(subject.name)")
     }
-    
+        
     private func setupInitialDirectionBtn() {
         if connectionManager.latestDirection != nil {
             let title = connectionManager.latestDirection!.rawValue
@@ -976,7 +984,8 @@ class CameraController: UIViewController {
         self.picker.mediaTypes = [kUTTypeMovie as String]
         self.picker.cameraOverlayView = self.bottomView
         self.picker.showsCameraControls = false
-        self.picker.videoQuality = .typeHigh // 1080 1920
+//        self.picker.videoQuality = .typeHigh // 1080 1920
+        self.picker.videoQuality = .typeIFrame960x540
         self.picker.cameraFlashMode = .off
         self.view.addSubview(self.picker.view)
         self.picker.view.snp.makeConstraints { make in
@@ -1445,8 +1454,14 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             if timeDiff == nil { timeDiff = 0 }
             guard let timeDiff = timeDiff else { fatalError() }
 
+//            guard let subjectName = subjectName else { fatalError() }
+//            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: subjectName)
             
-            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff)
+//            guard let screen = screen else { fatalError() }
+            
+//            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: "someName", screenIndex: screen.screenIndex )
+            
+            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: connectionManager.subjectName, screenIndex: Int64(connectionManager.upperIndex))
             
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             
@@ -1601,11 +1616,12 @@ extension CameraController: ConnectionManagerDelegate {
         
         let subjectName = subject.name
         
-        let screenIndex = screen.screenIndex
+        let screenIndex = screen.screenIndex + 1
         
         let titleShort = Dummy.shortForFileName[trialCore.title]!
         
         let directionShort: String
+        
         switch trialCore.direction {
         case "Left": directionShort = "l"
         case "Right": directionShort = "r"
@@ -1623,13 +1639,14 @@ extension CameraController: ConnectionManagerDelegate {
         
         let kneeLength = subject.kneeLength
         let palmLength = subject.palmLength
+//        1.0
+//        let kneeStr =
         
         let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
         
         let ftpInfoString = FtpInfoString(fileName: fileName)
         return ftpInfoString
     }
-    
 }
 
 
@@ -1743,17 +1760,39 @@ extension CameraController: ScoreControllerDelegate {
         }
     }
     
-    func saveVideoToLocal(with url: URL) {
-        //        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        //        let documentsDirectoryURL = paths[0]
-        //        print("duration: \(self.testDuration)")
+    func saveVideoToLocal(with videoURL: URL) {
+        
         PHPhotoLibrary.shared().performChanges {
-            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-            //            PHAssetChangeRequest.
+            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: videoURL) // url for a video file
+        }
+//        UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(<#T##videoPath: String##String#>)
+//        UISaveVideoAtPathToSavedPhotosAlbum("mymyTest", nil, nil, <#T##void?#>)
+    }
+   
+//    func saveToAlbum(named: String, image: UIImage) {
+////        let album = customalbum/
+//        let album = CustomAlbum(name: named)
+////        album.save(video: image, completion: { (result) in })
+//        album.save(video: <#T##URL#>, completion: <#T##(Result<Bool, Error>)#>)
+//    }
+    
+    func checkAuthorizationWithHandler(completion: @escaping (Result<Bool, Error>) -> ()) {
+        if PHPhotoLibrary.authorizationStatus() == .notDetermined {
+            PHPhotoLibrary.requestAuthorization({ (status) in
+                self.checkAuthorizationWithHandler(completion: completion)
+            })
+        }
+        else if PHPhotoLibrary.authorizationStatus() == .authorized {
+//            self.createAlbumIfNeeded { (success) in
+//                completion(success)
+//            }
+        }
+        else {
+//            completion(.failure(CustomAlbumError.notAuthorized))
         }
     }
-    // TODO: post, makePeersPost
     
+    // TODO: post, makePeersPost
     func postAction(ftpInfo: FTPInfo) {
         
         guard let validVideoUrl = videoUrl else { return }
@@ -1783,7 +1822,6 @@ extension CameraController: ScoreControllerDelegate {
     
     private func makeCall(title: String, direction: String, score: Int, pain: Int, trialCount: Int, videoURL: URL, cameraDirection: String, screenKey: UUID ) {
         
-        //        APIManager.shared.postRequest(movementTitle: <#T##String#>, direction: <#T##String#>, score: <#T##Int#>, pain: <#T##Int#>, trialCount: <#T##Int#>, videoURL: <#T##URL#>, cameraDirection: <#T##String#>, screenKey: <#T##UUID#>, closure: <#T##() -> Void#>)
     }
     
     /// merge Position Title + Direction  into Unique Key
@@ -1804,3 +1842,51 @@ extension CameraController: ScoreControllerDelegate {
 }
 
 
+
+//extension UIViewController {
+//    func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
+//
+//        guard let screen = screen else { fatalError() }
+//        guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
+//
+//        let date = Date()
+//        let formattedDateStr = date.getFormattedDate()
+//        //        let inspectorName = "someName"
+//
+//
+//        let inspectorName = screen.parentSubject!.inspector!.name
+//
+//        let subjectName = subject.name
+//
+//        let screenIndex = screen.screenIndex + 1
+//
+//        let titleShort = Dummy.shortForFileName[trialCore.title]!
+//
+//        let directionShort: String
+//
+//        switch trialCore.direction {
+//        case "Left": directionShort = "l"
+//        case "Right": directionShort = "r"
+//        default: directionShort = ""
+//        }
+//
+//        let trialNo = trialDetail.trialNo
+//        let phoneNumber = subject.phoneNumber
+//        let genderInt = subject.isMale ? 1 : 2
+//
+//        let calendar = Calendar.current
+//        let components = calendar.dateComponents([.year], from: subject.birthday)
+//
+//        guard let birthYear = components.year else { fatalError() }
+//
+//        let kneeLength = subject.kneeLength
+//        let palmLength = subject.palmLength
+////        1.0
+////        let kneeStr =
+//
+//        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
+//
+//        let ftpInfoString = FtpInfoString(fileName: fileName)
+//        return ftpInfoString
+//    }
+//}

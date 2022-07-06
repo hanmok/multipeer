@@ -18,6 +18,7 @@ protocol AddingSubjectDelegate: AnyObject {
 class AddingSubjectController: UIViewController {
     
     // MARK: - Properties
+    var userDefaultSetup = UserDefaultSetup()
     
     weak var delegate: AddingInspectorDelegate?
     var inspector: Inspector
@@ -226,7 +227,15 @@ class AddingSubjectController: UIViewController {
         let kneeLength = Double(kneeTF.text!)!
         let palmLength = Double(palmTF.text!)!
         
-        Subject.save(name: name, phoneNumber: phoneNumber, isMale: isMale, birthday: birthday, kneeLength: kneeLength, palmLength: palmLength, inspector: inspector)
+        let newSubject = Subject.save(name: name, phoneNumber: phoneNumber, isMale: isMale, birthday: birthday, kneeLength: kneeLength, palmLength: palmLength, inspector: inspector)
+        
+        let screen = newSubject.screens.first
+        guard let screen = screen else { fatalError() }
+        
+        screen.upperIndex = Int64(userDefaultSetup.upperIndex)
+        
+        userDefaultSetup.upperIndex += 1
+        
         
         delegate?.updateAfterAdded()
     }

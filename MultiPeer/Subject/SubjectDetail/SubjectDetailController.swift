@@ -14,6 +14,8 @@ import Then
 
 class SubjectDetailController: UIViewController {
         
+    var userDefaultSetup = UserDefaultSetup()
+    
     // MARK: - Properties
     
     let subject: Subject
@@ -167,8 +169,17 @@ class SubjectDetailController: UIViewController {
     
     @objc func makeBtnTapped(_ sender: UIButton) {
         print("makeBtnTapped!")
-        Screen.save(belongTo: subject)
+//        IncrementingIndex
+        let screen = Screen.save(belongTo: subject)
+        
+//        screen.screenIndex = Int64(userDefaultSetup.upperIndex)
+        screen.upperIndex = Int64(userDefaultSetup.upperIndex)
+        print("current upperIndex value : \(userDefaultSetup.upperIndex), from subjectDetailCntroller ")
+        
+        userDefaultSetup.upperIndex += 1
+
         selectedIndex = IndexPath(row: -1, section: 0)
+        
         
         fetchAndReloadScreens()
     }
@@ -185,6 +196,7 @@ class SubjectDetailController: UIViewController {
         guard let selectedScreen = selectedScreen else {
             fatalError("selected screen is nil", file: #function)
         }
+        
         selectedIndex = IndexPath(row: -1, section: 0)
         
         print("navigation 0")
@@ -195,8 +207,12 @@ class SubjectDetailController: UIViewController {
         let screenInfo: [AnyHashable: Any] = [
             "screen": selectedScreen
         ]
-        
+//        print("selectedScreen's upperIndex: \()")
+        printFlag(type: .upperIndex, count: 0, message: "screen's upperIndex: \(selectedScreen.upperIndex)")
+
         NotificationCenter.default.post(name: .screenSettingKey, object: nil, userInfo: screenInfo)
+        
+//        ConnectionManager
     }
     
     @objc func detailBtnTapped(_ sender: UIButton) {

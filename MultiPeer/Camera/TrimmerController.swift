@@ -24,9 +24,6 @@ class TrimmerController {
     var startTime: CMTime = .zero
     var endTime: CMTime = .zero
     
-    
-    
-    
     private func exportvideo(_ sender: UIButton) {
         let cropScaleComposition: AVVideoComposition? = AVVideoComposition()
         

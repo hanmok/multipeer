@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21D62" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="IncrementingIndex" representedClassName="IncrementingIndex" syncable="YES" codeGenerationType="class">
+        <attribute name="index_" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <entity name="Inspector" representedClassName="Inspector" syncable="YES" codeGenerationType="class">
         <attribute name="id_" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name_" optional="YES" attributeType="String"/>
@@ -10,8 +13,9 @@
         <attribute name="date_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id_" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isFinished_" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="screenIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="screenIndex_" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="totalScore" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="upperIndex_" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="parentSubject" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Subject" inverseName="screens_" inverseEntity="Subject"/>
         <relationship name="trialCores_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrialCore" inverseName="parentScreen" inverseEntity="TrialCore"/>
     </entity>
@@ -49,9 +53,10 @@
     </entity>
     <elements>
         <element name="Inspector" positionX="-189" positionY="288" width="128" height="14"/>
-        <element name="Screen" positionX="-65.186279296875" positionY="261.2911987304688" width="128" height="134"/>
+        <element name="Screen" positionX="-65.186279296875" positionY="261.2911987304688" width="128" height="149"/>
         <element name="Subject" positionX="-323.895751953125" positionY="235.299560546875" width="128" height="209"/>
         <element name="TrialCore" positionX="-171" positionY="243" width="128" height="164"/>
         <element name="TrialDetail" positionX="-271.5946044921875" positionY="134.26513671875" width="128" height="104"/>
+        <element name="IncrementingIndex" positionX="-198" positionY="279" width="128" height="44"/>
     </elements>
 </model>

@@ -12,11 +12,13 @@ import Then
 import CoreData
 import MobileCoreServices
 import AVFoundation
-
+import Photos
 
 class MovementListController: UIViewController {
     
     // MARK: - Properties
+    
+    var userDefaultSetup = UserDefaultSetup()
     
     var connectionManager = ConnectionManager()
     
@@ -59,6 +61,7 @@ class MovementListController: UIViewController {
     private func initializeViewModels() {
         completeConditionViewModels = []
     }
+    
     private func checkConditionForViewModels() {
         print("checkConditionForViewModels called!!")
         var isCompleted = true
@@ -192,60 +195,90 @@ class MovementListController: UIViewController {
         connectionManager.delegate = self
         
         // 여기에서 에러
-        fetchDefaultScreen() // 이거... Peer 한테 필요한거야? 아마도 ?
+//        fetchDefaultScreen() // 이거... Peer 한테 필요한거야? 아마도 ?
         
         updateTrialCores(screen: screen)
         setupLayout()
         setupAddTargets()
         addNotificationObservers()
-        
+//        testCode()
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
     
-    // call if no screen assigned
+    private func testCode() {
+        
+    }
     
-    func fetchDefaultScreen() {
-        print("fetchDefaultScreen called")
-        // false -> error !
-        if testMode {
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate")}
-            
-            let subjectContext = appDelegate.persistentContainer.viewContext
-            
-            let subjectReq = NSFetchRequest<NSFetchRequestResult>(entityName: .CoreEntitiesStr.Subject)
-            subjectReq.returnsObjectsAsFaults = false
-            
-            do {
-                let result = try subjectContext.fetch(subjectReq)
-                guard let fetchedSubjects = result as? [Subject] else { fatalError("failed to cast result to [Subject]")}
-                
-                if !fetchedSubjects.isEmpty {
-                    subject = fetchedSubjects.first!
-                }
-                
-                guard let subject = subject else {
-                    // no subject
-                    
-                    fatalError(" empty subject ")
-                }
-                
-                if subject.screens.isEmpty == false {
-                    screen = subject.screens.sorted{$0.date < $1.date}.first
-                    
-                    updateTrialCores(screen: screen)
-                    print("updateTrialCores called")
+    // success
+    private func createAlbumIfNotExist(albumName: String) {
+        let albumsPhoto:PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)
+        var albumNames = Set<String>()
+        albumsPhoto.enumerateObjects({(collection, index, object) in
+            let photoInAlbums = PHAsset.fetchAssets(in: collection, options: nil)
+//            print("print photoAlbum info")
+//            print(photoInAlbums.count)
+            print(collection.localizedTitle!)
+            albumNames.insert(collection.localizedTitle!)
+        })
+        // if given albumName not exist, create .
+        if albumNames.contains(albumName) == false {
+          // Create
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: albumName)
+            }) { success, error in
+                if success {
+                    print("successFully create file of name: \(albumName)")
                 } else {
-                    print("subject has no screen")
+                    print("error: \(error?.localizedDescription)")
                 }
-                
-            } catch {
-                fatalError("failed to fetch subjects!")
             }
         }
     }
+    
+    // call if no screen assigned
+    
+//    func fetchDefaultScreen() {
+//        print("fetchDefaultScreen called")
+//        // false -> error !
+//        if testMode {
+//            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate")}
+//
+//            let subjectContext = appDelegate.persistentContainer.viewContext
+//
+//            let subjectReq = NSFetchRequest<NSFetchRequestResult>(entityName: .CoreEntitiesStr.Subject)
+//            subjectReq.returnsObjectsAsFaults = false
+//
+//            do {
+//                let result = try subjectContext.fetch(subjectReq)
+//                guard let fetchedSubjects = result as? [Subject] else { fatalError("failed to cast result to [Subject]")}
+//
+//                if !fetchedSubjects.isEmpty {
+//                    subject = fetchedSubjects.first!
+//                }
+//
+//                guard let subject = subject else {
+//                    // no subject
+//
+//                    fatalError(" empty subject ")
+//                }
+//
+//                if subject.screens.isEmpty == false {
+//                    screen = subject.screens.sorted{$0.date < $1.date}.first
+//
+//                    updateTrialCores(screen: screen)
+//                    print("updateTrialCores called")
+//                } else {
+//                    print("subject has no screen")
+//                }
+//
+//            } catch {
+//                fatalError("failed to fetch subjects!")
+//            }
+//        }
+//    }
     
     private func registerCollectionView() {
         movementCollectionView.register(MovementCell.self, forCellWithReuseIdentifier: MovementCell.cellId)
@@ -315,17 +348,56 @@ class MovementListController: UIViewController {
             self,
             selector: #selector(setScreen(_:)),
             name: .screenSettingKey, object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(createAlbum(_:)),
+            name: .sendAlbumNameInfoKey, object: nil)
     }
     
+    @objc func createAlbum(_ notification: Notification) {
+//        guard let receivedAlbumNameInfo = notification.userInfo?[""]
+        let upperIndex = (notification.userInfo?["upperIndex"])! as! Int
+        let subjectName = (notification.userInfo?["subjectName"])! as! String
+        print("new album name : \(upperIndex), from movementListController")
+        createAlbumIfNotExist(albumName: "\(upperIndex)")
+    }
+    
+    
     @objc func setScreen(_ notification: Notification) {
-        
+        print("setScreen called")
         guard let receivedScreen = notification.userInfo?["screen"] as? Screen else { fatalError() }
         
         screen = receivedScreen
+        guard let screen = screen else {
+            fatalError()        }
         
-        self.updatePeopleInfo(with: screen!)
+        guard let parentSubject = screen.parentSubject else { fatalError() }
+//        let subjectName = SubjectName(name: parentSubject.name)
+        //        self.updatePeopleInfo(with: screen!)?
+        
+        self.updatePeopleInfo(with: screen)
         self.updateTrialCores(screen: screen)
         
+        let subjectName = parentSubject.name
+//        let screenIndex = screen.screenIndex + 1
+        let upperIndex = screen.upperIndex + 1
+        
+//        let albumNameInfo = AlbumNameInfo(subjectName: parentSubject.name, screenIndex: Int(screen.screenIndex))
+        
+        let albumNameInfo = AlbumNameInfo(subjectName: subjectName, upperIndex: Int(upperIndex))
+        
+
+        connectionManager.send(PeerInfo(msgType: .sendAlbumNameInfo, info: Info(albumNameInfo: albumNameInfo)))
+//        print("screen's upperIndex: \()")
+        connectionManager.upperIndex = Int(upperIndex)
+        let msg = "new album name : \(upperIndex), from movementListController"
+        
+        printFlag(type: .upperIndex, count: 0, message: msg)
+        
+        createAlbumIfNotExist(albumName: "\(upperIndex)")
+        
+        print("current ScreenIndex from setScreen: \(upperIndex)")
         dismiss(animated: true)
     }
     
@@ -340,13 +412,14 @@ class MovementListController: UIViewController {
     // 여기서 Crash 발생. Why ??
     @objc func presentCameraNoti(_ notification: Notification) {
         
-        if !isCameraOn {
+        if isCameraOn == false {
             printFlag(type: .defaultSubjectScreen, count: 0)
             
             //        guard let subject = subject else { fatalError("fail to get subject ")}
             
             //            guard let screen = screen else { fatalError(" fail to get screen")}
             
+//            createAlbumIfNotExist(albumName: <#T##String#>)
             
             guard let title = notification.userInfo?["title"] as? String,
                   let direction = notification.userInfo?["direction"] as? MovementDirection
@@ -360,6 +433,8 @@ class MovementListController: UIViewController {
             //            }.first!
             
             presentCameraAsChild(rank: .follower, title: title, direction: direction)
+            
+            
         } else {
             // update peer's camera title
         }
@@ -384,7 +459,13 @@ class MovementListController: UIViewController {
         if screen != nil {
             self.screen = screen!
         } else {
-            self.screen = Screen.save() // default Screen
+            let newScreen = Screen.save()
+//            self.screen = Screen.save() // default Screen
+            newScreen.screenIndex = Int64(userDefaultSetup.upperIndex)
+            
+            userDefaultSetup.upperIndex += 1
+            self.screen = newScreen
+            
         }
         
         guard let screen = self.screen else { fatalError() }
@@ -503,17 +584,22 @@ class MovementListController: UIViewController {
         
         
         connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: selectedTrial.title, direction: direction))))
+        
+        
     }
     
     private func presentCameraAsChild(trialCore: TrialCore? = nil, rank: Rank, title: String, direction: MovementDirection) {
-        
-        //        guard let screen = screen else { fatalError() }
         
         DispatchQueue.main.async {
             if self.isCameraPresented == false {
                 
                 if rank == .boss {
                     print("screen from MovementListController: \(self.screen)")
+                    guard let screen = self.screen,
+                          let subject = screen.parentSubject else {
+                        return
+                    }
+
                     self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: self.screen, trialCore: trialCore!, positionTitle: title, direction: direction, rank: rank)
                     
                 } else {
@@ -531,7 +617,9 @@ class MovementListController: UIViewController {
                 UIView.animate(withDuration: 0.3) {
                     self.cameraVC!.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
                 }
+                
                 self.isCameraPresented = true
+            
             } else {
                 
                 self.showUpCamera()
@@ -792,5 +880,37 @@ extension UIViewController {
     func printFlag(type: FlagType, count: Int, message: String = "" ) {
         let str = type.rawValue + ", " + "flag \(count)" + " " + message
         print(str)
+    }
+}
+
+
+
+extension URL {
+    @discardableResult
+    static func createFolder(folderName: String) -> URL? {
+        let fileManager = FileManager.default
+        // Get document directory for device, this should succeed
+        if let documentDirectory = fileManager.urls(for: .documentDirectory,
+                                                    in: .userDomainMask).first {
+            // Construct a URL with desired folder name
+            let folderURL = documentDirectory.appendingPathComponent(folderName)
+            // If folder URL does not exist, create it
+            if !fileManager.fileExists(atPath: folderURL.path) {
+                do {
+                    // Attempt to create folder
+                    try fileManager.createDirectory(atPath: folderURL.path,
+                                                    withIntermediateDirectories: true,
+                                                    attributes: nil)
+                } catch {
+                    // Creation failed. Print error & return nil
+                    print(error.localizedDescription)
+                    return nil
+                }
+            }
+            // Folder either exists, or was created. Return URL
+            return folderURL
+        }
+        // Will only be called if document directory not found
+        return nil
     }
 }

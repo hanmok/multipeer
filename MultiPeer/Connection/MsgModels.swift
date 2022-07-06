@@ -31,10 +31,23 @@ struct Info: Codable {
     var ftpInfoString: FtpInfoString?
     
     var capturingTime: CapturingTime?
+    
+    var subjectName: SubjectName?
+    
+    var albumNameInfo: AlbumNameInfo?
 }
 
 struct FtpInfoString: Codable {
     var fileName: String
+}
+
+struct AlbumNameInfo: Codable {
+    var subjectName: String
+    var upperIndex: Int
+}
+
+struct SubjectName: Codable {
+    var name: String
 }
 
 struct DeviceNameWithCameraDirection: Codable {
@@ -57,16 +70,19 @@ struct PeerCommunicationHelper {
     static let msgToKeyDic: [MessageType: Notification.Name] = [
         .setScreenMsg: .screenSettingKey,
         
-        .startRecordingMsg: .startRecordingKey,
+            .startRecordingMsg: .startRecordingKey,
         .stopRecordingMsg: .stopRecordingKey,
         .hidePreviewMsg: .hidePreviewKey,
         
-        .presentCameraMsg: .presentCameraKey,
+            .presentCameraMsg: .presentCameraKey,
         .updatePeerTitleMsg: .updatePeerTitleKey,
         .requestPostMsg: .requestPostKey,
         
-        .updatePeerCameraDirectionMsg: .updatePeerCameraDirectionKey,
-        .sendCapturingStartedTime: .capturingStartedTime
+            .updatePeerCameraDirectionMsg: .updatePeerCameraDirectionKey,
+        .sendCapturingStartedTime: .capturingStartedTime,
+        
+//            .sendSubjectName: .sendSubjectNameKey
+            .sendAlbumNameInfo: .sendAlbumNameInfoKey
     ]
 }
 
@@ -90,6 +106,9 @@ public enum MessageType: String, Codable {
     
     case sendCapturingStartedTime
     case none
+    
+//    case sendSubjectName
+    case sendAlbumNameInfo
 }
 
 

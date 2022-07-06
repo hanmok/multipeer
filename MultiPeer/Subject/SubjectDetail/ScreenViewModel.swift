@@ -31,6 +31,7 @@ struct ScreenViewModel {
     
     var score: String { return screen.isFinished ? getFinalScore(screen: screen) : "incomplete" }
     
+//    var score: String { return getFinalScore(screen: screen) }
     
     func getFinalScore(screen: Screen) -> String {
         //        let some = screen
@@ -51,16 +52,12 @@ struct ScreenViewModel {
                     if latestScore > 0 {
                         totalScore += Int(latestScore)
                     }
-                    
                 } else {
                     if $0.latestScore > 0 {
                         totalScore += Int($0.latestScore)
                     }
                 }
-                
             }
-            
-            
         }
         
         print("totalScore: \(totalScore)")
