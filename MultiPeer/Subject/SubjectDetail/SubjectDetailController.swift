@@ -51,7 +51,7 @@ class SubjectDetailController: UIViewController {
     
     private let screenTableView = UITableView()
     
-    private let nameLabel = UILabel().then { $0.backgroundColor = .brown }
+    private let nameLabel = UILabel()
     
     private let imageView = UIImageView().then {
         $0.layer.cornerRadius = 35

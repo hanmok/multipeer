@@ -59,7 +59,7 @@ class InspectorController: UIViewController {
     // MARK: - Properties
     
     private let inspectorListLabel = UILabel().then {
-        $0.text = "검사자 리스트"
+        $0.text = "검사자 목록"
         $0.textColor = .white
         $0.textAlignment = .center
         $0.layer.borderColor = UIColor.white.cgColor
@@ -112,7 +112,7 @@ class InspectorController: UIViewController {
         view.addSubview(inspectorListLabel)
         inspectorListLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(30)
         }
         
