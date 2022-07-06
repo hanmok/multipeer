@@ -25,14 +25,14 @@ class TestViewController: UIViewController {
             .paragraphStyle: paragraph]
         )
         
-        attrText.append(NSAttributedString(string: "\n", attributes: [
-            .font: UIFont.systemFont(ofSize: 10)
-        ]))
+//        attrText.append(NSAttributedString(string: "\n", attributes: [
+//            .font: UIFont.systemFont(ofSize: 10)
+//        ]))
         
-        attrText.append(NSAttributedString(string: "Congrats!\n Video has been successfully uploaded.", attributes: [
-            .font: UIFont.systemFont(ofSize: 17),
-            .foregroundColor: UIColor.gray600,
-            .paragraphStyle: paragraph]))
+//        attrText.append(NSAttributedString(string: "Congrats!\n Video has been successfully uploaded.", attributes: [
+//            .font: UIFont.systemFont(ofSize: 17),
+//            .foregroundColor: UIColor.gray600,
+//            .paragraphStyle: paragraph]))
         
         
         $0.attributedText = attrText

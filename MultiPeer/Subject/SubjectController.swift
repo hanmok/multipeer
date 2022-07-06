@@ -74,7 +74,7 @@ class SubjectController: UIViewController {
     }
     
     private let subjectListLabel = UILabel().then {
-        $0.text = "수검자 리스트"
+        $0.text = "수검자 목록"
         $0.textColor = .white
         $0.textAlignment = .center
         $0.layer.borderColor = UIColor.white.cgColor
@@ -126,7 +126,7 @@ class SubjectController: UIViewController {
         view.addSubview(subjectListLabel)
         subjectListLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(30)
         }
         

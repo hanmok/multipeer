@@ -41,6 +41,9 @@ class CameraController: UIViewController {
     var timeDiff: Int64?
     var positionTitle: String
     
+    var recordingStartedDate = Date().timeIntervalSince1970
+    
+    var shouldIncreaseUpdatingLabel = true
     var direction: MovementDirection
     
     var cameraDirection: CameraDirection?
@@ -60,6 +63,7 @@ class CameraController: UIViewController {
     private var pressedBtnTitle = ""
     
     var updatingDurationTimer = Timer()
+    var startingRecordTimer = Timer()
     
     var count = 0
     
@@ -185,17 +189,8 @@ class CameraController: UIViewController {
     
     // 처음 동작 띄울 때, Variation 으로 이동할 때 호출.
     private func updatePeerTitle() {
-        
-        
-        //        let direction = MovementDirection(rawValue: trialCore.direction)!
-        
-        //        connectionManager.send(MsgWithMovementDetail(message: .updatePeerTitle, detailInfo: MovementDirectionScoreInfo(title: positionTitle, direction: direction)))
-        
-        //        connectionManager.send(PeerInfo(msgType: .updatePeerTitleMsg, info: Info(movementDetail: MovementDirectionScoreInfo(title: positionTitle, direction: direction))))
         connectionManager.send(PeerInfo(msgType: .updatePeerTitleMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: positionTitle, direction: direction))))
-        
-        //        connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: positionTitle, direction: direction))))
-    }
+        }
     
     override func viewWillDisappear(_ animated: Bool) {
         removeChildrenVC()
@@ -234,12 +229,16 @@ class CameraController: UIViewController {
     public func resetTimer() {
         count = 0
         updatingDurationTimer.invalidate()
+        updatingDurationTimer = Timer()
+        shouldIncreaseUpdatingLabel = false
         //        updatingDurationTimer = Timer()
         updateDurationLabel()
     }
     public func invalidateTimer() {
         print("invalidateTimer Called")
         updatingDurationTimer.invalidate()
+        updatingDurationTimer = Timer()
+        shouldIncreaseUpdatingLabel = false
     }
     
     // MARK: - Notification
@@ -348,9 +347,11 @@ class CameraController: UIViewController {
         resetTimer()
         //FIXME: ?? 왜 updatingDurationTimer 에 recording 이 들어가있는거야?
         
-        updatingDurationTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+        startingRecordTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
+//        updatingDurationTimer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(startRecording), userInfo: nil, repeats: false)
         
-        RunLoop.main.add(updatingDurationTimer, forMode: .common)
+//        RunLoop.main.add(updatingDurationTimer, forMode: .common)
+        RunLoop.main.add(startingRecordTimer, forMode: .common)
         
         if rank == .follower {
             currentDeviceStartedCapturingTime = Date().millisecondsSince1970
@@ -368,13 +369,17 @@ class CameraController: UIViewController {
     
     public func stopDurationTimer() {
         updatingDurationTimer.invalidate()
+        shouldIncreaseUpdatingLabel = false
+        updatingDurationTimer = Timer()
     }
     //    public func rese
     
     
     @objc func stopRecordingNoti(_ notification: Notification) {
         print("stopRecording has been triggered by observer. ")
-        
+        updatingDurationTimer.invalidate()
+        updatingDurationTimer = Timer()
+        shouldIncreaseUpdatingLabel = false
         stopRecording()
         changeBtnLookForPreparing(animation: false)
         stopTimer()
@@ -813,13 +818,15 @@ class CameraController: UIViewController {
     private func hideScoreView() {
         //        if rank == .boss {
         //        Thread 1: Fatal error: Unexpectedly found nil while unwrapping an Optional value
-        DispatchQueue.main.async {
-            UIView.animate(withDuration: 0.4) {
-                self.scoreVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+        // 여기서 자꾸 FatalError 뜨네 ..
+        if rank == .boss  && scoreVC != nil {
+            DispatchQueue.main.async {
+                UIView.animate(withDuration: 0.4) {
+                    self.scoreVC!.view.frame = CGRect(x: 0, y: screenHeight, width: screenWidth, height: screenHeight)
+                }
             }
         }
     }
-    
     
     
     
@@ -851,8 +858,10 @@ class CameraController: UIViewController {
                 self.recordingBtn.setAttributedTitle(attributedTitle, for: .normal)
             }
             
+            startingRecordTimer.invalidate()
+            
             self.isRecording = false
-            //            stopTimer()
+
         }
         //        stopTimer()
     }
@@ -860,14 +869,39 @@ class CameraController: UIViewController {
     private func triggerDurationTimer() {
         
         count = 0
+        shouldIncreaseUpdatingLabel = true
+        recordingStartedDate = Date().timeIntervalSince1970
         
-        updatingDurationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+        let updatingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
             
             guard let `self` = self else { return }
-            self.count += 1
+            
+            if self.shouldIncreaseUpdatingLabel {
+//                if self.rank == .boss {
+//                self.count += 1
+//                } else {
+                    self.count = Int(Date().timeIntervalSince1970 - self.recordingStartedDate)
+//                }
+                
+            }
             
             self.updateDurationLabel()
         }
+        
+//        let someTimer = Timer(
+        
+//        updatingDurationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+//
+//            guard let `self` = self else { return }
+//
+//            if self.shouldIncreaseUpdatingLabel {
+//                self.count += 1
+//            }
+//
+//            self.updateDurationLabel()
+//        }
+        updatingDurationTimer = updatingTimer
+//        updatingDurationTimer.inval
     }
     
     private func updateDurationLabel() {
@@ -897,7 +931,9 @@ class CameraController: UIViewController {
     }
     
     private func stopTimer() {
+        updatingDurationTimer = Timer()
         updatingDurationTimer.invalidate()
+        shouldIncreaseUpdatingLabel = false
     }
     
     private func showReconnectionGuideAction() {
@@ -1628,7 +1664,7 @@ extension CameraController: ConnectionManagerDelegate {
         default: directionShort = ""
         }
         
-        let trialNo = trialDetail.trialNo
+        let trialNo = trialDetail.trialNo + 1
         let phoneNumber = subject.phoneNumber
         let genderInt = subject.isMale ? 1 : 2
         
@@ -1640,13 +1676,16 @@ extension CameraController: ConnectionManagerDelegate {
         let kneeLength = subject.kneeLength
         let palmLength = subject.palmLength
 //        1.0
-//        let kneeStr =
+        let kneeStr = kneeLength.convertTo4DigitString()
+        let palmStr = palmLength.convertTo4DigitString()
         
-        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
+        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeStr)_\(palmStr)"
         
         let ftpInfoString = FtpInfoString(fileName: fileName)
         return ftpInfoString
     }
+    
+    
 }
 
 
@@ -1835,9 +1874,7 @@ extension CameraController: ScoreControllerDelegate {
         updateNameLabel()
         removeChildrenVC()
         resetTimer()
-        //        hideScoreView()
-        //        hidePreview()
-        //        hidePreview2()
+
     }
 }
 

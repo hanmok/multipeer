@@ -362,7 +362,7 @@ class ScoreController: UIViewController {
         default: directionShort = ""
         }
         
-        let trialNo = trialDetail.trialNo
+        let trialNo = trialDetail.trialNo + 1
         let phoneNumber = subject.phoneNumber
         let genderInt = subject.isMale ? 1 : 2
         
