@@ -43,7 +43,7 @@ struct FtpInfoString: Codable {
 
 struct AlbumNameInfo: Codable {
     var subjectName: String
-    var screenIndex: Int
+    var upperIndex: Int
 }
 
 struct SubjectName: Codable {

@@ -26,6 +26,7 @@ extension String {
 
         static let totalScore = "totalScore"
         static let screenIndex = "screenIndex_"
+        static let upperIndex = "upperIndex_"
     }
 
     struct InspectorStr {

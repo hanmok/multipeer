@@ -99,9 +99,9 @@ class ScreenTableCell: UITableViewCell {
         guard let vm = viewModel else { return }
         
         sequenceIndexLabel.text = vm.sequenceIndex
-        print("sequenceIndex: \(vm.sequenceIndex)")
+//        print("sequenceIndex: \(vm.sequenceIndex)")
         dateLabel.text = " \(vm.date) "
         scoreLabel.text = " \(vm.score) "
-        print("vm.score: \(vm.score)")
+//        print("vm.score: \(vm.score)")
     }
 }

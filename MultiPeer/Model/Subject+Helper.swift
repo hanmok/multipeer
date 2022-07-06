@@ -58,9 +58,10 @@ extension Subject {
 }
 
 extension Subject {
-    
-    static func save(name: String, phoneNumber: String, isMale: Bool, birthday: Date, kneeLength: Double, palmLength: Double, inspector: Inspector) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+    @discardableResult
+    static func save(name: String, phoneNumber: String, isMale: Bool, birthday: Date, kneeLength: Double, palmLength: Double, inspector: Inspector) -> Subject {
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
         
         let managedContext = appDelegate.persistentContainer.viewContext
 
@@ -82,8 +83,10 @@ extension Subject {
         do {
             try managedContext.save()
             print("savedData: \(subject)")
+            return subject
         } catch let error as NSError {
-            print("Could not save, \(error), \(error.userInfo)")
+//            print("Could not save, \(error), \(error.userInfo)")
+            fatalError()
         }
     }
 }
@@ -94,5 +97,6 @@ extension Subject: RemovableProtocol {}
 extension Subject {
     func provideInitialScreen() {
         Screen.save(belongTo: self)
+//        UserDefaultSetup().screenIndex = UserDefaultSetup().screenIndex + 1
     }
 }

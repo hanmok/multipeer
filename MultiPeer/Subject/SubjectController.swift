@@ -62,6 +62,7 @@ class SubjectController: UIViewController {
                     subjects.append(subject)
                 }
             }
+            print("numOfSubjects: \(subjects.count)")
         } catch {
             fatalError("failed to fetch Subjects!")
         }

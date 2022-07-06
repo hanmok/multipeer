@@ -18,6 +18,8 @@ class MovementListController: UIViewController {
     
     // MARK: - Properties
     
+    var userDefaultSetup = UserDefaultSetup()
+    
     var connectionManager = ConnectionManager()
     
     private var isCameraVisible = false
@@ -355,10 +357,10 @@ class MovementListController: UIViewController {
     
     @objc func createAlbum(_ notification: Notification) {
 //        guard let receivedAlbumNameInfo = notification.userInfo?[""]
-        let screenIndex = (notification.userInfo?["screenIndex"])! as! Int
+        let upperIndex = (notification.userInfo?["upperIndex"])! as! Int
         let subjectName = (notification.userInfo?["subjectName"])! as! String
-        
-        createAlbumIfNotExist(albumName: "\(screenIndex)")
+        print("new album name : \(upperIndex), from movementListController")
+        createAlbumIfNotExist(albumName: "\(upperIndex)")
     }
     
     
@@ -369,6 +371,7 @@ class MovementListController: UIViewController {
         screen = receivedScreen
         guard let screen = screen else {
             fatalError()        }
+        
         guard let parentSubject = screen.parentSubject else { fatalError() }
 //        let subjectName = SubjectName(name: parentSubject.name)
         //        self.updatePeopleInfo(with: screen!)?
@@ -377,23 +380,24 @@ class MovementListController: UIViewController {
         self.updateTrialCores(screen: screen)
         
         let subjectName = parentSubject.name
-        let screenIndex = screen.screenIndex + 1
+//        let screenIndex = screen.screenIndex + 1
+        let upperIndex = screen.upperIndex + 1
         
 //        let albumNameInfo = AlbumNameInfo(subjectName: parentSubject.name, screenIndex: Int(screen.screenIndex))
-        let albumNameInfo = AlbumNameInfo(subjectName: subjectName, screenIndex: Int(screenIndex))
+        
+        let albumNameInfo = AlbumNameInfo(subjectName: subjectName, upperIndex: Int(upperIndex))
         
 
         connectionManager.send(PeerInfo(msgType: .sendAlbumNameInfo, info: Info(albumNameInfo: albumNameInfo)))
+//        print("screen's upperIndex: \()")
+        connectionManager.upperIndex = Int(upperIndex)
+        let msg = "new album name : \(upperIndex), from movementListController"
         
-        connectionManager.screenIndex = Int(screenIndex)
+        printFlag(type: .upperIndex, count: 0, message: msg)
         
-        createAlbumIfNotExist(albumName: "\(screenIndex)")
+        createAlbumIfNotExist(albumName: "\(upperIndex)")
         
-//        connectionManager.send(PeerInfo(msgType: .sendSubjectName, info: Info(subjectName: subjectName)))
-//        connection
-        
-//        connectionManager.subjectName = subjectName.name
-        print("current ScreenIndex from setScreen: \(screenIndex)")
+        print("current ScreenIndex from setScreen: \(upperIndex)")
         dismiss(animated: true)
     }
     
@@ -455,7 +459,13 @@ class MovementListController: UIViewController {
         if screen != nil {
             self.screen = screen!
         } else {
-            self.screen = Screen.save() // default Screen
+            let newScreen = Screen.save()
+//            self.screen = Screen.save() // default Screen
+            newScreen.screenIndex = Int64(userDefaultSetup.upperIndex)
+            
+            userDefaultSetup.upperIndex += 1
+            self.screen = newScreen
+            
         }
         
         guard let screen = self.screen else { fatalError() }

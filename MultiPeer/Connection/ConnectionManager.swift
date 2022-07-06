@@ -84,7 +84,8 @@ class ConnectionManager: NSObject {
     var numOfPeers = 0
     
     var subjectName = ""
-    var screenIndex = -1
+    var upperIndex = -1
+    
     
     static var connectedToChat = false
     
@@ -334,16 +335,16 @@ extension ConnectionManager: MCSessionDelegate {
                 guard let albumNameInfo = receivedData.info.albumNameInfo else { fatalError() }
                 
                 let subjectName = albumNameInfo.subjectName
-                let screenIndex = albumNameInfo.screenIndex
+                let upperIndex = albumNameInfo.upperIndex
                 
                 let albumInfoDic: [AnyHashable: Any] = [
                     "subjectName": subjectName,
-                    "screenIndex": screenIndex
+                    "upperIndex": upperIndex
                 ]
                 
                 self.subjectName = albumNameInfo.subjectName
-                self.screenIndex = albumNameInfo.screenIndex
-                print("current screenIndex: \(self.screenIndex)")
+                self.upperIndex = albumNameInfo.upperIndex
+                print("current screenIndex: \(self.upperIndex)")
                 
                 NotificationCenter.default.post(name: notificationName, object: nil, userInfo: albumInfoDic)
                 

@@ -77,6 +77,7 @@
 		22EE65F22874004800AFAC77 /* DoubleExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F12874004800AFAC77 /* DoubleExt+.swift */; };
 		22EE65F42874170E00AFAC77 /* MyCustomAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */; };
 		22EE65F628743A9F00AFAC77 /* IncrementingIndex+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65F528743A9F00AFAC77 /* IncrementingIndex+Helper.swift */; };
+		22EE66182875291900AFAC77 /* UserDefaultSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE66172875291900AFAC77 /* UserDefaultSetup.swift */; };
 		22F65DF2283E2DFB00646FCD /* EditorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DF1283E2DFB00646FCD /* EditorService.swift */; };
 		22F65DFE283F75A100646FCD /* TrimmingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65DFD283F75A100646FCD /* TrimmingController.swift */; };
 		22F65E672840C72500646FCD /* TrimmerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65E662840C72500646FCD /* TrimmerController.swift */; };
@@ -171,6 +172,7 @@
 		22EE65F12874004800AFAC77 /* DoubleExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoubleExt+.swift"; sourceTree = "<group>"; };
 		22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCustomAlbum.swift; sourceTree = "<group>"; };
 		22EE65F528743A9F00AFAC77 /* IncrementingIndex+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IncrementingIndex+Helper.swift"; sourceTree = "<group>"; };
+		22EE66172875291900AFAC77 /* UserDefaultSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultSetup.swift; sourceTree = "<group>"; };
 		22F65DF1283E2DFB00646FCD /* EditorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorService.swift; sourceTree = "<group>"; };
 		22F65DFD283F75A100646FCD /* TrimmingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingController.swift; sourceTree = "<group>"; };
 		22F65E662840C72500646FCD /* TrimmerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerController.swift; sourceTree = "<group>"; };
@@ -326,6 +328,7 @@
 				22795067282B929A00B675A1 /* MovementModels.swift */,
 				22795071282B939B00B675A1 /* MovementLists.swift */,
 				227950B4282BBE1600B675A1 /* PersistenceController.swift */,
+				22EE66172875291900AFAC77 /* UserDefaultSetup.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -572,6 +575,7 @@
 				227DA6C8282B60180097F8F1 /* SubjectController.swift in Sources */,
 				22244D672865616400B3D03C /* AddingInspectorController.swift in Sources */,
 				22244D362859D16A00B3D03C /* UIViewControllerExt+.swift in Sources */,
+				22EE66182875291900AFAC77 /* UserDefaultSetup.swift in Sources */,
 				227950B2282BB8F900B675A1 /* Subject+Helper.swift in Sources */,
 				226D87672834E07600E3F547 /* RemovableProtocol.swift in Sources */,
 				22A0343028572462005FDF0F /* DirectionBtnView.swift in Sources */,
