@@ -83,6 +83,9 @@ class ConnectionManager: NSObject {
     var peersId = Set<String>()
     var numOfPeers = 0
     
+    var subjectName = ""
+    var screenIndex = -1
+    
     static var connectedToChat = false
     
     let myPeerId = MCPeerID(displayName: UIDevice.current.name)
@@ -315,16 +318,34 @@ extension ConnectionManager: MCSessionDelegate {
                 
                 NotificationCenter.default.post(name: notificationName, object: nil, userInfo: timeInfoDic)
                 
-            case .sendSubjectName:
-                guard let subjectName = receivedData.info.subjectName else { fatalError()}
+//            case .sendSubjectName:
+//                guard let subjectName = receivedData.info.subjectName else { fatalError()}
+//
+//                let name = subjectName.name
+//
+//                let nameInfoDic: [AnyHashable: Any] = [
+//                    "subjectName": name]
+//
+//                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: nameInfoDic)
                 
-                let name = subjectName.name
                 
-                let nameInfoDic: [AnyHashable: Any] = [
-                    "subjectName": name]
+                // currently using screenIndex only
+            case .sendAlbumNameInfo:
+                guard let albumNameInfo = receivedData.info.albumNameInfo else { fatalError() }
                 
-                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: nameInfoDic)
+                let subjectName = albumNameInfo.subjectName
+                let screenIndex = albumNameInfo.screenIndex
                 
+                let albumInfoDic: [AnyHashable: Any] = [
+                    "subjectName": subjectName,
+                    "screenIndex": screenIndex
+                ]
+                
+                self.subjectName = albumNameInfo.subjectName
+                self.screenIndex = albumNameInfo.screenIndex
+                print("current screenIndex: \(self.screenIndex)")
+                
+                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: albumInfoDic)
                 
              default: print("default case !")
             }

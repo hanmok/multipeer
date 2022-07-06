@@ -28,4 +28,6 @@ extension Notification.Name {
     static let capturingStartedTime = Notification.Name(rawValue: "captureTime")
     
     static let sendSubjectNameKey = Notification.Name(rawValue: "sendSubjectName")
+    
+    static let sendAlbumNameInfoKey = Notification.Name(rawValue: "sendAlbumName")
 }

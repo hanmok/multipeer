@@ -213,11 +213,11 @@ class TrimmingController {
 //        let albumName = "subject5 \(formattedDate)"
 //        let albumName = "\(subjectName) \(formattedDate)"
         
-//        createAlbumIfNotExist(albumName: albumName)
-// screen 값이 주어져야하는데 .. ??
-        let screenIndex = 1
+//        let screenIndex = 1
+        let screenIndex = screenIndex
 
-        let albumName = "\(screenIndex)_\(subjectName)"
+//        let albumName = "\(screenIndex)_\(subjectName)"
+        let albumName = "\(screenIndex)"
 //        let userName = connec
 //        let albumName =
         

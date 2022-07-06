@@ -45,6 +45,15 @@ extension Screen {
         }
     }
     
+    public var screenIndex: Int64 {
+        get {
+            return self.screenIndex_
+        }
+        set {
+            self.screenIndex_ = newValue
+        }
+    }
+    
 //    public var positionTitleCores: Set<PositionTitleCore> {
 //        get {
 ////            return self.positionTitleCores_ as! Set<PositionTitleCore>

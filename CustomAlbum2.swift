@@ -1,10 +1,6 @@
-//
-//  CustomAlbum.swift
-//  TestingSaveImageMania
-//
-//  Created by Alex Nagy on 14/04/2019.
-//  Copyright © 2019 Alex Nagy. All rights reserved.
-//
+
+
+
 
 import Photos
 import UIKit

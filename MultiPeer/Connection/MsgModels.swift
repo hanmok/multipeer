@@ -33,10 +33,17 @@ struct Info: Codable {
     var capturingTime: CapturingTime?
     
     var subjectName: SubjectName?
+    
+    var albumNameInfo: AlbumNameInfo?
 }
 
 struct FtpInfoString: Codable {
     var fileName: String
+}
+
+struct AlbumNameInfo: Codable {
+    var subjectName: String
+    var screenIndex: Int
 }
 
 struct SubjectName: Codable {
@@ -74,7 +81,8 @@ struct PeerCommunicationHelper {
             .updatePeerCameraDirectionMsg: .updatePeerCameraDirectionKey,
         .sendCapturingStartedTime: .capturingStartedTime,
         
-            .sendSubjectName: .sendSubjectNameKey
+//            .sendSubjectName: .sendSubjectNameKey
+            .sendAlbumNameInfo: .sendAlbumNameInfoKey
     ]
 }
 
@@ -99,7 +107,8 @@ public enum MessageType: String, Codable {
     case sendCapturingStartedTime
     case none
     
-    case sendSubjectName
+//    case sendSubjectName
+    case sendAlbumNameInfo
 }
 
 

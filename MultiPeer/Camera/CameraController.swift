@@ -170,9 +170,10 @@ class CameraController: UIViewController {
         
 //        let screenIndex = 1
         
-        guard let screen = screen else { fatalError() }
-        guard let subject = screen.parentSubject else { fatalError() }
-        createAlbumIfNotExist(albumName: "\(screen.screenIndex)_\(subject.name)")
+//        guard let screen = screen else { fatalError() }
+//        guard let subject = screen.parentSubject else { fatalError() }
+        
+//        createAlbumIfNotExist(albumName: "\(screen.screenIndex)_\(subject.name)")
     }
         
     private func setupInitialDirectionBtn() {
@@ -1456,9 +1457,11 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
 //            guard let subjectName = subjectName else { fatalError() }
 //            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: subjectName)
             
-            guard let screen = screen else { fatalError() }
+//            guard let screen = screen else { fatalError() }
             
-            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: connectionManager.subjectName, screenIndex: screen.screenIndex )
+//            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: "someName", screenIndex: screen.screenIndex )
+            
+            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: connectionManager.subjectName, screenIndex: Int64(connectionManager.screenIndex))
             
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
             
@@ -1613,11 +1616,12 @@ extension CameraController: ConnectionManagerDelegate {
         
         let subjectName = subject.name
         
-        let screenIndex = screen.screenIndex
+        let screenIndex = screen.screenIndex + 1
         
         let titleShort = Dummy.shortForFileName[trialCore.title]!
         
         let directionShort: String
+        
         switch trialCore.direction {
         case "Left": directionShort = "l"
         case "Right": directionShort = "r"
@@ -1788,33 +1792,6 @@ extension CameraController: ScoreControllerDelegate {
         }
     }
     
-    private func createAlbumIfNotExist(albumName: String) {
-        let albumsPhoto:PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)
-        var albumNames = Set<String>()
-        albumsPhoto.enumerateObjects({(collection, index, object) in
-            let photoInAlbums = PHAsset.fetchAssets(in: collection, options: nil)
-//            print("print photoAlbum info")
-//            print(photoInAlbums.count)
-            print(collection.localizedTitle!)
-            albumNames.insert(collection.localizedTitle!)
-        })
-        // if given albumName not exist, create .
-        if albumNames.contains(albumName) == false {
-          // Create
-            PHPhotoLibrary.shared().performChanges({
-                PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: albumName)
-            }) { success, error in
-                if success {
-                    print("successFully create file of name: \(albumName)")
-                } else {
-                    print("error: \(error?.localizedDescription)")
-                }
-            }
-        }
-    }
-    
-    
-    
     // TODO: post, makePeersPost
     func postAction(ftpInfo: FTPInfo) {
         
@@ -1845,7 +1822,6 @@ extension CameraController: ScoreControllerDelegate {
     
     private func makeCall(title: String, direction: String, score: Int, pain: Int, trialCount: Int, videoURL: URL, cameraDirection: String, screenKey: UUID ) {
         
-        //        APIManager.shared.postRequest(movementTitle: <#T##String#>, direction: <#T##String#>, score: <#T##Int#>, pain: <#T##Int#>, trialCount: <#T##Int#>, videoURL: <#T##URL#>, cameraDirection: <#T##String#>, screenKey: <#T##UUID#>, closure: <#T##() -> Void#>)
     }
     
     /// merge Position Title + Direction  into Unique Key
@@ -1866,3 +1842,51 @@ extension CameraController: ScoreControllerDelegate {
 }
 
 
+
+//extension UIViewController {
+//    func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
+//
+//        guard let screen = screen else { fatalError() }
+//        guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
+//
+//        let date = Date()
+//        let formattedDateStr = date.getFormattedDate()
+//        //        let inspectorName = "someName"
+//
+//
+//        let inspectorName = screen.parentSubject!.inspector!.name
+//
+//        let subjectName = subject.name
+//
+//        let screenIndex = screen.screenIndex + 1
+//
+//        let titleShort = Dummy.shortForFileName[trialCore.title]!
+//
+//        let directionShort: String
+//
+//        switch trialCore.direction {
+//        case "Left": directionShort = "l"
+//        case "Right": directionShort = "r"
+//        default: directionShort = ""
+//        }
+//
+//        let trialNo = trialDetail.trialNo
+//        let phoneNumber = subject.phoneNumber
+//        let genderInt = subject.isMale ? 1 : 2
+//
+//        let calendar = Calendar.current
+//        let components = calendar.dateComponents([.year], from: subject.birthday)
+//
+//        guard let birthYear = components.year else { fatalError() }
+//
+//        let kneeLength = subject.kneeLength
+//        let palmLength = subject.palmLength
+////        1.0
+////        let kneeStr =
+//
+//        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
+//
+//        let ftpInfoString = FtpInfoString(fileName: fileName)
+//        return ftpInfoString
+//    }
+//}

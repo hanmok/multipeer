@@ -59,6 +59,7 @@ class MovementListController: UIViewController {
     private func initializeViewModels() {
         completeConditionViewModels = []
     }
+    
     private func checkConditionForViewModels() {
         print("checkConditionForViewModels called!!")
         var isCompleted = true
@@ -207,15 +208,6 @@ class MovementListController: UIViewController {
     
     private func testCode() {
         
-        
-
-//        createAlbumIfNotExist(albumName: "mymyTest")
-        let formattedDate = Date().getFormattedDate(format: "yyyy.MM.dd")
-        
-        let albumName = "subject4 \(formattedDate)"
-        createAlbumIfNotExist(albumName: albumName)
-
-        
     }
     
     // success
@@ -354,24 +346,54 @@ class MovementListController: UIViewController {
             self,
             selector: #selector(setScreen(_:)),
             name: .screenSettingKey, object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(createAlbum(_:)),
+            name: .sendAlbumNameInfoKey, object: nil)
     }
     
-    @objc func setScreen(_ notification: Notification) {
+    @objc func createAlbum(_ notification: Notification) {
+//        guard let receivedAlbumNameInfo = notification.userInfo?[""]
+        let screenIndex = (notification.userInfo?["screenIndex"])! as! Int
+        let subjectName = (notification.userInfo?["subjectName"])! as! String
         
+        createAlbumIfNotExist(albumName: "\(screenIndex)")
+    }
+    
+    
+    @objc func setScreen(_ notification: Notification) {
+        print("setScreen called")
         guard let receivedScreen = notification.userInfo?["screen"] as? Screen else { fatalError() }
         
         screen = receivedScreen
         guard let screen = screen else {
             fatalError()        }
         guard let parentSubject = screen.parentSubject else { fatalError() }
-        let subjectName = SubjectName(name: parentSubject.name)
+//        let subjectName = SubjectName(name: parentSubject.name)
         //        self.updatePeopleInfo(with: screen!)?
+        
         self.updatePeopleInfo(with: screen)
         self.updateTrialCores(screen: screen)
-        connectionManager.send(PeerInfo(msgType: .sendSubjectName, info: Info(subjectName: subjectName)))
         
-        connectionManager.subjectName = subjectName.name
+        let subjectName = parentSubject.name
+        let screenIndex = screen.screenIndex + 1
         
+//        let albumNameInfo = AlbumNameInfo(subjectName: parentSubject.name, screenIndex: Int(screen.screenIndex))
+        let albumNameInfo = AlbumNameInfo(subjectName: subjectName, screenIndex: Int(screenIndex))
+        
+
+        connectionManager.send(PeerInfo(msgType: .sendAlbumNameInfo, info: Info(albumNameInfo: albumNameInfo)))
+        
+        connectionManager.screenIndex = Int(screenIndex)
+        
+        createAlbumIfNotExist(albumName: "\(screenIndex)")
+        
+//        connectionManager.send(PeerInfo(msgType: .sendSubjectName, info: Info(subjectName: subjectName)))
+//        connection
+        
+//        connectionManager.subjectName = subjectName.name
+        print("current ScreenIndex from setScreen: \(screenIndex)")
         dismiss(animated: true)
     }
     
@@ -552,6 +574,8 @@ class MovementListController: UIViewController {
         
         
         connectionManager.send(PeerInfo(msgType: .presentCameraMsg, info: Info(movementTitleDirection: MovementTitleDirectionInfo(title: selectedTrial.title, direction: direction))))
+        
+        
     }
     
     private func presentCameraAsChild(trialCore: TrialCore? = nil, rank: Rank, title: String, direction: MovementDirection) {
