@@ -518,10 +518,12 @@ class CameraController: UIViewController {
     //    }
     
     private func changeMode(target: Side?, mode: Mode) {
-        printFlag(type: .peerConnectivity, count: -1, message: "changeMode triggered")
+//        printFlag(type: .peerConnectivity, count: -1, message: "changeMode triggered")
+        
         guard let target = target else {
             
-            printFlag(type: .peerConnectivity, count: 0, message: "target is nil")
+//            printFlag(type: .peerConnectivity, count: 0, message: "target is nil")
+        
             DispatchQueue.main.async {
                 self.leftShape.layer.cornerRadius = 10
                 self.leftShape.backgroundColor = .lavenderGray400
@@ -595,8 +597,6 @@ class CameraController: UIViewController {
                 
                 //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
                 self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .stop)
-                //                self.leftShape.layer.cornerRadius = 2
-                //                self.leftShape.backgroundColor = .lavenderGray400
             }
         } else {
             DispatchQueue.main.async {
@@ -604,9 +604,6 @@ class CameraController: UIViewController {
                 self.innerShape.layer.cornerRadius = 6
                 self.recordingBtn.setTitleColor(.gray900, for: .normal)
                 
-                //                self.leftShape.layer.cornerRadius = 2
-                //                self.leftShape.backgroundColor = .lavenderGray400
-                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
                 self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .stop)
             }
         }
@@ -1465,17 +1462,9 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             
             let fileName = "my some test Name"
             
-//            guard let timeDiff = timeDiff else { fatalError() }
             if timeDiff == nil { timeDiff = 0 }
             guard let timeDiff = timeDiff else { fatalError() }
 
-//            guard let subjectName = subjectName else { fatalError() }
-//            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: subjectName)
-            
-//            guard let screen = screen else { fatalError() }
-            
-//            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: "someName", screenIndex: screen.screenIndex )
-            
             trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: connectionManager.subjectName, screenIndex: Int64(connectionManager.upperIndex))
             
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small

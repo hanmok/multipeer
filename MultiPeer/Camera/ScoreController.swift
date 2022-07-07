@@ -374,11 +374,15 @@ class ScoreController: UIViewController {
         let kneeLength = subject.kneeLength
         let palmLength = subject.palmLength
         
-        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeLength)_\(palmLength)"
+        let kneeStr = kneeLength.convertTo4DigitString()
+        let palmStr = palmLength.convertTo4DigitString()
+        
+        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeStr)_\(palmStr)"
         
         let ftpInfoString = FtpInfoString(fileName: fileName)
         return ftpInfoString
     }
+    
     //    YYYY.MM.DD_HH.MM.SS_검사자명_피험자명_1_ds1_01012341234_성별_탄생년도_무릎길이_손바닥길이_앵글
     @objc func saveTapped() {
         // if tapped Button is "Hold" then send it back to CameraController

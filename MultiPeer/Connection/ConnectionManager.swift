@@ -307,7 +307,6 @@ extension ConnectionManager: MCSessionDelegate {
                 
                 cameraDirectionDic[peerId] = cameraDirection
                 
-
             case .sendCapturingStartedTime:
                 guard let peerStartedTime = receivedData.info.capturingTime else { fatalError() }
                 

@@ -354,7 +354,7 @@ enum FlagType: String {
     case upperIndex
 }
 
-
+/// left, right, both
 enum Side {
     case left
     case right
