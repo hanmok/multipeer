@@ -286,13 +286,18 @@ class CameraController: UIViewController {
     @objc func calculateTimeDiff(_ notification: Notification) {
         let peerStartedTime = (notification.userInfo?["peerStartedTime"])! as! Int64
         
-        guard let currentDeviceStartedCapturingTime = currentDeviceStartedCapturingTime else {
-            fatalError()
-        }
+//        guard let currentDeviceStartedCapturingTime = currentDeviceStartedCapturingTime else {
+//            fatalError()
+//        }
 
-        timeDiff = peerStartedTime - currentDeviceStartedCapturingTime
-        if timeDiff! < 0 { timeDiff = 0 }
-    
+        if let currentDeviceStartedCapturingTime = currentDeviceStartedCapturingTime {
+            timeDiff = peerStartedTime - currentDeviceStartedCapturingTime
+//            if timeDiff! < 0 { timeDiff}
+            timeDiff = max(timeDiff!, 0)
+        } else  {
+            currentDeviceStartedCapturingTime = Date().millisecondsSince1970
+            timeDiff = 0
+        }
     }
     
     @objc func updatePeerTitleNoti(_ notification: Notification) {
