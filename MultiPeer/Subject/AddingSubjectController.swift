@@ -100,7 +100,8 @@ class AddingSubjectController: UIViewController {
         let picker = UIDatePicker()
 //        picker.preferredDatePickerStyle = .inline
 //        picker.preferredDatePickerStyle = .automatic
-        picker.preferredDatePickerStyle = .wheels
+//        picker.preferredDatePickerStyle = .wheels
+        
         picker.datePickerMode = .date
         picker.tintColor = .white
         picker.backgroundColor = .gray
@@ -501,9 +502,9 @@ class AddingSubjectController: UIViewController {
 //            make.leading.equalTo(physicalLengthLabel.snp.trailing).offset(20)
             make.trailing.equalTo(kneeUnitLabel.snp.leading).offset(-5)
         }
-        
 
-    
+
+
         palmUnitLabel.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(40)
             make.height.equalTo(40)

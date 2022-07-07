@@ -187,6 +187,7 @@ class MovementListController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        AppUtility.lockOrientation(.portrait)
         
         view.insetsLayoutMarginsFromSafeArea = false
         print("viewDidLoad in MovementListController called") // not called..
