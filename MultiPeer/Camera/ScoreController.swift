@@ -351,7 +351,7 @@ class ScoreController: UIViewController {
         
         let subjectName = subject.name
         
-        let screenIndex = screen.screenIndex
+        let screenIndex = screen.screenIndex + 1
         
         let titleShort = Dummy.shortForFileName[trialCore.title]!
         

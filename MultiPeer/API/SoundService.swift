@@ -9,23 +9,25 @@ import Foundation
 import AVFoundation
 
 class SoundService {
-    static let shard = SoundService()
+    static let shared = SoundService()
     
     var decreasingCount = 3
     var decreasingTimer = Timer()
     
     var systemSoundID : SystemSoundID = 1016
     
+    // works
     func someFunc() {
-        
+        print("someFunc Triggered")
         decreasingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
             
             guard let `self` = self else { return }
-            
+            print("hello")
             if self.decreasingCount > 0 {
                 self.decreasingCount -= 1
 //                SoundService.shard.someFunc()
-//                AudioServicesPlaySystemSound(self.systemSoundID)
+                // 세번 호출. 
+                AudioServicesPlaySystemSound(self.systemSoundID)
                 
                 
                 if self.decreasingCount == 0 { // ????

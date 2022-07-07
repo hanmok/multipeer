@@ -29,7 +29,7 @@ class CameraController: UIViewController {
     
     // MARK: - Properties
     //    let sampleInspector = Inspector(name: "hanmok", phoneNumber: "01090417421")
-    
+//    var systemSoundID: SystemSoundID = 1016
     private var videoUrl: URL?
     var shouldShowScoreView = true
     // TODO: Handle inside ConnectionManager
@@ -81,8 +81,8 @@ class CameraController: UIViewController {
     
     private var isRecording = false
     
-    //    private let shouldRecordLater = false
-    private let shouldRecordLater = false
+        private let shouldRecordLater = true
+//    private let shouldRecordLater = false
     
     var variationName: String?
     
@@ -921,6 +921,7 @@ class CameraController: UIViewController {
     
     private func playCountDownLottie() {
         countDownLottieView.play()
+//        SoundService.shared.someFunc()
     }
     
     @objc private func triggerCountDownTimer() {
@@ -1356,30 +1357,8 @@ class CameraController: UIViewController {
     private let completeLottieView = AnimationView(name: "completeLottie2").then {
         $0.contentMode = .scaleAspectFit
         $0.loopMode = .playOnce
-        //        $0.backgroundColor = .white
-        //        $0.backgroundColor = .magenta
+        
     }
-    
-    //    private let completeMsgLabel = UILabel().then {
-    //        //    private let completeMsgLabel = UITextView().then {
-    //        let paragraph = NSMutableParagraphStyle()
-    //        paragraph.alignment = .center
-    //
-    //        let attrText = NSMutableAttributedString(string: "Upload Completed!\n hihi", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
-    //
-    //        attrText.append(NSAttributedString(string: "Contrats!\nYour video has been successfully uploaded.", attributes: [
-    //            .font: UIFont.systemFont(ofSize: 17),
-    //            .foregroundColor: UIColor.gray600,
-    //            .paragraphStyle: paragraph]))
-    //
-    //        attrText.append(NSAttributedString(string: "Your video has been successfully uploaded", attributes: [
-    //            .font: UIFont.systemFont(ofSize: 15),
-    //            .paragraphStyle: paragraph
-    //        ]))
-    //
-    //        $0.attributedText = attrText
-    //        $0.numberOfLines = 0
-    //    }
     
     private let completeMsgLabel = UILabel().then {
         //    private let completeMsgLabel = UITextView().then {
@@ -1638,52 +1617,52 @@ extension CameraController: ConnectionManagerDelegate {
         
     }
     
-    private func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
-        
-        guard let screen = screen else { fatalError() }
-        guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
-        
-        let date = Date()
-        let formattedDateStr = date.getFormattedDate()
-        //        let inspectorName = "someName"
-        
-        
-        let inspectorName = screen.parentSubject!.inspector!.name
-        
-        let subjectName = subject.name
-        
-        let screenIndex = screen.screenIndex + 1
-        
-        let titleShort = Dummy.shortForFileName[trialCore.title]!
-        
-        let directionShort: String
-        
-        switch trialCore.direction {
-        case "Left": directionShort = "l"
-        case "Right": directionShort = "r"
-        default: directionShort = ""
-        }
-        
-        let trialNo = trialDetail.trialNo + 1
-        let phoneNumber = subject.phoneNumber
-        let genderInt = subject.isMale ? 1 : 2
-        
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year], from: subject.birthday)
-        
-        guard let birthYear = components.year else { fatalError() }
-        
-        let kneeLength = subject.kneeLength
-        let palmLength = subject.palmLength
-//        1.0
-        let kneeStr = kneeLength.convertTo4DigitString()
-        let palmStr = palmLength.convertTo4DigitString()
-        
-        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeStr)_\(palmStr)"
-        
-        let ftpInfoString = FtpInfoString(fileName: fileName)
-        return ftpInfoString
-    }
+//    private func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
+//
+//        guard let screen = screen else { fatalError() }
+//        guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
+//
+//        let date = Date()
+//        let formattedDateStr = date.getFormattedDate()
+//        //        let inspectorName = "someName"
+//
+//
+//        let inspectorName = screen.parentSubject!.inspector!.name
+//
+//        let subjectName = subject.name
+//
+//        let screenIndex = screen.screenIndex + 1
+//
+//        let titleShort = Dummy.shortForFileName[trialCore.title]!
+//
+//        let directionShort: String
+//
+//        switch trialCore.direction {
+//        case "Left": directionShort = "l"
+//        case "Right": directionShort = "r"
+//        default: directionShort = ""
+//        }
+//
+//        let trialNo = trialDetail.trialNo + 1
+//        let phoneNumber = subject.phoneNumber
+//        let genderInt = subject.isMale ? 1 : 2
+//
+//        let calendar = Calendar.current
+//        let components = calendar.dateComponents([.year], from: subject.birthday)
+//
+//        guard let birthYear = components.year else { fatalError() }
+//
+//        let kneeLength = subject.kneeLength
+//        let palmLength = subject.palmLength
+////        1.0
+//        let kneeStr = kneeLength.convertTo4DigitString()
+//        let palmStr = palmLength.convertTo4DigitString()
+//
+//        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeStr)_\(palmStr)"
+//
+//        let ftpInfoString = FtpInfoString(fileName: fileName)
+//        return ftpInfoString
+//    }
     
     
 }

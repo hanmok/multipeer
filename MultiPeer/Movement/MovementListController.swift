@@ -19,7 +19,7 @@ class MovementListController: UIViewController {
     // MARK: - Properties
     
     var userDefaultSetup = UserDefaultSetup()
-    
+    var systemSoundID: SystemSoundID = 1016
     var connectionManager = ConnectionManager()
     
     private var isCameraVisible = false
@@ -557,7 +557,8 @@ class MovementListController: UIViewController {
     @objc func moveToInspectorController() {
         
         let inspectorVC = InspectorController()
-        
+//        SoundService.shared.someFunc()
+//        AudioServicesPlaySystemSound(systemSoundId)
         let uiNavController = UINavigationController(rootViewController: inspectorVC)
         
         self.present(uiNavController, animated: true)
@@ -601,13 +602,14 @@ class MovementListController: UIViewController {
                     }
 
                     self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: self.screen, trialCore: trialCore!, positionTitle: title, direction: direction, rank: rank)
-                    
+                    self.cameraVC?.delegate = self
                 } else {
                     self.cameraVC = CameraController(connectionManager: self.connectionManager, screen: nil, trialCore: nil, positionTitle: title, direction: direction, rank: rank)
                 }
                 
                 guard self.cameraVC != nil else { return }
                 self.cameraVC!.delegate = self
+                
                 self.addChild(self.cameraVC!)
                 
                 self.view.addSubview(self.cameraVC!.view)
@@ -827,6 +829,7 @@ extension MovementListController: CameraControllerDelegate {
     
     func makeSound() {
         // FIXME: make sound 보류.
+//        SoundService.shared.someFunc()
     }
     
     func dismissCamera(closure: () -> Void) {

@@ -9,10 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
-
-
 class ScreenTableCell: UITableViewCell {
-    
     
     var viewModel: ScreenViewModel? {
             didSet {
@@ -32,18 +29,18 @@ class ScreenTableCell: UITableViewCell {
     
     private let sequenceIndexLabel = UILabel().then {
         $0.textAlignment = .center
-        $0.textColor = .cyan
+        $0.textColor = .white
         $0.backgroundColor = .gray
     }
     
     private let dateLabel = UILabel().then {
         $0.textAlignment = .center
-        $0.textColor = .cyan
+        $0.textColor = .white
         $0.backgroundColor = .gray
     }
     
     private let scoreLabel = UILabel().then {
-        $0.textColor = .red
+        $0.textColor = .white
         $0.textAlignment = .center
         $0.backgroundColor = .darkGray
         $0.adjustsFontSizeToFitWidth = true
@@ -68,17 +65,13 @@ class ScreenTableCell: UITableViewCell {
         
         sequenceIndexLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview()
-//            make.top.equalToSuperview()
             make.width.equalTo(50)
-//            make.top.bottom.equalToSuperview().inset(2)
             make.top.bottom.equalToSuperview()
         }
         
         dateLabel.snp.makeConstraints { make in
             make.leading.equalTo(sequenceIndexLabel.snp.trailing).offset(20)
-//            make.top.equalToSuperview()
             make.width.equalToSuperview().dividedBy(2)
-//            make.top.bottom.equalToSuperview().inset(2)
             make.top.bottom.equalToSuperview()
         }
         
@@ -86,7 +79,6 @@ class ScreenTableCell: UITableViewCell {
         scoreLabel.snp.makeConstraints { make in
             make.leading.equalTo(dateLabel.snp.trailing).offset(20)
             make.trailing.equalToSuperview()
-//            make.top.bottom.equalToSuperview().inset(2)
             make.top.bottom.equalToSuperview()
         }
     }
@@ -97,11 +89,9 @@ class ScreenTableCell: UITableViewCell {
     
     private func configureLayout() {
         guard let vm = viewModel else { return }
-        
+
         sequenceIndexLabel.text = vm.sequenceIndex
-//        print("sequenceIndex: \(vm.sequenceIndex)")
         dateLabel.text = " \(vm.date) "
         scoreLabel.text = " \(vm.score) "
-//        print("vm.score: \(vm.score)")
     }
 }
