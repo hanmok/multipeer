@@ -25,6 +25,26 @@ class AddingSubjectController: UIViewController {
     var appDelegate: AppDelegate?
     var context: NSManagedObjectContext?
     
+    private let nameLabel = UILabel().then {
+        $0.text = "이름"
+        $0.textColor = .black
+    }
+    
+    private let genderLabel = UILabel().then {
+        $0.text = "성별"
+        $0.textColor = .black
+    }
+    
+    private let phoneNumberLabel = UILabel().then {
+        $0.text = "휴대폰 번호"
+        $0.textColor = .black
+    }
+    
+    private let physicalLengthLabel = UILabel().then {
+        $0.text = "신체 부분 길이"
+        $0.textColor = .black
+    }
+    
     private let nameTF: UITextField = {
         let tf = UITextField(withPadding: true)
 
@@ -68,7 +88,7 @@ class AddingSubjectController: UIViewController {
     
     private let birthDayLabel = UILabel().then {
         $0.text = "Birth Day"
-        $0.textColor = .white
+        $0.textColor = .black
     }
     
 //    private let birthDayPicker = UIDatePicker().then {
@@ -78,7 +98,11 @@ class AddingSubjectController: UIViewController {
     
     private let birthDayPicker : UIDatePicker = {
         let picker = UIDatePicker()
+//        picker.preferredDatePickerStyle = .inline
+//        picker.preferredDatePickerStyle = .automatic
+//        picker.preferredDatePickerStyle = .wheels
         
+        picker.datePickerMode = .date
         picker.tintColor = .white
         picker.backgroundColor = .gray
         picker.layer.cornerRadius = 10
@@ -92,22 +116,22 @@ class AddingSubjectController: UIViewController {
 //        $0.keyboardType = .numberPad
 //    }
     
-    private let emailTF: UITextField = {
-//        let tf = UITextField()
-        let tf = UITextField(withPadding: true)
-        let attrText = NSMutableAttributedString(string: "Email Address", attributes: [
-            .font: UIFont.systemFont(ofSize: 17),
-            .foregroundColor: UIColor.gray])
-//        tf.placeholder = "Enter Email Address"
-        tf.attributedPlaceholder = attrText
-        tf.textColor = .white
-        
-        tf.textColor = .white
-        tf.backgroundColor = UIColor(white: 0.4, alpha: 0.4)
-        tf.layer.cornerRadius = 10
-        
-        return tf
-    }()
+//    private let emailTF: UITextField = {
+////        let tf = UITextField()
+//        let tf = UITextField(withPadding: true)
+//        let attrText = NSMutableAttributedString(string: "Email Address", attributes: [
+//            .font: UIFont.systemFont(ofSize: 17),
+//            .foregroundColor: UIColor.gray])
+////        tf.placeholder = "Enter Email Address"
+//        tf.attributedPlaceholder = attrText
+//        tf.textColor = .white
+//
+//        tf.textColor = .white
+//        tf.backgroundColor = UIColor(white: 0.4, alpha: 0.4)
+//        tf.layer.cornerRadius = 10
+//
+//        return tf
+//    }()
     
     private let phoneTF : UITextField = {
 //        let tf = UITextField()
@@ -241,7 +265,7 @@ class AddingSubjectController: UIViewController {
     }
     
     func setupDelegate() {
-        emailTF.delegate = self
+//        emailTF.delegate = self
         phoneTF.delegate = self
     }
     
@@ -346,12 +370,15 @@ class AddingSubjectController: UIViewController {
         [maleBtn, femaleBtn].forEach { self.genderStackView.addArrangedButton($0)}
         
         [
-//            nameLabel,
+            nameLabel,
             nameTF,
+            genderLabel,
             genderStackView,
             birthDayLabel, birthDayPicker,
-            emailTF,
+//            emailTF,
+            phoneNumberLabel,
             phoneTF,
+            physicalLengthLabel,
             kneeTF, kneeUnitLabel,
             palmTF, palmUnitLabel,
             completeBtn
@@ -359,26 +386,46 @@ class AddingSubjectController: UIViewController {
         
         print("genderStackView's button: \(genderStackView.buttons.count)")
         
+
+        
+        nameLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
+            make.leading.equalToSuperview().inset(20)
+            make.height.equalTo(40)
+            make.width.equalTo(100)
+        }
+        
         nameTF.delegate = self
         nameTF.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(20)
+//            make.leading.equalToSuperview().inset(20)
+            make.leading.equalTo(nameLabel.snp.trailing).offset(20)
             make.trailing.equalToSuperview().inset(40)
             make.height.equalTo(40)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(60)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
+        }
+        
+        genderLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(20)
+            make.width.equalTo(100)
+            make.height.equalTo(40)
+//            make.top.equalTo(nameTF.snp.bottom).offset(40)
+            make.top.equalTo(nameTF.snp.bottom).offset(30)
         }
         
         genderStackView.snp.makeConstraints { make in
-
-            make.leading.equalToSuperview().inset(20)
+//            make.leading.equalToSuperview().inset(20)
+            make.leading.equalTo(genderLabel.snp.trailing).offset(20)
             make.trailing.equalToSuperview().inset(40)
-            make.top.equalTo(nameTF.snp.bottom).offset(40)
+//            make.top.equalTo(nameTF.snp.bottom).offset(40)
+            make.top.equalTo(nameTF.snp.bottom).offset(30)
             make.height.equalTo(45)
         }
         
         birthDayLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
-            make.width.equalTo(120)
-            make.top.equalTo(genderStackView.snp.bottom).offset(40)
+            make.width.equalTo(100)
+//            make.top.equalTo(genderStackView.snp.bottom).offset(60)
+            make.top.equalTo(genderStackView.snp.bottom).offset(50)
             make.height.equalTo(20)
         }
         
@@ -386,69 +433,98 @@ class AddingSubjectController: UIViewController {
             make.trailing.equalToSuperview().inset(40)
             make.leading.equalTo(birthDayLabel.snp.trailing).offset(20)
             make.centerY.equalTo(birthDayLabel.snp.centerY)
-            make.height.equalTo(40)
+            make.height.equalTo(50)
         }
         
-        emailTF.delegate = self
-        emailTF.snp.makeConstraints { make in
+//        emailTF.delegate = self
+//        emailTF.snp.makeConstraints { make in
 
             
-            make.leading.equalToSuperview().inset(20)
-            make.trailing.equalToSuperview().inset(40)
-            make.height.equalTo(40)
-            
-            make.top.equalTo(birthDayPicker.snp.bottom).offset(60)
+//            make.leading.equalToSuperview().inset(20)
+//            make.trailing.equalToSuperview().inset(40)
+//            make.height.equalTo(40)
+//
+//            make.top.equalTo(birthDayPicker.snp.bottom).offset(60)
 //            make.height.equalTo(20)
+//        }
+    
+        phoneNumberLabel.snp.makeConstraints { make in
+//            make.top.equalTo(birthDayPicker.snp.bottom).offset(50)
+            make.top.equalTo(birthDayPicker.snp.bottom).offset(30)
+            make.leading.equalToSuperview().inset(20)
+            make.height.equalTo(40)
+            make.width.equalTo(100)
         }
+        
         phoneTF.delegate = self
         phoneTF.snp.makeConstraints { make in
 //            make.leading.trailing.equalToSuperview().inset(20)
-            make.top.equalTo(emailTF.snp.bottom).offset(20)
+//            make.top.equalTo(emailTF.snp.bottom).offset(20)
+//            make.top.equalTo(birthDayPicker.snp.bottom).offset(60)
+//            make.top.equalTo(birthDayPicker.snp.bottom).offset(50)
+            make.top.equalTo(birthDayPicker.snp.bottom).offset(30)
 //            make.height.equalTo(30)
-            make.leading.equalToSuperview().inset(20)
+//            make.leading.equalToSuperview().inset(20)
+            make.leading.equalTo(phoneNumberLabel.snp.trailing).offset(20)
             make.trailing.equalToSuperview().inset(40)
             make.height.equalTo(40)
         }
-        kneeTF.delegate = self
-        kneeTF.snp.makeConstraints { make in
+        
+        physicalLengthLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
             make.height.equalTo(40)
-            make.top.equalTo(phoneTF.snp.bottom).offset(20)
-            make.width.equalTo(120)
+//            make.top.equalTo(phoneTF.snp.bottom).offset(20)
+//            make.top.equalTo(phoneTF.snp.bottom).offset(40)
+            make.top.equalTo(phoneTF.snp.bottom).offset(30)
+            make.width.equalTo(100)
         }
         
         kneeUnitLabel.snp.makeConstraints { make in
-            make.leading.equalTo(kneeTF.snp.trailing).offset(5)
-            make.height.equalTo(kneeTF.snp.height)
+//            make.leading.equalTo(kneeTF.snp.trailing).offset(5)
+            make.trailing.equalToSuperview().inset(40)
+//            make.height.equalTo(kneeTF.snp.height)
+            make.height.equalTo(40)
             make.width.equalTo(25)
-            make.centerY.equalTo(kneeTF.snp.centerY)
+//            make.centerY.equalTo(kneeTF.snp.centerY)
+//            make.top.equalTo(phoneTF.snp.bottom).offset(20)
+//            make.top.equalTo(phoneTF.snp.bottom).offset(40)
+            make.top.equalTo(phoneTF.snp.bottom).offset(30)
         }
         
-        
-        
+        kneeTF.delegate = self
+        kneeTF.snp.makeConstraints { make in
+//            make.leading.equalToSuperview().inset(20)
+            make.leading.equalTo(physicalLengthLabel.snp.trailing).offset(20)
+            make.height.equalTo(40)
+//            make.top.equalTo(phoneTF.snp.bottom).offset(20)
+//            make.top.equalTo(phoneTF.snp.bottom).offset(40)
+            make.top.equalTo(phoneTF.snp.bottom).offset(30)
+//            make.leading.equalTo(physicalLengthLabel.snp.trailing).offset(20)
+            make.trailing.equalTo(kneeUnitLabel.snp.leading).offset(-5)
+        }
 
-        
+
+
         palmUnitLabel.snp.makeConstraints { make in
-//            make.leading.equalTo(palmTF.snp.trailing).offset(5)
             make.trailing.equalToSuperview().inset(40)
-            make.height.equalTo(palmTF.snp.height)
+            make.height.equalTo(40)
             make.width.equalTo(25)
-            make.centerY.equalTo(kneeTF.snp.centerY)
+            make.top.equalTo(kneeTF.snp.bottom).offset(20)
         }
         
         palmTF.delegate = self
         palmTF.snp.makeConstraints { make in
             make.trailing.equalTo(palmUnitLabel.snp.leading).offset(-5)
             make.height.equalTo(40)
-            make.top.equalTo(phoneTF.snp.bottom).offset(20)
-            make.width.equalTo(120)
+            make.top.equalTo(kneeTF.snp.bottom).offset(20)
+
+            make.leading.equalTo(physicalLengthLabel.snp.trailing).offset(20)
         }
         
         completeBtn.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.equalTo(200)
-//            make.top.equalTo(phoneTF.snp.bottom).offset(50)
-            make.top.equalTo(palmTF.snp.bottom).offset(50)
+            make.top.equalTo(palmTF.snp.bottom).offset(100)
             make.height.equalTo(50)
         }
     }

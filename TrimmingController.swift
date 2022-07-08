@@ -73,11 +73,6 @@ class TrimmingController {
         
         guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("\(fileName).mov") else { fatalError() }
         
-//        guard let outputMovieURL = URL(string: "hi2.mov") else { fatalError() }
-                
-//        export(assetToExport, to: outputMovieURL, startTime: self.startTime, endTime: self.endTime, composition: composition)
-        
-//        let timeRange = CMTimeRangeFromTimeToTime(start: self.startTime, end: self.endTime)
         let timeRange = CMTimeRangeFromTimeToTime(start: self.timeDiff, end: self.endTime)
         
         do {
@@ -86,11 +81,8 @@ class TrimmingController {
             print("Could not remove file \(error.localizedDescription)")
         }
         
-//        let exporter = AVAssetExportSession(asset: assetToExport, presetName: AVAssetExportPresetHighestQuality)
-        
         let exporter = AVAssetExportSession(asset: assetToExport, presetName: AVAssetExportPreset960x540)
         
-//        exporter?.videoComposition = composition
         exporter?.outputURL = outputMovieURL
         exporter?.outputFileType = .mov
         exporter?.timeRange = timeRange

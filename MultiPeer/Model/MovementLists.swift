@@ -354,19 +354,22 @@ enum FlagType: String {
     case upperIndex
 }
 
-
-enum Side {
-    case left
-    case right
-    case both
+/// left, right, both
+enum connectedDeviceAmount {
+    case zero
+    case one
+//    case right
+    case two
 }
 
-enum Mode {
+enum RecordingMode {
     case onRecording
-    case stop
+    case onPreparing
+//    case onPreparing
 }
 
-let countToSideDic: [Int: Side?] = [0: nil, 1: .left, 2: .both]
+//let countToSideDic: [Int: connectedDeviceAmount?] = [0: nil, 1: .one, 2: .two]
+let countToSideDic: [Int: connectedDeviceAmount] = [0: .zero, 1: .one, 2: .two]
 
 
 struct PostReqInfo: Codable {

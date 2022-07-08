@@ -93,6 +93,7 @@
 		22F65EBA284EDCB600646FCD /* SelectableButtonStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EB9284EDCB600646FCD /* SelectableButtonStackView.swift */; };
 		22F65EBC284EDDC600646FCD /* RemovableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EBB284EDDC600646FCD /* RemovableCell.swift */; };
 		22F65EBE284EDF0F00646FCD /* ScoreBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F65EBD284EDF0F00646FCD /* ScoreBtnView.swift */; };
+		22F84AA62876D5AE0075BB59 /* AppUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F84AA52876D5AE0075BB59 /* AppUtility.swift */; };
 		3A73CB3F92B01C92EA9C388B /* Pods_MultiPeer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */; };
 		9A7545BB283B596F00558CA7 /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7545BA283B596F00558CA7 /* SoundService.swift */; };
 		E54927E5283B878A0049D00A /* SubjectTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E54927E4283B878A0049D00A /* SubjectTableCell.swift */; };
@@ -188,6 +189,7 @@
 		22F65EB9284EDCB600646FCD /* SelectableButtonStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableButtonStackView.swift; sourceTree = "<group>"; };
 		22F65EBB284EDDC600646FCD /* RemovableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovableCell.swift; sourceTree = "<group>"; };
 		22F65EBD284EDF0F00646FCD /* ScoreBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBtnView.swift; sourceTree = "<group>"; };
+		22F84AA52876D5AE0075BB59 /* AppUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUtility.swift; sourceTree = "<group>"; };
 		43DB5FCC617ADEAE491966E2 /* Pods_MultiPeer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MultiPeer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A7545BA283B596F00558CA7 /* SoundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
 		AA8C32117F417B1A5C42D8EC /* Pods-MultiPeer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MultiPeer.debug.xcconfig"; path = "Target Support Files/Pods-MultiPeer/Pods-MultiPeer.debug.xcconfig"; sourceTree = "<group>"; };
@@ -413,6 +415,7 @@
 				22EE65F12874004800AFAC77 /* DoubleExt+.swift */,
 				22F65EBB284EDDC600646FCD /* RemovableCell.swift */,
 				22244D352859D16A00B3D03C /* UIViewControllerExt+.swift */,
+				22F84AA52876D5AE0075BB59 /* AppUtility.swift */,
 				22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */,
 				22EE65E92872DB8700AFAC77 /* CMTimeExt+.swift */,
 			);
@@ -565,6 +568,7 @@
 			files = (
 				22EE65F42874170E00AFAC77 /* MyCustomAlbum.swift in Sources */,
 				22A034322857246B005FDF0F /* DirectionBtnStackView.swift in Sources */,
+				22F84AA62876D5AE0075BB59 /* AppUtility.swift in Sources */,
 				22EE65F22874004800AFAC77 /* DoubleExt+.swift in Sources */,
 				22F65EB22849B0FA00646FCD /* UIView+Ext.swift in Sources */,
 				22F65E6E2844770100646FCD /* MovementCell.swift in Sources */,

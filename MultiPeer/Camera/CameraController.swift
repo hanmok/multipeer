@@ -18,6 +18,7 @@ import Lottie
 protocol CameraControllerDelegate: AnyObject {
     func dismissCamera(closure: () -> Void)
     func makeSound()
+    func orderUpdatingPeerState()
 }
 
 extension CameraController: FileManagerDelegate {
@@ -29,7 +30,7 @@ class CameraController: UIViewController {
     
     // MARK: - Properties
     //    let sampleInspector = Inspector(name: "hanmok", phoneNumber: "01090417421")
-    
+//    var systemSoundID: SystemSoundID = 1016
     private var videoUrl: URL?
     var shouldShowScoreView = true
     // TODO: Handle inside ConnectionManager
@@ -81,7 +82,7 @@ class CameraController: UIViewController {
     
     private var isRecording = false
     
-    //    private let shouldRecordLater = false
+//        private let shouldRecordLater = true
     private let shouldRecordLater = false
     
     var variationName: String?
@@ -286,13 +287,18 @@ class CameraController: UIViewController {
     @objc func calculateTimeDiff(_ notification: Notification) {
         let peerStartedTime = (notification.userInfo?["peerStartedTime"])! as! Int64
         
-        guard let currentDeviceStartedCapturingTime = currentDeviceStartedCapturingTime else {
-            fatalError()
-        }
+//        guard let currentDeviceStartedCapturingTime = currentDeviceStartedCapturingTime else {
+//            fatalError()
+//        }
 
-        timeDiff = peerStartedTime - currentDeviceStartedCapturingTime
-        if timeDiff! < 0 { timeDiff = 0 }
-    
+        if let currentDeviceStartedCapturingTime = currentDeviceStartedCapturingTime {
+            timeDiff = peerStartedTime - currentDeviceStartedCapturingTime
+//            if timeDiff! < 0 { timeDiff}
+            timeDiff = max(timeDiff!, 0)
+        } else  {
+            currentDeviceStartedCapturingTime = Date().millisecondsSince1970
+            timeDiff = 0
+        }
     }
     
     @objc func updatePeerTitleNoti(_ notification: Notification) {
@@ -509,127 +515,102 @@ class CameraController: UIViewController {
         retryAction()
         connectionManager.send(PeerInfo(msgType: .hidePreviewMsg, info: Info()))
     }
-    
-    
-    //    @objc func recordingBtnTapped(_ sender: UIButton) {
-    //
-    //        recordingBtnAction()
-    //
-    //    }
-    
-    private func changeMode(target: Side?, mode: Mode) {
-        printFlag(type: .peerConnectivity, count: -1, message: "changeMode triggered")
-        guard let target = target else {
-            
-            printFlag(type: .peerConnectivity, count: 0, message: "target is nil")
-            DispatchQueue.main.async {
-                self.leftShape.layer.cornerRadius = 10
-                self.leftShape.backgroundColor = .lavenderGray400
-                
-                self.rightShape.layer.cornerRadius = 10
-                self.rightShape.backgroundColor = .lavenderGray400
+
+    private func setLayoutForState(connected: Bool = true, status: RecordingMode? = nil, applyTo targetView: UIView) {
+        
+        if connected {
+            guard let status = status else { return }
+            if status == .onPreparing {
+                DispatchQueue.main.async {
+                    targetView.layer.cornerRadius = 10
+                    targetView.backgroundColor = .red
+                }
+
+            } else if status == .onRecording {
+                DispatchQueue.main.async {
+                    targetView.layer.cornerRadius = 2
+                    targetView.backgroundColor = .red
+                }
             }
-            return
+            
+        } else {
+            DispatchQueue.main.async {
+                targetView.backgroundColor = .lavenderGray400
+                targetView.layer.cornerRadius = 10
+            }
+
+        }
+    }
+    
+    private func changePeerIndicator(connectedNum: connectedDeviceAmount, mode: RecordingMode) {
+        print("changePeerIndicator called, connectedNum: \(connectedNum), mode: \(mode)")
+        if connectedNum == .zero {
+            setLayoutForState(connected: false, applyTo: self.leftShape)
+            setLayoutForState(connected: false, applyTo: self.rightShape)
         }
         
         switch mode {
-        case .onRecording:
-            switch target {
+        case .onPreparing:
+            switch connectedNum {
                 
-            case .left:
-                DispatchQueue.main.async {
-                    self.leftShape.layer.cornerRadius = 10
-                    self.leftShape.backgroundColor = .red
-                }
+            case .one:
+                setLayoutForState(status: .onPreparing, applyTo: leftShape)
                 
-            case .right:
-                DispatchQueue.main.async {
-                    
-                    self.rightShape.layer.cornerRadius = 10
-                    self.rightShape.backgroundColor = .red
-                }
-            case .both:
-                DispatchQueue.main.async {
-                    
-                    self.leftShape.layer.cornerRadius = 10
-                    self.leftShape.backgroundColor = .red
-                    self.rightShape.layer.cornerRadius = 10
-                    self.rightShape.backgroundColor = .red
-                }
+            case .two:
+                setLayoutForState(status: .onPreparing, applyTo: leftShape)
+                setLayoutForState(status: .onPreparing, applyTo: rightShape)
+                
+            case .zero: break
             }
             
-        case .stop:
-            switch target {
-            case .left:
-                DispatchQueue.main.async {
-                    
-                    self.leftShape.layer.cornerRadius = 2
-                    self.leftShape.backgroundColor = .lavenderGray400
-                }
-            case .right:
-                DispatchQueue.main.async {
-                    
-                    self.rightShape.layer.cornerRadius = 2
-                    self.rightShape.backgroundColor = .lavenderGray400
-                }
-            case .both:
-                DispatchQueue.main.async {
-                    
-                    self.leftShape.layer.cornerRadius = 2
-                    self.leftShape.backgroundColor = .lavenderGray400
-                    
-                    self.rightShape.layer.cornerRadius = 2
-                    self.rightShape.backgroundColor = .lavenderGray400
-                }
+        case .onRecording:
+            switch connectedNum {
+            case .one:
+                setLayoutForState(status: .onRecording, applyTo: leftShape)
+
+            case .two:
+                setLayoutForState(status: .onRecording, applyTo: self.leftShape)
+                setLayoutForState(status: .onRecording, applyTo: self.rightShape)
+                
+            case .zero: break
             }
         }
     }
     
+    /// change btn look if recording started
     private func changeBtnLookForRecording(animation: Bool) {
         if animation {
-            //            if connectionMa
+
             UIView.animate(withDuration: 0.4) {
-                self.outerRecCircle.backgroundColor = .lavenderGray900
                 self.innerShape.layer.cornerRadius = 6
                 self.recordingBtn.setTitleColor(.gray900, for: .normal)
                 
-                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
-                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .stop)
-                //                self.leftShape.layer.cornerRadius = 2
-                //                self.leftShape.backgroundColor = .lavenderGray400
+                self.changePeerIndicator(connectedNum: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
             }
         } else {
-            DispatchQueue.main.async {
-                self.outerRecCircle.backgroundColor = .lavenderGray900
-                self.innerShape.layer.cornerRadius = 6
+            DispatchQueue.main.async {                self.innerShape.layer.cornerRadius = 6
                 self.recordingBtn.setTitleColor(.gray900, for: .normal)
                 
-                //                self.leftShape.layer.cornerRadius = 2
-                //                self.leftShape.backgroundColor = .lavenderGray400
-                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
-                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .stop)
+                self.changePeerIndicator(connectedNum: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
             }
         }
     }
-    
+    /// change btn look if preparing (stopped)
     private func changeBtnLookForPreparing(animation: Bool ) {
         if animation {
             UIView.animate(withDuration: 0.4) {
-                self.outerRecCircle.backgroundColor = .red
+                
                 self.innerShape.layer.cornerRadius = 18
                 self.recordingBtn.setTitleColor(.red, for: .normal)
-                
-                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
-                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
+        
+                self.changePeerIndicator(connectedNum: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onPreparing)
             }
         } else {
             DispatchQueue.main.async {
-                self.outerRecCircle.backgroundColor = .red
                 self.innerShape.layer.cornerRadius = 18
                 self.recordingBtn.setTitleColor(.red, for: .normal)
                 
-                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
-                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
+                self.changePeerIndicator(connectedNum: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onPreparing)
             }
         }
     }
@@ -660,13 +641,8 @@ class CameraController: UIViewController {
     @objc func dismissBtnTapped(_ sender: UIButton) {
         print("dismiss btn tapped!")
         
-        //        scoreVC = nil
-        
-        //        self.dismiss(animated: true)
-        // 왜 dismiss 가 안되지?
-        
         delegate?.dismissCamera() {
-            //            self.dismiss(animated: true)
+            
         }
     }
     
@@ -921,6 +897,7 @@ class CameraController: UIViewController {
     
     private func playCountDownLottie() {
         countDownLottieView.play()
+//        SoundService.shared.someFunc()
     }
     
     @objc private func triggerCountDownTimer() {
@@ -1356,30 +1333,8 @@ class CameraController: UIViewController {
     private let completeLottieView = AnimationView(name: "completeLottie2").then {
         $0.contentMode = .scaleAspectFit
         $0.loopMode = .playOnce
-        //        $0.backgroundColor = .white
-        //        $0.backgroundColor = .magenta
+        
     }
-    
-    //    private let completeMsgLabel = UILabel().then {
-    //        //    private let completeMsgLabel = UITextView().then {
-    //        let paragraph = NSMutableParagraphStyle()
-    //        paragraph.alignment = .center
-    //
-    //        let attrText = NSMutableAttributedString(string: "Upload Completed!\n hihi", attributes: [.font: UIFont.systemFont(ofSize: 24, weight: .bold), .foregroundColor: UIColor.gray900, .paragraphStyle: paragraph])
-    //
-    //        attrText.append(NSAttributedString(string: "Contrats!\nYour video has been successfully uploaded.", attributes: [
-    //            .font: UIFont.systemFont(ofSize: 17),
-    //            .foregroundColor: UIColor.gray600,
-    //            .paragraphStyle: paragraph]))
-    //
-    //        attrText.append(NSAttributedString(string: "Your video has been successfully uploaded", attributes: [
-    //            .font: UIFont.systemFont(ofSize: 15),
-    //            .paragraphStyle: paragraph
-    //        ]))
-    //
-    //        $0.attributedText = attrText
-    //        $0.numberOfLines = 0
-    //    }
     
     private let completeMsgLabel = UILabel().then {
         //    private let completeMsgLabel = UITextView().then {
@@ -1486,17 +1441,9 @@ extension CameraController: UIImagePickerControllerDelegate, UINavigationControl
             
             let fileName = "my some test Name"
             
-//            guard let timeDiff = timeDiff else { fatalError() }
             if timeDiff == nil { timeDiff = 0 }
             guard let timeDiff = timeDiff else { fatalError() }
 
-//            guard let subjectName = subjectName else { fatalError() }
-//            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: subjectName)
-            
-//            guard let screen = screen else { fatalError() }
-            
-//            trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: "someName", screenIndex: screen.screenIndex )
-            
             trimmingController = TrimmingController(url: validUrl, vc: self, timeDiff: timeDiff, subjectName: connectionManager.subjectName, screenIndex: Int64(connectionManager.upperIndex))
             
             let size: ScoreViewSize = Dummy.getPainTestName(from: positionTitle, direction: direction) != nil ? .large : .small
@@ -1544,34 +1491,37 @@ extension CameraController: ConnectionManagerDelegate {
         case .disconnected:
             print("disconnected!")
             connectionManager.numOfPeers = 0
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 
-                //                self.connectionStateLabel.text = "Disconnected!"
-                //                self.showConnectivityAction()
                 if self.connectionManager.isHost == false {
-                    print("disconnect flag 1")
                     self.showReconnectionGuideAction()
-                    print("disconnect flag 2")
                 }
-                print("disconnect flag 3")
+                
                 // TODO: Update UI to notify disconnection
-                self.changeMode(target: nil, mode: .onRecording)
-                print("disconnect flag 4")
-            }
-            print("disconnect flag 5")
+
+//            }
+            
+            self.changePeerIndicator(connectedNum: .zero, mode: .onPreparing)
+            
             resetRecording()
-            print("disconnect flag 6")
+            
+            print("updateState called from CameraController, connectedAmount: \(connectedAmount), state: disconnected")
+        
         case .connected:
             print("connected!")
-            //            self.connectedAmount = connectedAmount
+
             self.connectionManager.numOfPeers = connectedAmount
-            //            switch connectedAmount {
+
             switch self.connectionManager.numOfPeers {
-            case 1: self.changeMode(target: .left, mode: .stop)
-            case 2: self.changeMode(target: .both, mode: .stop)
+            case 1: self.changePeerIndicator(connectedNum: .one, mode: .onRecording)
+            case 2: self.changePeerIndicator(connectedNum: .two, mode: .onRecording)
             default: break
             }
+            print("updateState called from CameraController, connectedAmount: \(connectedAmount), state: connected")
         }
+        delegate?.orderUpdatingPeerState()
+        print("updateState called from CameraController, connectedAmount: \(connectedAmount)")
+        
     }
     
     private func showCompleteMsgView() {
@@ -1638,52 +1588,52 @@ extension CameraController: ConnectionManagerDelegate {
         
     }
     
-    private func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
-        
-        guard let screen = screen else { fatalError() }
-        guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
-        
-        let date = Date()
-        let formattedDateStr = date.getFormattedDate()
-        //        let inspectorName = "someName"
-        
-        
-        let inspectorName = screen.parentSubject!.inspector!.name
-        
-        let subjectName = subject.name
-        
-        let screenIndex = screen.screenIndex + 1
-        
-        let titleShort = Dummy.shortForFileName[trialCore.title]!
-        
-        let directionShort: String
-        
-        switch trialCore.direction {
-        case "Left": directionShort = "l"
-        case "Right": directionShort = "r"
-        default: directionShort = ""
-        }
-        
-        let trialNo = trialDetail.trialNo + 1
-        let phoneNumber = subject.phoneNumber
-        let genderInt = subject.isMale ? 1 : 2
-        
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year], from: subject.birthday)
-        
-        guard let birthYear = components.year else { fatalError() }
-        
-        let kneeLength = subject.kneeLength
-        let palmLength = subject.palmLength
-//        1.0
-        let kneeStr = kneeLength.convertTo4DigitString()
-        let palmStr = palmLength.convertTo4DigitString()
-        
-        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeStr)_\(palmStr)"
-        
-        let ftpInfoString = FtpInfoString(fileName: fileName)
-        return ftpInfoString
-    }
+//    private func makeFTPInfoString(trialCore:TrialCore, trialDetail: TrialDetail, additionalInfo: String = "") -> FtpInfoString {
+//
+//        guard let screen = screen else { fatalError() }
+//        guard let subject = screen.parentSubject else { fatalError() } // parentSubject 가 없나?
+//
+//        let date = Date()
+//        let formattedDateStr = date.getFormattedDate()
+//        //        let inspectorName = "someName"
+//
+//
+//        let inspectorName = screen.parentSubject!.inspector!.name
+//
+//        let subjectName = subject.name
+//
+//        let screenIndex = screen.screenIndex + 1
+//
+//        let titleShort = Dummy.shortForFileName[trialCore.title]!
+//
+//        let directionShort: String
+//
+//        switch trialCore.direction {
+//        case "Left": directionShort = "l"
+//        case "Right": directionShort = "r"
+//        default: directionShort = ""
+//        }
+//
+//        let trialNo = trialDetail.trialNo + 1
+//        let phoneNumber = subject.phoneNumber
+//        let genderInt = subject.isMale ? 1 : 2
+//
+//        let calendar = Calendar.current
+//        let components = calendar.dateComponents([.year], from: subject.birthday)
+//
+//        guard let birthYear = components.year else { fatalError() }
+//
+//        let kneeLength = subject.kneeLength
+//        let palmLength = subject.palmLength
+////        1.0
+//        let kneeStr = kneeLength.convertTo4DigitString()
+//        let palmStr = palmLength.convertTo4DigitString()
+//
+//        let fileName = "\(formattedDateStr)_\(inspectorName)_\(subjectName)_\(screenIndex)_\(titleShort)\(directionShort)\(trialNo)_\(phoneNumber)_\(genderInt)_\(birthYear)_\(kneeStr)_\(palmStr)"
+//
+//        let ftpInfoString = FtpInfoString(fileName: fileName)
+//        return ftpInfoString
+//    }
     
     
 }

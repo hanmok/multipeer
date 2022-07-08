@@ -11,19 +11,18 @@ import SnapKit
 
 class SoundTestViewController: UIViewController {
 
+    let soundService = SoundService()
+    
     let btn = UIButton().then { $0.setTitle("btn", for: .normal)
         $0.setTitleColor(.magenta, for: .normal)
-        $0.addTarget(self, action: #selector(btnTapped), for: .touchUpInside)
     }
     
     let upButton = UIButton().then {
         $0.setTitle("+", for: .normal)
-        $0.addTarget(self, action: #selector(countUp), for: .touchUpInside)
     }
     
     let downButton = UIButton().then {
         $0.setTitle("-", for: .normal)
-        $0.addTarget(self, action: #selector(countDown), for: .touchUpInside)
     }
     
     let soundCodeLabel = UILabel().then {
@@ -34,6 +33,9 @@ class SoundTestViewController: UIViewController {
     
     @objc func btnTapped(_ sender: UIButton) {
 //        AudioServicesPlaySystemSound(systemSoundID)
+        
+//        soundService.shared.
+        SoundService.shared.someFunc()
     }
     
     @objc func countUp(_ sender: UIButton) {
@@ -60,6 +62,7 @@ class SoundTestViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         systemSoundID = soundCode
         let stackView = UIStackView(arrangedSubviews: [downButton, btn, upButton])
         stackView.distribution = .fillEqually
@@ -78,6 +81,16 @@ class SoundTestViewController: UIViewController {
             make.bottom.equalTo(stackView.snp.top).offset(-20)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(40)
+            
+            setupAddTargets()
+        }
+        
+        func setupAddTargets() {
+            btn.addTarget(self, action: #selector(btnTapped), for: .touchUpInside)
+            
+            upButton.addTarget(self, action: #selector(countUp), for: .touchUpInside)
+            
+            downButton.addTarget(self, action: #selector(countDown), for: .touchUpInside)
         }
 //        soundCodeLabel.
         

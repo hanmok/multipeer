@@ -23,7 +23,7 @@ class SubjectDetailController: UIViewController {
     var screens: [Screen] = [] {
         didSet {
             DispatchQueue.main.async {
-                self.screenCollectionView.reloadData()
+                self.screenTableView.reloadData()
             }
         }
     }
@@ -40,14 +40,6 @@ class SubjectDetailController: UIViewController {
         $0.distribution = .fillEqually
         $0.spacing = 10
     }
-    
-    private let screenCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        return collectionView
-    }()
     
     private let screenTableView = UITableView()
     
@@ -69,7 +61,7 @@ class SubjectDetailController: UIViewController {
         $0.layer.borderColor = UIColor.green.cgColor
         $0.layer.borderWidth = 2
         $0.layer.cornerRadius = 5
-        $0.addTarget(self, action: #selector(continueBtnTapped), for: .touchUpInside)
+        
     }
     
     private let makeBtn = UIButton().then {
@@ -94,6 +86,8 @@ class SubjectDetailController: UIViewController {
         detailBtn.addTarget(self, action: #selector(detailBtnTapped(_:)), for: .touchUpInside)
         
         makeBtn.addTarget(self, action: #selector(makeBtnTapped(_:)), for: .touchUpInside)
+        
+        continueBtn.addTarget(self, action: #selector(continueBtnTapped), for: .touchUpInside)
     }
     
     init(subject: Subject, frame: CGRect = .zero) {
@@ -111,9 +105,7 @@ class SubjectDetailController: UIViewController {
         print("before fetch and reload, screen count: \(screens.count) \n screen fetched: \(screens) ")
         
         switch subject.screens.count {
-            //        case 0: continueBtn.setTitle("Start Testing", for: .normal)
         case 0: screens = []
-            //        case 1: screens.append(subject.screens.first!)
         case 1: screens = [subject.screens.first!]
         default: // > 1
             
@@ -123,17 +115,11 @@ class SubjectDetailController: UIViewController {
             })
         }
         
-        //        reloadCollectionView()
         reloadTableView()
         
         print("after fetch and reload, fetched screen count: \(screens.count)")
     }
     
-    private func reloadCollectionView() {
-        DispatchQueue.main.async {
-            self.screenCollectionView.reloadData()
-        }
-    }
     private func reloadTableView() {
         DispatchQueue.main.async {
             self.screenTableView.reloadData()
@@ -145,9 +131,8 @@ class SubjectDetailController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .black
         fetchAndReloadScreens()
-        registerCollectionView(customCollectionView: screenCollectionView)
+
         registerTableView()
-        screenCollectionView.reloadData()
         setupLayout()
         configureLayout()
             setupAddTargets()
@@ -160,19 +145,12 @@ class SubjectDetailController: UIViewController {
         screenTableView.rowHeight = 60
     }
     
-    private func registerCollectionView(customCollectionView: UICollectionView) {
-        customCollectionView.register(ScreenCollectionCell.self, forCellWithReuseIdentifier: reuseId)
-        customCollectionView.delegate = self
-        customCollectionView.dataSource = self
-    }
-    
     
     @objc func makeBtnTapped(_ sender: UIButton) {
         print("makeBtnTapped!")
-//        IncrementingIndex
+        
         let screen = Screen.save(belongTo: subject)
         
-//        screen.screenIndex = Int64(userDefaultSetup.upperIndex)
         screen.upperIndex = Int64(userDefaultSetup.upperIndex)
         print("current upperIndex value : \(userDefaultSetup.upperIndex), from subjectDetailCntroller ")
         
@@ -207,12 +185,10 @@ class SubjectDetailController: UIViewController {
         let screenInfo: [AnyHashable: Any] = [
             "screen": selectedScreen
         ]
-//        print("selectedScreen's upperIndex: \()")
+        
         printFlag(type: .upperIndex, count: 0, message: "screen's upperIndex: \(selectedScreen.upperIndex)")
 
         NotificationCenter.default.post(name: .screenSettingKey, object: nil, userInfo: screenInfo)
-        
-//        ConnectionManager
     }
     
     @objc func detailBtnTapped(_ sender: UIButton) {
@@ -303,49 +279,6 @@ class SubjectDetailController: UIViewController {
 }
 
 
-extension SubjectDetailController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        return screens.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! ScreenCollectionCell
-        
-        cell.viewModel = ScreenViewModel(screen: screens[indexPath.row], index: indexPath.row)
-        
-        if selectedIndex == indexPath { cell.backgroundColor = .red } else { cell.backgroundColor = .clear }
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: screenWidth - 40, height: 40)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    
-        selectedScreen = screens[indexPath.row]
-        
-        selectedIndex = indexPath
-        
-        collectionView.reloadData()
-        
-        print("selected screen index: \(indexPath.row)")
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-        
-        //         set selectedIndex none
-        selectedIndex = IndexPath(row: -1, section: 0)
-        Screen.deleteSelf(screens[indexPath.row])
-        
-        fetchAndReloadScreens()
-        
-    }
-    
-}
-
 extension SubjectDetailController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return screens.count
@@ -356,7 +289,6 @@ extension SubjectDetailController: UITableViewDataSource, UITableViewDelegate {
         
         cell.viewModel = ScreenViewModel(screen: screens[indexPath.row], index: indexPath.row)
         
-//        if selectedIndex == indexPath { cell.backgroundColor = .green } else { cell.backgroundColor = .clear }
         if selectedIndex == indexPath { cell.backgroundColor = .green } else { cell.backgroundColor = .white }
         
         return cell

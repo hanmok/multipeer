@@ -25,6 +25,16 @@ class AddingInspectorController: UIViewController {
     
     var context: NSManagedObjectContext?
     
+    private let nameLabel = UILabel().then {
+        $0.text = "이름"
+        $0.textColor = .black
+    }
+    
+    private let phoneNumberLabel = UILabel().then {
+        $0.text = "휴대폰 번호"
+        $0.textColor = .black
+    }
+    
     private let nameTF: UITextField = {
 //        let tf = UITextField()
         let tf = UITextField(withPadding: true)
@@ -195,31 +205,71 @@ class AddingInspectorController: UIViewController {
         
         [
 //            nameLabel,
+            nameLabel,
             nameTF,
 //         genderStackView,
 //         birthDayLabel, birthDayPicker,
 //         emailTF,
+            phoneNumberLabel,
          phoneTF,
 //            kneeTF, palmTF,
          completeBtn
         ].forEach { self.view.addSubview($0)}
         
-        nameTF.delegate = self
-        nameTF.snp.makeConstraints { make in
+        
+        nameLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
             make.leading.equalToSuperview().inset(20)
+            make.height.equalTo(40)
+            make.width.equalTo(100)
+        }
+        
+        nameTF.delegate = self
+//        nameTF.snp.makeConstraints { make in
+//            make.leading.equalToSuperview().inset(20)
+//            make.trailing.equalToSuperview().inset(40)
+//            make.height.equalTo(40)
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
+//        }
+        nameTF.snp.makeConstraints { make in
+//            make.leading.equalToSuperview().inset(20)
+            make.leading.equalTo(nameLabel.snp.trailing).offset(20)
             make.trailing.equalToSuperview().inset(40)
             make.height.equalTo(40)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(60)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
+        }
+        
+        
+        phoneNumberLabel.snp.makeConstraints { make in
+//            make.top.equalTo(birthDayPicker.snp.bottom).offset(50)
+            make.top.equalTo(nameLabel.snp.bottom).offset(30)
+            make.leading.equalToSuperview().inset(20)
+            make.height.equalTo(40)
+            make.width.equalTo(100)
         }
         
         
         phoneTF.delegate = self
+//        phoneTF.snp.makeConstraints { make in
+////            make.leading.trailing.equalToSuperview().inset(20)
+////            make.top.equalTo(emailTF.snp.bottom).offset(20)
+////            make.top.equalTo(nameTF.snp.bottom).offset(20)
+//            make.top.equalTo(nameLabel.snp.bottom).offset(30)
+////            make.height.equalTo(30)
+//            make.leading.equalToSuperview().inset(20)
+//            make.trailing.equalToSuperview().inset(40)
+//            make.height.equalTo(40)
+//        }
+        
         phoneTF.snp.makeConstraints { make in
 //            make.leading.trailing.equalToSuperview().inset(20)
 //            make.top.equalTo(emailTF.snp.bottom).offset(20)
-            make.top.equalTo(nameTF.snp.bottom).offset(20)
+//            make.top.equalTo(birthDayPicker.snp.bottom).offset(60)
+//            make.top.equalTo(birthDayPicker.snp.bottom).offset(50)
+            make.top.equalTo(nameLabel.snp.bottom).offset(30)
 //            make.height.equalTo(30)
-            make.leading.equalToSuperview().inset(20)
+//            make.leading.equalToSuperview().inset(20)
+            make.leading.equalTo(phoneNumberLabel.snp.trailing).offset(20)
             make.trailing.equalToSuperview().inset(40)
             make.height.equalTo(40)
         }
@@ -229,7 +279,8 @@ class AddingInspectorController: UIViewController {
             make.width.equalTo(200)
 //            make.top.equalTo(phoneTF.snp.bottom).offset(50)
 //            make.top.equalTo(palmTF.snp.bottom).offset(50)
-            make.top.equalTo(phoneTF.snp.bottom).offset(50)
+//            make.top.equalTo(phoneTF.snp.bottom).offset(50)
+            make.top.equalTo(phoneTF.snp.bottom).offset(100)
             make.height.equalTo(50)
         }
     }
