@@ -61,7 +61,6 @@ class SubjectDetailController: UIViewController {
         $0.layer.borderColor = UIColor.green.cgColor
         $0.layer.borderWidth = 2
         $0.layer.cornerRadius = 5
-        
     }
     
     private let makeBtn = UIButton().then {

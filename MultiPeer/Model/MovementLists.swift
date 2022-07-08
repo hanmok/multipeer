@@ -247,11 +247,11 @@ let  MovementImgsDictionaryWithVars: [String: [String]] = [
 
 // 위, 아래가 중복 데이터임. ;; 어.. 어떤 형태로 사용할 지 정해주는게 좋을 것 같은데 ??
 // 현재 안쓰는중
-public enum MovementWithPain {
-    case ankleClearing
-    case shoulderClearing
-    case extensionClearing
-    case flexionClearing
+public enum MovementWithPainEnum: String {
+    case ankleClearing = "Ankle Clearing"
+    case shoulderClearing = "Shoulder Clearing"
+    case extensionClearing = "Extension Clearing"
+    case flexionClearing = "Flexion Clearing"
 }
 
 //public let movementWithPainNoAnkle = [
