@@ -70,9 +70,14 @@ class ConnectionManager: NSObject {
     
     weak var delegate: ConnectionManagerDelegate?
     
-    static var peers: [MCPeerID] = [] {
+//    static var peers: [MCPeerID] = [] {
+//        didSet {
+//            print("current peers: \(oldValue.count)")
+//        }
+//    }
+    var peers: [MCPeerID] = [] {
         didSet {
-            print("current peers: \(oldValue.count)")
+            self.numOfPeers = oldValue.count
         }
     }
     
@@ -85,9 +90,6 @@ class ConnectionManager: NSObject {
     
     var subjectName = ""
     var upperIndex = -1
-    
-    
-    static var connectedToChat = false
     
     let myPeerId = MCPeerID(displayName: UIDevice.current.name)
     
@@ -102,9 +104,6 @@ class ConnectionManager: NSObject {
     deinit {
         print("connectionManager deinitiated.")
     }
-    
-    var startTime = Date()
-    var endTime = Date()
     
     func send(_ customMsg: String) {
 
@@ -207,7 +206,8 @@ class ConnectionManager: NSObject {
     
     func join() {
         // TODO: 이게 뭔 코드여? removeAll() ? why ?
-        ConnectionManager.peers.removeAll()
+//        ConnectionManager.peers.removeAll()
+        self.peers.removeAll()
 
         session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .required)
         session?.delegate = self
@@ -224,8 +224,9 @@ class ConnectionManager: NSObject {
     
     func host() {
         isHosting = true
-        ConnectionManager.peers.removeAll()
-        ConnectionManager.connectedToChat = true
+//        ConnectionManager.peers.removeAll()
+        self.peers.removeAll()
+//        ConnectionManager.connectedToChat = true
         session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .required)
         session?.delegate = self
         advertiserAssistant = MCNearbyServiceAdvertiser(peer: myPeerId, discoveryInfo: nil, serviceType: ConnectionManager.service)
@@ -235,7 +236,7 @@ class ConnectionManager: NSObject {
     
     func leaveChat() {
         isHosting = false
-        ConnectionManager.connectedToChat = false
+//        ConnectionManager.connectedToChat = false
         advertiserAssistant?.stopAdvertisingPeer()
         session = nil
         advertiserAssistant = nil
@@ -318,17 +319,6 @@ extension ConnectionManager: MCSessionDelegate {
                 
                 NotificationCenter.default.post(name: notificationName, object: nil, userInfo: timeInfoDic)
                 
-//            case .sendSubjectName:
-//                guard let subjectName = receivedData.info.subjectName else { fatalError()}
-//
-//                let name = subjectName.name
-//
-//                let nameInfoDic: [AnyHashable: Any] = [
-//                    "subjectName": name]
-//
-//                NotificationCenter.default.post(name: notificationName, object: nil, userInfo: nameInfoDic)
-                
-                
                 // currently using screenIndex only
             case .sendAlbumNameInfo:
                 guard let albumNameInfo = receivedData.info.albumNameInfo else { fatalError() }
@@ -350,7 +340,6 @@ extension ConnectionManager: MCSessionDelegate {
              default: print("default case !")
             }
             
-            
         } catch {
             fatalError(error.localizedDescription)
         }
@@ -359,44 +348,42 @@ extension ConnectionManager: MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         print("session delegate called")
         switch state {
-        case .connected:
-            print("connectionFlag, case: connected")
-            if !ConnectionManager.peers.contains(peerID) {
-                ConnectionManager.peers.insert(peerID, at: 0)
-            }
-                        
-            self.numOfPeers = ConnectionManager.peers.count
-            self.connectionState = .connected
-                        
-            // how can i update subject name .. ??
             
-            print("state: connected !")
-            startTime = Date()
+        case .connected:
+            if self.peers.contains(peerID) == false {
+                self.peers.insert(peerID, at: 0)
+            }
+
+            self.numOfPeers = self.peers.count
+            self.connectionState = .connected
             
             delegate?.updateState(state: .connected, connectedAmount: self.numOfPeers)
             
+            var stateStr = MCSessionState(rawValue: state.rawValue)!
+
+            
+            print("delegation called, numOfConnectedPeers: \(self.numOfPeers), state: \(MCSessionState.connected)")
             self.startDurationTimer()
             
         case .notConnected:
-            print("connectionFlag, case: notconnected")
-            if let index = ConnectionManager.peers.firstIndex(of: peerID) {
-                ConnectionManager.peers.remove(at: index)
+
+            if let index = self.peers.firstIndex(of: peerID) {
+                self.peers.remove(at: index)
             }
-            if ConnectionManager.peers.isEmpty && !self.isHosting {
-                ConnectionManager.connectedToChat = false
-            }
+            
             self.numOfPeers = 0
             self.connectionState = .disconnected
-            endTime = Date()
             
             delegate?.updateState(state: .disconnected, connectedAmount: self.numOfPeers)
-        
-            numOfPeers = 0
+
+            var stateStr = MCSessionState(rawValue: state.rawValue)!
+
+            print("delegation called, numOfConnectedPeers: \(self.numOfPeers), state: \(MCSessionState.notConnected)")
             
-            print("disconnected!!")
-        case .connecting:
-            print("connectionFlag, case: connecting")
-            print("it's connecting .. ")
+            numOfPeers = 0
+
+        case .connecting: break
+            
         @unknown default:
             fatalError(" it's in unknown state")
         }
@@ -430,7 +417,7 @@ extension ConnectionManager: MCSessionDelegate {
 extension ConnectionManager: MCBrowserViewControllerDelegate {
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
         browserViewController.dismiss(animated: true) {
-            ConnectionManager.connectedToChat = true
+//            ConnectionManager.connectedToChat = true
         }
     }
     

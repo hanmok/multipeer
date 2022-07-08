@@ -18,6 +18,7 @@ import Lottie
 protocol CameraControllerDelegate: AnyObject {
     func dismissCamera(closure: () -> Void)
     func makeSound()
+    func orderUpdatingPeerState()
 }
 
 extension CameraController: FileManagerDelegate {
@@ -81,8 +82,8 @@ class CameraController: UIViewController {
     
     private var isRecording = false
     
-        private let shouldRecordLater = true
-//    private let shouldRecordLater = false
+//        private let shouldRecordLater = true
+    private let shouldRecordLater = false
     
     var variationName: String?
     
@@ -514,124 +515,102 @@ class CameraController: UIViewController {
         retryAction()
         connectionManager.send(PeerInfo(msgType: .hidePreviewMsg, info: Info()))
     }
-    
-    
-    //    @objc func recordingBtnTapped(_ sender: UIButton) {
-    //
-    //        recordingBtnAction()
-    //
-    //    }
-    
-    private func changeMode(target: Side?, mode: Mode) {
-//        printFlag(type: .peerConnectivity, count: -1, message: "changeMode triggered")
+
+    private func setLayoutForState(connected: Bool = true, status: RecordingMode? = nil, applyTo targetView: UIView) {
         
-        guard let target = target else {
-            
-//            printFlag(type: .peerConnectivity, count: 0, message: "target is nil")
-        
-            DispatchQueue.main.async {
-                self.leftShape.layer.cornerRadius = 10
-                self.leftShape.backgroundColor = .lavenderGray400
-                
-                self.rightShape.layer.cornerRadius = 10
-                self.rightShape.backgroundColor = .lavenderGray400
+        if connected {
+            guard let status = status else { return }
+            if status == .onPreparing {
+                DispatchQueue.main.async {
+                    targetView.layer.cornerRadius = 10
+                    targetView.backgroundColor = .red
+                }
+
+            } else if status == .onRecording {
+                DispatchQueue.main.async {
+                    targetView.layer.cornerRadius = 2
+                    targetView.backgroundColor = .red
+                }
             }
-            return
+            
+        } else {
+            DispatchQueue.main.async {
+                targetView.backgroundColor = .lavenderGray400
+                targetView.layer.cornerRadius = 10
+            }
+
+        }
+    }
+    
+    private func changePeerIndicator(connectedNum: connectedDeviceAmount, mode: RecordingMode) {
+        print("changePeerIndicator called, connectedNum: \(connectedNum), mode: \(mode)")
+        if connectedNum == .zero {
+            setLayoutForState(connected: false, applyTo: self.leftShape)
+            setLayoutForState(connected: false, applyTo: self.rightShape)
         }
         
         switch mode {
-        case .onRecording:
-            switch target {
+        case .onPreparing:
+            switch connectedNum {
                 
-            case .left:
-                DispatchQueue.main.async {
-                    self.leftShape.layer.cornerRadius = 10
-                    self.leftShape.backgroundColor = .red
-                }
+            case .one:
+                setLayoutForState(status: .onPreparing, applyTo: leftShape)
                 
-            case .right:
-                DispatchQueue.main.async {
-                    
-                    self.rightShape.layer.cornerRadius = 10
-                    self.rightShape.backgroundColor = .red
-                }
-            case .both:
-                DispatchQueue.main.async {
-                    
-                    self.leftShape.layer.cornerRadius = 10
-                    self.leftShape.backgroundColor = .red
-                    self.rightShape.layer.cornerRadius = 10
-                    self.rightShape.backgroundColor = .red
-                }
+            case .two:
+                setLayoutForState(status: .onPreparing, applyTo: leftShape)
+                setLayoutForState(status: .onPreparing, applyTo: rightShape)
+                
+            case .zero: break
             }
             
-        case .stop:
-            switch target {
-            case .left:
-                DispatchQueue.main.async {
-                    
-                    self.leftShape.layer.cornerRadius = 2
-                    self.leftShape.backgroundColor = .lavenderGray400
-                }
-            case .right:
-                DispatchQueue.main.async {
-                    
-                    self.rightShape.layer.cornerRadius = 2
-                    self.rightShape.backgroundColor = .lavenderGray400
-                }
-            case .both:
-                DispatchQueue.main.async {
-                    
-                    self.leftShape.layer.cornerRadius = 2
-                    self.leftShape.backgroundColor = .lavenderGray400
-                    
-                    self.rightShape.layer.cornerRadius = 2
-                    self.rightShape.backgroundColor = .lavenderGray400
-                }
+        case .onRecording:
+            switch connectedNum {
+            case .one:
+                setLayoutForState(status: .onRecording, applyTo: leftShape)
+
+            case .two:
+                setLayoutForState(status: .onRecording, applyTo: self.leftShape)
+                setLayoutForState(status: .onRecording, applyTo: self.rightShape)
+                
+            case .zero: break
             }
         }
     }
     
+    /// change btn look if recording started
     private func changeBtnLookForRecording(animation: Bool) {
         if animation {
-            //            if connectionMa
+
             UIView.animate(withDuration: 0.4) {
-                self.outerRecCircle.backgroundColor = .lavenderGray900
                 self.innerShape.layer.cornerRadius = 6
                 self.recordingBtn.setTitleColor(.gray900, for: .normal)
                 
-                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .stop)
-                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .stop)
+                self.changePeerIndicator(connectedNum: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
             }
         } else {
-            DispatchQueue.main.async {
-                self.outerRecCircle.backgroundColor = .lavenderGray900
-                self.innerShape.layer.cornerRadius = 6
+            DispatchQueue.main.async {                self.innerShape.layer.cornerRadius = 6
                 self.recordingBtn.setTitleColor(.gray900, for: .normal)
                 
-                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .stop)
+                self.changePeerIndicator(connectedNum: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
             }
         }
     }
-    
+    /// change btn look if preparing (stopped)
     private func changeBtnLookForPreparing(animation: Bool ) {
         if animation {
             UIView.animate(withDuration: 0.4) {
-                self.outerRecCircle.backgroundColor = .red
+                
                 self.innerShape.layer.cornerRadius = 18
                 self.recordingBtn.setTitleColor(.red, for: .normal)
-                
-                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
-                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
+        
+                self.changePeerIndicator(connectedNum: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onPreparing)
             }
         } else {
             DispatchQueue.main.async {
-                self.outerRecCircle.backgroundColor = .red
                 self.innerShape.layer.cornerRadius = 18
                 self.recordingBtn.setTitleColor(.red, for: .normal)
                 
-                //                self.changeMode(target: countToSideDic[self.connectedAmount]!, mode: .onRecording)
-                self.changeMode(target: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onRecording)
+                self.changePeerIndicator(connectedNum: countToSideDic[self.connectionManager.numOfPeers]!, mode: .onPreparing)
             }
         }
     }
@@ -662,13 +641,8 @@ class CameraController: UIViewController {
     @objc func dismissBtnTapped(_ sender: UIButton) {
         print("dismiss btn tapped!")
         
-        //        scoreVC = nil
-        
-        //        self.dismiss(animated: true)
-        // 왜 dismiss 가 안되지?
-        
         delegate?.dismissCamera() {
-            //            self.dismiss(animated: true)
+            
         }
     }
     
@@ -1517,34 +1491,37 @@ extension CameraController: ConnectionManagerDelegate {
         case .disconnected:
             print("disconnected!")
             connectionManager.numOfPeers = 0
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 
-                //                self.connectionStateLabel.text = "Disconnected!"
-                //                self.showConnectivityAction()
                 if self.connectionManager.isHost == false {
-                    print("disconnect flag 1")
                     self.showReconnectionGuideAction()
-                    print("disconnect flag 2")
                 }
-                print("disconnect flag 3")
+                
                 // TODO: Update UI to notify disconnection
-                self.changeMode(target: nil, mode: .onRecording)
-                print("disconnect flag 4")
-            }
-            print("disconnect flag 5")
+
+//            }
+            
+            self.changePeerIndicator(connectedNum: .zero, mode: .onPreparing)
+            
             resetRecording()
-            print("disconnect flag 6")
+            
+            print("updateState called from CameraController, connectedAmount: \(connectedAmount), state: disconnected")
+        
         case .connected:
             print("connected!")
-            //            self.connectedAmount = connectedAmount
+
             self.connectionManager.numOfPeers = connectedAmount
-            //            switch connectedAmount {
+
             switch self.connectionManager.numOfPeers {
-            case 1: self.changeMode(target: .left, mode: .stop)
-            case 2: self.changeMode(target: .both, mode: .stop)
+            case 1: self.changePeerIndicator(connectedNum: .one, mode: .onRecording)
+            case 2: self.changePeerIndicator(connectedNum: .two, mode: .onRecording)
             default: break
             }
+            print("updateState called from CameraController, connectedAmount: \(connectedAmount), state: connected")
         }
+        delegate?.orderUpdatingPeerState()
+        print("updateState called from CameraController, connectedAmount: \(connectedAmount)")
+        
     }
     
     private func showCompleteMsgView() {

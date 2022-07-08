@@ -753,28 +753,30 @@ class MovementListController: UIViewController {
         view.backgroundColor = .lavenderGray50
     }
     
-    private func updateConnectionState() {
+    private func updatePeerIndicators() {
         
-        DispatchQueue.main.async {
-            switch self.connectionManager.numOfPeers {
-                
-            case 1:
-                DispatchQueue.main.async {
-                    self.leftConnectionStateView.backgroundColor = .red
-                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
-                }
-                
-            case 2:
-                DispatchQueue.main.async {
-                    self.rightConnectionStateView.backgroundColor = .red
-                    self.leftConnectionStateView.backgroundColor = .red
-                }
-            default:
-                DispatchQueue.main.async {
-                    self.leftConnectionStateView.backgroundColor = .lavenderGray300
-                    self.rightConnectionStateView.backgroundColor = .lavenderGray300
-                }
+        switch self.connectionManager.numOfPeers {
+            
+        case 0:
+            DispatchQueue.main.async {
+                self.leftConnectionStateView.backgroundColor = .lavenderGray300
+                self.rightConnectionStateView.backgroundColor = .lavenderGray300
             }
+            
+        case 1:
+            DispatchQueue.main.async {
+                self.leftConnectionStateView.backgroundColor = .red
+                self.rightConnectionStateView.backgroundColor = .lavenderGray300
+            }
+            
+        case 2:
+            DispatchQueue.main.async {
+                self.rightConnectionStateView.backgroundColor = .red
+                self.leftConnectionStateView.backgroundColor = .red
+            }
+            
+        default: break
+            
         }
     }
 }
@@ -849,10 +851,13 @@ extension MovementListController: CameraControllerDelegate {
             if done {
                 self.updateScoreLabels()
                 
-                self.updateConnectionState()
-                
+                self.updatePeerIndicators()
             }
         }
+    }
+    
+    func orderUpdatingPeerState() {
+        updatePeerIndicators()
     }
 }
 
@@ -862,20 +867,11 @@ extension MovementListController: ConnectionManagerDelegate {
     
     // TODO: Update Connection Indicator on the right top (next to connect btn)
     func updateState(state: ConnectionState, connectedAmount: Int) {
-        print("updateState called, connectedAmount: \(connectedAmount)")
-        switch state {
-        case .connected:
-            self.connectionManager.numOfPeers = connectedAmount
-            
-            updateConnectionState()
-            
-        case .disconnected:
-            self.connectionManager.numOfPeers = 0
-            DispatchQueue.main.async {
-                self.leftConnectionStateView.backgroundColor = .lavenderGray300
-                self.rightConnectionStateView.backgroundColor = .lavenderGray300
-            }
-        }
+        print("updateState called from MovementListController, connectedAmount: \(connectedAmount)")
+        
+//        self.connectionManager.numOfPeers = connectedAmount
+        
+        updatePeerIndicators()
     }
 }
 
