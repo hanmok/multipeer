@@ -79,7 +79,7 @@ class SubjectDetailController: UIViewController {
         $0.layer.borderColor = UIColor.blue.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 5
-        $0.isHidden = true
+//        $0.isHidden = true
     }
     
     private func setupAddTargets() {
@@ -199,9 +199,9 @@ class SubjectDetailController: UIViewController {
         selectedIndex = IndexPath(row: -1, section: 0)
         
         
-        let trialDetailController = TrialDetailController(screen: selectedScreen)
+        let screenDetailController = ScreenDetailController(screen: selectedScreen)
         print("passing screen id: \(selectedScreen.id)")
-        self.navigationController?.pushViewController(trialDetailController, animated: true)
+        self.navigationController?.pushViewController(screenDetailController, animated: true)
     }
 
     

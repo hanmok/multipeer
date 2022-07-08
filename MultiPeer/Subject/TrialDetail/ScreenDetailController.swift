@@ -23,7 +23,8 @@ import CoreData
 // show only latest Trial Infos
 // 어떤 Screen 이 주어진 상태에서, 그 때의 최신 값을 가져오기.
 // This one Need Header !
-class TrialDetailController: UIViewController {
+
+class ScreenDetailController: UIViewController {
     
     var screen: Screen {
         didSet {
@@ -32,6 +33,7 @@ class TrialDetailController: UIViewController {
             }
         }
     }
+    
     var trialCores: [TrialCore] = []
     
     let reuseId = "TrialCellId"
@@ -93,7 +95,7 @@ class TrialDetailController: UIViewController {
     }
 }
 
-extension TrialDetailController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
+extension ScreenDetailController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         print("numOfTrialCoresFromCollectionView: \(trialCores.count)")
