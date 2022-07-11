@@ -62,7 +62,15 @@ class MovementListController: UIViewController {
         completeConditionViewModels = []
     }
     
-    private func checkConditionForViewModels() {
+    private func reflectScreenState() {
+        completeConditionViewModels = []
+        DispatchQueue.main.async {
+            self.movementCollectionView.reloadData()
+        }
+        changeBottomBtnLayoutIfNeeded()
+    }
+    
+    private func changeBottomBtnLayoutIfNeeded() {
         print("checkConditionForViewModels called!!")
         var isCompleted = true
         
@@ -86,6 +94,11 @@ class MovementListController: UIViewController {
             screen.isFinished = true
             
             applyStyle(to: finishBtn, selectable: false)
+        } else {
+            guard let screen = screen else { fatalError() }
+            screen.isFinished = false
+            applyStyle(to: completeBtn, selectable: false)
+            applyStyle(to: finishBtn, selectable: true)
         }
     }
     
@@ -397,6 +410,8 @@ class MovementListController: UIViewController {
         printFlag(type: .upperIndex, count: 0, message: msg)
         
         createAlbumIfNotExist(albumName: "\(upperIndex)")
+//        checkConditionForViewModels()
+        reflectScreenState()
         
         print("current ScreenIndex from setScreen: \(upperIndex)")
         dismiss(animated: true)
@@ -812,7 +827,7 @@ extension MovementListController: UICollectionViewDelegateFlowLayout, UICollecti
         completeConditionViewModels.append(viewModel)
         
         if indexPath.row == trialCoresToShow.count - 1 {
-            checkConditionForViewModels()
+            changeBottomBtnLayoutIfNeeded()
         }
         
         print("cell : \(cell.viewModel?.title)")

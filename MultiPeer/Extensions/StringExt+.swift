@@ -77,5 +77,9 @@ extension String {
         static let red = "Red"
         static let yellow = "Yellow"
         static let green = "Green"
+        
+        static let shortRed = "R"
+        static let shortYellow = "Y"
+        static let shortGreen = "G"
     }
 }

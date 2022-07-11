@@ -33,7 +33,7 @@
 		226D87692834FE7B00E3F547 /* TODO in Resources */ = {isa = PBXBuildFile; fileRef = 226D87682834FE7B00E3F547 /* TODO */; };
 		226D876B2835D9F000E3F547 /* Int64Ext+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D876A2835D9F000E3F547 /* Int64Ext+.swift */; };
 		227648CE2831E75900214EBF /* TrialDetail+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227648CD2831E75900214EBF /* TrialDetail+Helper.swift */; };
-		227648D628321B9200214EBF /* TrialDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227648D528321B9200214EBF /* TrialDetailController.swift */; };
+		227648D628321B9200214EBF /* ScreenDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227648D528321B9200214EBF /* ScreenDetailController.swift */; };
 		2278625F2807EB8300C9EB79 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2278625E2807EB8300C9EB79 /* ConnectionManager.swift */; };
 		2279505E282B87BC00B675A1 /* SubjectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2279505D282B87BC00B675A1 /* SubjectViewModel.swift */; };
 		22795061282B880800B675A1 /* SubjectCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22795060282B880800B675A1 /* SubjectCollectionCell.swift */; };
@@ -67,7 +67,6 @@
 		22A0343028572462005FDF0F /* DirectionBtnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0342F28572462005FDF0F /* DirectionBtnView.swift */; };
 		22A034322857246B005FDF0F /* DirectionBtnStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A034312857246B005FDF0F /* DirectionBtnStackView.swift */; };
 		22ACAF5528094ACF007277A7 /* DateExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ACAF5428094ACF007277A7 /* DateExt+.swift */; };
-		22EE6528286D419100AFAC77 /* Debugging History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE6527286D419100AFAC77 /* Debugging History.swift */; };
 		22EE652A286D41A300AFAC77 /* Debugging History in Resources */ = {isa = PBXBuildFile; fileRef = 22EE6529286D41A300AFAC77 /* Debugging History */; };
 		22EE6589286EF09B00AFAC77 /* UITextFieldExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */; };
 		22EE65EA2872DB8700AFAC77 /* CMTimeExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EE65E92872DB8700AFAC77 /* CMTimeExt+.swift */; };
@@ -127,7 +126,7 @@
 		226D87682834FE7B00E3F547 /* TODO */ = {isa = PBXFileReference; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		226D876A2835D9F000E3F547 /* Int64Ext+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int64Ext+.swift"; sourceTree = "<group>"; };
 		227648CD2831E75900214EBF /* TrialDetail+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrialDetail+Helper.swift"; sourceTree = "<group>"; };
-		227648D528321B9200214EBF /* TrialDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialDetailController.swift; sourceTree = "<group>"; };
+		227648D528321B9200214EBF /* ScreenDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenDetailController.swift; sourceTree = "<group>"; };
 		2278625E2807EB8300C9EB79 /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
 		2279505D282B87BC00B675A1 /* SubjectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectViewModel.swift; sourceTree = "<group>"; };
 		22795060282B880800B675A1 /* SubjectCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectCollectionCell.swift; sourceTree = "<group>"; };
@@ -163,7 +162,6 @@
 		22A0342F28572462005FDF0F /* DirectionBtnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionBtnView.swift; sourceTree = "<group>"; };
 		22A034312857246B005FDF0F /* DirectionBtnStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionBtnStackView.swift; sourceTree = "<group>"; };
 		22ACAF5428094ACF007277A7 /* DateExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateExt+.swift"; sourceTree = "<group>"; };
-		22EE6527286D419100AFAC77 /* Debugging History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Debugging History.swift"; sourceTree = "<group>"; };
 		22EE6529286D41A300AFAC77 /* Debugging History */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Debugging History"; sourceTree = "<group>"; };
 		22EE6588286EF09B00AFAC77 /* UITextFieldExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextFieldExt+.swift"; sourceTree = "<group>"; };
 		22EE65E92872DB8700AFAC77 /* CMTimeExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CMTimeExt+.swift"; sourceTree = "<group>"; };
@@ -338,7 +336,7 @@
 		2280DCD92832541B0036632E /* TrialDetail */ = {
 			isa = PBXGroup;
 			children = (
-				227648D528321B9200214EBF /* TrialDetailController.swift */,
+				227648D528321B9200214EBF /* ScreenDetailController.swift */,
 				2280DCD5283253F70036632E /* TrialCell.swift */,
 				2280DCD7283254100036632E /* TrialViewModel.swift */,
 				2280DCDA28334BEE0036632E /* TrialHeader.swift */,
@@ -349,16 +347,15 @@
 		228B882A2806577A007A6842 = {
 			isa = PBXGroup;
 			children = (
-				22244D68286561E300B3D03C /* InspectorTableCell.swift */,
 				22244D5C285B262B00B3D03C /* Updates */,
-				22244D2028596BDE00B3D03C /* TestViewController.swift */,
 				227DA6C528291D450097F8F1 /* Memos */,
 				22315E40282E4CA30093079B /* MemoForCoreData */,
 				227E7C922833A5C800084BA2 /* CameraWithCoreData */,
 				226D87682834FE7B00E3F547 /* TODO */,
 				22EE6529286D41A300AFAC77 /* Debugging History */,
-				22EE6527286D419100AFAC77 /* Debugging History.swift */,
 				22244D1E28586AC900B3D03C /* toFix */,
+				22244D68286561E300B3D03C /* InspectorTableCell.swift */,
+				22244D2028596BDE00B3D03C /* TestViewController.swift */,
 				22F65DFD283F75A100646FCD /* TrimmingController.swift */,
 				22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */,
 				22EE65EB2873E1C500AFAC77 /* CustomAlbum.swift */,
@@ -573,7 +570,7 @@
 				22F65EB22849B0FA00646FCD /* UIView+Ext.swift in Sources */,
 				22F65E6E2844770100646FCD /* MovementCell.swift in Sources */,
 				22795075282B965D00B675A1 /* SubjectDetailController.swift in Sources */,
-				227648D628321B9200214EBF /* TrialDetailController.swift in Sources */,
+				227648D628321B9200214EBF /* ScreenDetailController.swift in Sources */,
 				2279506D282B931A00B675A1 /* APIModels.swift in Sources */,
 				226D876B2835D9F000E3F547 /* Int64Ext+.swift in Sources */,
 				227DA6C8282B60180097F8F1 /* SubjectController.swift in Sources */,
@@ -619,7 +616,6 @@
 				22F65EB8284EDCA200646FCD /* SelectableButton.swift in Sources */,
 				22889EFD2820CA96002A9C4F /* PreviewController.swift in Sources */,
 				22EE65EA2872DB8700AFAC77 /* CMTimeExt+.swift in Sources */,
-				22EE6528286D419100AFAC77 /* Debugging History.swift in Sources */,
 				2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */,
 				22244D69286561E300B3D03C /* InspectorTableCell.swift in Sources */,
 				227DA6C22828F5C20097F8F1 /* APIManager.swift in Sources */,
