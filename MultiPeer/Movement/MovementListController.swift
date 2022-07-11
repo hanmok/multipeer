@@ -19,28 +19,21 @@ class MovementListController: UIViewController {
     // MARK: - Properties
     
     var userDefaultSetup = UserDefaultSetup()
-    var systemSoundID: SystemSoundID = 1016
-    var connectionManager = ConnectionManager()
     
-    private var isCameraVisible = false
-    private var isCameraPresented = false
-    var screen: Screen?
+    var connectionManager = ConnectionManager()
     
     var cameraVC: CameraController?
     
-    var count = 0
-    var durationTimer: Timer?
+    private var isCameraVisible = false
+    private var isCameraPresented = false
+    
+    var screen: Screen?
     
     var subject: Subject?
     
     var selectedTrialCore: TrialCore?
     
     var completeConditionViewModels: [MovementViewModel] = []
-    
-    // TODO: change to false after some updates..
-    // TODO: false -> 정상 작동 ;;
-    
-    var testMode = false
     
     /// trialCoresToShow 만드는 재료
     var trialCores: [[TrialCore]] = [[]]
@@ -51,6 +44,8 @@ class MovementListController: UIViewController {
     
     var rank: Rank?
     
+    
+     // MARK: - Life Cycles
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         print("viewWillAppear triggered")
@@ -208,22 +203,14 @@ class MovementListController: UIViewController {
         registerCollectionView()
         connectionManager.delegate = self
         
-        // 여기에서 에러
-//        fetchDefaultScreen() // 이거... Peer 한테 필요한거야? 아마도 ?
-        
         updateTrialCores(screen: screen)
         setupLayout()
         setupAddTargets()
         addNotificationObservers()
-//        testCode()
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-    }
-    
-    private func testCode() {
-        
     }
     
     // success
@@ -232,8 +219,7 @@ class MovementListController: UIViewController {
         var albumNames = Set<String>()
         albumsPhoto.enumerateObjects({(collection, index, object) in
             let photoInAlbums = PHAsset.fetchAssets(in: collection, options: nil)
-//            print("print photoAlbum info")
-//            print(photoInAlbums.count)
+            
             print(collection.localizedTitle!)
             albumNames.insert(collection.localizedTitle!)
         })
@@ -246,53 +232,11 @@ class MovementListController: UIViewController {
                 if success {
                     print("successFully create file of name: \(albumName)")
                 } else {
-                    print("error: \(error?.localizedDescription)")
+                    print("error: \(String(describing: error?.localizedDescription))")
                 }
             }
         }
     }
-    
-    // call if no screen assigned
-    
-//    func fetchDefaultScreen() {
-//        print("fetchDefaultScreen called")
-//        // false -> error !
-//        if testMode {
-//            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("failed to get appDelegate")}
-//
-//            let subjectContext = appDelegate.persistentContainer.viewContext
-//
-//            let subjectReq = NSFetchRequest<NSFetchRequestResult>(entityName: .CoreEntitiesStr.Subject)
-//            subjectReq.returnsObjectsAsFaults = false
-//
-//            do {
-//                let result = try subjectContext.fetch(subjectReq)
-//                guard let fetchedSubjects = result as? [Subject] else { fatalError("failed to cast result to [Subject]")}
-//
-//                if !fetchedSubjects.isEmpty {
-//                    subject = fetchedSubjects.first!
-//                }
-//
-//                guard let subject = subject else {
-//                    // no subject
-//
-//                    fatalError(" empty subject ")
-//                }
-//
-//                if subject.screens.isEmpty == false {
-//                    screen = subject.screens.sorted{$0.date < $1.date}.first
-//
-//                    updateTrialCores(screen: screen)
-//                    print("updateTrialCores called")
-//                } else {
-//                    print("subject has no screen")
-//                }
-//
-//            } catch {
-//                fatalError("failed to fetch subjects!")
-//            }
-//        }
-//    }
     
     private func registerCollectionView() {
         movementCollectionView.register(MovementCell.self, forCellWithReuseIdentifier: MovementCell.cellId)
@@ -372,7 +316,7 @@ class MovementListController: UIViewController {
     @objc func createAlbum(_ notification: Notification) {
 //        guard let receivedAlbumNameInfo = notification.userInfo?[""]
         let upperIndex = (notification.userInfo?["upperIndex"])! as! Int
-        let subjectName = (notification.userInfo?["subjectName"])! as! String
+//        let subjectName = (notification.userInfo?["subjectName"])! as! String
         print("new album name : \(upperIndex), from movementListController")
         createAlbumIfNotExist(albumName: "\(upperIndex)")
     }
@@ -383,37 +327,32 @@ class MovementListController: UIViewController {
         guard let receivedScreen = notification.userInfo?["screen"] as? Screen else { fatalError() }
         
         screen = receivedScreen
-        guard let screen = screen else {
-            fatalError()        }
+        guard let screen = screen else { fatalError() }
         
         guard let parentSubject = screen.parentSubject else { fatalError() }
-//        let subjectName = SubjectName(name: parentSubject.name)
-        //        self.updatePeopleInfo(with: screen!)?
         
         self.updatePeopleInfo(with: screen)
         self.updateTrialCores(screen: screen)
         
         let subjectName = parentSubject.name
-//        let screenIndex = screen.screenIndex + 1
+        
         let upperIndex = screen.upperIndex + 1
         
-//        let albumNameInfo = AlbumNameInfo(subjectName: parentSubject.name, screenIndex: Int(screen.screenIndex))
         
         let albumNameInfo = AlbumNameInfo(subjectName: subjectName, upperIndex: Int(upperIndex))
         
 
         connectionManager.send(PeerInfo(msgType: .sendAlbumNameInfo, info: Info(albumNameInfo: albumNameInfo)))
-//        print("screen's upperIndex: \()")
+
         connectionManager.upperIndex = Int(upperIndex)
         let msg = "new album name : \(upperIndex), from movementListController"
         
         printFlag(type: .upperIndex, count: 0, message: msg)
         
         createAlbumIfNotExist(albumName: "\(upperIndex)")
-//        checkConditionForViewModels()
+        
         reflectScreenState()
         
-        print("current ScreenIndex from setScreen: \(upperIndex)")
         dismiss(animated: true)
     }
     
@@ -425,34 +364,19 @@ class MovementListController: UIViewController {
         subjectLabel.text = subject.name
     }
     
-    // 여기서 Crash 발생. Why ??
+    
     @objc func presentCameraNoti(_ notification: Notification) {
         
         if isCameraOn == false {
             printFlag(type: .defaultSubjectScreen, count: 0)
-            
-            //        guard let subject = subject else { fatalError("fail to get subject ")}
-            
-            //            guard let screen = screen else { fatalError(" fail to get screen")}
-            
-//            createAlbumIfNotExist(albumName: <#T##String#>)
-            
+    
             guard let title = notification.userInfo?["title"] as? String,
-                  let direction = notification.userInfo?["direction"] as? MovementDirection
-                    //                ,let score = notification.userInfo?["score"] as? Int?
-            else {
+                  let direction = notification.userInfo?["direction"] as? MovementDirection else {
                 print("failed to converting userInfo back.")
-                return }
-            
-            //            let trialCore = screen.trialCores.filter {
-            //                $0.title == title && $0.direction == direction.rawValue
-            //            }.first!
+                return
+            }
             
             presentCameraAsChild(rank: .follower, title: title, direction: direction)
-            
-            
-        } else {
-            // update peer's camera title
         }
     }
     
@@ -467,16 +391,15 @@ class MovementListController: UIViewController {
     
     
     private func updateTrialCores(screen: Screen? = nil) {
-        print("screen is nil? \(screen == nil)")
-        print("updateTrialCores Called ")
-        self.trialCores = [[]] // initialize
+
+        self.trialCores = [[]]
         
         // screen 유효하면 self.screen 에 넣고 없으면 만들어서 넣기.
         if screen != nil {
             self.screen = screen!
         } else {
             let newScreen = Screen.save()
-//            self.screen = Screen.save() // default Screen
+            
             newScreen.screenIndex = Int64(userDefaultSetup.upperIndex)
             
             userDefaultSetup.upperIndex += 1
@@ -486,8 +409,8 @@ class MovementListController: UIViewController {
         
         guard let screen = self.screen else { fatalError() }
         
-        //        let sortedCores = self.screen!.trialCores.sorted {
-        // 먼저 운동 순서대로, 같은 운동의 경우 좌우 순서로 넣기.
+        // 1. 운동 순서대로, (DS -> HS -> ... )
+        // 2. 같은 운동의 경우 좌우 순서로 넣기.
         let sortedCores = screen.trialCores.sorted {
             if $0.tag != $1.tag {
                 return $0.tag < $1.tag
@@ -496,11 +419,9 @@ class MovementListController: UIViewController {
             }
         }
         
-        print("---------- sorted Cores: ----------")
-        
         // sortedCores: [Deep Squat, Deep Squat Var, Hurdle Step Left, Hurdle Step Right, ... ]
-        
         // trialCores 에 잘 분류해서 넣기 위해 선언한 이전 sortedCore 값
+        
         var prev = sortedCores.first!
         
         // TODO: 이건 또 뭐야 ??
@@ -514,13 +435,13 @@ class MovementListController: UIViewController {
             }
             prev = eachCore
         }
+        
         print("--------- sortedCores: ---------")
         for eachCore in sortedCores {
             print("title: \(eachCore.title), direction: \(eachCore.direction)")
         }
         self.trialCores.removeFirst()
         
-        // initialize
         trialCoresToShow = [[]]
         
         print("----------------- trialCores: -----------------")
@@ -531,9 +452,10 @@ class MovementListController: UIViewController {
         }
         
         for (index, eachCore) in trialCores.enumerated() {
-            // hanmok, 여기 잘못됨. 애초에, 받는 애가.. 잘못됐음.. ??
-            // 음.. deep squat 의 경우, Deep Squat 과 Variation 을 비교해서,
+            
+            // deep squat 의 경우, Deep Squat 과 Variation 을 비교해서,
             // Variation 의 trialNo 가 Deep Squat 과 '같을 시' Variation 의 점수 반영해야함.
+            // trialNo 가 아니라, updatedDate 이 중요함. 언제 입력이 되었는지.
             
             // basic moves
             if MovementImgsDictionary[eachCore.first!.title] != nil {
@@ -573,8 +495,7 @@ class MovementListController: UIViewController {
     @objc func moveToInspectorController() {
         
         let inspectorVC = InspectorController()
-//        SoundService.shared.someFunc()
-//        AudioServicesPlaySystemSound(systemSoundId)
+        
         let uiNavController = UINavigationController(rootViewController: inspectorVC)
         
         self.present(uiNavController, animated: true)
