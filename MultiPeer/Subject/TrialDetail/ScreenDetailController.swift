@@ -37,6 +37,7 @@ class ScreenDetailController: UIViewController {
 //    var trialCores: [TrialCore] = []
     var trialCores: [[TrialCore]] = [[]]
 //    var trialCoresToShow: [[(TrialCore, TrialCore?)]] = [[]]
+    // tuple form due to following clearing Test ;;
     var trialCoresToShow: ([[TrialCore]], [[TrialCore]]) = ([[]], [[]])
     
     var trialPainCores: [[TrialCore]] = [[]]
@@ -180,11 +181,14 @@ class ScreenDetailController: UIViewController {
                 // trialCores: [(TrialCore, TrialCore?)]
                 
                 trialCoresToShow.0.append(eachCoreArr)
+                
                 if let variationCoreName = movementWithVariation[eachCoreArr.first!.title] {
                     
                     let matchedVariationCore = trialCores[index + 1]
-                    if !(eachCoreArr.first!.updatedDate >= matchedVariationCore.first!.updatedDate) {
+                    if (eachCoreArr.first!.updatedDate < matchedVariationCore.first!.updatedDate) {
                         trialCoresToShow.0[trialCoresToShow.0.count - 1].append(matchedVariationCore.first!)
+                    } else {
+                        // FIXME: What about else case ? already handled. (added basic)
                     }
                 }
             }
@@ -209,6 +213,7 @@ class ScreenDetailController: UIViewController {
                 trialCores.remove(at: idx)
             }
         }
+        
 //        print("trialPainCores")
 //        trialPainCores.forEach {
 //            print($0.first?.title)
@@ -216,6 +221,7 @@ class ScreenDetailController: UIViewController {
         
         trialCoresToShow.0.removeFirst()
         
+        // Screen 에 따라 Variation 있을수도 없을수도 ..
         print("----------------- trialCoresToShow: -----------------")
         for (index, eachCoreArray) in trialCoresToShow.0.enumerated() {
             print("index: \(index)")
@@ -224,29 +230,8 @@ class ScreenDetailController: UIViewController {
             }
         }
         
-        // 여기서 무엇인가 잘못됨...
-        //        for (idx, eachCores) in trialCoresToShow.0.enumerated() {
-//        for (idx, eachCores) in trialCores.enumerated() {
-//            if let valid = eachCores.first {
-//                if let painTitle = MovementWithPainEnum(rawValue: valid.title) {
-//                    print("pain flag1, painTitle: \(painTitle)")
-//                    for trialPainCoreArr in trialPainCores {
-//                        if let firstCore = trialPainCoreArr.first {
-//                            if firstCore.title == painTitle.rawValue {
-//                                trialCoresToShow.1.append(trialPainCoreArr)
-//                                print("pain flag2, added painCoreArr: \(trialPainCoreArr.first!.title)")
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    print("pain flag3, valid title that has no pain: \(valid.title)")
-//                    trialCoresToShow.1.append([])
-//                }
-//            }
-//        }
         
-        
-        print("my result flag") // 여기서 뭔가를 잘못 더하고 있네..
+        print("my result flag")
     bigLoop: for (idx, eachCores) in trialCoresToShow.0.enumerated() {
         
         if let firstElement = eachCores.first {
@@ -324,8 +309,7 @@ extension ScreenDetailController: UICollectionViewDelegateFlowLayout, UICollecti
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         print("numOfTrialCoresFromCollectionView: \(trialCores.count)")
-        
-//        return trialCores.count
+    
         return trialCoresToShow.0.count
     }
     
@@ -333,9 +317,11 @@ extension ScreenDetailController: UICollectionViewDelegateFlowLayout, UICollecti
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! TrialCell
         print("cell : ")
         
+        
 //        for (idx, trialCoresToShowSmall) in trialCoresToShow.0.enumerated() {
 //            print("index: \(idx), \(trialCores.first)")
 //        }
+        
         
         cell.viewModel = TrialViewModel(trialCoresToShow: (trialCoresToShow.0[indexPath.row], trialCoresToShow.1[indexPath.row]))
         
@@ -370,3 +356,70 @@ extension ScreenDetailController: UICollectionViewDelegateFlowLayout, UICollecti
         return CGSize(width: screenWidth, height: 50) // prev: 60
     }
 }
+
+
+
+
+
+
+/*
+ 
+ 
+ ScreenDetailController
+
+ print("----------------- trialCoresToShow: -----------------")
+
+ index: 0
+ title: Deep Squat, direction: Neutral
+ index: 1
+ title: Hurdle Step, direction: Left
+ title: Hurdle Step, direction: Right
+ index: 2
+ title: Inline Lunge, direction: Left
+ title: Inline Lunge, direction: Right
+ index: 3
+ title: Ankle Clearing, direction: Left
+ title: Ankle Clearing, direction: Right
+ index: 4
+ title: Shoulder Mobility, direction: Left
+ title: Shoulder Mobility, direction: Right
+ index: 5
+ title: Active Straight-LegRaise, direction: Left
+ title: Active Straight-LegRaise, direction: Right
+ index: 6
+ title: Trunk Stability Push-up, direction: Neutral
+ index: 7
+ title: Rotary Stability, direction: Left
+ title: Rotary Stability, direction: Right
+
+
+
+
+
+ index: 0
+ title: Deep Squat, direction: Neutral
+ title: Deep Squat Var, direction: Neutral
+ index: 1
+ title: Hurdle Step, direction: Left
+ title: Hurdle Step, direction: Right
+ index: 2
+ title: Inline Lunge, direction: Left
+ title: Inline Lunge, direction: Right
+ index: 3
+ title: Ankle Clearing, direction: Left
+ title: Ankle Clearing, direction: Right
+ index: 4
+ title: Shoulder Mobility, direction: Left
+ title: Shoulder Mobility, direction: Right
+ index: 5
+ title: Active Straight-LegRaise, direction: Left
+ title: Active Straight-LegRaise, direction: Right
+ index: 6
+ title: Trunk Stability Push-up, direction: Neutral
+ title: Trunk Stability Push-up Var, direction: Neutral
+ index: 7
+ title: Rotary Stability, direction: Left
+ title: Rotary Stability, direction: Right
+
+ 
+ */

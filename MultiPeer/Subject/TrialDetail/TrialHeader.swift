@@ -21,41 +21,50 @@ class TrialHeader: UICollectionReusableView {
         $0.backgroundColor = .clear
     }
     
-    private let shortTitleLabel = UILabel().then { $0.backgroundColor = .cyan
-        $0.text = "Movement Title"
+    private let shortTitleLabel = UILabel().then {
+//        $0.backgroundColor = .cyan
+//        $0.text = "Movement Title"
 //        $0.font = UIFont.preferredFont(forTextStyle: .footnote)
         
         $0.textAlignment = .center
-        $0.backgroundColor = .black
-        $0.textColor = .white
+//        $0.backgroundColor = .black
+//        $0.textColor = .white
+        $0.textColor = .black
         $0.numberOfLines = 0
     }
     
     
     private let realScoreLabel = UILabel().then {
 //        $0.text = "L / R"
-        $0.text = "Score"
+//        $0.text = "Score"
+        // I think.. 'Score' is bettwe for name ..
+        $0.text = "L/R"
         $0.textAlignment = .center
 //        $0.backgroundColor = .black
-        $0.backgroundColor = .gray
-        $0.textColor = .white
+//        $0.backgroundColor = .gray
+//        $0.textColor = .white
+        $0.textColor = .black
+        
     }
     
     private let painScoreLabel = UILabel().then {
-        $0.text = "Pain"
-        $0.backgroundColor = .black
+        $0.text = "CL"
+//        $0.backgroundColor = .black
         $0.textAlignment = .center
-        $0.textColor = .white
-        $0.font = UIFont.preferredFont(forTextStyle: .footnote)
+//        $0.textColor = .white
+        $0.textColor = .black
+//        $0.font = UIFont.preferredFont(forTextStyle: .footnote)
     }
-//
-//    private let finalScoreLabel = UILabel().then {
-//        $0.text = "Final"
-////        $0.backgroundColor = .brown
-//        $0.textAlignment = .center
+    
+    private let finalScoreLabel = UILabel().then {
+        $0.text = "Final"
+//        $0.backgroundColor = .gray
+        $0.textAlignment = .center
 //        $0.backgroundColor = .black
 //        $0.textColor = .white
-//    }
+        $0.textColor = .black
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
@@ -68,7 +77,7 @@ class TrialHeader: UICollectionReusableView {
     private func setupLayout() {
         [positionImageLabel, shortTitleLabel,
          painScoreLabel, realScoreLabel
-//        ,finalScoreLabel
+        ,finalScoreLabel
         ].forEach {addSubview($0)
         }
         
@@ -78,16 +87,35 @@ class TrialHeader: UICollectionReusableView {
             make.width.equalTo(60)
         }
         
-        
-        painScoreLabel.snp.makeConstraints { make in
+        finalScoreLabel.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-5)
             make.top.bottom.equalToSuperview()
             make.width.equalTo(70)
         }
-
+        
+        
+//        painScoreLabel.snp.makeConstraints { make in
+//            make.trailing.equalTo(finalScoreLabel.snp.leading).offset(-5)
+//            make.top.bottom.equalToSuperview()
+//            make.width.equalTo(70)
+//        }
         
         realScoreLabel.snp.makeConstraints { make in
-            make.trailing.equalTo(painScoreLabel.snp.leading).offset(-5)
+            make.trailing.equalTo(finalScoreLabel.snp.leading).offset(-5)
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(70)
+        }
+        
+
+        
+//        realScoreLabel.snp.makeConstraints { make in
+//            make.trailing.equalTo(painScoreLabel.snp.leading).offset(-5)
+//            make.top.bottom.equalToSuperview()
+//            make.width.equalTo(70)
+//        }
+        
+        painScoreLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(realScoreLabel.snp.leading).offset(-5)
             make.top.bottom.equalToSuperview()
             make.width.equalTo(70)
         }

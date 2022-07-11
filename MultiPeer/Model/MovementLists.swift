@@ -88,7 +88,7 @@ struct Dummy {
         return painTest
     }
     
-    static let shortForFileName: [String: String] = [
+    static let shortMovementName: [String: String] = [
         MovementList.deepSquat.rawValue: "ds",
         MovementList.deepSquatVar.rawValue: "dsv",
         MovementList.hurdleStep.rawValue: "hs",

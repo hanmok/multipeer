@@ -1,0 +1,56 @@
+
+ScreenDetailController
+
+        print("----------------- trialCoresToShow: -----------------")
+
+index: 0
+title: Deep Squat, direction: Neutral
+index: 1
+title: Hurdle Step, direction: Left
+title: Hurdle Step, direction: Right
+index: 2
+title: Inline Lunge, direction: Left
+title: Inline Lunge, direction: Right
+index: 3
+title: Ankle Clearing, direction: Left
+title: Ankle Clearing, direction: Right
+index: 4
+title: Shoulder Mobility, direction: Left
+title: Shoulder Mobility, direction: Right
+index: 5
+title: Active Straight-LegRaise, direction: Left
+title: Active Straight-LegRaise, direction: Right
+index: 6
+title: Trunk Stability Push-up, direction: Neutral
+index: 7
+title: Rotary Stability, direction: Left
+title: Rotary Stability, direction: Right
+
+
+
+
+
+index: 0
+title: Deep Squat, direction: Neutral
+title: Deep Squat Var, direction: Neutral
+index: 1
+title: Hurdle Step, direction: Left
+title: Hurdle Step, direction: Right
+index: 2
+title: Inline Lunge, direction: Left
+title: Inline Lunge, direction: Right
+index: 3
+title: Ankle Clearing, direction: Left
+title: Ankle Clearing, direction: Right
+index: 4
+title: Shoulder Mobility, direction: Left
+title: Shoulder Mobility, direction: Right
+index: 5
+title: Active Straight-LegRaise, direction: Left
+title: Active Straight-LegRaise, direction: Right
+index: 6
+title: Trunk Stability Push-up, direction: Neutral
+title: Trunk Stability Push-up Var, direction: Neutral
+index: 7
+title: Rotary Stability, direction: Left
+title: Rotary Stability, direction: Right

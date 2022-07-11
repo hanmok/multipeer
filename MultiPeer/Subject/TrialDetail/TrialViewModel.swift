@@ -13,11 +13,23 @@ struct TrialViewModel {
     
     let trialCoresToShow: ([TrialCore], [TrialCore]) // Clearing Test 포함되어있음.
     
-    var titleName: String { return filteredTrialCores.first!.title }
+//    var titleName: String { return filteredTrialCores.first!.title }
+    
+    var titleName: String { return returnShortTitleName(filteredTrialCores.first!.title)}
 
+    private func returnShortTitleName(_ titleName: String) -> String {
+//        if let shortName = shortmovement
+        if let shortName = Dummy.shortName[titleName] {
+            return shortName
+        } else {
+            return titleName
+        }
+//        return ""
+    }
+    
     var filteredTrialCores: [TrialCore] {
         let result = trialCoresToShow.0.filter { !$0.title.lowercased().contains("var") }
-
+// deepSquat 이 왜 두번들어가지 ?
         print("----------------- filteredTrialCoresToShow: -----------------")
 
         for eachCore in result {
@@ -28,7 +40,8 @@ struct TrialViewModel {
     
     var imageName: String { return MovementImgsDictionaryWithVars[filteredTrialCores.first!.title]!.first!}
     
-    var realScore: [String] { return convertScoreToString()}
+    var realScore: [String] { return returnLatestScores()}
+    var finalScore: String { return getFinalScore(from: realScore) }
     
     var scoreTobePrinted: String {
         if realScore.count == 2 {
@@ -37,19 +50,50 @@ struct TrialViewModel {
             if leftScore == "" && rightScore == "" {
                 return ""
             }
-            return "( \(leftScore) | \(rightScore) )"
+            return "(\(leftScore)/\(rightScore))"
             
         } else {
             return realScore.first!
         }
-        
     }
     
-    var painText: String {
+    
+    private func getFinalScore(from latestScore: [String]) -> String {
+        print("latestScore: \(latestScore)")
+        
+        if (latestScore.first! == "R" || latestScore.first! == "Y" || latestScore.first! == "G") {
+            return ""
+        }
+        
+        if latestScore.count != 2 {
+            return latestScore.first!
+        } else {
+            var scores: (leftScore: Int?, rightScore: Int?) = (nil, nil)
             
+            if let firstScoreStr = latestScore.first,
+               let firstScore = Int(firstScoreStr) {
+                scores.leftScore = firstScore
+            }
+            
+            if let secondScoreStr = latestScore.last,
+               let secondScore = Int(secondScoreStr) {
+                scores.rightScore = secondScore
+            }
+
+            if scores.leftScore != nil && scores.rightScore != nil {
+                let result = min(scores.leftScore!, scores.rightScore!)
+                return String(result)
+                
+            } else {
+                return ""
+            }
+        }
+    }
+    
+    
+    var painText: String {
+        
         if trialCoresToShow.1.isEmpty == false {
-//            return trialCoresToShow.1.
-//            let some = trialCoresToShow.1.fir
             let painCores = trialCoresToShow.1
             
             if painCores.count == 2 {
@@ -57,22 +101,24 @@ struct TrialViewModel {
                 let rightPain = convertPain(painCores.last!.latestWasPainful)
                 if leftPain == "" && rightPain == "" { return "" }
                 
-                return "( \(leftPain) | \(rightPain) )"
-            
+                return "(\(leftPain)/\(rightPain))"
+                
             } else {
                 let pain = convertPain(painCores.first!.latestWasPainful)
                 return pain
             }
+            
             // ankleClearing -> ankleClearing (LR)
             // shoulderMobility -> shoulderClearing (LR)
             // trunkStabilityPushUp -> extensionClearing
             // rotaryStability -> flexionClearing
+            
         } else {
             return ""
         }
     }
     
-    func convertScoreToString() -> [String] {
+    func returnLatestScores() -> [String] {
         // 여기서 출력했던 것 같은데 ??
         var temp: [String] = []
         
@@ -132,6 +178,10 @@ struct TrialViewModel {
         
         print("temp Score: \(temp)")
         return temp
+    }
+    
+    private func returnFinalScore() -> String {
+        return ""
     }
     
     private func convertScoreToColor(score: Int64) -> String {

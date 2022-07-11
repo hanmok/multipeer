@@ -38,8 +38,9 @@ struct ScreenViewModel {
         // TODO: FinalScore 구하기.
         // How? Variation 우선 고려하지 않고 만들어보기.
         var totalScore = 0
-        
+        var scoreDic: [String: Int64] = [:]
         screen.trialCores.forEach {
+            
             // TODO: filter out Variations
             if $0.title.lowercased().contains("var") == false {
                 // TODO: Compare Date between original and variation
@@ -48,16 +49,35 @@ struct ScreenViewModel {
                     let variationCore = screen.trialCores.filter { $0.title == variationName}.first!
                     
                     let latestScore = $0.updatedDate < variationCore.updatedDate ? variationCore.latestScore : $0.latestScore
+                    let selectedCoreName = $0.updatedDate < variationCore.updatedDate ? variationName : $0.title
                     
                     if latestScore > 0 {
                         totalScore += Int(latestScore)
+                        print("fflag selectedCoreName: \(selectedCoreName), score: \(latestScore)")
                     }
+                    // has no variation. (all variations has no direction)
                 } else {
-                    if $0.latestScore > 0 {
-                        totalScore += Int($0.latestScore)
+                    // compare two trialCores if has direction.
+                    // then, add to totalScore with the lower one.
+                    // ?? latestScore is always greater than or equal to 0 (maybe)
+                    if $0.latestScore >= 0 {
+                        // second core
+                        if let prevScore = scoreDic[$0.title] {
+                            if $0.latestScore < prevScore {
+                                scoreDic[$0.title] = $0.latestScore
+                            }
+                            // first core
+                        } else {
+                            scoreDic[$0.title] = $0.latestScore
+                        }
                     }
                 }
             }
+        }
+        
+        for (movement, finalScore) in scoreDic {
+            print("fflag movement: \(movement), finalScore: \(finalScore)")
+            totalScore += Int(finalScore)
         }
         
         print("totalScore: \(totalScore)")

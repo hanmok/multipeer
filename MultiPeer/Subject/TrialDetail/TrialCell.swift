@@ -33,7 +33,7 @@ class TrialCell: UICollectionViewCell {
         $0.contentMode = .scaleAspectFit
     }
     
-    private let shortTitleLabel = UILabel().then {
+    private let titleLabel = UILabel().then {
 //        $0.backgroundColor = .cyan
         $0.backgroundColor = .white
         $0.textAlignment = .center
@@ -59,27 +59,30 @@ class TrialCell: UICollectionViewCell {
         $0.backgroundColor = .white
     }
     
+    private let finalScoreLabel = UILabel().then {
+        $0.textAlignment = .center
+        $0.textColor = .black
+        $0.backgroundColor = .white
+    }
+    
     private func configureLayout() {
         guard let viewModel = viewModel else { return }
 
         positionImageView.image = UIImage(imageLiteralResourceName: viewModel.imageName)
         
-        shortTitleLabel.text = viewModel.titleName
-//        painScoreLabel.text = viewModel.painScore
+        titleLabel.text = viewModel.titleName
+        
         painScoreLabel.text = viewModel.painText
-//        realScoreLabel.text = viewModel.realScore.joined(separator: ", ")
-//        realScoreLabel.text = viewModel.realScore.jo
+
         realScoreLabel.text = viewModel.scoreTobePrinted
-//        let strs = viewModel.realScore
-//        for each in strs {
-//            realScoreLabel.text! += each
-//        }
+
+        finalScoreLabel.text = viewModel.finalScore
         
     }
     
     private func setupLayout() {
         
-        [positionImageView, shortTitleLabel, painScoreLabel, realScoreLabel
+        [positionImageView, titleLabel, painScoreLabel, realScoreLabel, finalScoreLabel
         ].forEach { addSubview($0)}
         
         positionImageView.snp.makeConstraints { make in
@@ -88,19 +91,36 @@ class TrialCell: UICollectionViewCell {
             make.width.equalTo(60)
         }
         
-        painScoreLabel.snp.makeConstraints { make in
+        finalScoreLabel.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-5)
             make.top.bottom.equalToSuperview()
             make.width.equalTo(70)
         }
         
+//        painScoreLabel.snp.makeConstraints { make in
+//            make.trailing.equalTo(finalScoreLabel.snp.leading).offset(-5)
+//            make.top.bottom.equalToSuperview()
+//            make.width.equalTo(70)
+//        }
+        
         realScoreLabel.snp.makeConstraints { make in
-            make.trailing.equalTo(painScoreLabel.snp.leading).offset(-5)
+            make.trailing.equalTo(finalScoreLabel.snp.leading).offset(-5)
             make.top.bottom.equalToSuperview()
             make.width.equalTo(70)
         }
         
-        shortTitleLabel.snp.makeConstraints { make in
+//        realScoreLabel.snp.makeConstraints { make in
+//            make.trailing.equalTo(painScoreLabel.snp.leading).offset(-5)
+//            make.top.bottom.equalToSuperview()
+//            make.width.equalTo(70)
+//        }
+        painScoreLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(realScoreLabel.snp.leading).offset(-5)
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(70)
+        }
+        
+        titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(positionImageView.snp.trailing).offset(5)
             make.top.bottom.equalToSuperview()
             make.trailing.equalTo(realScoreLabel.snp.leading).offset(-5)

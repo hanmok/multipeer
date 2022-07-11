@@ -27,6 +27,7 @@ class ScreenTableCell: UITableViewCell {
     }
     
     
+    
     private let sequenceIndexLabel = UILabel().then {
         $0.textAlignment = .center
         $0.textColor = .white
@@ -44,7 +45,7 @@ class ScreenTableCell: UITableViewCell {
         $0.textAlignment = .center
         $0.backgroundColor = .darkGray
         $0.adjustsFontSizeToFitWidth = true
-        
+
     }
     
     static let identifier = "screenTableCell"

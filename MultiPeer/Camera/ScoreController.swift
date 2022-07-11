@@ -353,7 +353,7 @@ class ScoreController: UIViewController {
         
         let screenIndex = screen.screenIndex + 1
         
-        let titleShort = Dummy.shortForFileName[trialCore.title]!
+        let titleShort = Dummy.shortMovementName[trialCore.title]!
         
         let directionShort: String
         switch trialCore.direction {

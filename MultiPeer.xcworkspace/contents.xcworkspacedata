@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Logs">
+   </FileRef>
+   <FileRef
       location = "group:MultiPeer.xcodeproj">
    </FileRef>
    <FileRef

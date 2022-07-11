@@ -27,6 +27,7 @@
 		22315E3D282E1FCB0093079B /* ScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3C282E1FCB0093079B /* ScreenViewModel.swift */; };
 		22315E3F282E38D40093079B /* TrialCore+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22315E3E282E38D40093079B /* TrialCore+Helper.swift */; };
 		22315E41282E4CA40093079B /* MemoForCoreData in Resources */ = {isa = PBXBuildFile; fileRef = 22315E40282E4CA30093079B /* MemoForCoreData */; };
+		2235E90F287BCA0700871D69 /* toFix2 in Resources */ = {isa = PBXBuildFile; fileRef = 2235E90E287BCA0700871D69 /* toFix2 */; };
 		2265AC4E2817F42300E0FCCF /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265AC4D2817F42300E0FCCF /* CameraController.swift */; };
 		226D20DF282DE6C6001D6019 /* StringExt+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D20DE282DE6C5001D6019 /* StringExt+.swift */; };
 		226D87672834E07600E3F547 /* RemovableProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D87662834E07600E3F547 /* RemovableProtocol.swift */; };
@@ -120,6 +121,7 @@
 		22315E3C282E1FCB0093079B /* ScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewModel.swift; sourceTree = "<group>"; };
 		22315E3E282E38D40093079B /* TrialCore+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrialCore+Helper.swift"; sourceTree = "<group>"; };
 		22315E40282E4CA30093079B /* MemoForCoreData */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemoForCoreData; sourceTree = "<group>"; };
+		2235E90E287BCA0700871D69 /* toFix2 */ = {isa = PBXFileReference; lastKnownFileType = text; path = toFix2; sourceTree = "<group>"; };
 		2265AC4D2817F42300E0FCCF /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		226D20DE282DE6C5001D6019 /* StringExt+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringExt+.swift"; sourceTree = "<group>"; };
 		226D87662834E07600E3F547 /* RemovableProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovableProtocol.swift; sourceTree = "<group>"; };
@@ -354,6 +356,7 @@
 				226D87682834FE7B00E3F547 /* TODO */,
 				22EE6529286D41A300AFAC77 /* Debugging History */,
 				22244D1E28586AC900B3D03C /* toFix */,
+				2235E90E287BCA0700871D69 /* toFix2 */,
 				22244D68286561E300B3D03C /* InspectorTableCell.swift */,
 				22244D2028596BDE00B3D03C /* TestViewController.swift */,
 				22F65DFD283F75A100646FCD /* TrimmingController.swift */,
@@ -498,6 +501,7 @@
 			files = (
 				227E7C932833A5C800084BA2 /* CameraWithCoreData in Resources */,
 				22244D322859C2EE00B3D03C /* loadingLottie.json in Resources */,
+				2235E90F287BCA0700871D69 /* toFix2 in Resources */,
 				228B884328065784007A6842 /* LaunchScreen.storyboard in Resources */,
 				22EE652A286D41A300AFAC77 /* Debugging History in Resources */,
 				22244D332859C2EE00B3D03C /* countDown.json in Resources */,
