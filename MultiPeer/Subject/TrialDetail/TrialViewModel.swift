@@ -11,13 +11,8 @@ import Foundation
 
 struct TrialViewModel {
     
-//    let trialCore: TrialCore
     let trialCoresToShow: ([TrialCore], [TrialCore]) // Clearing Test 포함되어있음.
-//    let trialPainCores: [TrialCore]
     
-//    var imageName: String { return correspondingImageString(from: trialCore.title) }
-
-//    var titleName: String { return trialCore.title }
     var titleName: String { return filteredTrialCores.first!.title }
 
     var filteredTrialCores: [TrialCore] {
