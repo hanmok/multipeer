@@ -226,6 +226,7 @@
 			children = (
 				22244D6428655FF600B3D03C /* InspectorController.swift */,
 				22244D6A286562F700B3D03C /* InspectorViewModel.swift */,
+				22244D68286561E300B3D03C /* InspectorTableCell.swift */,
 				22244D662865616400B3D03C /* AddingInspectorController.swift */,
 			);
 			path = Inspector;
@@ -240,6 +241,18 @@
 				22315E3C282E1FCB0093079B /* ScreenViewModel.swift */,
 			);
 			path = SubjectDetail;
+			sourceTree = "<group>";
+		};
+		2235E90D287BBD0100871D69 /* Trash */ = {
+			isa = PBXGroup;
+			children = (
+				22EE65ED2873E81100AFAC77 /* CustomAlbum2.swift */,
+				22EE65EB2873E1C500AFAC77 /* CustomAlbum.swift */,
+				22EE65EF2873E85600AFAC77 /* ErrorExt+.swift */,
+				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
+				22244D2028596BDE00B3D03C /* TestViewController.swift */,
+			);
+			path = Trash;
 			sourceTree = "<group>";
 		};
 		22795064282B922800B675A1 /* Movement */ = {
@@ -354,14 +367,9 @@
 				226D87682834FE7B00E3F547 /* TODO */,
 				22EE6529286D41A300AFAC77 /* Debugging History */,
 				22244D1E28586AC900B3D03C /* toFix */,
-				22244D68286561E300B3D03C /* InspectorTableCell.swift */,
-				22244D2028596BDE00B3D03C /* TestViewController.swift */,
 				22F65DFD283F75A100646FCD /* TrimmingController.swift */,
 				22EE65F32874170E00AFAC77 /* MyCustomAlbum.swift */,
-				22EE65EB2873E1C500AFAC77 /* CustomAlbum.swift */,
-				22EE65EF2873E85600AFAC77 /* ErrorExt+.swift */,
-				22EE65ED2873E81100AFAC77 /* CustomAlbum2.swift */,
-				227DA6C32829103D0097F8F1 /* SoundTestViewController.swift */,
+				2235E90D287BBD0100871D69 /* Trash */,
 				228B88352806577A007A6842 /* MultiPeer */,
 				228B88342806577A007A6842 /* Products */,
 				6C823DBE391EE5CB5A4C0AA5 /* Pods */,
